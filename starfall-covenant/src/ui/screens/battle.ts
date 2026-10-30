@@ -38,6 +38,7 @@ import { showDefeatGuide } from '../components/defeat-guide';
 import { trackBattleRecords, type BattleRecordTracker } from '../battle-records';
 import { leaderLineOf } from '../victory-line';
 import { helperBondOnClear } from '../helper-bond-clear';
+import { cardBondOnClear } from '../card-bond-clear';
 import { markStorySeen } from './story';
 import { createTutorialBattle } from '../tutorial/battle-setup';
 import { TutorialBattleGuide, texts as guideTexts, type BattleGuide } from '../tutorial/battle-guide';
@@ -650,6 +651,8 @@ class BattleView {
     // 借用流浪契印師通關：同行情誼 +1，跨過門檻時加提示，感謝台詞取代隊長台詞
     const bond = this.s.practice ? null : helperBondOnClear(this.s.stage, this.state.team.find((m) => m.isHelper)?.card);
     if (bond) notes.push(...bond.notes);
+    // 出戰的玩家角色：羈絆 +1，10、30 場解鎖小劇場
+    if (!this.s.practice) notes.push(...cardBondOnClear(this.s.stage, this.s.memberUids ?? []));
     // then：離開後要去的 hash 路徑（下一關）；沒給就回到這關所屬的關卡列表（練習回上一頁）
     const leave = (then?: string) => {
       this.dialog?.close();

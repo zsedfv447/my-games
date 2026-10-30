@@ -382,4 +382,6 @@ export interface SaveData {
   lorePages?: string[];
   /** 流浪契印師的同行情誼：NPC id → 點數（可選；讀取一律經過 progression/helper-bond.ts 的 bondPoints 補預設值） */
   helperBond?: Record<string, number>;
+  /** 角色羈絆：進化鏈的家族 id（最初型態的卡號）→ 出戰通關場數（可選；讀取一律經過 progression/card-bond.ts 補預設值） */
+  cardBond?: Record<string, number>;
 }

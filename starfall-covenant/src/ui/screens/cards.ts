@@ -16,6 +16,8 @@ import {
   activeFilterCount, ATTRIBUTE_CHIPS, emptyBagFilter, RACE_CHIPS, RARITY_CHIPS, toCardFilter, toggleValues, type BagFilterState,
 } from './bag-view';
 import '../bag.css';
+import { cardBondPanel } from '../card-bond-view';
+import { closeBondStories } from '../bond-story';
 
 let sortKey: SortKey = 'obtainedAt';
 // 篩選條件跨畫面保留（從卡片詳情返回時不會被清掉）
@@ -142,8 +144,9 @@ export const cardScreen: ScreenDef = {
   title: '卡片詳情',
   chrome: 'sub',
   parent: 'cards',
-  render({ route, nav }) {
+  render({ route, nav, onLeave }) {
     const owned = getSave().inventory.cards.find((c) => c.uid === route.args[0]);
+    onLeave(closeBondStories);
     const def = owned && growth.card(owned.cardId);
     if (!owned || !def) return h('div', null, emptyState('cards', '找不到這張卡片'));
     const st = computeStats(def, owned, growth.rules);
@@ -195,6 +198,7 @@ export const cardScreen: ScreenDef = {
       skill && panel({ title: `主動技・${skill.name}` }, h('p', null, skill.description), h('p', { class: 'small-text dim' }, `冷卻 ${skill.cooldown.max} 回合（技能等級 ${owned.skillLevel}）`)),
       leader && panel({ title: `隊長技・${leader.name}` }, h('p', null, leader.description)),
       def.flavor && panel(null, h('p', { class: 'small-text dim' }, def.flavor)),
+      !isMaterial && cardBondPanel(def),
       isMaterial
         ? h('div', { class: 'row' }, lockBtn, !starCore && button('拿去強化…', { small: true, variant: 'primary', onClick: feed }))
         : h('div', { class: 'row' }, lockBtn, button('強化', { small: true, onClick: () => nav.go('enhance', [owned.uid]) }), def.evolution && button('進化', { small: true, onClick: () => nav.go('evolve', [owned.uid]) })),
