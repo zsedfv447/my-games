@@ -34,10 +34,17 @@ export function questDestination(quest: QuestDef, save: SaveData, stages: StageD
       return { name: 'shop', args: [] };
     case 'login':
       return { name: 'login-bonus', args: [] };
+    case 'teamEdited':
+      return { name: 'team', args: [] };
+    case 'puzzleSolved':
+      return { name: 'puzzle', args: [] };
+    case 'chapterRewards':
+      return { name: 'adventure', args: [] };
     case 'stageClear':
     case 'stageClear3Stars':
     case 'mainCleared':
     case 'playerLevel':
+    case 'helperClears':
     case 'stageFail':
     case 'orbsCleared':
     case 'comboBest':
