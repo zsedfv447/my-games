@@ -31,6 +31,8 @@ export interface GrowthRules {
   maxInventoryCapacity: number;
   /** 販賣價 = sellValue × (1 + 此值 × (Lv − 1)) */
   sellLevelBonus: number;
+  /** 強化時吃掉這個稀有度以上的角色卡（非素材卡）要先確認 */
+  enhanceConfirmRarity: Rarity;
   /** 販賣這個稀有度以上的卡要二次確認 */
   sellConfirmRarity: Rarity;
   /** 背包剩餘格數小於等於此值時提醒玩家 */
@@ -57,6 +59,7 @@ export const GROWTH_RULES: GrowthRules = {
   awakenMaterialByAttribute: { fire: 'c916', water: 'c917', wood: 'c918', light: 'c919', dark: 'c920' },
   maxInventoryCapacity: 300,
   sellLevelBonus: 0.05,
+  enhanceConfirmRarity: 4,
   sellConfirmRarity: 5,
   inventoryWarnFree: 5,
   collectionGems: { 1: 0, 2: 0, 3: 1, 4: 1, 5: 3, 6: 5 },

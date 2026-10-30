@@ -21,9 +21,14 @@ export interface DialogHandle {
   close(): void;
 }
 
-export function openDialog(title: string, body: Child, actions: HTMLElement[] = [], opts: { dismissible?: boolean } = {}): DialogHandle {
+export function openDialog(title: string, body: Child, actions: HTMLElement[] = [], opts: { dismissible?: boolean; onClose?: () => void } = {}): DialogHandle {
   const overlay = h('div', { class: 'overlay', role: 'dialog', 'aria-modal': 'true', 'aria-label': title });
+  let closed = false;
+  // 不論按鈕或點背景關閉，onClose 都只會呼叫一次
   const close = () => {
+    if (closed) return;
+    closed = true;
+    opts.onClose?.();
     overlay.classList.add('closing');
     setTimeout(() => overlay.remove(), 140);
   };
