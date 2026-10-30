@@ -37,17 +37,27 @@ export const evolveScreen: ScreenDef = {
     const toSkill = toDef.activeSkill ? growth.skill(toDef.activeSkill) : undefined;
     const toLeader = toDef.leaderSkill ? growth.leaderSkill(toDef.leaderSkill) : undefined;
 
+    // 防連點：確認框開著或處理中時不再接受點擊
+    let busy = false;
     const run = async () => {
-      const ok = await confirmDialog('確認進化', `${def.name} 將進化為 ${toDef.name}。等級會回到 Lv1，素材卡會被消耗。`, '進化');
-      if (!ok) return;
-      const pick = pickEvolutionMaterials(getSave(), growth, uid);
-      if (pick.missing.length) return toast('素材不足');
-      const r = evolve(getSave(), growth, uid, pick.uids);
-      if (!r.ok) return toast(r.error.message);
-      commit(r.save);
-      celebrate(toDef, '進化成功！', h('div', { class: 'growth-level-jump' },
-        h('span', null, def.name), h('span', { class: 'arrow' }, '→'), h('strong', { class: 'up' }, toDef.name)),
-      'summon-release', () => nav.replace('card', [uid]));
+      if (busy) return;
+      busy = true;
+      try {
+        const ok = await confirmDialog('確認進化', `${def.name} 將進化為 ${toDef.name}。等級會回到 Lv1，素材卡會被消耗。`, '進化');
+        if (!ok) return;
+        const pick = pickEvolutionMaterials(getSave(), growth, uid);
+        if (pick.missing.length) return toast('素材不足');
+        const r = evolve(getSave(), growth, uid, pick.uids);
+        if (!r.ok) return toast(r.error.message);
+        commit(r.save);
+        // 先換到新型態的卡片詳情，演出疊在上面；不論怎麼關閉演出都不會停在舊的進化頁
+        nav.replace('card', [uid]);
+        celebrate(toDef, '進化成功！', h('div', { class: 'growth-level-jump' },
+          h('span', null, def.name), h('span', { class: 'arrow' }, '→'), h('strong', { class: 'up' }, toDef.name)),
+        'summon-release');
+      } finally {
+        busy = false;
+      }
     };
 
     root.append(h('div', { class: 'growth-body' },

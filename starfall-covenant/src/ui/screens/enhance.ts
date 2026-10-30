@@ -36,14 +36,15 @@ export function statTable(lines: StatLine[]): HTMLElement {
 }
 
 /** 成功演出：立繪閃光＋大字；按確定或點背景關閉 */
-export function celebrate(def: CardDef, headline: string, detail: Child, sound: 'win' | 'skill' | 'summon-release' = 'win', onClose?: () => void): void {
+// 存檔與換頁要在呼叫前完成：點背景關閉時不會有任何回呼
+export function celebrate(def: CardDef, headline: string, detail: Child, sound: 'win' | 'skill' | 'summon-release' = 'win'): void {
   audio.play(sound);
   const dlg = openDialog(headline, h('div', { class: 'growth-celebrate' },
     h('div', { class: 'burst' }),
     cardPortrait(def),
     h('div', { class: 'headline' }, headline),
     h('div', { class: 'detail' }, detail),
-  ), [button('確定', { variant: 'primary', block: true, onClick: () => { dlg.close(); onClose?.(); } })]);
+  ), [button('確定', { variant: 'primary', block: true, onClick: () => dlg.close() })]);
 }
 
 interface ModeView {
@@ -127,8 +128,13 @@ export const enhanceScreen: ScreenDef = {
           button(GROWTH_MODES.find((m) => m.id === mode)!.label, {
             variant: 'primary', block: true, disabled: !view.canRun || coinShort,
             cost: view.coin ? { kind: 'coin', amount: view.coin } : undefined,
-            onClick: () => {
+            onClick: (e) => {
+              // 防連點：先停用這顆按鈕，成功後 draw() 會換上新的按鈕
+              const btn = e.currentTarget as HTMLButtonElement;
+              if (btn.disabled) return;
+              btn.disabled = true;
               const r = view.run();
+              if (!r.ok) btn.disabled = false;
               if (!r.ok) return toast(r.error.message);
               commit(r.save);
               const after = r.save.inventory.cards.find((c) => c.uid === uid)!;
