@@ -43,4 +43,4 @@
 
 ### 商店、登入、任務、成就素材（2026-10-31）
 
-`ui/shop-refill.png`、`ui/shop-expand.png`、`ui/shop-coin-bag.png`、`ui/shop-gems.png`、`ui/login-chest.png`、`ui/shop-banner.webp`、`ui/login-banner.webp`、`ui/quest-banner.webp` 由 Codex CLI（`gpt-6-astra`）以文字提示詞生成的原創圖，未使用既有作品素材作為輸入。各檔的工具、提示詞與後製方式記錄於 `ui/economy-sources.json`。
+`ui/shop-refill.png`、`ui/shop-expand.png`、`ui/shop-coin-bag.png`、`ui/shop-gems.png`、`ui/login-chest.png`、`ui/shop-banner.webp`、`ui/login-banner.webp`、`ui/quest-banner.webp` 由 Codex CLI（`codex exec -m gpt-6-astra`）呼叫其內建圖像工具 `image_gen.imagegen`（底層模型未公開）以文字提示詞生成的原創圖，未使用既有作品素材作為輸入。各檔的工具、提示詞與後製方式記錄於 `ui/economy-sources.json`。

@@ -4,7 +4,7 @@ import { gameData } from '../src/data/load';
 import { createNewSave } from '../src/save/save';
 import { claimLoginReward } from '../src/progression/login';
 import { buyItem, remainingPurchases } from '../src/progression/shop';
-import { addQuestCounters, claimableQuests, claimQuest, derivedCounters, questProgress } from '../src/progression/quests';
+import { addQuestCounters, claimAllQuests, claimableQuests, claimQuest, derivedCounters, questProgress } from '../src/progression/quests';
 import {
   homeBadges, limitText, loginCalendar, loginRewards, questDerived, rewardParts, shopItemDetail, shopPrice, shopTab, sortQuests,
 } from '../src/ui/economy';
@@ -130,6 +130,22 @@ describe('任務與成就', () => {
     }
     expect(questProgress(s, quest('d-all')).done).toBe(true);
     expect(claimableQuests(s, gameData.quests, MON).map((q) => q.id)).toContain('d-all');
+  });
+
+  it('一鍵領取：同一次操作連帶領到「領取 5 個每日任務」，不碰其他種類', () => {
+    const s = addQuestCounters(fresh(), { login: 1, stageClear: 3, 'stageClear:daily': 1, combo5: 5, orbsCleared: 150, gachaPull: 1 }, gameData.quests, MON);
+    const r = claimAllQuests(s, ['daily'], gameData.quests, config, MON);
+    expect(r.claimed.map((q) => q.id).sort()).toEqual(['d-all', 'd-clear', 'd-combo5', 'd-daily-stage', 'd-login', 'd-orbs']);
+    expect(r.save.player.gems).toBe(config.newPlayer.gems + 1);
+    expect(r.save.quests.claimed).not.toContain('a-gachaPull-1');
+    expect(claimAllQuests(r.save, ['daily'], gameData.quests, config, MON).claimed).toEqual([]);
+  });
+
+  it('一鍵領取成就時用 derive 推算存檔數值', () => {
+    const s = { ...fresh(), player: { ...fresh().player, level: 20 } };
+    const r = claimAllQuests(s, ['achievement'], gameData.quests, config, MON, questDerived);
+    expect(r.claimed.map((q) => q.id)).toEqual(['a-playerLevel-10', 'a-playerLevel-20']);
+    expect(claimAllQuests(s, ['achievement'], gameData.quests, config, MON).claimed).toEqual([]);
   });
 
   it('主城紅點：可領登入、任務、成就時亮起', () => {

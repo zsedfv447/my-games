@@ -2,7 +2,7 @@
   "schema_version": 1,
   "project": "星骸契約",
   "created_date": "2026-10-31",
-  "generator": "內建 image_gen.imagegen（未指定底層模型）",
+  "generator": "Codex CLI（codex exec -m gpt-6-astra）呼叫其內建圖像工具 image_gen.imagegen；圖像工具的底層模型未公開",
   "art_direction": "原創星空奇幻道具與場景，古銅金、深青綠、石紋、星形幾何契印。",
   "reference_policy": "閱讀 covenant-skin.css 的配色並查看既有素材；發現既有 home.webp 和 summon-card-gold.webp 為外部作品素材，未將其傳給生成工具、未裁切或重用其像素，提示詞明確排除既有作品造型。所有新圖從文字提示詞生成；登入橫幅另針對自己生成的圖修正星節點數量。",
   "workspace_write_scope": [

@@ -1,7 +1,7 @@
 // 任務（每日／每週）與成就：顯示進度、領取獎勵、一鍵全部領取
 import type { QuestDef } from '../../core/types';
 import { gameData } from '../../data/load';
-import { claimableQuests, claimQuest, questProgress, resetQuestsIfNeeded } from '../../progression/quests';
+import { claimAllQuests, claimableQuests, claimQuest, questProgress, resetQuestsIfNeeded } from '../../progression/quests';
 import { mergeRewards } from '../../progression/rewards';
 import { audio } from '../audio';
 import { badge, bar, button, emptyState, tabs } from '../components/basic';
@@ -15,25 +15,15 @@ import { commit, getSave } from '../state';
 type QuestTab = 'daily' | 'weekly';
 let questTab: QuestTab = 'daily';
 
-/** 領取多個任務（逐一套用；後面的任務可能因前面的領取而達標，例如「領取 5 個每日任務」） */
+/** 一鍵領取（規則在 progression/quests.ts 的 claimAllQuests）；回傳領取數 */
 export function claimAll(kinds: QuestDef['kind'][]): number {
-  const now = Date.now();
-  let save = resetQuestsIfNeeded(getSave(), gameData.quests, now);
-  const got: QuestDef[] = [];
-  for (let guard = 0; guard < 3; guard++) {
-    const ready = claimableQuests(save, gameData.quests, now, questDerived(save)).filter((q) => kinds.includes(q.kind));
-    if (!ready.length) break;
-    for (const q of ready) {
-      const r = claimQuest(save, q, gameData.quests, gameData.config, now, questDerived(save));
-      if (r.ok) { save = r.save; got.push(q); }
-    }
-  }
-  if (!got.length) return 0;
+  const { save, claimed } = claimAllQuests(getSave(), kinds, gameData.quests, gameData.config, Date.now(), questDerived);
+  if (!claimed.length) return 0;
   commit(save);
   audio.play('confirm');
-  const total = mergeRewards(...got.map((q) => q.reward));
-  toast(`領取 ${got.length} 項：${rewardParts(total).map((p) => p.label).join('、')}`, 2600);
-  return got.length;
+  const total = mergeRewards(...claimed.map((q) => q.reward));
+  toast(`領取 ${claimed.length} 項：${rewardParts(total).map((p) => p.label).join('、')}`, 2600);
+  return claimed.length;
 }
 
 function claimOne(q: QuestDef): void {

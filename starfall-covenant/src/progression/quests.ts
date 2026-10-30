@@ -154,6 +154,33 @@ export function claimableQuests(save: SaveData, quests: QuestDef[], now: number,
 }
 
 /**
+ * 一次領取所有已達標的任務（只限 kinds 指定的種類）。
+ * 會重複檢查幾輪：領取每日任務會推進「領取 N 個每日任務」，讓它在同一次操作中也能領到。
+ * derive 依目前存檔重新推算成就數值（領卡片獎勵可能改變收集數）。
+ */
+export function claimAllQuests(
+  save: SaveData,
+  kinds: QuestDef['kind'][],
+  quests: QuestDef[],
+  config: GameConfig,
+  now: number,
+  derive: (save: SaveData) => DerivedCounters = () => ({}),
+): { save: SaveData; claimed: QuestDef[] } {
+  let s = resetQuestsIfNeeded(save, quests, now);
+  const claimed: QuestDef[] = [];
+  for (;;) {
+    const ready = claimableQuests(s, quests, now, derive(s)).filter((q) => kinds.includes(q.kind));
+    const before = claimed.length;
+    for (const q of ready) {
+      const r = claimQuest(s, q, quests, config, now, derive(s));
+      if (r.ok) { s = r.save; claimed.push(q); }
+    }
+    if (claimed.length === before) break;
+  }
+  return { save: s, claimed };
+}
+
+/**
  * 把任務計數接到事件匯流排。update 由持有存檔的一方（介面）提供：收到函式後套用到目前存檔並存檔。
  * 回傳取消訂閱的函式。
  */
