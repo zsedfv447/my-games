@@ -14,7 +14,7 @@
 3. `leader.ts`：解析 `LeaderSkillDef`（條件＋效果），計算本回合倍率；隊長與助戰兩個隊長技相乘。
 4. `skills/`：`SkillEffect` 全部 20 種效果積木；敵人異常狀態 15 種。
 5. `battle-state.ts`：回合狀態機（施放主動技 → 轉珠 → 結算 → 敵人行動 → 換波／勝敗）、續戰。
-6. `view/`：Canvas 盤面繪製、Pointer Events 拖曳（可斜向、軌跡顯示、倒數計時）、消除與傷害動畫。
+6. ~~`view/`~~：已移交介面與美術（見第 4 節）。戰鬥組負責提供足夠的事件與狀態快照，讓畫面能播放動畫。
 - 介面：對外提供 `startBattle(stage, team, helper, rng)` 與事件，讓介面與關卡模組呼叫。
 
 ## 2. 養成系統 — `src/growth/`
@@ -28,6 +28,7 @@
 5. `tools/sim/`：戰鬥模擬器，每個流派一種自動轉珠策略，輸出各流派通關回合與勝率。
 
 ## 4. 介面與美術 — `src/ui/`、`assets/`
+戰鬥畫面整體由介面組負責，包含 `src/battle/view/`：Canvas 盤面繪製、Pointer Events 拖曳（可斜向、軌跡顯示、倒數計時）、消除與傷害動畫；只透過 `battle-state.ts` 的 `startBattle` 介面與事件操作戰鬥。
 主題與共用元件、畫面路由、GDD 2.5 全部畫面＋任務、成就、圖鑑、流派圖鑑、活動、挑戰之塔、劇情對話、抽卡紀錄；新手教學；程式產生的卡面、珠子（含色弱符號）、敵人；使用者提供素材的整理（`assets/user/`，並更新 `CREDITS.md`）；BGM 與音效播放；PWA。
 
 ## 5. 創意顧問 — `docs/proposals/`、`data/` 文字欄位
