@@ -40,3 +40,7 @@
 ### 素材查核
 
 `asset-manifest.json` 記錄原包相對路徑、來源網址、來源 SHA-256、遊戲內路徑、輸出 SHA-256、圖片尺寸、用途與角色對照。所有輸出檔均可解碼，原件與輸出雜湊相同。未找到「強化且鎖定」的獨立符石原圖，因此只提供正常、強化、鎖定三組；額外鎖鏈由程式疊繪。
+
+### 商店、登入、任務、成就素材（2026-10-31）
+
+`ui/shop-refill.png`、`ui/shop-expand.png`、`ui/shop-coin-bag.png`、`ui/shop-gems.png`、`ui/login-chest.png`、`ui/shop-banner.webp`、`ui/login-banner.webp`、`ui/quest-banner.webp` 由 Codex CLI（`gpt-6-astra`）以文字提示詞生成的原創圖，未使用既有作品素材作為輸入。各檔的工具、提示詞與後製方式記錄於 `ui/economy-sources.json`。
