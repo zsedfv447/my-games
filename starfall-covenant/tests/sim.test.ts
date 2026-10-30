@@ -26,7 +26,8 @@ function battleState(archetype: (typeof ARCHETYPE_IDS)[number], rows?: string[])
 
 describe('模擬器資料', () => {
   it('提案 001 的暫定資料能通過資料驗證', () => {
-    const data = { ...gameData, ...fixtureData, stages: benchmarkStages, chapters: [] };
+    // 基準關卡沒有正式關卡 id，所以不帶章節與星骸殘頁
+    const data = { ...gameData, ...fixtureData, stages: benchmarkStages, chapters: [], lore: undefined };
     expect(validateGameData(data)).toEqual([]);
   });
 

@@ -373,4 +373,6 @@ export interface SaveData {
   settings: { bgm: number; sfx: number; battleSpeed: 1 | 2 };
   /** 契印師手札的個人戰績（可選；讀取一律經過 progression/records.ts 的 recordsOf 補預設值） */
   records?: import('../progression/records').PlayerRecords;
+  /** 已收集的星骸殘頁 id（可選；讀取一律經過 progression/lore.ts 的 collectedLorePages 補預設值） */
+  lorePages?: string[];
 }
