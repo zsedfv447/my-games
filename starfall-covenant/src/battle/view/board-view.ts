@@ -50,8 +50,11 @@ export class BoardView {
   private dropOffset = 0;
   /** 逐段落下時：格子索引 → 起始列（負數代表從盤面上方掉進來） */
   private drops = new Map<number, number>();
+  /** 主動技轉珠：格子 → 開始翻面的時間與原本的珠 */
+  private flips = new Map<number, { t0: number; from: Orb }>();
   private dropT = 1;
   private raf = 0;
+  private flipSpeed = 1;
   private boardTexture?: HTMLImageElement;
 
   constructor(private opts: BoardViewOptions) {
@@ -176,6 +179,34 @@ export class BoardView {
         if (t < 1) requestAnimationFrame(tick);
         else {
           this.dropOffset = 0;
+          this.draw();
+          resolve();
+        }
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+
+  /** 主動技改變盤面：變了的珠逐顆翻面換色；盤面大小不同時改用整盤落下 */
+  async playTransform(board: Board, speed = 1): Promise<void> {
+    const prev = this.board;
+    if (!prev || prev.cols !== board.cols || prev.rows !== board.rows) return this.playRefill(board, speed);
+    this.fading.clear();
+    const changed = board.cells.map((_, i) => i).filter((i) => !sameOrb(prev.cells[i], board.cells[i]));
+    this.board = board;
+    if (!changed.length) return this.draw();
+    // 由左上往右下依序翻，整段控制在 0.5 秒內
+    const stagger = Math.min(40, 360 / changed.length) / speed;
+    const t0 = performance.now();
+    changed.forEach((i, k) => this.flips.set(i, { t0: t0 + k * stagger, from: prev.cells[i] }));
+    const total = stagger * changed.length + FLIP_MS / speed;
+    this.flipSpeed = speed;
+    await new Promise<void>((resolve) => {
+      const tick = () => {
+        this.draw();
+        if (performance.now() - t0 < total) requestAnimationFrame(tick);
+        else {
+          this.flips.clear();
           this.draw();
           resolve();
         }
@@ -395,8 +426,12 @@ export class BoardView {
 
     const pad = s * 0.05;
     board.cells.forEach((orb, i) => {
-      const img = this.image(orb);
+      // 翻面：前半段縮成一條線顯示原本的珠，後半段展開成新珠
+      const flip = this.flips.get(i);
+      const ft = flip ? clamp(((now - flip.t0) * this.flipSpeed) / FLIP_MS, 0, 1) : 1;
+      const img = this.image(flip && ft < 0.5 ? flip.from : orb);
       if (!img) return;
+      const squeeze = flip ? Math.abs(1 - ft * 2) : 1;
       const slid = this.slidePos(i, now);
       const col = slid ? slid.col : i % board.cols;
       const fromRow = this.drops.get(i);
@@ -413,7 +448,14 @@ export class BoardView {
       }
       if (alpha <= 0) return;
       ctx.globalAlpha = alpha;
-      ctx.drawImage(img, col * s + pad - grow, row * s + pad - grow + this.dropOffset, s - pad * 2 + grow * 2, s - pad * 2 + grow * 2);
+      const w = (s - pad * 2 + grow * 2) * squeeze;
+      ctx.drawImage(img, (col + 0.5) * s - w / 2, row * s + pad - grow + this.dropOffset, w, s - pad * 2 + grow * 2);
+      if (flip && ft > 0 && ft < 1) {
+        ctx.fillStyle = `rgba(255, 246, 216, ${0.5 * Math.sin(ft * Math.PI)})`;
+        ctx.beginPath();
+        ctx.arc((col + 0.5) * s, (row + 0.5) * s + this.dropOffset, s * 0.42, 0, Math.PI * 2);
+        ctx.fill();
+      }
       if (fadeStart !== undefined) {
         ctx.fillStyle = `rgba(255, 246, 216, ${0.6 * (1 - alpha)})`;
         ctx.beginPath();
@@ -436,6 +478,11 @@ export class BoardView {
     }
   }
 }
+
+/** 主動技轉珠時每顆珠翻面的時間 */
+const FLIP_MS = 220;
+const sameOrb = (a: Orb | undefined, b: Orb | undefined) =>
+  !!a && !!b && a.type === b.type && a.enhanced === b.enhanced && a.locked === b.locked && !!a.poison === !!b.poison && !!a.hidden === !!b.hidden;
 
 /** 被擠開的珠滑到新位置的時間 */
 const SLIDE_MS = 80;
