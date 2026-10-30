@@ -69,9 +69,13 @@ describe('角色羈絆', () => {
 });
 
 describe('羈絆小劇場資料', () => {
-  it('12 位角色各 2 段，每個流派都有代表，通過驗證', () => {
+  it('所有 5★ 以上角色與新卡都有小劇場，每個流派都有代表，通過驗證', () => {
     expect(validateCardBonds(CARD_BONDS, gameData.cards)).toEqual([]);
-    expect(CARD_BONDS.length).toBe(12);
+    const families = new Set(CARD_BONDS.map((b) => b.family));
+    const evolvedInto = new Set(gameData.cards.flatMap((c) => (c.evolution ? [c.evolution.to] : [])));
+    const roots = gameData.cards.filter((c) => c.race !== 'material' && !evolvedInto.has(c.id));
+    for (const c of roots.filter((r) => r.rarity >= 5)) expect(families.has(c.id), c.id).toBe(true);
+    for (const id of ['c606', ...Array.from({ length: 11 }, (_, i) => `c7${String(i + 1).padStart(2, '0')}`)]) expect(families.has(id), id).toBe(true);
     const archetypes = new Set(CARD_BONDS.flatMap((b) => gameData.cards.find((c) => c.id === b.family)!.archetypes.filter((a) => a.role === 'leader').map((a) => a.id)));
     expect(archetypes.size).toBe(12);
   });
