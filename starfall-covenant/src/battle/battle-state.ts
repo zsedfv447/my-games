@@ -47,6 +47,7 @@ import {
   enemyAtkMultiplier,
   enemyHitCount,
   isHeartSealed,
+  isMemberSealed,
   isSkillSealed,
   moveTimePenalty,
   poisonPercent,
@@ -477,6 +478,7 @@ export function startBattle(
       const skill = skills[member];
       if (!m || !skill || m.skillCooldown === null) return fail('這名隊員沒有主動技');
       if (isSkillSealed(state)) return fail('主動技被封印');
+      if (isMemberSealed(state, member)) return fail('這名隊員被星紋封印');
       if (m.skillCooldown > 0) return fail('主動技冷卻中');
 
       const outcome = applyActiveSkill(state, member, skill, rng);

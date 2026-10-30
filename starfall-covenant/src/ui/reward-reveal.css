@@ -62,6 +62,12 @@
 .rv-card.r5.shown::after { box-shadow: 0 0 16px 3px var(--rarity-5); }
 .rv-card.r6.shown::after { box-shadow: 0 0 18px 4px var(--rarity-6); }
 @keyframes rv-rare { 50% { opacity: 0.45; } }
+.rv-card-tag {
+  position: absolute; left: 50%; top: -7px; transform: translateX(-50%); white-space: nowrap; z-index: 1;
+  font-size: 10px; font-weight: 800; color: #1b1203; background: var(--gold); border-radius: 999px; padding: 0 6px;
+  opacity: 0;
+}
+.rv-card.shown .rv-card-tag { animation: fade-in 200ms ease-out 380ms both; }
 .rv-card-count { position: absolute; right: -4px; bottom: -4px; font-size: 11px; font-weight: 800; background: var(--bg-deep); border: 1px solid var(--gold-deep); border-radius: 999px; padding: 0 5px; }
 
 /* 星章：逐顆點亮 */

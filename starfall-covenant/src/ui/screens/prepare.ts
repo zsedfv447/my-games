@@ -1,6 +1,7 @@
 // 出戰確認：關卡情報、推薦流派、隊伍限制或借用隊伍、星章條件，確認後扣體力進入戰鬥
 import { h, svg } from '../dom';
 import { gameData } from '../../data/load';
+import { stageStoryToPlay } from '../../progression/stage-story';
 import type { Attribute, EnemyDef, StageDef, StarCondition } from '../../core/types';
 import { enterStage, periodFirstClearClaimed } from '../../progression/stages';
 import { badge, button, emptyState, panel } from '../components/basic';
@@ -106,9 +107,10 @@ export const prepareScreen: ScreenDef = {
       if (!entered.ok) return toast(ENTER_ERRORS[entered.reason] ?? entered.reason);
       commit(entered.save);
       armBattle(stage.id);
-      // 第一次挑戰時先播關卡開場劇情，播完直接進戰鬥
-      const before = stage.story?.before;
-      if (before && gameData.story[before] && !getSave().progress.storySeen.includes(before)) nav.go('story', [before], { next: `battle/${stage.id}` });
+      // 第一次挑戰時先播關卡開場劇情（progression/stage-story.ts），播完直接進戰鬥
+      const saved = getSave();
+      const before = stageStoryToPlay(stage, 'before', gameData.story, saved.progress.storySeen, !saved.progress.clearedStages.includes(stage.id));
+      if (before) nav.go('story', [before], { next: `battle/${stage.id}` });
       else nav.go('battle', [stage.id]);
     };
 

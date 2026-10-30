@@ -4,6 +4,7 @@ import { h } from '../dom';
 import { gameData } from '../../data/load';
 import type { StageDef } from '../../core/types';
 import { chapterRewardStatus, chapterStars, claimChapterStarReward, periodFirstClearClaimed } from '../../progression/stages';
+import { chapterStarStoryToPlay } from '../../progression/stage-story';
 import { isSeriesStage, nemesisView } from '../nemesis';
 import { badge, bar, button, emptyState, icon, listItem, panel } from '../components/basic';
 import { rewardChips } from '../components/rewards';
@@ -44,7 +45,7 @@ function row(r: StageRow, nav: Navigator, leading: IconName, fresh = new Set<str
 }
 
 /** 章節星章進度與獎勵；領取後原地重畫 */
-function chapterReward(info: ChapterDef): HTMLElement {
+function chapterReward(info: ChapterDef, nav: Navigator): HTMLElement {
   const save = getSave();
   const stars = chapterStars(save, info.chapter, gameData.stages, gameData.chapters);
   const status = chapterRewardStatus(save, info.chapter, gameData.stages, gameData.chapters);
@@ -60,9 +61,15 @@ function chapterReward(info: ChapterDef): HTMLElement {
     const r = claimChapterStarReward(getSave(), info.chapter, gameData.chapters, gameData.stages, gameData.config, Date.now());
     if (!r.ok) return toast(r.reason === 'alreadyClaimed' ? '已經領過了' : '星章還沒集滿');
     commit(r.save);
-    void revealReward('星章獎勵', r.reward!, `第 ${info.chapter} 章・${info.name}`);
+    const fresh = chapterReward(info, nav);
+    // 收下獎勵後，有章節星章劇情（例如第 4 章艾嵐加入）就播一次
+    void revealReward('星章獎勵', r.reward!, `第 ${info.chapter} 章・${info.name}`).then(() => {
+      const story = chapterStarStoryToPlay(info.chapter, gameData.story, getSave().progress.storySeen);
+      // 還停在這個畫面才播（收下前已離開就不打擾）
+      if (story && fresh.isConnected) nav.go('story', [story]);
+    });
     el.parentElement?.querySelector('.constellation-box.claimable')?.classList.remove('claimable');
-    el.replaceWith(chapterReward(info));
+    el.replaceWith(fresh);
   };
   return el;
 }
@@ -128,7 +135,7 @@ export const stagesScreen: ScreenDef = {
         { gold: true },
         h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, `第 ${chapter} 章・${info?.name ?? ''}`), info && badge(info.constellation, 'gold')),
         info && chapterConstellation(info, { claimable: chapterRewardStatus(save, info.chapter, gameData.stages, gameData.chapters) === 'claimable' }),
-        info && chapterReward(info),
+        info && chapterReward(info, nav),
       ),
       h('div', { class: 'list' }, rows.map((r) => row(r, nav, 'adventure', fresh))),
     );

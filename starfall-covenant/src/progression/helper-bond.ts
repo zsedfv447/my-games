@@ -2,6 +2,7 @@
 import type { SaveData, StoryLine } from '../core/types';
 import type { HelperNpcDef } from './helpers';
 import bondData from '../../data/helper-bonds.json';
+import { addPoint, nextTierOf, tiersReached } from './bond-tiers';
 
 /** 情誼門檻：依序解鎖第 1～3 段劇情與感謝台詞；最後一個門檻另送頭像框 */
 export const BOND_TIERS = [5, 10, 20] as const;
@@ -20,12 +21,12 @@ export function bondPoints(save: SaveData, npcId: string): number {
 
 /** 已達成的門檻數（0～3） */
 export function bondLevel(points: number): number {
-  return BOND_TIERS.filter((t) => points >= t).length;
+  return tiersReached(BOND_TIERS, points);
 }
 
 /** 下一個門檻；全部達成時為 null */
 export function nextBondTier(points: number): number | null {
-  return BOND_TIERS.find((t) => points < t) ?? null;
+  return nextTierOf(BOND_TIERS, points);
 }
 
 export const hasBondFrame = (points: number) => bondLevel(points) > BOND_FRAME_TIER;
@@ -45,10 +46,8 @@ export interface BondGain {
 
 /** 通關時呼叫：借用的 NPC 情誼 +1。撤退、失敗不要呼叫 */
 export function addBondOnClear(save: SaveData, npcId: string): BondGain {
-  const before = bondPoints(save, npcId);
-  const after = before + 1;
-  const unlocked = BOND_TIERS.flatMap((t, i) => (before < t && after >= t ? [i] : []));
-  return { save: { ...save, helperBond: { ...save.helperBond, [npcId]: after } }, before, after, unlocked };
+  const { map, ...gain } = addPoint(save.helperBond, npcId, BOND_TIERS);
+  return { save: { ...save, helperBond: map }, ...gain };
 }
 
 export const HELPER_BONDS = bondData as HelperBondDef[];

@@ -43,5 +43,7 @@
   {"id": "e0042", "name": "斷誓鎖靈", "attribute": "light", "hp": 160000, "atk": 5400, "def": 900, "cd": 2, "abilities": [{"status": "orbLock", "trigger": "onAttack", "value": 6, "turns": 2}], "art": {"sprite": "assets/user/enemies/e0022.webp"}},
   {"id": "e0043", "name": "碑前默禱影", "attribute": "water", "hp": 150000, "atk": 5000, "def": 900, "cd": 3, "abilities": [{"status": "skillSeal", "trigger": "onStart", "turns": 3}], "art": {"sprite": "assets/user/enemies/e0023.webp"}},
   {"id": "e0044", "name": "營火殘燼", "attribute": "fire", "hp": 58000, "atk": 2800, "def": 350, "cd": 1, "abilities": [{"status": "delayImmune", "trigger": "onStart", "turns": 0}], "art": {"sprite": "assets/user/enemies/e0024.webp"}},
-  {"id": "e0045", "name": "守碑石像", "attribute": "wood", "hp": 1000000, "atk": 6700, "def": 150, "cd": 4, "abilities": [], "art": {"sprite": "assets/user/enemies/e0025.webp"}}
+  {"id": "e0045", "name": "守碑石像", "attribute": "wood", "hp": 1000000, "atk": 6700, "def": 150, "cd": 4, "abilities": [], "art": {"sprite": "assets/user/enemies/e0025.webp"}},
+  {"id": "e0046", "name": "幕紗星蛾", "attribute": "dark", "hp": 380000, "atk": 2600, "def": 600, "cd": 3, "abilities": [{"status": "darkOrbs", "trigger": "onStart", "value": 6, "turns": 2}, {"status": "darkOrbs", "trigger": "everyNTurns", "value": 8, "turns": 2, "params": {"n": 3}}], "art": {}},
+  {"id": "e0047", "name": "封紋司祭", "attribute": "light", "hp": 420000, "atk": 2800, "def": 700, "cd": 3, "abilities": [{"status": "attributeSeal", "trigger": "onStart", "turns": 2, "params": {"attribute": "leader"}}, {"status": "attributeSeal", "trigger": "everyNTurns", "turns": 1, "params": {"n": 3, "attribute": "fire,wood"}}], "art": {}}
 ]

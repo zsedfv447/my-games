@@ -47,11 +47,13 @@ function build(item: RevealItem): Built {
     case 'card': {
       const def = cardById.get(item.cardId);
       return {
-        el: h('div', { class: ['rv-item rv-card', def && def.rarity >= 3 && 'rare', def && `r${def.rarity}`] },
+        el: h('div', { class: ['rv-item rv-card', def && def.rarity >= 3 && 'rare', def && `r${def.rarity}`, item.tag && 'tagged'] },
           h('div', { class: 'rv-card-inner' },
             h('div', { class: 'rv-card-back' }),
             h('div', { class: 'rv-card-face' }, def ? cardThumb(def, { size: 56 }) : item.cardId)),
-          item.count > 1 && h('span', { class: 'rv-card-count' }, `×${item.count}`)),
+          item.count > 1 && h('span', { class: 'rv-card-count' }, `×${item.count}`),
+          // 首通給的卡標上來源，避免跟隨機掉落混在一起看不出來
+          item.tag && h('span', { class: 'rv-card-tag' }, item.tag)),
       };
     }
     case 'star':
