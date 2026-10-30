@@ -25,9 +25,27 @@
             "value": 1.3
           }
         ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "orbsInOneMatch",
+            "orb": "fire",
+            "count": 5
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "fire"
+            },
+            "value": 1.3
+          }
+        ]
       }
     ],
-    "description": "焰屬性攻擊 3.5 倍、生命 1.3 倍。"
+    "description": "焰屬性攻擊 3.5 倍、生命 1.3 倍；一串消除 5 顆以上焰珠時焰屬性攻擊再 1.3 倍。"
   },
   {
     "id": "l102",
@@ -86,6 +104,90 @@
     "description": "生命 < 30% 時全隊攻擊 5 倍；一串消除 6 顆以上焰珠時再無視防禦。"
   },
   {
+    "id": "l104",
+    "name": "熔軌延伸",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "orbsInOneMatch",
+            "orb": "fire",
+            "count": 5
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2.5,
+            "perStep": 0.5,
+            "maxValue": 3.5
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "attribute": "fire"
+            },
+            "value": 1.2
+          }
+        ]
+      }
+    ],
+    "description": "一串消除 5 顆以上焰珠時全隊攻擊 2.5 倍，每多 1 顆 +0.5 倍，最高 3.5 倍；焰屬性生命 1.2 倍。"
+  },
+  {
+    "id": "l105",
+    "name": "熔流總軌",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "orbsInOneMatch",
+            "orb": "fire",
+            "count": 5
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3,
+            "perStep": 0.5,
+            "maxValue": 4.5
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "attribute": "fire"
+            },
+            "value": 1.3
+          },
+          {
+            "type": "extendMoveTime",
+            "seconds": 1
+          }
+        ]
+      }
+    ],
+    "description": "轉珠時間 +1 秒；一串消除 5 顆以上焰珠時全隊攻擊 3 倍，每多 1 顆 +0.5 倍，最高 4.5 倍；焰屬性生命 1.3 倍。"
+  },
+  {
     "id": "l106",
     "name": "點爐",
     "rules": [
@@ -107,6 +209,60 @@
       }
     ],
     "description": "焰屬性攻擊 2.5 倍。"
+  },
+  {
+    "id": "l107",
+    "name": "從這頭到那頭",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "orbsInOneMatch",
+            "orb": "fire",
+            "count": 5
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "fire"
+            },
+            "value": 2,
+            "perStep": 0.5,
+            "maxValue": 3
+          }
+        ]
+      }
+    ],
+    "description": "一串消除 5 顆以上焰珠時焰屬性攻擊 2 倍，每多 1 顆 +0.5 倍，最高 3 倍。"
+  },
+  {
+    "id": "l108",
+    "name": "晚一點敲鐘",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "enemyCooldownPlus",
+            "turns": 1
+          },
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "fire"
+            },
+            "value": 1.5
+          }
+        ]
+      }
+    ],
+    "description": "敵人攻擊倒數永遠 +1；焰屬性攻擊 1.5 倍。"
   },
   {
     "id": "l109",
@@ -137,18 +293,82 @@
         "conditions": [
           {
             "type": "hpBelow",
+            "percent": 50
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "hpBelow",
             "percent": 30
           }
         ],
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 3.5
+            "value": 1.5
           }
         ]
       }
     ],
-    "description": "生命 < 30% 時全隊攻擊 3.5 倍。"
+    "description": "生命 < 50% 時全隊攻擊 2 倍；生命 < 30% 時再 1.5 倍（共 3 倍）。"
+  },
+  {
+    "id": "l111",
+    "name": "添柴",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "enhancedOrbsMatched",
+            "count": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "fire"
+            },
+            "value": 2
+          }
+        ]
+      }
+    ],
+    "description": "消除 3 顆以上強化珠時焰屬性攻擊 2 倍。"
+  },
+  {
+    "id": "l112",
+    "name": "旺火",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "enhancedOrbsMatched",
+            "count": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "fire"
+            },
+            "value": 2,
+            "perStep": 0.25,
+            "maxValue": 3
+          }
+        ]
+      }
+    ],
+    "description": "消除 3 顆以上強化珠時焰屬性攻擊 2 倍，每多 1 顆 +0.25 倍，最高 3 倍。"
   },
   {
     "id": "l201",
@@ -333,6 +553,89 @@
     "description": "Combo ≥ 5 時全隊攻擊 2 倍，每多 1 Combo +0.25 倍，最高 3 倍。"
   },
   {
+    "id": "l207",
+    "name": "兩色墨",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": [
+                "water",
+                "dark"
+              ]
+            },
+            "value": 1.5
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "attributesMatched",
+            "count": 2,
+            "attributes": [
+              "water",
+              "dark"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2
+          }
+        ]
+      }
+    ],
+    "description": "潮、蝕屬性攻擊 1.5 倍；同時消除潮珠與蝕珠時全隊攻擊 2 倍。"
+  },
+  {
+    "id": "l208",
+    "name": "碎念療程",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "rcvMultiplier",
+            "value": 1.5
+          },
+          {
+            "type": "hpMultiplier",
+            "value": 1.2
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "heartsMatched",
+            "count": 2
+          }
+        ],
+        "effects": [
+          {
+            "type": "followUpDamage",
+            "mode": "fixed",
+            "value": 2000
+          }
+        ]
+      }
+    ],
+    "description": "全隊回復 1.5 倍、生命 1.2 倍；消除 2 組以上心珠時追加 2000 固定傷害。"
+  },
+  {
     "id": "l209",
     "name": "慢潮",
     "rules": [
@@ -384,6 +687,63 @@
     "description": "敵人攻擊倒數永遠 +1；全隊受到傷害減少 20%；潮屬性攻擊 1.5 倍。"
   },
   {
+    "id": "l211",
+    "name": "一顆一顆",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "comboAtLeast",
+            "combo": 6
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2
+          }
+        ]
+      }
+    ],
+    "description": "Combo ≥ 6 時全隊攻擊 2 倍。"
+  },
+  {
+    "id": "l212",
+    "name": "泡沫王國",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "extendMoveTime",
+            "seconds": 0.5
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "comboAtLeast",
+            "combo": 6
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2,
+            "perStep": 0.25,
+            "maxValue": 3
+          }
+        ]
+      }
+    ],
+    "description": "轉珠時間 +0.5 秒；Combo ≥ 6 時全隊攻擊 2 倍，每多 1 Combo +0.25 倍，最高 3 倍。"
+  },
+  {
     "id": "l301",
     "name": "根之庇護",
     "rules": [
@@ -419,7 +779,7 @@
         ]
       }
     ],
-    "description": "全隊回復 2 倍、受到傷害減少 40%；消除 3 顆以上心珠時全隊攻擊 3.5 倍。"
+    "description": "全隊回復 2 倍、受到傷害減少 40%；消除 3 組以上心珠時全隊攻擊 3.5 倍。"
   },
   {
     "id": "l302",
@@ -481,6 +841,84 @@
     "description": "同上最高改為 5 倍；全隊生命 1.2 倍。"
   },
   {
+    "id": "l304",
+    "name": "一滴之差",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "rcvMultiplier",
+            "value": 1.3
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "heartsMatched",
+            "count": 2
+          }
+        ],
+        "effects": [
+          {
+            "type": "followUpDamage",
+            "mode": "fixed",
+            "value": 5000
+          }
+        ]
+      }
+    ],
+    "description": "全隊回復 1.3 倍；消除 2 組以上心珠時追加 5000 固定傷害。"
+  },
+  {
+    "id": "l305",
+    "name": "荊冠藥方",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "rcvMultiplier",
+            "value": 1.5
+          },
+          {
+            "type": "hpMultiplier",
+            "value": 1.3
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "heartsMatched",
+            "count": 2
+          }
+        ],
+        "effects": [
+          {
+            "type": "followUpDamage",
+            "mode": "fixed",
+            "value": 10000
+          },
+          {
+            "type": "atkMultiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ],
+    "description": "全隊回復 1.5 倍、生命 1.3 倍；消除 2 組以上心珠時追加 10000 固定傷害，並且全隊攻擊 1.5 倍。"
+  },
+  {
     "id": "l306",
     "name": "苔背",
     "rules": [
@@ -516,7 +954,7 @@
         ]
       }
     ],
-    "description": "全隊回復 1.5 倍、受到傷害減少 20%；消除 3 顆以上心珠時全隊攻擊 2.5 倍。"
+    "description": "全隊回復 1.5 倍、受到傷害減少 20%；消除 3 組以上心珠時全隊攻擊 2.5 倍。"
   },
   {
     "id": "l307",
@@ -551,7 +989,31 @@
         ]
       }
     ],
-    "description": "消除 3 顆以上心珠時追加 3000 固定傷害；全隊生命 1.3 倍。"
+    "description": "消除 3 組以上心珠時追加 3000 固定傷害；全隊生命 1.3 倍。"
+  },
+  {
+    "id": "l308",
+    "name": "歸處",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "value": 1.3
+          },
+          {
+            "type": "damageReduction",
+            "percent": 20
+          }
+        ]
+      }
+    ],
+    "description": "全隊生命 1.3 倍、受到傷害減少 20%。"
   },
   {
     "id": "l309",
@@ -867,14 +1329,14 @@
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 3,
-            "perStep": 1,
-            "maxValue": 4
+            "value": 2.5,
+            "perStep": 0.5,
+            "maxValue": 3
           }
         ]
       }
     ],
-    "description": "同時消除 4 種屬性時全隊攻擊 3 倍，消除 5 種時 4 倍。"
+    "description": "同時消除 4 種屬性時全隊攻擊 2.5 倍，消除 5 種時 3 倍。"
   },
   {
     "id": "l407",
@@ -905,6 +1367,40 @@
       }
     ],
     "description": "機構攻擊 2.5 倍、生命 1.3 倍。"
+  },
+  {
+    "id": "l408",
+    "name": "引路燭火",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "value": 1.2
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "attributesMatched",
+            "count": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2
+          }
+        ]
+      }
+    ],
+    "description": "全隊生命 1.2 倍；同時消除 3 種以上屬性時全隊攻擊 2 倍。"
   },
   {
     "id": "l409",
@@ -958,6 +1454,63 @@
       }
     ],
     "description": "開場全員技能冷卻已滿；本回合施放過主動技時全隊攻擊 2.5 倍。"
+  },
+  {
+    "id": "l411",
+    "name": "灑光粉",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "attributesMatched",
+            "count": 4
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2
+          }
+        ]
+      }
+    ],
+    "description": "同時消除 4 種以上屬性時全隊攻擊 2 倍。"
+  },
+  {
+    "id": "l412",
+    "name": "虹翅補色",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "extendMoveTime",
+            "seconds": 0.5
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "attributesMatched",
+            "count": 4
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2,
+            "perStep": 1,
+            "maxValue": 3
+          }
+        ]
+      }
+    ],
+    "description": "轉珠時間 +0.5 秒；同時消除 4 種屬性時全隊攻擊 2 倍，消除 5 種時 3 倍。"
   },
   {
     "id": "l501",
@@ -1018,7 +1571,7 @@
         ]
       }
     ],
-    "description": "消除 3 顆以上心珠時追加 8000 固定傷害；全隊生命 1.5 倍。"
+    "description": "消除 3 組以上心珠時追加 8000 固定傷害；全隊生命 1.5 倍。"
   },
   {
     "id": "l503",
@@ -1056,6 +1609,94 @@
     "description": "同上改為 15000，生命 1.8 倍。"
   },
   {
+    "id": "l504",
+    "name": "影絲替身",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "extendMoveTime",
+            "seconds": 1
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "skillUsedThisTurn"
+          },
+          {
+            "type": "comboAtLeast",
+            "combo": 5
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2.5,
+            "perStep": 0.25,
+            "maxValue": 3.5
+          }
+        ]
+      }
+    ],
+    "description": "轉珠時間 +1 秒；本回合施放過主動技且 Combo ≥ 5 時全隊攻擊 2.5 倍，每多 1 Combo +0.25 倍，最高 3.5 倍。"
+  },
+  {
+    "id": "l505",
+    "name": "千影劇場",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "extendMoveTime",
+            "seconds": 1.5
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "comboAtLeast",
+            "combo": 5
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2,
+            "perStep": 0.25,
+            "maxValue": 3
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "skillUsedThisTurn"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ],
+    "description": "轉珠時間 +1.5 秒；Combo ≥ 5 時全隊攻擊 2 倍，每多 1 Combo +0.25 倍，最高 3 倍；本回合施放過主動技時攻擊再 1.5 倍。"
+  },
+  {
     "id": "l506",
     "name": "兩界之船",
     "rules": [
@@ -1081,6 +1722,65 @@
     "description": "同時消除蝕珠與潮珠時全隊攻擊 3 倍。"
   },
   {
+    "id": "l507",
+    "name": "最後一口氣",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "hpBelow",
+            "percent": 50
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "hpBelow",
+            "percent": 20
+          }
+        ],
+        "effects": [
+          {
+            "type": "damageReduction",
+            "percent": 20
+          }
+        ]
+      }
+    ],
+    "description": "生命 < 50% 時全隊攻擊 2 倍；生命 < 20% 時受到傷害減少 20%。"
+  },
+  {
+    "id": "l508",
+    "name": "天還沒亮",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "enemyCooldownPlus",
+            "turns": 1
+          },
+          {
+            "type": "damageReduction",
+            "percent": 15
+          }
+        ]
+      }
+    ],
+    "description": "敵人攻擊倒數永遠 +1；全隊受到傷害減少 15%。"
+  },
+  {
     "id": "l509",
     "name": "一直線",
     "rules": [
@@ -1094,12 +1794,12 @@
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 2.5
+            "value": 2
           }
         ]
       }
     ],
-    "description": "一串消除 6 顆以上珠時全隊攻擊 2.5 倍。"
+    "description": "一串消除 6 顆以上珠時全隊攻擊 2 倍。"
   },
   {
     "id": "l510",
@@ -1115,7 +1815,7 @@
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 3
+            "value": 2.5
           },
           {
             "type": "ignoreDefense"
@@ -1123,7 +1823,63 @@
         ]
       }
     ],
-    "description": "一串消除 6 顆以上珠時全隊攻擊 3 倍並無視防禦。"
+    "description": "一串消除 6 顆以上珠時全隊攻擊 2.5 倍並無視防禦。"
+  },
+  {
+    "id": "l511",
+    "name": "上發條",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "skillUsedThisTurn"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2
+          }
+        ]
+      }
+    ],
+    "description": "本回合施放過主動技時全隊攻擊 2 倍。"
+  },
+  {
+    "id": "l512",
+    "name": "鐘響連轉",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "skillUsedThisTurn"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2.5
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "race": "machina"
+            },
+            "value": 1.3
+          }
+        ]
+      }
+    ],
+    "description": "本回合施放過主動技時全隊攻擊 2.5 倍；機構生命 1.3 倍。"
   },
   {
     "id": "l601",
