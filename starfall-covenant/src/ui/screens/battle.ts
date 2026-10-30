@@ -294,6 +294,8 @@ class BattleView {
     el.classList.toggle('dead', e.hp <= 0);
     el.classList.toggle('targeted', i === this.state.target);
     el.querySelector('.enemy-chips')!.replaceWith(chipRow(enemyChips(e), 'enemy-chips'));
+    // 減傷狀態會變（護盾到期、輪替），弱點跟著更新
+    el.querySelector('.weak-hint')?.replaceWith(weakHint(e, this.s.data.config.battle));
   }
 
   private renderTeam(): void {

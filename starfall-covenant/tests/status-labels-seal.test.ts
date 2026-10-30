@@ -13,6 +13,6 @@ describe('星紋封印的中文標籤', () => {
   it('我方狀態標籤顯示剩餘回合與說明', () => {
     const chip = statusChip({ id: 'attributeSeal', turns: 2, params: { attribute: 'fire' } }, 'debuff');
     expect(chip.text).toBe('星紋封印・焰 2');
-    expect(chip.detail).toContain('不能施放主動技');
+    expect(chip.detail).toContain('轉珠攻擊無效、不能施放主動技');
   });
 });

@@ -146,3 +146,6 @@
 .team-row .card-thumb.sealed { animation: none; box-shadow: none; }
 .seal-chain { position: absolute; inset: 0; z-index: 3; pointer-events: none; display: flex; align-items: center; justify-content: center; }
 .seal-chain svg { width: 92%; height: 92%; filter: drop-shadow(0 1px 2px #000); }
+
+/* 弱點被減傷擋下時（提案 72）：名牌的「弱：」變淡 */
+.weak-hint.reduced { color: #b9b2a0; }
