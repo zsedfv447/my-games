@@ -55,9 +55,10 @@ describe('章節進度與製作中提示', () => {
     expect(upcomingStageRange(9, 3)).toEqual({ from: 4, to: 9 });
     expect(upcomingStageRange(9, 9)).toBeNull();
     expect(upcomingStageRange(undefined, 9)).toBeNull();
+    // 第 6 章 9 關已全部上線，提示自動消失
     const ch6 = gameData.chapters.find((c) => c.chapter === 6)!;
     const live = gameData.stages.filter((s) => s.kind === 'main' && s.chapter === 6).length;
-    expect(upcomingStageRange(ch6.stageCount, live)?.from).toBe(live + 1);
+    expect(upcomingStageRange(ch6.stageCount, live)).toBeNull();
   });
 });
 

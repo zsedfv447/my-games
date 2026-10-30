@@ -6,9 +6,9 @@ const { stages, chapters } = gameData;
 const byKind = (kind: string) => stages.filter((s) => s.kind === kind);
 
 describe('關卡資料（docs/stage-plan.md）', () => {
-  it('數量：主線第 1～5 章各 9 關、第 6 章先上 3 關（預定 9 關）、每日 21、活動 10（獸王 5＋齒輪 5）、流派克星週 18（6 主題×3）、塔 30、試煉 12', () => {
+  it('數量：主線第 1～6 章各 9 關、每日 21、活動 10（獸王 5＋齒輪 5）、流派克星週 18（6 主題×3）、塔 30、試煉 12', () => {
     expect(chapters.map((c) => c.chapter)).toEqual([1, 2, 3, 4, 5, 6]);
-    for (const c of chapters) expect(byKind('main').filter((s) => s.chapter === c.chapter)).toHaveLength(c.chapter === 6 ? 3 : 9);
+    for (const c of chapters) expect(byKind('main').filter((s) => s.chapter === c.chapter)).toHaveLength(9);
     expect(chapters[5].stageCount).toBe(9);
     expect(byKind('daily')).toHaveLength(21);
     const nemesis = new Set(gameData.events.filter((e) => e.series === 'nemesis').map((e) => e.id));
@@ -54,22 +54,38 @@ describe('關卡資料（docs/stage-plan.md）', () => {
 
   it('第 6 章：接在第 5 章最後一關後面，開場與前篇結尾劇情都存在，敵人沿用第 5 章的造型且數值較高', () => {
     const ch6 = byKind('main').filter((s) => s.chapter === 6);
-    expect(ch6.map((s) => s.id)).toEqual(['st-6-1', 'st-6-2', 'st-6-3']);
+    expect(ch6.map((s) => s.id)).toEqual(Array.from({ length: 9 }, (_, i) => `st-6-${i + 1}`));
     expect(ch6[0].unlockAfter).toBe('st-5-9');
     expect(ch6[0].story?.before).toBe('ch6-open');
     expect(ch6[2].story?.after).toBe('ch6-mid');
-    for (const id of ['ch6-open', 'ch6-mid']) expect(gameData.story[id]?.length).toBeGreaterThan(5);
+    expect(ch6[3].story?.beforeBoss).toBe('ch6-mid2');
+    expect(ch6[8].story).toEqual({ beforeBoss: 'ch6-boss', after: 'ch6-end' });
+    for (const id of ['ch6-open', 'ch6-mid', 'ch6-mid2', 'ch6-boss', 'ch6-end']) expect(gameData.story[id]?.length).toBeGreaterThan(5);
+    // 第 4、9 關有 Boss 波；Boss 用第 5 章 Boss 的造型
+    expect(ch6.filter((s) => s.waves.some((w) => w.boss)).map((s) => s.id)).toEqual(['st-6-4', 'st-6-9']);
     const enemy = new Map(gameData.enemies.map((e) => [e.id, e]));
     const ch5Max = Math.max(...byKind('main').filter((s) => s.chapter === 5).flatMap((s) => s.waves.filter((w) => !w.boss).flatMap((w) => w.enemies)).map((id) => enemy.get(id)!.atk));
     for (const s of ch6) {
       for (const id of s.waves.flatMap((w) => w.enemies)) {
         const e = enemy.get(id)!;
-        expect(e.art.sprite, id).toMatch(/^assets\/user\/enemies\/e00(2[1-5])\.webp$/);
+        expect(e.art.sprite, id).toMatch(/^assets\/user\/enemies\/e00(2[1-5]|39|40)\.webp$/);
       }
       expect(s.stamina).toBeGreaterThanOrEqual(12);
     }
     // 雜兵攻擊力比第 5 章雜兵最高值再高一點
     expect(Math.max(...ch6.flatMap((s) => s.waves.flatMap((w) => w.enemies)).map((id) => enemy.get(id)!.atk))).toBeGreaterThan(ch5Max);
+  });
+
+  it('第 6 章後半用到新機制：隱藏珠與星紋封印至少各 2 關，Boss 兩種都有', () => {
+    const enemy = new Map(gameData.enemies.map((e) => [e.id, e]));
+    const uses = (s: (typeof stages)[number], status: string) => s.waves.some((w) => w.enemies.some((id) => enemy.get(id)!.abilities.some((a) => a.status === status)));
+    const late = byKind('main').filter((s) => s.chapter === 6 && Number(s.id.split('-')[2]) >= 4);
+    for (const status of ['darkOrbs', 'attributeSeal']) expect(late.filter((s) => uses(s, status)).length, status).toBeGreaterThanOrEqual(2);
+    const boss = enemy.get(late.at(-1)!.waves.at(-1)!.enemies[0])!;
+    expect(boss.name).toContain('卡隆');
+    expect(boss.abilities.map((a) => a.status)).toEqual(expect.arrayContaining(['darkOrbs', 'attributeSeal']));
+    // 第 6 章後半的敵人從 e0048 開始編（e0046、e0047 是 battle-feel 的示範敵人）
+    expect(late.flatMap((s) => s.waves.flatMap((w) => w.enemies)).every((id) => Number(id.slice(1)) >= 41 && id !== 'e0046' && id !== 'e0047')).toBe(true);
   });
 
   it('初始卡是一張隊長加四張通用輔助', () => {
