@@ -10,6 +10,7 @@ import { stageContext } from '../stage-nav';
 import { buildSortieTeam, chosenHelper, describeTeamRule, ensureHelper, sortieProblem, VIOLATION_TEXT } from '../sortie';
 import { commit, getSave, growth } from '../state';
 import { armBattle } from './battle';
+import { confirmNewBattle } from '../battle-session';
 import { npcAvatar, rosterFor } from './helper';
 import { HELPER_NPCS, stageAllowsHelper } from '../../progression/helpers';
 import type { ScreenDef } from '../router';
@@ -94,7 +95,11 @@ export const prepareScreen: ScreenDef = {
     const gotStars = save.progress.stars[stage.id] ?? [];
     const fastest = recordsOf(save).fastestTurns[stage.id];
 
-    const start = () => {
+    const start = async () => {
+      // 已有進行中的戰鬥：同一關可以直接回去繼續，別關要先確認放棄（記失敗）才出發
+      const check = await confirmNewBattle(stage.id);
+      if (check === 'resume') return nav.go('battle', [stage.id]);
+      if (check === 'cancel') return;
       const now = Date.now();
       const entered = enterStage(getSave(), stage, stageContext(gameData.stages), gameData.config, now,
         team.borrowed ? undefined : { members: team.cards, helper: team.helperCard });

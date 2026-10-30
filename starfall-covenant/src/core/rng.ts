@@ -3,6 +3,8 @@ export interface Rng {
   next(): number;
   int(maxExclusive: number): number;
   pick<T>(items: readonly T[]): T;
+  /** 目前的內部狀態；用 createRng(state) 可從這裡接著產生同樣的序列（戰鬥續戰存檔用） */
+  state?(): number;
 }
 
 export function createRng(seed: number = Date.now()): Rng {
@@ -18,5 +20,6 @@ export function createRng(seed: number = Date.now()): Rng {
     next,
     int: (maxExclusive) => Math.floor(next() * maxExclusive),
     pick: (items) => items[Math.floor(next() * items.length)],
+    state: () => a,
   };
 }
