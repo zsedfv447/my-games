@@ -143,7 +143,7 @@ export function inventoryWarning(save: SaveData, ctx: GrowthContext): 'full' | '
 
 /**
  * 批次販賣：上鎖或在隊伍中的卡會整批拒絕，避免誤賣。
- * 包含高星卡（sellConfirmRarity 以上，預設 4★）時，必須帶 confirmHighRarity 才會執行。
+ * 包含高星卡（sellConfirmRarity 以上，預設 5★）時，必須帶 confirmHighRarity 才會執行。
  */
 export function sellCards(
   save: SaveData, ctx: GrowthContext, uids: string[], opts: { confirmHighRarity?: boolean } = {},

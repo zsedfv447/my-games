@@ -52,12 +52,12 @@ describe('背包：上鎖、擴充、販賣', () => {
     expect(sellCards(save, ctx, ['u4'])).toMatchObject({ ok: false, error: { code: 'cardInTeam' } });
   });
 
-  it('4★ 以上的卡販賣要二次確認', () => {
-    const save = makeSave([owned('u1', 'c106'), owned('u2', 'c905')]);
+  it('5★ 以上的卡販賣要二次確認，4★ 不用', () => {
+    const save = makeSave([owned('u1', 'c102'), owned('u2', 'c905'), owned('u3', 'c106')]);
     expect(sellCards(save, ctx, ['u1', 'u2'])).toMatchObject({ ok: false, error: { code: 'confirmRequired', subject: 'u1' } });
     const r = sellCards(save, ctx, ['u1', 'u2'], { confirmHighRarity: true });
-    expect(r.ok && r.save.inventory.cards).toEqual([]);
-    expect(sellCards(save, ctx, ['u2']).ok).toBe(true);
+    expect(r.ok && r.save.inventory.cards.map((c) => c.uid)).toEqual(['u3']);
+    expect(sellCards(save, ctx, ['u2', 'u3']).ok).toBe(true);
   });
 
   it('Lv1 的卡賣價等於 sellValue 總和；任一張不能賣就整批不賣、存檔不變', () => {
@@ -82,8 +82,9 @@ describe('背包：上鎖、擴充、販賣', () => {
     expect(p.sellable).toEqual(['u1', 'u2']);
     expect(p.blocked).toEqual([{ uid: 'u3', reason: 'locked' }, { uid: 'u4', reason: 'inTeam' }]);
     expect(p.coin).toBe(400 + 200);
-    expect(p.highRarity).toEqual(['u1', 'u2']);
+    expect(p.highRarity).toEqual(['u2']);
     expect(p.needsConfirm).toBe(true);
+    expect(previewSell(save, ctx, ['u1']).needsConfirm).toBe(false);
     expect(save.inventory.cards).toHaveLength(4);
   });
 
