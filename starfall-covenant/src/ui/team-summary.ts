@@ -53,6 +53,7 @@ export function leaderHighlights(def: LeaderSkillDef): string[] {
   if (p.reduction > 0) out.push(`減傷 ${p.reduction}%`);
   if (p.moveTime > 0) out.push(`轉珠 +${p.moveTime} 秒`);
   if (p.fixedFollowUp > 0) out.push(`追打 ${p.fixedFollowUp.toLocaleString()}`);
+  if (p.percentFollowUp > 0) out.push(`追打最大生命 ${p.percentFollowUp}%${Number.isFinite(p.percentFollowUpCap) ? `（上限 ${p.percentFollowUpCap.toLocaleString()}）` : ''}`);
   if (p.enemyCooldown > 0) out.push(`敵人行動 +${p.enemyCooldown} 回合`);
   if (p.allyCooldown > 0) out.push(`技能加速 ${p.allyCooldown}`);
   if (p.ignoreDefense) out.push('無視防禦');

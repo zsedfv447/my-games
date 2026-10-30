@@ -97,7 +97,10 @@ export function applyActiveSkill(state: BattleState, caster: number, skill: Acti
         out.hits.push(
           e.mode === 'fixed'
             ? { member: caster, target: e.target, amount: e.value, fixed: true, ignoreShield: e.ignoreShield }
-            : {
+            : e.mode === 'percentMaxHp'
+              // 目標最大生命的 value %（無視防禦、不吃屬性），每個目標最多 cap 點
+              ? { member: caster, target: e.target, amount: e.cap ?? 0, fixed: true, percentMaxHp: e.value, cap: e.cap, ignoreShield: e.ignoreShield }
+              : {
                 member: caster,
                 attribute: e.attribute ?? me.attribute,
                 target: e.target,

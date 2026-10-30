@@ -125,6 +125,13 @@
 - **主動技**：每張卡一個，有冷卻回合數，冷卻滿可在轉珠前點擊施放（例：轉珠、單體大傷、回血、減傷、延長轉珠時間）。
 - **隊長技**：條件＋效果（例：「焰屬性攻擊力 ×2.5」「Combo ≥ 6 時全隊攻擊 ×3」）。
 - **關卡流程**：一個關卡有多波敵人（1–5 波），清空一波進下一波；最後一波為 Boss。隊伍生命歸零則失敗，可用星晶「續戰」（回滿生命、清除負面狀態）。
+- **百分比傷害**（隊長技追打 `followUpDamage` 與主動技 `damage` 的 `mode: 'percentMaxHp'`）：傷害＝**目標最大生命** × N%（取整），每個目標最多 `cap` 點（一定要填，避免秒殺 Boss）；全體時每個目標依自己的最大生命計算。結算視同**固定傷害**：
+  ‑ 不算屬性傷害：不吃屬性剋制，也不受敵人的屬性減傷影響；
+  ‑ 無視防禦；
+  ‑ 受敵人的一般護盾（`shield`）減免，完全護盾會擋下；技能可用 `ignoreShield` 穿透；
+  ‑ 不受 Combo 盾與傷害吸收影響，也不計入傷害吸收的門檻；
+  ‑ 不吃 Combo、隊長技攻擊倍率等攻擊加成。
+  目的是讓固定傷害流派打得動百萬生命的 Boss，但靠上限不會一擊秒殺；隊長技的百分比與上限依星數分級（docs/card-matrix.md）。
 - **強化珠**：特定技能可把珠子變成「強化珠」（消除時傷害 +15%）；另有「封鎖珠」「毒珠」等敵人造成的干擾珠。
 - **異常狀態**：中毒、封印主動技、珠子鎖定、轉珠時間縮短、敵方護盾、屬性減傷、Combo 數門檻護盾。
 - **結算**：顯示獲得經驗、金幣、掉落卡片、首通獎勵。
@@ -261,7 +268,7 @@
   "description": "潮紋珠轉為焰紋珠，本回合焰屬性攻擊力 1.5 倍"
 }
 ```
-v0.1 支援的效果積木（約 20 種，為了撐起 12 個流派）：`convertOrbs`、`refreshBoard`、`balanceBoard`（各色平均）、`enhanceOrbs`、`setSkyfallRate`、`damage`（倍率／固定、單體／全體、可無視防禦或護盾）、`damageOverTime`、`heal`、`selfDamage`、`surviveOnce`、`buffAttack`、`rcvToAtk`、`reduceDamage`、`delayEnemy`、`lockEnemy`、`extendMoveTime`、`noSkyfallCombo`、`reduceAllyCooldown`、`chainOnSkill`、`cleanse`。
+v0.1 支援的效果積木（約 20 種，為了撐起 12 個流派）：`convertOrbs`、`refreshBoard`、`balanceBoard`（各色平均）、`enhanceOrbs`、`setSkyfallRate`、`damage`（倍率／固定／目標最大生命百分比（有上限）、單體／全體、可無視防禦或護盾）、`damageOverTime`、`heal`、`selfDamage`、`surviveOnce`、`buffAttack`、`rcvToAtk`、`reduceDamage`、`delayEnemy`、`lockEnemy`、`extendMoveTime`、`noSkyfallCombo`、`reduceAllyCooldown`、`chainOnSkill`、`cleanse`。
 
 **隊長技 `leader-skills.json`**
 ```json
