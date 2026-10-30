@@ -15,10 +15,18 @@ export interface PauseOptions {
   onResume: () => void;
   /** 撤退：關掉暫停選單後走原本的撤退流程 */
   onRetreat: () => void;
+  /** 現在能不能撤退（結算動畫播放中為 false）；不給視為可以 */
+  canRetreat?: boolean;
+}
+
+/** 撤退按鈕的狀態：不能撤退時停用，旁邊顯示原因 */
+export function retreatControl(canRetreat = true): { disabled: boolean; note: string | null } {
+  return canRetreat ? { disabled: false, note: null } : { disabled: true, note: '結算中無法撤退' };
 }
 
 export function openPauseMenu(opts: PauseOptions): void {
   const s = getSettings();
+  const retreat = retreatControl(opts.canRetreat);
   const dlg = openDialog('暫停', h('div', { class: 'list pause-menu' },
     toggle('戰鬥加速 ×2', s.battleSpeed === 2, (v) => updateSettings({ battleSpeed: v ? 2 : 1 })),
     toggle('顯示轉珠倒數', s.showMoveTimer, (v) => updateSettings({ showMoveTimer: v })),
@@ -31,8 +39,9 @@ export function openPauseMenu(opts: PauseOptions): void {
         h('span', { class: 'pause-star-icon', 'aria-hidden': 'true' }, '★'),
         h('span', { class: 'pause-star-text' }, starText(cond)),
         h('span', { class: 'pause-star-status' }, STATUS_TEXT[status])))),
+    retreat.note && h('p', { class: 'small-text dim pause-retreat-note' }, retreat.note),
   ), [
-    button('撤退', { variant: 'ghost', sound: 'back', onClick: () => { dlg.close(); opts.onRetreat(); } }),
+    button('撤退', { variant: 'ghost', sound: 'back', disabled: retreat.disabled, onClick: () => { dlg.close(); opts.onRetreat(); } }),
     button('繼續', { variant: 'primary', onClick: () => { dlg.close(); opts.onResume(); } }),
   ], { dismissible: false });
 }

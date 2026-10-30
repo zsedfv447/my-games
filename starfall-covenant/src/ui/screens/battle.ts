@@ -336,15 +336,10 @@ class BattleView {
         if ((wasEnabled || this.enableWhenResumed) && canAct(this.guard)) this.boardView.setEnabled(true);
         this.enableWhenResumed = false;
       },
+      // 結算動畫播放中撤退按鈕直接停用
+      canRetreat: canAct(this.guard),
       onRetreat: () => {
         close();
-        // 結算動畫播放中不能撤退：當作繼續，動畫播完照常開放盤面
-        if (this.resolving) {
-          toast('結算中，請等動畫播完再撤退');
-          if (this.enableWhenResumed && this.state.phase === 'player') this.boardView.setEnabled(true);
-          this.enableWhenResumed = false;
-          return;
-        }
         // 暫停時盤面已被關掉，取消撤退後要照暫停前的狀態恢復
         const restore = wasEnabled || this.enableWhenResumed;
         this.enableWhenResumed = false;
