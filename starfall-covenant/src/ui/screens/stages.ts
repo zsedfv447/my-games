@@ -1,5 +1,6 @@
 // 關卡列表：#/stages/<章節> 或 #/stages/daily|event|tower|side
 import { eventBanner } from '../components/event-banner';
+import { sortEventsForList } from '../event-order';
 import { h } from '../dom';
 import { gameData } from '../../data/load';
 import type { StageDef } from '../../core/types';
@@ -8,7 +9,7 @@ import { chapterStarStoryToPlay } from '../../progression/stage-story';
 import { badge, bar, button, emptyState, icon, listItem, panel } from '../components/basic';
 import { rewardChips } from '../components/rewards';
 import { toast } from '../components/overlay';
-import { isPlayable, lockText, stageContext, takeJustUnlocked, stageRow, weekdayText, type StageRow } from '../stage-nav';
+import { isPlayable, lockText, stageContext, takeJustUnlocked, stageRow, upcomingStageRange, weekdayText, type StageRow } from '../stage-nav';
 import { commit, getSave } from '../state';
 import type { ChapterDef } from '../../core/types';
 import type { Navigator, ScreenDef } from '../router';
@@ -95,6 +96,12 @@ export const stagesScreen: ScreenDef = {
       let rows = list.map((s) => stageRow(save, s, ctx, now));
       // 每日關卡把今天開放的排前面；塔從高樓層往下排，目前樓層在最上面
       if (group.kind === 'daily') rows = [...rows.filter((r) => r.status !== 'wrongDay'), ...rows.filter((r) => r.status === 'wrongDay')];
+      // 活動：開放中的限時活動排最前面（快結束的在前），常駐活動排後面
+      const events = sortEventsForList(gameData.events, now);
+      if (group.kind === 'event') {
+        const order = new Map(events.map((e, i) => [e.id, i]));
+        rows = rows.map((r, i) => ({ r, i })).sort((a, b) => (order.get(a.r.stage.event ?? '') ?? 99) - (order.get(b.r.stage.event ?? '') ?? 99) || a.i - b.i).map((x) => x.r);
+      }
       if (group.kind === 'tower') {
         const shown = Math.min(rows.length, save.progress.towerFloor + 3);
         rows = rows.slice(0, shown).reverse();
@@ -105,7 +112,7 @@ export const stagesScreen: ScreenDef = {
         'div',
         null,
         h('h2', { class: 'section-title' }, group.title),
-        group.kind === 'event' && gameData.events.map((e) => eventBanner(e, { nav, onLeave })),
+        group.kind === 'event' && events.map((e) => eventBanner(e, { nav, onLeave })),
         group.kind === 'side' && panel(null, h('p', { class: 'small-text dim', style: { margin: '0' } }, '第一部開始前的那個晚上，灰燈港的燈一盞一盞熄滅。港口的海豹提米和鐵匠赫姆，度過了漫長的一夜。')),
         group.kind === 'tower' && panel(null, h('p', { class: 'small-text dim' }, `目前到達第 ${save.progress.towerFloor} 層，共 ${gameData.stages.filter((s) => s.kind === 'tower').length} 層。每 10 層有星晶獎勵。`)),
         rows.length ? h('div', { class: 'list' }, rows.map((r) => row(r, nav, group.icon, fresh))) : emptyState(group.icon, '目前沒有關卡'),
@@ -116,6 +123,8 @@ export const stagesScreen: ScreenDef = {
     const info = gameData.chapters.find((c) => c.chapter === chapter);
     const rows = gameData.stages.filter((s) => s.kind === 'main' && s.chapter === chapter).map((s) => stageRow(save, s, ctx, now));
     const fresh = takeJustUnlocked(rows.map((r) => r.stage.id));
+    // 章節分批上線時，列出還沒上線的關卡範圍；全部上線後自動不顯示
+    const upcoming = upcomingStageRange(info?.stageCount, rows.length);
     return h(
       'div',
       null,
@@ -125,7 +134,14 @@ export const stagesScreen: ScreenDef = {
         info && chapterConstellation(info, { claimable: chapterRewardStatus(save, info.chapter, gameData.stages, gameData.chapters) === 'claimable' }),
         info && chapterReward(info, nav),
       ),
-      h('div', { class: 'list' }, rows.map((r) => row(r, nav, 'adventure', fresh))),
+      h('div', { class: 'list' },
+        rows.map((r) => row(r, nav, 'adventure', fresh)),
+        upcoming && listItem({
+          leading: icon('construction'),
+          title: `${chapter}-${upcoming.from}～${chapter}-${upcoming.to}　製作中`,
+          sub: `第 ${chapter} 章後半正在製作，敬請期待`,
+          locked: true,
+        })),
     );
   },
 };

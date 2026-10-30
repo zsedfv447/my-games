@@ -28,6 +28,8 @@ export const ICONS = {
   play: wrap('<path d="M7 4.5v15l12-7.5z" fill="currentColor"/>'),
   sound: wrap('<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>'),
   save: wrap('<path d="M5 3.5h11l3.5 3.5v13.5H5z"/><path d="M8 3.5v5h7v-5M8 20.5v-6h8v6"/>'),
+  // 星紋謎題：四顆紋珠排成方陣，和流派試煉的星座圖示區分
+  puzzle: wrap('<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="8.6" cy="8.6" r="2.1"/><circle cx="15.4" cy="8.6" r="2.1"/><circle cx="8.6" cy="15.4" r="2.1"/><path d="M14.2 14.3a1.4 1.4 0 1 1 1.9 1.3c-.5.2-.7.5-.7 1"/><circle cx="15.4" cy="18.1" r=".4" fill="currentColor"/>'),
   construction: wrap('<path d="M3 20h18M5 20l3-12h8l3 12"/><path d="M6.5 14h11M9 8l1-4h4l1 4"/>'),
 } as const;
 export type IconName = keyof typeof ICONS;

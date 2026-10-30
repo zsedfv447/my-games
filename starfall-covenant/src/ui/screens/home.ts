@@ -11,6 +11,9 @@ import { cardPortraitUrl, cardThumb, emptySlot } from '../components/card-thumb'
 import { chapterProgress, nextMainStage, stageContext } from '../stage-nav';
 import { homeBadges, type HomeBadges } from '../economy';
 import { maybeShowLoginPopup } from './login-bonus';
+import { openLimitedEvents } from '../event-order';
+import { eventStatusText } from '../../progression/events';
+import '../flow-polish.css';
 import { maybeOfferResume } from '../battle-session';
 
 /** 捷徑上的紅點：有可領的登入、任務或成就獎勵 */
@@ -67,6 +70,11 @@ export const homeScreen: ScreenDef = {
         h('span', { class: 'quest-copy' }, h('small', null, chapter ? `第 ${chapter.chapter} 章 · ${chapter.name}` : '星骸遠征'), h('strong', null, next?.name ?? '踏上新的冒險'), h('small', null, progress ? `章節進度 ${progress.cleared} / ${progress.total}` : '探索關卡與挑戰之塔')),
         h('span', { class: 'quest-arrow' }, '›'),
         badges.chapters && h('span', { class: 'badge dot', dataset: { badge: 'chapters' }, 'aria-label': '有可領取的章節獎勵' })),
+      // 開放中的限時活動（常駐活動不顯示），點了進活動列表
+      openLimitedEvents(gameData.events, Date.now()).map((e) => h('button', { type: 'button', class: 'home-event-banner', onClick: () => nav.go('stages', ['event']) },
+        icon('event'),
+        h('span', { class: 'grow' }, h('strong', null, e.name), h('small', null, `限時活動・${eventStatusText(e, Date.now())}`)),
+        h('span', { class: 'quest-arrow' }, '›'))),
       h('div', { class: 'home-party' }, h('div', { class: 'home-section-label' }, h('span', null, '出戰隊伍'), h('button', { type: 'button', onClick: () => nav.go('team') }, '編成 ›')),
         h('div', { class: 'home-party-cards' }, members.map((owned) => {
           const def = owned && growth.card(owned.cardId);
