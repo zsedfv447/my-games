@@ -1252,5 +1252,239 @@
       }
     ],
     "description": "龍嗣攻擊 1.5 倍（1 回合），轉珠時間延長 1 秒（1 回合）。"
+  },
+  {
+    "id": "s701",
+    "name": "新芽",
+    "cooldown": {
+      "max": 6,
+      "min": 3
+    },
+    "effects": [
+      {
+        "type": "convertOrbs",
+        "from": "heart",
+        "to": "wood"
+      }
+    ],
+    "description": "心珠轉為森珠。"
+  },
+  {
+    "id": "s702",
+    "name": "引魂燈",
+    "cooldown": {
+      "max": 8,
+      "min": 5
+    },
+    "effects": [
+      {
+        "type": "delayEnemy",
+        "turns": 1
+      },
+      {
+        "type": "heal",
+        "mode": "percentMaxHp",
+        "value": 15
+      }
+    ],
+    "description": "全體敵人行動延遲 1 回合，並回復最大生命 15%。"
+  },
+  {
+    "id": "s703",
+    "name": "潮嚎",
+    "cooldown": {
+      "max": 9,
+      "min": 5
+    },
+    "effects": [
+      {
+        "type": "convertOrbs",
+        "from": "wood",
+        "to": "water"
+      },
+      {
+        "type": "buffAttack",
+        "target": {
+          "race": "beast"
+        },
+        "multiplier": 1.5,
+        "turns": 1
+      }
+    ],
+    "description": "森珠轉為潮珠，獸裔攻擊 1.5 倍（1 回合）。"
+  },
+  {
+    "id": "s704",
+    "name": "霧中小燈",
+    "cooldown": {
+      "max": 7,
+      "min": 4
+    },
+    "effects": [
+      {
+        "type": "buffAttack",
+        "target": {
+          "race": "nether"
+        },
+        "multiplier": 1.5,
+        "turns": 1
+      }
+    ],
+    "description": "冥裔攻擊 1.5 倍（1 回合）。"
+  },
+  {
+    "id": "s705",
+    "name": "列陣",
+    "cooldown": {
+      "max": 10,
+      "min": 6
+    },
+    "effects": [
+      {
+        "type": "reduceDamage",
+        "percent": 50,
+        "turns": 1
+      },
+      {
+        "type": "cleanse"
+      }
+    ],
+    "description": "受到傷害減少 50%（1 回合），並解除我方異常狀態與盤面干擾。"
+  },
+  {
+    "id": "s706",
+    "name": "燃誓之光",
+    "cooldown": {
+      "max": 12,
+      "min": 7
+    },
+    "effects": [
+      {
+        "type": "twoColorBoard",
+        "colors": [
+          "fire",
+          "light"
+        ],
+        "keep": [
+          "heart",
+          "dark"
+        ]
+      }
+    ],
+    "description": "心珠與蝕珠以外的珠，全部平均轉成焰珠與輝珠。"
+  },
+  {
+    "id": "s707",
+    "name": "戰首咆哮",
+    "cooldown": {
+      "max": 11,
+      "min": 6
+    },
+    "effects": [
+      {
+        "type": "buffAttack",
+        "target": {
+          "race": "beast"
+        },
+        "multiplier": 1.8,
+        "turns": 2
+      }
+    ],
+    "description": "獸裔攻擊 1.8 倍（2 回合）。"
+  },
+  {
+    "id": "s708",
+    "name": "花與霜",
+    "cooldown": {
+      "max": 11,
+      "min": 6
+    },
+    "effects": [
+      {
+        "type": "twoColorBoard",
+        "colors": [
+          "wood",
+          "dark"
+        ]
+      }
+    ],
+    "description": "心珠以外的珠，全部平均轉成森珠與蝕珠。"
+  },
+  {
+    "id": "s709",
+    "name": "一排碑文",
+    "cooldown": {
+      "max": 8,
+      "min": 5
+    },
+    "effects": [
+      {
+        "type": "rowToOrb",
+        "row": -1,
+        "to": "wood"
+      }
+    ],
+    "description": "最下排的珠全部轉為森珠。"
+  },
+  {
+    "id": "s710",
+    "name": "晝夜交替",
+    "cooldown": {
+      "max": 8,
+      "min": 5
+    },
+    "effects": [
+      {
+        "type": "convertOrbs",
+        "from": "wood",
+        "to": "light"
+      },
+      {
+        "type": "convertOrbs",
+        "from": "fire",
+        "to": "dark"
+      }
+    ],
+    "description": "森珠轉為輝珠、焰珠轉為蝕珠。"
+  },
+  {
+    "id": "s711",
+    "name": "直直挖",
+    "cooldown": {
+      "max": 7,
+      "min": 4
+    },
+    "effects": [
+      {
+        "type": "rowToOrb",
+        "row": -1,
+        "to": "dark"
+      }
+    ],
+    "description": "最下排的珠全部轉為蝕珠。"
+  },
+  {
+    "id": "s606",
+    "name": "重立之誓",
+    "cooldown": {
+      "max": 10,
+      "min": 6
+    },
+    "effects": [
+      {
+        "type": "buffAttack",
+        "target": {
+          "race": "human"
+        },
+        "multiplier": 1.5,
+        "turns": 2
+      },
+      {
+        "type": "reduceDamage",
+        "percent": 20,
+        "turns": 2
+      }
+    ],
+    "description": "人傑攻擊 1.5 倍、受到傷害減少 20%（2 回合）。"
   }
 ]

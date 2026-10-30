@@ -96,7 +96,11 @@ export type SkillEffect =
   /** 盤面上缺少的屬性（五屬，不含心）各補 count 顆（提案 001，用於七彩齊攻） */
   | { type: 'fillMissingOrbs'; count: number }
   /** turns 回合內天降珠為強化珠的機率（0–1）（提案 001，用於強化珠增幅） */
-  | { type: 'setEnhancedSkyfallRate'; rate: number; turns: number };
+  | { type: 'setEnhancedSkyfallRate'; rate: number; turns: number }
+  /** 雙色盤：心珠與 keep（預設只有心）以外的珠全部轉成 colors 兩色，兩色數量平均（提案 65，用於雙屬共鳴） */
+  | { type: 'twoColorBoard'; colors: [OrbType, OrbType]; keep?: OrbType[] }
+  /** 整排轉色：row 從 0（最上排）起算，負數從最下排倒數（提案 65，用於長串貫穿） */
+  | { type: 'rowToOrb'; row: number; to: OrbType };
 
 export interface ActiveSkillDef {
   id: string;

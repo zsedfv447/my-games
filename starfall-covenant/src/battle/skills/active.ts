@@ -1,4 +1,4 @@
-// 主動技：SkillEffect 的 22 種效果積木。
+// 主動技：SkillEffect 的 24 種效果積木。
 //
 // 約定：
 // - 施放當回合算持續效果的第 1 回合；在我方回合結束時（敵人行動之後）回合數 −1。
@@ -22,6 +22,7 @@ import {
 import type { Hit } from '../damage';
 import type { BattleState } from '../runtime';
 import { buffsOf, skyfallOptions } from './buffs';
+import { rowToOrb, twoColorBoard } from './board-ops';
 import { isDelayImmune } from './status';
 
 export interface SkillOutcome {
@@ -76,6 +77,14 @@ export function applyActiveSkill(state: BattleState, caster: number, skill: Acti
         break;
       case 'fillMissingOrbs':
         state.board = fillMissingOrbs(state.board, rng, e.count);
+        out.boardChanged = true;
+        break;
+      case 'twoColorBoard':
+        state.board = twoColorBoard(state.board, e.colors, e.keep);
+        out.boardChanged = true;
+        break;
+      case 'rowToOrb':
+        state.board = rowToOrb(state.board, e.row, e.to);
         out.boardChanged = true;
         break;
       case 'setSkyfallRate':
