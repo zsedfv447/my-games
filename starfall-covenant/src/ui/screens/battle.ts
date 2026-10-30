@@ -10,6 +10,7 @@ import { completeStage, type StageClearResult } from '../../progression/stages';
 import { enemySvg } from '../art/enemy';
 import { ATTRIBUTE_NAMES } from '../art/palette';
 import { resolveArtPath, userAsset } from '../assets';
+import { sceneBackdrop, sceneForStage } from '../backdrop';
 import { audio } from '../audio';
 import { badge, bar, button, emptyState, iconButton, resourceIcon } from '../components/basic';
 import { cardThumb } from '../components/card-thumb';
@@ -109,6 +110,7 @@ class BattleView {
   private boardView: BoardView;
   private state: BattleState;
   private enemyEls: HTMLElement[] = [];
+  private backdrop?: { boss: boolean; el: HTMLElement };
   private shownHp: number;
   private dialog?: DialogHandle;
   private speed: number;
@@ -166,8 +168,7 @@ class BattleView {
     clear(this.enemyZone);
     const boss = !!this.s.stage.waves[this.state.wave]?.boss;
     this.waveLabel.textContent = `WAVE ${this.state.wave + 1}/${this.state.waveCount}`;
-    const bg = userAsset('backgrounds', boss ? 'battle-boss' : 'battle');
-    if (bg) this.enemyZone.appendChild(h('img', { class: 'battle-bg', src: bg, alt: '' }));
+    this.updateBackdrop(boss);
     const row = h('div', { class: ['enemy-line', boss && 'boss'] });
     this.enemyEls = this.state.enemies.map((e, i) => {
       const el = h(
@@ -183,6 +184,15 @@ class BattleView {
       return el;
     });
     this.enemyZone.appendChild(row);
+  }
+
+  /** 場景背景鋪滿整個戰鬥畫面底層；進入 Boss 波時換成 Boss 版 */
+  private updateBackdrop(boss: boolean): void {
+    if (this.backdrop?.boss === boss) return;
+    const el = sceneBackdrop(sceneForStage(this.s.stage), { boss, battle: true });
+    if (this.backdrop) this.backdrop.el.replaceWith(el);
+    else this.element.prepend(el);
+    this.backdrop = { boss, el };
   }
 
   private updateEnemy(i: number, e: EnemyState, previousHp?: number): void {

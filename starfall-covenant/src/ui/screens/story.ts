@@ -1,7 +1,7 @@
 // 劇情：播放 data/story.json 的對白（#/story/<劇情id>?next=<之後要去的畫面>），沒有 id 時是劇情回顧列表
-import { h, svg } from '../dom';
+import { h } from '../dom';
 import { gameData } from '../../data/load';
-import { starfieldSvg } from '../art/scenery';
+import { sceneBackdrop, type SceneId } from '../backdrop';
 import { userAsset } from '../assets';
 import { emptyState, icon, listItem } from '../components/basic';
 import { storyBox } from '../components/story';
@@ -28,6 +28,15 @@ export function storyTitle(id: string): string {
   return id;
 }
 
+/** 劇情 id 對應的場景背景：章節劇情用該章場景，決戰前用 Boss 版 */
+export function storyScene(id: string): { scene: SceneId; boss: boolean } {
+  const m = /^ch(\d+)-(\w+)$/.exec(id);
+  if (m) return { scene: `chapter-${Math.min(5, Math.max(1, Number(m[1])))}` as SceneId, boss: m[2] === 'boss' };
+  if (id.startsWith('tower-')) return { scene: 'tower', boss: false };
+  if (id.startsWith('ev-')) return { scene: 'event', boss: false };
+  return { scene: 'home', boss: false };
+}
+
 /** 播完後去哪：next=back 回上一頁；next=<hash 路徑> 換到該畫面；沒給就回上一頁 */
 function goNext(nav: Navigator, next: string | undefined): void {
   if (!next || next === 'back') return nav.back();
@@ -38,6 +47,7 @@ function goNext(nav: Navigator, next: string | undefined): void {
 function player(id: string, next: string | undefined, nav: Navigator): HTMLElement {
   const lines = gameData.story[id] ?? [];
   const bg = userAsset('backgrounds', `story-${id}`) ?? userAsset('backgrounds', 'story') ?? userAsset('backgrounds', 'title');
+  const scene = storyScene(id);
   const done = () => {
     markStorySeen(id);
     goNext(nav, next);
@@ -49,7 +59,7 @@ function player(id: string, next: string | undefined, nav: Navigator): HTMLEleme
   return h(
     'div',
     { style: { background: 'radial-gradient(80% 50% at 50% 35%, #2a3a85, #060a1f)' } },
-    bg ? h('img', { src: bg, alt: '', style: { position: 'absolute', inset: '0', width: '100%', height: '100%', objectFit: 'cover' } }) : svg(starfieldSvg()),
+    bg ? h('img', { src: bg, alt: '', style: { position: 'absolute', inset: '0', width: '100%', height: '100%', objectFit: 'cover' } }) : sceneBackdrop(scene.scene, { boss: scene.boss }),
     h('div', { class: 'story-chapter' }, storyTitle(id)),
     h('button', { type: 'button', class: 'btn small ghost', style: { position: 'absolute', right: '12px', top: 'calc(12px + var(--safe-top, 0px))' }, onClick: done }, '略過'),
     storyBox(lines, done),
