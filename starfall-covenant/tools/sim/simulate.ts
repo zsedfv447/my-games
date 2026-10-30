@@ -3,6 +3,7 @@ import type { ArchetypeId, CardDef, LeaderSkillDef, StageDef } from '../../src/c
 import { createRng } from '../../src/core/rng';
 import { startBattle, type BattleData, type TeamMemberInput } from '../../src/battle/battle-state';
 import { DEFAULT_PLANNER, planMove, type PlannerOptions } from './planner';
+import { castSkills } from './skills';
 import { STRATEGIES } from './strategies';
 
 export interface SimTeam {
@@ -42,18 +43,28 @@ export function simulateBattle(
     return id ? leaderById.get(id) : undefined;
   };
   const leaders = [leaderOf(team.members[0]), leaderOf(team.helper)];
+  const inputs = team.helper ? [...team.members, team.helper] : team.members;
+  const skillById = new Map(data.skills.map((s) => [s.id, s]));
+  const skillOf = (member: number) => {
+    const id = cardById.get(inputs[member]?.cardId ?? '')?.activeSkill;
+    return id ? skillById.get(id) : undefined;
+  };
 
   let state = battle.getState();
   while (state.phase === 'player' && state.turns < opts.maxTurns) {
-    // 技能好了就放（戰鬥模組還沒實作效果時會回傳失敗，直接略過）
-    state.team.forEach((m, i) => {
-      if (m.skillCooldown === 0) battle.useSkill(i);
-    });
-    // 打血最少的敵人，加快清場
-    const alive = state.enemies.map((e, i) => ({ e, i })).filter((x) => x.e.hp > 0);
-    if (alive.length > 0) battle.setTarget(alive.reduce((a, b) => (b.e.hp < a.e.hp ? b : a)).i);
+    // 打血最少的敵人，加快清場（單體傷害技能也會打這隻）
+    const pickTarget = () => {
+      const alive = state.enemies.map((e, i) => ({ e, i })).filter((x) => x.e.hp > 0);
+      if (alive.length > 0) battle.setTarget(alive.reduce((a, b) => (b.e.hp < a.e.hp ? b : a)).i);
+    };
+    pickTarget();
+    // 依技能效果與戰況施放主動技（skills.ts）；技能可能直接清掉這一波
+    const usedSkill = castSkills(battle, skillOf, team.archetype);
     state = battle.getState();
-    const { path } = planMove(state, leaders, strategy, data.config.battle, opts.planner);
+    if (state.phase !== 'player') break;
+    pickTarget();
+    state = battle.getState();
+    const { path } = planMove(state, leaders, strategy, data.config.battle, opts.planner, usedSkill);
     const r = battle.submitMove(path);
     if (!r.ok) break;
     state = battle.getState();
