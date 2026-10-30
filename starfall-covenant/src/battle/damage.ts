@@ -119,8 +119,10 @@ export interface HealInput {
   groups: MatchGroup[];
   combo?: number;
   config: BattleConfig;
-  /** 回復倍率（隊長技、主動技），不填 = 1 */
+  /** 全隊回復倍率（主動技等），不填 = 1 */
   rcvMultiplier?: number;
+  /** 每位隊員的回復倍率（有條件的隊長技），長度同 team；不填 = 1 */
+  rcvMultipliers?: number[];
 }
 
 /** 心珠回復量 = 全隊回復力總和 × Σ(心珠每組的組倍率) × Combo 倍率 × 回復倍率 */
@@ -129,7 +131,7 @@ export function computeHeal(input: HealInput): number {
   const combo = input.combo ?? groups.length;
   const heartGroups = groups.filter((g) => g.orb === 'heart');
   if (heartGroups.length === 0) return 0;
-  const rcv = team.reduce((sum, m) => sum + m.rcv * orbDamageUp(m, 'heart'), 0);
+  const rcv = team.reduce((sum, m, i) => sum + m.rcv * orbDamageUp(m, 'heart') * (input.rcvMultipliers?.[i] ?? 1), 0);
   const orbs = heartGroups.reduce((sum, g) => sum + groupMultiplier(g, config), 0);
   return Math.floor(rcv * orbs * comboMultiplier(combo, config) * (input.rcvMultiplier ?? 1));
 }
