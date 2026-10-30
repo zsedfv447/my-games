@@ -64,7 +64,7 @@ export function maybeShowLoginPopup(onClaimed?: () => void): void {
   const dlg = openDialog('七日星約', body, [
     button('稍後', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
     button('領取', { variant: 'primary', icon: 'gift', sound: false, onClick: () => { if (claimToday()) { dlg.close(); onClaimed?.(); } } }),
-  ]);
+  ], { scope: 'route' });
 }
 
 export const loginBonusScreen: ScreenDef = {
