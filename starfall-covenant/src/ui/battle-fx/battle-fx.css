@@ -137,3 +137,6 @@
 .drop-counter.bump { animation: counter-bump 400ms ease-out; }
 @keyframes counter-bump { 40% { transform: scale(1.3); filter: brightness(1.6); } }
 .battle.low-fx .enemy-chest { animation: none; }
+
+/* 練習場：暫停選單的練習敵人切換 */
+.pause-practice { display: flex; flex-direction: column; gap: 4px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }

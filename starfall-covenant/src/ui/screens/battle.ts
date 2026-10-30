@@ -14,7 +14,7 @@ import { enemySvg } from '../art/enemy';
 import { enemyArtUrl } from '../art/enemy-art';
 import { ATTRIBUTE_NAMES } from '../art/palette';
 import { buzz, flashClass, skillCutin } from '../battle-fx/effects';
-import { openPauseMenu } from '../battle-fx/pause';
+import { openPauseMenu, type PauseHandle } from '../battle-fx/pause';
 import { clearCombo, finishCombo, flashReadySkills, markMatchups, renderCombo, renderIntent, weakHint } from '../battle-fx/readability';
 import { playStrikes } from '../battle-fx/strikes';
 import { userAsset } from '../assets';
@@ -22,7 +22,7 @@ import { audio } from '../audio';
 import { badge, bar, button, emptyState, iconButton } from '../components/basic';
 import { cardThumb } from '../components/card-thumb';
 import { confirmDialog, openDialog, toast, type DialogHandle } from '../components/overlay';
-import { DEMO_DATA, DEMO_HELPER, DEMO_STAGE, DEMO_TEAM } from '../demo';
+import { DEMO_HELPER, DEMO_TEAM, PRACTICE_MODES, isPracticeMode, practiceSetup, type PracticeMode } from '../demo';
 import { stageContext, stageListPath } from '../stage-nav';
 import { commit, getSave, getSettings } from '../state';
 import type { Navigator, ScreenDef } from '../router';
@@ -87,13 +87,15 @@ interface Setup {
   /** 正式關卡：結算掉落的亂數種子、是否從中斷處還原 */
   dropSeed?: number;
   resumed?: boolean;
+  /** 練習場目前的模式 */
+  practiceMode?: PracticeMode;
   /** 新手教學戰鬥的引導層 */
   guide?: BattleGuide;
   /** 進場時骰好的掉落；練習與教學沒有 */
   drops?: DropPlan;
 }
 
-function setup(stageId: string, nav: Navigator): Setup | string {
+function setup(stageId: string, nav: Navigator, variant?: string): Setup | string {
   if (stageId === 'tutorial') {
     const t = createTutorialBattle(gameData);
     const guide = new TutorialBattleGuide(guideTexts(t.battle.getState(), t.data), {
@@ -103,7 +105,10 @@ function setup(stageId: string, nav: Navigator): Setup | string {
     return { stage: t.stage, data: t.data, practice: true, battle: t.battle, guide };
   }
   if (stageId === 'practice') {
-    return { stage: DEMO_STAGE, data: DEMO_DATA, practice: true, battle: startBattle(DEMO_STAGE, DEMO_TEAM, DEMO_HELPER, createRng(), DEMO_DATA) };
+    // 第二個參數是練習模式（暫停選單可切換敵人機制）
+    const mode: PracticeMode = isPracticeMode(variant) ? variant : 'normal';
+    const { stage, data } = practiceSetup(mode);
+    return { stage, data, practice: true, practiceMode: mode, battle: startBattle(stage, DEMO_TEAM, DEMO_HELPER, createRng(), data) };
   }
   const stage = gameData.stages.find((s) => s.id === stageId);
   if (!stage) return '找不到這一關';
@@ -117,7 +122,7 @@ export const battleScreen: ScreenDef = {
   chrome: 'bare',
   parent: 'adventure',
   render({ route, nav, onLeave }) {
-    const s = setup(route.args[0] ?? '', nav);
+    const s = setup(route.args[0] ?? '', nav, route.args[1]);
     if (typeof s === 'string') {
       return h('div', { style: { justifyContent: 'center', padding: '24px' } },
         emptyState('sword', s),
@@ -156,6 +161,8 @@ class BattleView {
   private enableWhenResumed = false;
   /** 轉珠或主動技的結算動畫播放中（state.phase 此時還是 player） */
   private resolving = false;
+  /** 開著的暫停選單（結算剛好結束時更新撤退按鈕） */
+  private pauseMenu?: PauseHandle;
   private get guard() {
     return { phase: this.state.phase, resolving: this.resolving };
   }
@@ -328,10 +335,14 @@ class BattleView {
     this.boardView.setEnabled(false);
     const close = () => {
       this.paused = false;
+      this.pauseMenu = undefined;
       this.speed = getSettings().battleSpeed;
       this.element.classList.toggle('low-fx', getSettings().lowFx);
     };
-    openPauseMenu({
+    this.pauseMenu = openPauseMenu({
+      practice: this.s.practiceMode && !this.s.guide
+        ? { modes: PRACTICE_MODES, current: this.s.practiceMode, onSwitch: (mode) => { close(); this.nav.replace('battle', ['practice', mode]); } }
+        : undefined,
       stars: this.s.practice ? [] : (this.s.stage.stars ?? []).map((cond) => ({ cond, status: liveStarStatus(cond, liveSummary(this.state), false) })),
       onResume: () => {
         close();
@@ -391,6 +402,7 @@ class BattleView {
       await this.playSkill(i, before, r);
     } finally {
       this.resolving = false;
+      this.pauseMenu?.setCanRetreat(canAct(this.guard));
     }
   }
 
@@ -462,6 +474,7 @@ class BattleView {
       await this.playTurn(before, res);
     } finally {
       this.resolving = false;
+      this.pauseMenu?.setCanRetreat(canAct(this.guard));
     }
   }
 
