@@ -178,7 +178,7 @@ export interface EnemyDef {
 }
 
 // ---------- 關卡 ----------
-export type StageKind = 'main' | 'daily' | 'event' | 'tower' | 'trial';
+export type StageKind = 'main' | 'daily' | 'event' | 'tower' | 'trial' | 'side';
 
 export type StarCondition =
   | { type: 'clearWithinTurns'; turns: number }
