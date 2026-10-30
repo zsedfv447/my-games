@@ -1,0 +1,162 @@
+{
+  "files": 29684,
+  "bytes": 12568503158,
+  "image_files": 29639,
+  "unique_image_contents": 26677,
+  "groups": [
+    {
+      "group": "01-official-wallpapers",
+      "files": 43,
+      "images": 43,
+      "bytes": 36085951,
+      "unique_contents": 43
+    },
+    {
+      "group": "02-official-story",
+      "files": 37,
+      "images": 37,
+      "bytes": 26732765,
+      "unique_contents": 37
+    },
+    {
+      "group": "03-community-repositories",
+      "files": 9635,
+      "images": 9596,
+      "bytes": 777475340,
+      "unique_contents": 9142
+    },
+    {
+      "group": "04-community-shared-packs",
+      "files": 4629,
+      "images": 4625,
+      "bytes": 1579732221,
+      "unique_contents": 2448
+    },
+    {
+      "group": "05-artist-portfolios",
+      "files": 33,
+      "images": 33,
+      "bytes": 134882761,
+      "unique_contents": 33
+    },
+    {
+      "group": "06-official-card-gallery",
+      "files": 4348,
+      "images": 4348,
+      "bytes": 477101550,
+      "unique_contents": 4300
+    },
+    {
+      "group": "07-wiki-hd-card-art",
+      "files": 4547,
+      "images": 4547,
+      "bytes": 6388962891,
+      "unique_contents": 4475
+    },
+    {
+      "group": "08-wiki-supplement",
+      "files": 5969,
+      "images": 5969,
+      "bytes": 3117064333,
+      "unique_contents": 5968
+    },
+    {
+      "group": "09-runtime-bundle-examples-2020",
+      "files": 2,
+      "images": 0,
+      "bytes": 923649,
+      "unique_contents": 2
+    },
+    {
+      "group": "10-korean-wiki-supplement",
+      "files": 441,
+      "images": 441,
+      "bytes": 29541697,
+      "unique_contents": 441
+    }
+  ],
+  "integrity_counts": {
+    "downloaded-file-sha256-recorded": 9090,
+    "git-blob-match": 9635,
+    "cdn-served-variant-valid-image": 3244,
+    "source-metadata-match": 7715
+  },
+  "psd_files": [
+    {
+      "path": "03-community-repositories/AdmiJW__TOS_Spinner/assets/img/elims.psd",
+      "width": 320,
+      "height": 128,
+      "psd_layers": 8,
+      "sha256": "bdf71788d9a48e521352f8a59efc0924ecb506c7b7f158972148ce08f8d7d68e",
+      "image_check": "passed"
+    },
+    {
+      "path": "03-community-repositories/jordengit__TowerOfSaviorsHelper/Materials/icon.psd",
+      "width": 600,
+      "height": 600,
+      "psd_layers": 5,
+      "sha256": "e0d0e901196c8f3e771c2641101f48a9f0eceb0b68606138f4e42acd03f01630",
+      "image_check": "passed"
+    },
+    {
+      "path": "03-community-repositories/jordengit__TowerOfSaviorsHelper/Materials/number.psd",
+      "width": 480,
+      "height": 72,
+      "psd_layers": 14,
+      "sha256": "80425cd9902c3cf3134d12f2dda2656bc48cd655263f3ac6fcf9a55a6bc89463",
+      "image_check": "passed"
+    },
+    {
+      "path": "03-community-repositories/jordengit__TowerOfSaviorsHelper/Materials/技能类型.psd",
+      "width": 80,
+      "height": 28,
+      "psd_layers": 2,
+      "sha256": "b7bc82678c31b3f5170a2fff80db3d4b2ae813b59ff60817bae4254dc3f0fce2",
+      "image_check": "passed"
+    },
+    {
+      "path": "03-community-repositories/jordengit__TowerOfSaviorsHelper/Materials/抽卡.psd",
+      "width": 800,
+      "height": 1200,
+      "psd_layers": 18,
+      "sha256": "a51a6c6d76a17766fa76c7194774e7f340d9f2c1e85c9f4e157a3a0ba60ef04f",
+      "image_check": "passed"
+    },
+    {
+      "path": "03-community-repositories/jordengit__TowerOfSaviorsHelper/Materials/血条.psd",
+      "width": 750,
+      "height": 1334,
+      "psd_layers": 27,
+      "sha256": "21c7dba636591db12a00314be5bcbb45af6277142c7c7cae1db31c89d6503372",
+      "image_check": "passed"
+    },
+    {
+      "path": "03-community-repositories/pionxzh__Runestones/src/assets/Icon/element.psd",
+      "width": 128,
+      "height": 128,
+      "psd_layers": 37,
+      "sha256": "35461cec9a631175ed987871bab537d2bc9190e5c70496de2e9273c46a6ca9f9",
+      "image_check": "passed"
+    },
+    {
+      "path": "03-community-repositories/tower-of-saviors__website/img/Creature/creature.psd",
+      "width": 100,
+      "height": 100,
+      "psd_layers": 11,
+      "sha256": "e0087d433a72e9bde21da5ef236a92f4af3f581f3f546914641004f3bcab1fb4",
+      "image_check": "passed"
+    },
+    {
+      "path": "03-community-repositories/tower-of-saviors__website/img/Icon/element.psd",
+      "width": 128,
+      "height": 128,
+      "psd_layers": 37,
+      "sha256": "35461cec9a631175ed987871bab537d2bc9190e5c70496de2e9273c46a6ca9f9",
+      "image_check": "passed"
+    }
+  ],
+  "known_empty_placeholder": "03-community-repositories/islu__TOS/image/monster/630n.png",
+  "format_extension_mismatch_count": 35,
+  "all_asset_files_have_source_url": true,
+  "validation": "All non-placeholder raster image files were opened and fully decoded; per-file SHA256 recorded. ZIP CRC verification appears in DOWNLOADS.json after packaging."
+}

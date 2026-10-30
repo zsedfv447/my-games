@@ -1,0 +1,761 @@
+{
+  "checked_at": "2026-10-30",
+  "official_gallery": "https://gallery.tosgame.com/",
+  "official_wallpaper": "https://towerofsaviors.com/picture/",
+  "official_story": "https://story.towerofsaviors.com/",
+  "wikis": [
+    {
+      "url": "https://tos.fandom.com/zh/api.php",
+      "metadata_count": 34418
+    },
+    {
+      "url": "https://towerofsaviors.fandom.com/api.php",
+      "metadata_count": 20247
+    },
+    {
+      "url": "https://tos.fandom.com/ko/api.php",
+      "metadata_count": 806
+    }
+  ],
+  "repositories": [
+    {
+      "repo": "kelp404/Tower-of-Saviors",
+      "url": "https://github.com/kelp404/Tower-of-Saviors",
+      "ref": "master",
+      "tree_sha": "192b0628dd094f6943ccbab10ec6abbb5d570562",
+      "indexed_files": 980
+    },
+    {
+      "repo": "islu/TOS",
+      "url": "https://github.com/islu/TOS",
+      "ref": "main",
+      "tree_sha": "8a0d57173ad2d2dc662a6172b04037d2a2cc2f2c",
+      "indexed_files": 2296
+    },
+    {
+      "repo": "pionxzh/Runestones",
+      "url": "https://github.com/pionxzh/Runestones",
+      "ref": "master",
+      "tree_sha": "71b20062a4871b7f3cd2e507dd1d9db1088a5b31",
+      "indexed_files": 338
+    },
+    {
+      "repo": "jordengit/TowerOfSaviorsHelper",
+      "url": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "ref": "master",
+      "tree_sha": "bb34761c815c52fc21daf0d9c49a02293c315d71",
+      "indexed_files": 2854
+    },
+    {
+      "repo": "tower-of-saviors/website",
+      "url": "https://github.com/Tower-of-Saviors/website",
+      "ref": "master",
+      "tree_sha": "e4648aaccd2ac59373815a4085487f333e173b28",
+      "indexed_files": 1837
+    },
+    {
+      "repo": "AdmiJW/TOS_Spinner",
+      "url": "https://github.com/AdmiJW/TOS_Spinner",
+      "ref": "master",
+      "tree_sha": "bece0fdaecf8bb8775a197e22a943e33a9be4ecd",
+      "indexed_files": 22
+    },
+    {
+      "repo": "chenFlyingkite/MyTosWiki",
+      "url": "https://github.com/chenFlyingkite/MyTosWiki",
+      "ref": "master",
+      "tree_sha": "3478f5b49e2bce82c79876320b6589dd76f0b09e",
+      "indexed_files": 392
+    },
+    {
+      "repo": "liouh/puzzle",
+      "url": "https://github.com/liouh/puzzle",
+      "ref": "master",
+      "tree_sha": "06c6f989aff05be55814e692d9826b02cfda731e",
+      "indexed_files": 7
+    },
+    {
+      "repo": "Patrick-Cain/not-tos",
+      "url": "https://github.com/Patrick-Cain/not-tos",
+      "ref": "master",
+      "tree_sha": "5253cc47e281d61165cb1b4eec2cff63b2dec80b",
+      "indexed_files": 35
+    },
+    {
+      "repo": "jtsai1120/Tower_of_Savior_Qt",
+      "url": "https://github.com/jtsai1120/Tower_of_Savior_Qt",
+      "ref": "main",
+      "tree_sha": "07dd4f12dad7e04021eff976ddf2b1b0b1645a28",
+      "indexed_files": 69
+    },
+    {
+      "repo": "Tony0921/Tower-Of-Saviors",
+      "url": "https://github.com/Tony0921/Tower-Of-Saviors",
+      "ref": "master",
+      "tree_sha": "c7f84fb5683a68368cb7cc5ec8fa42c331197e5a",
+      "indexed_files": 21
+    },
+    {
+      "repo": "MikSuki/ToS",
+      "url": "https://github.com/MikSuki/ToS",
+      "ref": "master",
+      "tree_sha": "372c698bc4509bdabbb2b132d9cb35fcb6af8614",
+      "indexed_files": 28
+    },
+    {
+      "repo": "boyan1001/Tower_of_Crush",
+      "url": "https://github.com/boyan1001/Tower_of_Crush",
+      "ref": "main",
+      "tree_sha": "b71ef3a300fc16092bd4cfbf5f3593c6fb07de50",
+      "indexed_files": 28
+    },
+    {
+      "repo": "KakaC009720/Tower-Of-Saviors-card-srawing-simulator",
+      "url": "https://github.com/KakaC009720/Tower-Of-Saviors-card-srawing-simulator",
+      "ref": "main",
+      "tree_sha": "8d10f3d2fe1c995a3403e4f7b9aaebaac4d08d14",
+      "indexed_files": 42
+    },
+    {
+      "repo": "sullerandras/tower-of-saviors",
+      "url": "https://github.com/sullerandras/tower-of-saviors",
+      "ref": "master",
+      "tree_sha": "9356eacabd3beb03f9002d8f02aa23b7e5eb5ee6",
+      "indexed_files": 474
+    },
+    {
+      "repo": "28921085/Tower-of-Saviors-e-book",
+      "url": "https://github.com/28921085/Tower-of-Saviors-e-book",
+      "ref": "main",
+      "tree_sha": "f5ab814a41374c07c8410ca8450e6758644b6d71",
+      "indexed_files": 197
+    },
+    {
+      "repo": "willyliu/SwiftTowerOfSaviors",
+      "url": "https://github.com/willyliu/SwiftTowerOfSaviors",
+      "ref": "master",
+      "tree_sha": "f44bbd5d0d40fd9a05d8c154b25ff00fbe558438",
+      "indexed_files": 15
+    }
+  ],
+  "artist_sources": [
+    {
+      "category": "official_wallpapers",
+      "url": "https://en.towerofsaviors.com/wallpaper/",
+      "title": "官方英文桌布頁",
+      "notes": "HTTP 200; 30 個原尺寸 JPG 全部逐一 200；另頁標示 Fallen Halos 2564×1440 但實測檔案尺寸以 assets 陣列為準。"
+    },
+    {
+      "category": "official_media",
+      "url": "https://en.towerofsaviors.com/media-2/",
+      "title": "官方英文 Media",
+      "notes": "公開 Story / Wallpaper 入口；未見可下載 PSD/媒體包。"
+    },
+    {
+      "category": "artist",
+      "url": "https://rentu621.wixsite.com/renart",
+      "title": "Ren Tu 個人作品集",
+      "notes": "明確列 Tower of Saviors 客戶與中文角色名稱。11 張 JPG 直連200，10張6000×4000。"
+    },
+    {
+      "category": "artist",
+      "url": "https://ren_tu621.artstation.com/projects/a0mLAL",
+      "title": "Ren Tu - Tower of Saviors 神魔之塔",
+      "notes": "作者自述正式工作插畫；Randena, Bonnie, Han Xiangzi, Basti。搜尋工具正文可讀；直連子網域 SSL hostname mismatch。"
+    },
+    {
+      "category": "artist",
+      "url": "https://gusmukin.artstation.com/projects/RYvZBX",
+      "title": "Gus Mukin - Works Of Tower Of Saviors",
+      "notes": "正文可讀、全權保留；直接網頁、RSS及公開JSON403，未取得圖檔直連。"
+    },
+    {
+      "category": "artist",
+      "url": "https://gusmukin.artstation.com/resume",
+      "title": "Gus Mukin resume",
+      "notes": "作者自述2012/9–2014/6 Madhead美術總監；一手資歷佐證。"
+    },
+    {
+      "category": "artist",
+      "url": "https://chrisnfy85.artstation.com/projects/kQvw6n",
+      "title": "Chris Ng - creatures and characters illustrations",
+      "notes": "作者明確說明為神魔繪製；web正文可讀，HTTP403。"
+    },
+    {
+      "category": "artist",
+      "url": "https://chrisnfy85.artstation.com/projects/VJngvR",
+      "title": "Chris Ng - creatures and characters design",
+      "notes": "作者總覽可見標題與連結，作品頁web cache miss，HTTP403。"
+    },
+    {
+      "category": "artist",
+      "url": "https://chrisnfy85.artstation.com/projects/NxZE3b",
+      "title": "Chris Ng - 沃瓦道（火魔）",
+      "notes": "作者明列 Final / Flat colors / Lines，描述初稿方向與 Daniel Fong 協助，非可下載PSD。"
+    },
+    {
+      "category": "artist",
+      "url": "https://chrisnfy85.artstation.com/projects/B1vyJD",
+      "title": "Chris Ng - compilation 3",
+      "notes": "作者列 Cthulhu ingested Neptune、Underwater heavy Mechs、Lunar New Year skin；web正文可讀，HTTP403。"
+    },
+    {
+      "category": "artist",
+      "url": "https://chrisnfy85.artstation.com/projects/8emG5q",
+      "title": "Chris Ng - Compilation 2",
+      "notes": "總覽可見，作品頁cache miss，HTTP403。"
+    },
+    {
+      "category": "artist",
+      "url": "https://chrisnfy85.artstation.com/projects/48abdL",
+      "title": "Chris Ng - Compilation",
+      "notes": "作者說明是遊戲工作；web正文可讀，HTTP403。"
+    },
+    {
+      "category": "artist",
+      "url": "https://chrisnfy85.artstation.com/projects/5XearA",
+      "title": "Chris Ng - 慈禧討債小隊",
+      "notes": "總覽可見，cache miss，HTTP403。"
+    },
+    {
+      "category": "artist_alternative",
+      "url": "https://www.deviantart.com/chrisnfy85/gallery",
+      "title": "Chris Ng DeviantArt",
+      "notes": "正常公開頁200；讀取內嵌作品索引只見DeNA及其他早期作品，未確認神魔作品，未把其他遊戲圖混入。"
+    },
+    {
+      "category": "artist_background",
+      "url": "https://minimark.artstation.com/projects",
+      "title": "Mark Ho 作品總覽",
+      "notes": "神魔專輯列要塞、第八/九封、北歐、青木原等場景；直接HTTP403。"
+    },
+    {
+      "category": "artist_background",
+      "url": "https://minimark.artstation.com/projects/w8b95Z",
+      "title": "Mark Ho - fortress boss stage",
+      "notes": "作者總覽列出；cache miss/HTTP403。"
+    },
+    {
+      "category": "artist_background",
+      "url": "https://minimark.artstation.com/projects/1nVZaq",
+      "title": "Mark Ho - fortress stage",
+      "notes": "作者總覽列出；cache miss/HTTP403。"
+    },
+    {
+      "category": "artist_background",
+      "url": "https://minimark.artstation.com/projects/8lVl5x",
+      "title": "Mark Ho - 2nd stage of seal no.8",
+      "notes": "作者明確說是 Tower of Saviors stage scene design；web正文可讀；公開JSON403。"
+    },
+    {
+      "category": "artist_background",
+      "url": "https://minimark.artstation.com/projects/oOoOQw",
+      "title": "Mark Ho - Nordic stage scene",
+      "notes": "作者總覽列出；cache miss/HTTP403。"
+    },
+    {
+      "category": "artist_background",
+      "url": "https://minimark.artstation.com/projects/4bxWQ4",
+      "title": "Mark Ho - 2nd stage of seal no.9",
+      "notes": "作者總覽列出；cache miss/HTTP403。"
+    },
+    {
+      "category": "artist_background",
+      "url": "https://minimark.artstation.com/projects/gJLYNG",
+      "title": "Mark Ho - 1st stage of seal no.9",
+      "notes": "作者總覽列出；cache miss/HTTP403。"
+    },
+    {
+      "category": "artist_background",
+      "url": "https://minimark.artstation.com/projects/DxyaG0",
+      "title": "Mark Ho - final stage of seal no.9",
+      "notes": "作者總覽列出；cache miss/HTTP403。"
+    },
+    {
+      "category": "artist_background",
+      "url": "https://minimark.artstation.com/projects/k43wqd",
+      "title": "Mark Ho - 2nd stage of Aokigahara",
+      "notes": "作者總覽列出；cache miss/HTTP403。"
+    },
+    {
+      "category": "artist_background",
+      "url": "https://minimark.artstation.com/projects/baW0Ea",
+      "title": "Mark Ho - stage of Aokigahara",
+      "notes": "作者總覽列出；cache miss/HTTP403。"
+    },
+    {
+      "category": "artist_ui",
+      "url": "https://ku103.artstation.com/",
+      "title": "Ku Chung 作品集",
+      "notes": "大量神魔角色、關卡背景、公會任務、道具；作品列表可讀；HTTP403。"
+    },
+    {
+      "category": "artist_ui",
+      "url": "https://ku103.artstation.com/resume",
+      "title": "Ku Chung 資歷",
+      "notes": "作者自述2014/11–2017/1 Madhead 2D Game Artist，負責 Map/UI/Guild Cabinet；一手佐證。"
+    },
+    {
+      "category": "artist_ui",
+      "url": "https://ku103.artstation.com/projects/8weNeR",
+      "title": "Ku Chung - 命途引領者 瓦倫西亞",
+      "notes": "作者列2018並連神魔Wiki；web正文可讀，無PSD。"
+    },
+    {
+      "category": "artist_ui",
+      "url": "https://ku103.artstation.com/projects/rDEN6",
+      "title": "Ku Chung - TOS X Monster Strike Collaboration",
+      "notes": "作者列 Fire/Wood Level1/2 與遊戲影片連結；可讀正文，未得圖檔直連。"
+    },
+    {
+      "category": "artist_ui",
+      "url": "https://ku103.artstation.com/projects/nNQaK",
+      "title": "Ku Chung - Map",
+      "notes": "總覽可見，作品頁cache miss。"
+    },
+    {
+      "category": "artist_ui",
+      "url": "https://ku103.artstation.com/projects/Lx32R",
+      "title": "Ku Chung - COK Guild Mission",
+      "notes": "總覽可見，作品頁cache miss。"
+    },
+    {
+      "category": "artist_ui",
+      "url": "https://ku103.artstation.com/projects/Dlx00",
+      "title": "Ku Chung - Easter Guild Event 2016",
+      "notes": "總覽可見，作品頁cache miss。"
+    },
+    {
+      "category": "artist_ui",
+      "url": "https://ku103.artstation.com/projects/OXqNy",
+      "title": "Ku Chung - Halloween Guild Event 2015",
+      "notes": "總覽可見，作品頁cache miss。"
+    },
+    {
+      "category": "artist_ui",
+      "url": "https://ku103.artstation.com/projects/3ZdKJ",
+      "title": "Ku Chung - Xuan-Yuan Sword and Chinese Paladin",
+      "notes": "總覽可見，作品頁cache miss。"
+    },
+    {
+      "category": "artist_ui",
+      "url": "https://dormousee.mystrikingly.com/",
+      "title": "Dormouse 眠",
+      "notes": "作者自述2014/10–2015/12 madhead卡牌遊戲研發/主UI/角色/原畫/SPINE。作品混合多遊戲，無法逐張歸屬神魔；直接HTTP403，未誤標所有Spine為神魔。"
+    },
+    {
+      "category": "artist_marketing",
+      "url": "https://www.behance.net/gallery/73611705/-20182021",
+      "title": "泡啾 神魔之塔官方宣傳插畫2018–2021",
+      "notes": "作者Behance總覽確認標題；作品頁403；cover CDN200可與Wix酒吧雙人圖比對。"
+    },
+    {
+      "category": "artist_marketing",
+      "url": "https://paujiou.wixsite.com/paujiou/",
+      "title": "泡啾個人官網",
+      "notes": "明確列神魔之塔社群宣傳插畫；商業合作頁混合多客戶，僅已確認神魔圖入列。"
+    },
+    {
+      "category": "animation",
+      "url": "https://www.paperboxcreations.com/tower-of-saviors-chiyou-promotional-video",
+      "title": "Paperbox - 蚩尤宣傳動畫",
+      "notes": "製作商官方案例HTML200；圖片srcset/GIF可讀，第二輪另存清單。"
+    },
+    {
+      "category": "animation",
+      "url": "https://www.behance.net/gallery/113492915/Tower-of-Saviors-Chiyou-Promotional-Video",
+      "title": "Paperbox - 蚩尤Behance",
+      "notes": "一手credit Mad Head App Limited, Paperbox animation/vfx, Ren Tu/Wong Hui Yin illustration；直連403。"
+    },
+    {
+      "category": "animation",
+      "url": "https://vimeo.com/512193438",
+      "title": "Paperbox 蚩尤影片",
+      "notes": "作者公開播放頁；未發現工程專案下載，影片非工程原檔。"
+    },
+    {
+      "category": "animation",
+      "url": "https://www.behance.net/gallery/75654473/_",
+      "title": "WhiteDeer 白鹿動畫 - 千古一帝秦始皇",
+      "notes": "公司總覽確認標題與其視效/3D背景服務；該頁403，未取得工程原檔。"
+    },
+    {
+      "category": "artist_marketing",
+      "url": "https://www.behance.net/gallery/207748881/Madhead",
+      "title": "Vicky Lam - Madhead繪圖作品",
+      "notes": "作者總覽確認；作品頁cache miss，未得原圖。"
+    },
+    {
+      "category": "artist_marketing",
+      "url": "https://www.behance.net/gallery/207495095/2021",
+      "title": "Vicky Lam - 2021神魔盃活動圖",
+      "notes": "作者總覽確認；cache miss。"
+    },
+    {
+      "category": "artist_marketing",
+      "url": "https://www.behance.net/gallery/207358565/_",
+      "title": "Vicky Lam - 神魔社交平台帖文設計",
+      "notes": "作者總覽確認；cache miss。"
+    },
+    {
+      "category": "artist_marketing",
+      "url": "https://www.behance.net/gallery/207121803/_",
+      "title": "Vicky Lam - 神魔遊戲攻略文設計",
+      "notes": "作者總覽確認；cache miss。"
+    },
+    {
+      "category": "official_ui",
+      "url": "https://en.towerofsaviors.com/2020/01/21/ui-intro-main-map/",
+      "title": "官方舊版UI Introduction",
+      "notes": "2020舊介面截圖；原頁200含10張PNG，不是切開的UI元件或最新介面。"
+    },
+    {
+      "category": "official_ui",
+      "url": "https://en.towerofsaviors.com/2020/01/20/ui-intro-team/",
+      "title": "官方舊版UI Team",
+      "notes": "公開截圖與影片。"
+    },
+    {
+      "category": "official_ui",
+      "url": "https://en.towerofsaviors.com/2020/01/20/ui-intro-community/",
+      "title": "官方舊版UI Community",
+      "notes": "公開大量社群頁截圖與影片。"
+    },
+    {
+      "category": "official_ui",
+      "url": "https://en.towerofsaviors.com/2020/01/20/ui-intro-shop/",
+      "title": "官方舊版UI Shop",
+      "notes": "公開商城/抽卡/商船截圖與影片。"
+    },
+    {
+      "category": "official_ui",
+      "url": "https://en.towerofsaviors.com/2020/01/20/ui-intro-arena/",
+      "title": "官方舊版UI Arena",
+      "notes": "公開競技場截圖與獎勵表。"
+    },
+    {
+      "category": "native_template_dead",
+      "url": "https://forum.gamer.com.tw/G2.php?bsn=23805&lorder=4&parent=954&sn=880",
+      "title": "玩家封印卡設計PSD組合包",
+      "notes": "2013玩家卡框PSD，包含字體及可改數據的圖層，非官方角色原稿；Drive連結404。"
+    },
+    {
+      "category": "native_template_dead",
+      "url": "https://drive.google.com/file/d/0B0SkDWzfosNjdTFRdVk1MnZoS2M/view",
+      "title": "2013玩家PSD Drive檔",
+      "notes": "HTTP404，無法下載。"
+    },
+    {
+      "category": "native_template_unverified",
+      "url": "https://forum.gamer.com.tw/Co.php?bsn=23805&sn=140210",
+      "title": "玩家創造召喚獸PSD/UFO",
+      "notes": "搜尋索引指舊Dropbox PSD/UFO與去背屬性圖；目前正文讀到不同樓層，未取到Dropbox直連，不列可下載。"
+    },
+    {
+      "category": "japanese_primary",
+      "url": "https://www.forside.co.jp/wordpress/wp-content/uploads/2018/02/180209_PR_FD_Mad-Head-Games%E3%81%A8%E3%81%AE%E5%8D%94%E6%A5%AD%E5%B1%95%E9%96%8B.pdf",
+      "title": "Forside 2018-02-09 合作公告",
+      "notes": "日本合作方一手文件第1頁稱「神魔の塔」。這可證明日文稱呼，不能推論存在日本版或專用日文素材庫。"
+    },
+    {
+      "category": "official_artbook",
+      "url": "https://towerofsaviors.com/tgs2023/",
+      "title": "官方TGS2023第六版畫冊",
+      "notes": "官方明列前100名早鳥贈第六版實體畫冊；未見電子PDF/PSD下載。"
+    },
+    {
+      "category": "official_artbook",
+      "url": "https://towerofsaviors.com/2018/01/17/%E3%80%8A%E7%A5%9E%E9%AD%94%E4%B9%8B%E5%A1%94%E3%80%8B5-%E9%80%B1%E5%B9%B4%E7%94%9F%E6%97%A5%E5%A4%A7%E6%B4%BE%E5%B0%8D%E7%9B%A1%E5%9C%A8-2018-%E5%8F%B0%E5%8C%97%E5%9C%8B%E9%9A%9B%E9%9B%BB%E7%8E%A9/",
+      "title": "官方2018第二版畫冊",
+      "notes": "官方明列限量實體第二版畫冊；未見電子PDF/PSD下載。"
+    },
+    {
+      "category": "rejected_false_positive",
+      "url": "https://tos.hehagame.com/ShowArt146388.html",
+      "title": "百萬達人Show第三屆創作大賽",
+      "notes": "搜尋PSD誤命中：實際為百萬亞瑟王1600×2240徵稿規格，完全不是神魔原始素材，已排除。"
+    },
+    {
+      "category": "japanese_low_trust",
+      "url": "https://www.pngwing.com/ja/free-png-tujeb",
+      "title": "日文PNGWing 洛基/妖怪PNG",
+      "notes": "512×512、199.41KB，第三方聚合；標非營利用，不是官方授權或工程原稿，不優先下載。"
+    },
+    {
+      "category": "japanese_low_trust",
+      "url": "https://applion.jp/%E7%A5%9E%E9%AD%94%E4%B9%8B%E5%A1%94-%E6%94%BB%E7%95%A5-Tower-of-Saviors/android-coolapp.tower/gallery/",
+      "title": "日文APPLION圖片",
+      "notes": "實際是Starasonic第三方攻略App截圖，非遊戲官方素材庫，排除。"
+    }
+  ],
+  "chinese_sources": {
+    "checked_date": "2026-10-30",
+    "scope": "繁中/簡中來源與官方gallery、公開Wiki",
+    "sources": [
+      {
+        "title": "官方神魔之塔圖鑑",
+        "source_page": "https://gallery.tosgame.com/",
+        "category": "官方完整卡面",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "official": true,
+        "author": "Mad Head Limited",
+        "manifest": "gallery-manifest.json",
+        "asset_count": 4353,
+        "availability": "首頁、JS與最新11305/11306樣本HTTP200；批量下載結果由主代理驗證",
+        "format": "JPG",
+        "sample_dimensions": [
+          640,
+          427
+        ],
+        "download_template": "https://d1h5mn9kk900cf.cloudfront.net/toswebsites/gallery/cards/{id_zero_padded_min_4}.jpg",
+        "js_source": "https://gallery.tosgame.com/static/js/main.b2399f93.chunk.js",
+        "notes": "JS Ka陣列4408筆，排除空groupId/空id得4353筆；按鈕與img都直接z(t.id)，函式只有padStart，沒有11016-11020別名回退。",
+        "license": "官方公開瀏覽；未找到素材再利用授權，不是PSD/原始畫布工程。"
+      },
+      {
+        "title": "神魔之塔繁中Wiki完整allimages",
+        "source_page": "https://tos.fandom.com/zh/api.php?action=query&list=allimages&ailimit=500&aidir=descending&aisort=timestamp&aiprop=url%7Csize%7Csha1%7Cmime%7Ctimestamp&format=json",
+        "category": "Wiki完整圖片索引",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "official": false,
+        "author": "Fandom神魔之塔維基社群",
+        "manifest": "wiki-allimages-with-sha1.json",
+        "asset_count": 34418,
+        "availability": "69頁完整列舉，與siteinfo images=34418相同；每筆具sha1，無登入",
+        "format": "PNG/JPG/GIF/WebP等",
+        "priority_manifest": "wiki-priority-manifest.json",
+        "priority_count": 4547,
+        "priority_declared_bytes": 6403635702,
+        "notes": "URL附format=original可避免Fandom自動轉WebP；全尺寸Pet卡面與角色n圖4385筆，另162筆依檔名尺寸挑選的背景/插畫/活動候選。近期Pet11306.png為960x540，原始PNG940271 bytes，RGBA但alpha全255，含場景背景。i圖即使512 RGBA也可能只有外框透明的臉部頭像。",
+        "license": "社群文字CC BY-SA不代表遊戲圖像可自由再利用；各原作權利仍須依來源。"
+      },
+      {
+        "title": "sprite.zip PNG+TGA角色去背整理包",
+        "source_page": "https://forum.gamer.com.tw/C.php?bsn=23805&snA=414338",
+        "category": "角色去背PNG/TGA",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "official": false,
+        "author": "★☆TWY☆★ / wingyintang",
+        "url": "https://www.dropbox.com/s/5a4tlw0yai9int0/sprite.zip?dl=0",
+        "download_url": "https://www.dropbox.com/scl/fi/x2keiymrc7duwu8twrcfe/sprite.zip?rlkey=y5j91cmaqxtw7x90z98pljxko&dl=1",
+        "availability": "HTTP200 Dropbox scl_oboe_file檔案檢視頁；未由本代理批量下載",
+        "format": "ZIP圖片整理包",
+        "is_psd": false,
+        "notes": "論壇9.01更新段註記1-800及194MB；其他後續文引用同URL，實際壓縮包版本需由主代理開檔確認。",
+        "license": "第三方解包/整理，未找到授予再利用的明確授權。"
+      },
+      {
+        "title": "spritepng.zip PNG-only角色整理包",
+        "source_page": "https://forum.gamer.com.tw/C.php?bsn=23805&snA=414338",
+        "category": "角色去背PNG",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "official": false,
+        "author": "★☆TWY☆★ / wingyintang",
+        "url": "https://www.dropbox.com/s/qzq1s2zh9xvv8bt/spritepng.zip?dl=0",
+        "download_url": "https://www.dropbox.com/scl/fi/b3yl7nomat156am47zkry/spritepng.zip?rlkey=hbvhfqltckl7dyrx477xk8ihu&dl=1",
+        "availability": "HTTP200 Dropbox scl_oboe_file檔案檢視頁；未由本代理批量下載",
+        "format": "ZIP圖片整理包",
+        "is_psd": false,
+        "notes": "論壇9.01段註記1-800及125MB；實際內容需由主代理開檔確認。",
+        "license": "第三方解包/整理，未找到授予再利用的明確授權。"
+      },
+      {
+        "title": "skill.zip 敵人技能介面拆圖",
+        "source_page": "https://forum.gamer.com.tw/C.php?bsn=23805&snA=414338",
+        "category": "介面技能圖片",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "official": false,
+        "author": "★☆TWY☆★ / wingyintang",
+        "url": "https://www.dropbox.com/s/o2smmu01j7kh51l/skill.zip?dl=0",
+        "download_url": "https://www.dropbox.com/scl/fi/m2b0klv26pgrj8a73t40i/skill.zip?rlkey=zgm8pcsdcovwnaoimzzy4legv&dl=1",
+        "availability": "HTTP200 Dropbox scl_oboe_file檔案檢視頁；未由本代理批量下載",
+        "format": "ZIP圖片整理包",
+        "is_psd": false,
+        "notes": "同串38樓作者應要求分開整理的敵人技能圖。",
+        "license": "第三方解包/整理，未找到授予再利用的明確授權。"
+      },
+      {
+        "title": "Dropbox角色獨立下載資料夾",
+        "source_page": "https://forum.gamer.com.tw/C.php?bsn=23805&snA=414338",
+        "category": "角色去背PNG",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "official": false,
+        "author": "★☆TWY☆★ / wingyintang",
+        "url": "https://www.dropbox.com/sh/yvjl1n5mlk71qby/AAC25AKykfEnLvNRhN6040CAa?dl=0",
+        "download_url": "https://www.dropbox.com/scl/fo/jerqk94hcxlyna1l3dr1g/AGuVXmwRzfCBtfSB09TUOe0?rlkey=2fglbq4s4nx0faa7z9m8355r2&dl=0",
+        "availability": "HTTP200，Dropbox scl_oboe_folder，頁標題sprite",
+        "is_psd": false,
+        "notes": "目前檔案明細仍需主代理讀資料夾，原分享文標示獨立下載與10.0/10.2更新。"
+      },
+      {
+        "title": "15.42 PNG整包",
+        "source_page": "https://forum.gamer.com.tw/C.php?bsn=23805&snA=414338",
+        "category": "角色圖片失效連結",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "url": "https://drive.google.com/file/d/1YVTNqjiiEvqe8NYPjN0n7CZ42juu1GG5/view?usp=sharing",
+        "availability": "HTTP404",
+        "format": "ZIP，文章宣告204MB",
+        "is_psd": false,
+        "notes": "原整理者文章仍在，下載檔已不可公開取得。"
+      },
+      {
+        "title": "其他圖片KTX/介面/背景整理資料夾",
+        "source_page": "https://forum.gamer.com.tw/C.php?bsn=23805&snA=414338",
+        "category": "介面背景圖片受限連結",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "url": "https://drive.google.com/drive/folders/0B7jZIAZamt9ubDRvQTdkRkdYWnM",
+        "availability": "轉Google登入，未嘗試存取私有檔案",
+        "notes": "同串26樓列卡框、GAMEOVER、COMBO、MISS、多人模式、公會會徽、教學、主畫面、背景、VICTORY等遊戲素材；不是PSD。"
+      },
+      {
+        "title": "2017神魔畫冊整合29張JPG ZIP",
+        "source_page": "https://forum.gamer.com.tw/Co.php?bsn=23805&sn=3237440",
+        "category": "畫冊索引待確認",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "author": "星星 / kratos2006",
+        "url": "https://www.dropbox.com/s/4tsxpub5kf3ao5y/神魔畫冊整合.zip?dl=0",
+        "download_url": "https://www.dropbox.com/scl/fi/8g38ul9c3hm7af4g5civs/.zip?rlkey=o0ehbs9q53drvfv5zpt6vs135&dl=1",
+        "availability": "HTTP200 Dropbox檔案檢視頁",
+        "do_not_bundle": true,
+        "is_psd": false,
+        "notes": "作者聲稱官方免費釋出後無損合併；尚未找到官方首次釋出網址，無法獨立確認是否官方免費數位頁面或實體畫冊重製。只保留來源索引。",
+        "license": "作者明記版權歸Madhead。"
+      },
+      {
+        "title": "2017神魔畫冊PDF",
+        "source_page": "https://forum.gamer.com.tw/Co.php?bsn=23805&sn=3237440",
+        "category": "畫冊索引待確認",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "author": "星星 / kratos2006",
+        "url": "https://www.dropbox.com/s/yxatbwme2h2eq6f/TOS畫冊.pdf?dl=0",
+        "download_url": "https://www.dropbox.com/scl/fi/gbaw14y8mxtnlmst88xmu/TOS.pdf?rlkey=n9tamzgv559jj9dsaw0ok9bo8&dl=1",
+        "availability": "HTTP200 Dropbox檔案檢視頁",
+        "do_not_bundle": true,
+        "is_psd": false,
+        "notes": "作者聲稱官方免費釋出後無損合併；尚未找到官方首次釋出網址，無法獨立確認是否官方免費數位頁面或實體畫冊重製。只保留來源索引。",
+        "license": "作者明記版權歸Madhead。"
+      },
+      {
+        "title": "玩家召喚獸卡面模板PSD",
+        "source_page": "https://forum.gamer.com.tw/Co.php?bsn=23805&sn=140210",
+        "category": "PSD模板失效",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "author": "阿銘 / toby70609",
+        "url": "https://www.dropbox.com/sh/8sqrgqdp8tl6bxv/XaedzmarV1/null.psd",
+        "availability": "HTTP200但Dropbox頁名shared_link_disabled，實質失效",
+        "format": "PSD；另提供UFO",
+        "is_psd": true,
+        "is_game_artist_original": false,
+        "notes": "玩家仿製圖鑑版面模板，含可編輯卡框等；不是官方角色繪畫工程。"
+      },
+      {
+        "title": "封印卡設計大賞PSD組合包",
+        "source_page": "https://forum.gamer.com.tw/G2.php?bsn=23805&lorder=4&parent=954&sn=880",
+        "category": "PSD模板失效",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "url": "https://drive.google.com/file/d/0B0SkDWzfosNjdTFRdVk1MnZoS2M/view",
+        "availability": "HTTP404",
+        "format": "壓縮包內PSD及字體",
+        "is_psd": true,
+        "is_game_artist_original": false,
+        "notes": "玩家文字/選單/卡圖位置分層模板，非官方原畫PSD。"
+      },
+      {
+        "title": "TOS Tex Converter",
+        "source_page": "https://forum.gamer.com.tw/Co.php?bsn=23805&sn=999204",
+        "category": "舊版貼圖轉換工具",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "author": "帝龍‧蒼鱗の雷光 / TERENCEYAO",
+        "url": "https://www.mediafire.com/file/294w2eev7e74v83/TOS+Tex+Converter.rar/file",
+        "download_url": "https://download1511.mediafire.com/tfayskya5jfgwPzUDuFhhM5WRMxG3iJvIQwRRon1tg5I_j_k1a0bYAHbWgBnoUwGZ4lAyMogOI2PKF01rvf1I47d3sFsduhq6wx6QN0eXIvLOdgdgPfa3_NOxr6uHbk4XjdmorYrmAR5gUILipbSylCGQh4SzUXwdJBRU5ejYor4eQ/294w2eev7e74v83/TOS+Tex+Converter.rar",
+        "availability": "HTTP200 MediaFire，含Download file按鈕",
+        "format": "RAR / Windows exe",
+        "is_psd": false,
+        "notes": "2014舊工具/範例。原始專案僅為作者自己的TEX轉換工具，不是神魔遊戲工程。直下載網址可能有時效；可從來源下載頁重新取得。"
+      },
+      {
+        "title": "TTC Example",
+        "source_page": "https://forum.gamer.com.tw/Co.php?bsn=23805&sn=999204",
+        "category": "原始遊戲TEX範例",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "author": "帝龍‧蒼鱗の雷光 / TERENCEYAO",
+        "url": "https://www.mediafire.com/file/zb4i5acf1b4qjqe/TTC+Example.rar/file",
+        "download_url": "https://download1584.mediafire.com/xovuqe6eijvg4Rfe-EVxsmbyD4orBp79BHw7birMCxXJB072bo_rdB9ugXwlZb7XpEaVuDPhvcvMI2GyicjR4s9DvBejy7UFbqX43yllw774_-ov8UI9desTBx2e57ZhfxixaPUujpEMU2S9ttnPN6KzF0jkgoxXFyuK-0A3uTy3DKg/zb4i5acf1b4qjqe/TTC+Example.rar",
+        "availability": "HTTP200 MediaFire，含Download file按鈕",
+        "format": "RAR / TEX",
+        "is_psd": false,
+        "notes": "2014舊工具/範例。原始專案僅為作者自己的TEX轉換工具，不是神魔遊戲工程。直下載網址可能有時效；可從來源下載頁重新取得。"
+      },
+      {
+        "title": "TOS Tex Converter Source Code",
+        "source_page": "https://forum.gamer.com.tw/Co.php?bsn=23805&sn=999204",
+        "category": "玩家工具MFC原始專案",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "author": "帝龍‧蒼鱗の雷光 / TERENCEYAO",
+        "url": "https://www.mediafire.com/file/ea7xvrl5nna0sxh/TOS+Tex+Converter+Source+Code.rar/file",
+        "download_url": "https://download1326.mediafire.com/5i6yh17d9qtgeK854eKmDj11BjyyyB5UvwkIoxR4IQk1ujTIgHF-dO_63WhCtLWMQbWohswnhD2LdOdgvJT2mTFMrAIb6B_x1XeemkKfiRxL_EMlWPSPNd_X94Z_uHZrMi1asepkXhpHhkU35aZpoAo5VHrvQcRlLNFGkPgu0c-PBQ/ea7xvrl5nna0sxh/TOS+Tex+Converter+Source+Code.rar",
+        "availability": "HTTP200 MediaFire，含Download file按鈕",
+        "format": "RAR / MFC C++",
+        "is_psd": false,
+        "notes": "2014舊工具/範例。原始專案僅為作者自己的TEX轉換工具，不是神魔遊戲工程。直下載網址可能有時效；可從來源下載頁重新取得。"
+      },
+      {
+        "title": "神魔之塔美術Wiki",
+        "source_page": "https://towerofsaviorsart.fandom.com/zh-tw/wiki/圖鑑",
+        "category": "畫師及舊圖索引",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "url": "https://towerofsaviorsart.fandom.com/zh-tw/api.php?action=query&list=allimages&ailimit=500&aidir=descending&aisort=timestamp&format=json",
+        "availability": "HTTP200 API可讀；最新首批更新2021-10-25",
+        "notes": "含Shin Chan、Katew、老湯、黑色玉米軍艦、陸六鹿、Panda Pen等作者頁；圖鑑含無效連結，較適合追作者而非近期全集。",
+        "is_psd": false
+      },
+      {
+        "title": "神魔之塔簡中Wiki",
+        "source_page": "https://toscn.fandom.com/zh/wiki/神魔之塔_维基",
+        "category": "早期中國版卡圖",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "url": "https://toscn.fandom.com/zh/api.php?action=query&list=allimages&ailimit=500&format=json",
+        "availability": "HTTP200 API可讀；抽樣為2013早期001i等",
+        "notes": "早期版本補充，未全列舉。",
+        "is_psd": false
+      },
+      {
+        "title": "神魔之塔立繪替換Steam模組",
+        "source_page": "https://steamcommunity.com/sharedfiles/filedetails/?id=3432327245&l=schinese",
+        "category": "第三方模組不可公開取得",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "availability": "Steam頁明記因違反社群指引移除",
+        "notes": "622.058MB，只索引不追繞下載。",
+        "is_psd": false
+      },
+      {
+        "title": "Kingsmai/apk-extract",
+        "source_page": "https://git.tootaio.com/Kingsmai/apk-extract",
+        "category": "公開素材整理工具",
+        "checked_date": "2026-10-30",
+        "is_original_game_project": false,
+        "availability": "公開README可讀，僅閱讀，沒有執行/修改專案",
+        "notes": "README自述可處理神魔之塔Unity/Spine/FairyGUI素材並在本機產生大量檔案；沒有公開成品素材包，不能把還原執行資料當作原始Unity或Spine編輯工程。",
+        "is_psd": false
+      }
+    ]
+  }
+}

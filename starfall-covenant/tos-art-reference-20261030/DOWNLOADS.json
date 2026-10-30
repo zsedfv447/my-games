@@ -1,0 +1,52 @@
+{
+  "verified_zip_crc": true,
+  "single_full_zip_available_locally": true,
+  "release_url": "https://github.com/zsedfv447/my-games/releases/tag/tos-art-pack-20261030",
+  "packages": [
+    {
+      "name": "tower-of-saviors-art-20261030-full.zip",
+      "bytes": 11808198579,
+      "sha256": "1fd348b7047aefc05ac89a2bc0574ce536415c236c14e960e15954f503168ed8"
+    },
+    {
+      "name": "tos-art-01.zip",
+      "bytes": 1710002417,
+      "sha256": "9fa5a282da0543cdcd543ef9fa3ab98642ac20fbee8a20f04002ba857f28e65f"
+    },
+    {
+      "name": "tos-art-02.zip",
+      "bytes": 1700786468,
+      "sha256": "5dbc6e9b16695a06364f2fc7769d06df293f0aca1ffd58c43648cbb991dea430"
+    },
+    {
+      "name": "tos-art-03.zip",
+      "bytes": 1700720242,
+      "sha256": "8047073adf80032b168585d388acb2010e3b9674917a7404f1ed27dcdf992211"
+    },
+    {
+      "name": "tos-art-04.zip",
+      "bytes": 1700174202,
+      "sha256": "5b1e60ed50d93ad922df6fee20df44dee3de66bed7383db162fe80b027dd58d2"
+    },
+    {
+      "name": "tos-art-05.zip",
+      "bytes": 1700519948,
+      "sha256": "0b2a8fe1ba74decf4efac6ebb7ba6b51a0c4dafeed921493ce048a1071e95b26"
+    },
+    {
+      "name": "tos-art-06.zip",
+      "bytes": 1700431870,
+      "sha256": "c0cf4f28dd91c60a7d71c269a55528fe4f476646b123bcbcb0b06dfbb4b8bb98"
+    },
+    {
+      "name": "tos-art-07.zip",
+      "bytes": 1595421745,
+      "sha256": "e374124dd48cdd072ad0f476ea4555e804d6df8a82adc8061f50ba9ab5356ceb"
+    },
+    {
+      "name": "tos-art-guide.zip",
+      "bytes": 12514216,
+      "sha256": "15e11fbcfe39ced0af0f0ee48c17f0632ab535a90111a112dae291559b48c361"
+    }
+  ]
+}
