@@ -1,7 +1,7 @@
 // 出戰確認：關卡情報、推薦流派、隊伍限制或借用隊伍、星章條件，確認後扣體力進入戰鬥
-import { h } from '../dom';
+import { h, svg } from '../dom';
 import { gameData } from '../../data/load';
-import type { StageDef, StarCondition } from '../../core/types';
+import type { Attribute, EnemyDef, StageDef, StarCondition } from '../../core/types';
 import { enterStage } from '../../progression/stages';
 import { badge, button, emptyState, panel } from '../components/basic';
 import { cardThumb, emptySlot } from '../components/card-thumb';
@@ -13,6 +13,11 @@ import { armBattle } from './battle';
 import { npcAvatar, rosterFor } from './helper';
 import { HELPER_NPCS, stageAllowsHelper } from '../../progression/helpers';
 import type { ScreenDef } from '../router';
+import { enemySvg } from '../art/enemy';
+import { ATTRIBUTE_NAMES, ORB_COLORS } from '../art/palette';
+import { resolveArtPath, userAsset } from '../assets';
+import { stageIntel } from '../stage-intel';
+import '../convenience.css';
 
 const KIND_LABEL: Record<StageDef['kind'], string> = { main: '主線', daily: '每日', event: '活動', tower: '挑戰之塔', trial: '流派試煉' };
 
@@ -37,6 +42,33 @@ export function starText(c: StarCondition): string {
     case 'maxCombo': return `單回合達成 ${c.combo} Combo`;
     case 'noContinue': return '不續戰';
   }
+}
+
+function attrChip(a: Attribute): HTMLElement {
+  return h('span', { class: 'attr-chip', style: { '--attr': ORB_COLORS[a].base } }, ATTRIBUTE_NAMES[a]);
+}
+
+function enemyPortrait(e: EnemyDef, boss: boolean): Element {
+  const url = userAsset('enemies', e.id) ?? resolveArtPath(e.art.sprite);
+  return url ? h('img', { src: url, alt: '', loading: 'lazy' }) : svg(enemySvg({ ...e, boss }));
+}
+
+/** 關卡情報：每一波的敵人頭像、屬性、能力，Boss 加框；最上面是建議帶的屬性 */
+function intelPanel(stage: StageDef): HTMLElement {
+  const intel = stageIntel(stage, gameData.enemies, gameData.config.battle);
+  return panel(
+    { title: '敵人情報' },
+    intel.suggested.length > 0 && h('div', { class: 'row wrap intel-suggest' }, h('span', { class: 'small-text' }, '建議屬性'), intel.suggested.map(attrChip)),
+    h('div', { class: 'intel-waves' }, intel.waves.map((w, i) => h('div', { class: `intel-wave${w.boss ? ' boss' : ''}` },
+      h('div', { class: 'intel-wave-title small-text' }, `第 ${i + 1} 波`, w.boss && badge('BOSS', 'gold')),
+      w.enemies.map((e) => h('div', { class: 'intel-enemy' },
+        h('div', { class: 'intel-portrait' }, enemyPortrait(e.def, w.boss)),
+        h('div', { class: 'grow' },
+          h('div', { class: 'row small-text', style: { gap: '6px' } }, h('strong', null, e.def.name), attrChip(e.def.attribute)),
+          e.abilities.length
+            ? h('div', { class: 'intel-abilities' }, e.abilities.map((a) => h('span', { class: 'chip enemy' }, a)))
+            : h('div', { class: 'small-text dim' }, '沒有特殊能力'))))))),
+  );
 }
 
 export const prepareScreen: ScreenDef = {
@@ -83,6 +115,7 @@ export const prepareScreen: ScreenDef = {
           ? h('div', { class: 'row wrap', style: { gap: '4px' } }, h('span', { class: 'small-text' }, '推薦流派'), stage.recommendedArchetypes.map((a) => badge(archetypeName(a))))
           : null,
       ),
+      intelPanel(stage),
       stage.kind === 'trial' && stage.archetype && panel(
         { title: `試煉：${archetypeName(stage.archetype)}` },
         h('p', { class: 'small-text' }, gameData.archetypes.find((a) => a.id === stage.archetype)?.howToPlay ?? ''),
