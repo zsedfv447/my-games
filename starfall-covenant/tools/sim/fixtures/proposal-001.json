@@ -1,0 +1,3245 @@
+{
+ "source": "docs/proposals/001-characters.md（提案 001，總監已通過）；數值為依稀有度的暫定值",
+ "cards": [
+  {
+   "id": "c101",
+   "name": "燼冕女王・伊格菈",
+   "attribute": "fire",
+   "race": "human",
+   "rarity": 6,
+   "maxLevel": 99,
+   "stats": {
+    "hp": [
+     1300,
+     4200
+    ],
+    "atk": [
+     500,
+     1650
+    ],
+    "rcv": [
+     190,
+     560
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 12,
+   "activeSkill": "s101",
+   "leaderSkill": "l101",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "mono",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c102",
+   "name": "赤鱗狂嗣・薩爾姆",
+   "attribute": "fire",
+   "race": "dragon",
+   "rarity": 5,
+   "maxLevel": 90,
+   "stats": {
+    "hp": [
+     1000,
+     3300
+    ],
+    "atk": [
+     380,
+     1300
+    ],
+    "rcv": [
+     150,
+     450
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 10,
+   "activeSkill": "s102",
+   "leaderSkill": "l102",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "berserk",
+     "role": "leader"
+    },
+    {
+     "id": "chain",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c104",
+   "name": "熔軌工匠・卡朵",
+   "attribute": "fire",
+   "race": "machina",
+   "rarity": 5,
+   "maxLevel": 90,
+   "stats": {
+    "hp": [
+     1000,
+     3300
+    ],
+    "atk": [
+     380,
+     1300
+    ],
+    "rcv": [
+     150,
+     450
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 10,
+   "activeSkill": "s104",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "chain",
+     "role": "core"
+    },
+    {
+     "id": "mono",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c106",
+   "name": "焰紋見習・蘿希",
+   "attribute": "fire",
+   "race": "human",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s106",
+   "leaderSkill": "l106",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "mono",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c107",
+   "name": "岩漿蜥・波吉",
+   "attribute": "fire",
+   "race": "dragon",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s107",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "chain",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c108",
+   "name": "煙囪鐘匠・諾斯",
+   "attribute": "fire",
+   "race": "machina",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s108",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "control",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c109",
+   "name": "灰燼傭兵・拉卡",
+   "attribute": "fire",
+   "race": "beast",
+   "rarity": 3,
+   "maxLevel": 50,
+   "stats": {
+    "hp": [
+     400,
+     1300
+    ],
+    "atk": [
+     150,
+     520
+    ],
+    "rcv": [
+     60,
+     210
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 6,
+   "activeSkill": "s109",
+   "leaderSkill": "l109",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "berserk",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c111",
+   "name": "爐心精・小炭",
+   "attribute": "fire",
+   "race": "sylph",
+   "rarity": 3,
+   "maxLevel": 50,
+   "stats": {
+    "hp": [
+     400,
+     1300
+    ],
+    "atk": [
+     150,
+     520
+    ],
+    "rcv": [
+     60,
+     210
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 6,
+   "activeSkill": "s111",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "enhance",
+     "role": "core"
+    },
+    {
+     "id": "mono",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c201",
+   "name": "潮刻守時者・瑟琳",
+   "attribute": "water",
+   "race": "nether",
+   "rarity": 6,
+   "maxLevel": 99,
+   "stats": {
+    "hp": [
+     1300,
+     4200
+    ],
+    "atk": [
+     500,
+     1650
+    ],
+    "rcv": [
+     190,
+     560
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 12,
+   "activeSkill": "s201",
+   "leaderSkill": "l201",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "control",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c202",
+   "name": "浪花舞姬・蜜瑟",
+   "attribute": "water",
+   "race": "human",
+   "rarity": 5,
+   "maxLevel": 90,
+   "stats": {
+    "hp": [
+     1000,
+     3300
+    ],
+    "atk": [
+     380,
+     1300
+    ],
+    "rcv": [
+     150,
+     450
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 10,
+   "activeSkill": "s202",
+   "leaderSkill": "l202",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "combo",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c204",
+   "name": "雙月海龍・瑟恩與露恩",
+   "attribute": "water",
+   "race": "dragon",
+   "rarity": 5,
+   "maxLevel": 90,
+   "stats": {
+    "hp": [
+     1000,
+     3300
+    ],
+    "atk": [
+     380,
+     1300
+    ],
+    "rcv": [
+     150,
+     450
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 10,
+   "activeSkill": "s204",
+   "leaderSkill": "l204",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "dual",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c206",
+   "name": "信號海豹・提米",
+   "attribute": "water",
+   "race": "beast",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s206",
+   "leaderSkill": "l206",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "combo",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c207",
+   "name": "墨潮章魚・歐克",
+   "attribute": "water",
+   "race": "beast",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s207",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "dual",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c208",
+   "name": "白沫醫者・珊",
+   "attribute": "water",
+   "race": "human",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s208",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "heart",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c209",
+   "name": "潮汐鐘機・咕嚕",
+   "attribute": "water",
+   "race": "machina",
+   "rarity": 3,
+   "maxLevel": 50,
+   "stats": {
+    "hp": [
+     400,
+     1300
+    ],
+    "atk": [
+     150,
+     520
+    ],
+    "rcv": [
+     60,
+     210
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 6,
+   "activeSkill": "s209",
+   "leaderSkill": "l209",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "control",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c211",
+   "name": "泡泡水母・啵啵",
+   "attribute": "water",
+   "race": "sylph",
+   "rarity": 3,
+   "maxLevel": 50,
+   "stats": {
+    "hp": [
+     400,
+     1300
+    ],
+    "atk": [
+     150,
+     520
+    ],
+    "rcv": [
+     60,
+     210
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 6,
+   "activeSkill": "s211",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "combo",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c301",
+   "name": "千年樹母・艾菈蒂",
+   "attribute": "wood",
+   "race": "sylph",
+   "rarity": 6,
+   "maxLevel": 99,
+   "stats": {
+    "hp": [
+     1300,
+     4200
+    ],
+    "atk": [
+     500,
+     1650
+    ],
+    "rcv": [
+     190,
+     560
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 12,
+   "activeSkill": "s301",
+   "leaderSkill": "l301",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "heart",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c302",
+   "name": "苔晶園丁・葛瑞",
+   "attribute": "wood",
+   "race": "machina",
+   "rarity": 5,
+   "maxLevel": 90,
+   "stats": {
+    "hp": [
+     1000,
+     3300
+    ],
+    "atk": [
+     380,
+     1300
+    ],
+    "rcv": [
+     150,
+     450
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 10,
+   "activeSkill": "s302",
+   "leaderSkill": "l302",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "enhance",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c304",
+   "name": "荊棘藥師・薇妮",
+   "attribute": "wood",
+   "race": "human",
+   "rarity": 5,
+   "maxLevel": 90,
+   "stats": {
+    "hp": [
+     1000,
+     3300
+    ],
+    "atk": [
+     380,
+     1300
+    ],
+    "rcv": [
+     150,
+     450
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 10,
+   "activeSkill": "s304",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "fixed",
+     "role": "core"
+    },
+    {
+     "id": "heart",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c306",
+   "name": "苔背刺蝟・波可",
+   "attribute": "wood",
+   "race": "beast",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s306",
+   "leaderSkill": "l306",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "heart",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c307",
+   "name": "毒藤刺客・絲蔓",
+   "attribute": "wood",
+   "race": "nether",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s307",
+   "leaderSkill": "l307",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "fixed",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c308",
+   "name": "苔甲地龍・歐登",
+   "attribute": "wood",
+   "race": "dragon",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s308",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "control",
+     "role": "support"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c309",
+   "name": "種子鳥・啾波",
+   "attribute": "wood",
+   "race": "sylph",
+   "rarity": 3,
+   "maxLevel": 50,
+   "stats": {
+    "hp": [
+     400,
+     1300
+    ],
+    "atk": [
+     150,
+     520
+    ],
+    "rcv": [
+     60,
+     210
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 6,
+   "activeSkill": "s309",
+   "leaderSkill": "l309",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "enhance",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c311",
+   "name": "羽葉精靈・琪雅",
+   "attribute": "wood",
+   "race": "sylph",
+   "rarity": 3,
+   "maxLevel": 50,
+   "stats": {
+    "hp": [
+     400,
+     1300
+    ],
+    "atk": [
+     150,
+     520
+    ],
+    "rcv": [
+     60,
+     210
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 6,
+   "activeSkill": "s311",
+   "leaderSkill": "l311",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "race",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c401",
+   "name": "虹羽聖詠・菈米耶",
+   "attribute": "light",
+   "race": "sylph",
+   "rarity": 6,
+   "maxLevel": 99,
+   "stats": {
+    "hp": [
+     1300,
+     4200
+    ],
+    "atk": [
+     500,
+     1650
+    ],
+    "rcv": [
+     190,
+     560
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 12,
+   "activeSkill": "s401",
+   "leaderSkill": "l401",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "rainbow",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c402",
+   "name": "星盤占卜師・歐倫",
+   "attribute": "light",
+   "race": "human",
+   "rarity": 5,
+   "maxLevel": 90,
+   "stats": {
+    "hp": [
+     1000,
+     3300
+    ],
+    "atk": [
+     380,
+     1300
+    ],
+    "rcv": [
+     150,
+     450
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 10,
+   "activeSkill": "s402",
+   "leaderSkill": "l402",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "skillcycle",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c404",
+   "name": "金曜聖龍・艾斯特拉",
+   "attribute": "light",
+   "race": "dragon",
+   "rarity": 5,
+   "maxLevel": 90,
+   "stats": {
+    "hp": [
+     1000,
+     3300
+    ],
+    "atk": [
+     380,
+     1300
+    ],
+    "rcv": [
+     150,
+     450
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 10,
+   "activeSkill": "s404",
+   "leaderSkill": "l404",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "race",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c406",
+   "name": "稜鏡少女・普莉茲",
+   "attribute": "light",
+   "race": "human",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s406",
+   "leaderSkill": "l406",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "rainbow",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c407",
+   "name": "黃銅守衛・M-7「麥塔」",
+   "attribute": "light",
+   "race": "machina",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s407",
+   "leaderSkill": "l407",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "race",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c408",
+   "name": "燭光修士・亞柏",
+   "attribute": "light",
+   "race": "nether",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s408",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "rainbow",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c409",
+   "name": "齒輪書記・帕奇",
+   "attribute": "light",
+   "race": "machina",
+   "rarity": 3,
+   "maxLevel": 50,
+   "stats": {
+    "hp": [
+     400,
+     1300
+    ],
+    "atk": [
+     150,
+     520
+    ],
+    "rcv": [
+     60,
+     210
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 6,
+   "activeSkill": "s409",
+   "leaderSkill": "l409",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "skillcycle",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c411",
+   "name": "光蝶・芙洛",
+   "attribute": "light",
+   "race": "sylph",
+   "rarity": 3,
+   "maxLevel": 50,
+   "stats": {
+    "hp": [
+     400,
+     1300
+    ],
+    "atk": [
+     150,
+     520
+    ],
+    "rcv": [
+     60,
+     210
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 6,
+   "activeSkill": "s411",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "rainbow",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c501",
+   "name": "深淵吞星者・莫爾德",
+   "attribute": "dark",
+   "race": "dragon",
+   "rarity": 6,
+   "maxLevel": 99,
+   "stats": {
+    "hp": [
+     1300,
+     4200
+    ],
+    "atk": [
+     500,
+     1650
+    ],
+    "rcv": [
+     190,
+     560
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 12,
+   "activeSkill": "s501",
+   "leaderSkill": "l501",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "chain",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c502",
+   "name": "冥燈渡者・伊薩",
+   "attribute": "dark",
+   "race": "nether",
+   "rarity": 5,
+   "maxLevel": 90,
+   "stats": {
+    "hp": [
+     1000,
+     3300
+    ],
+    "atk": [
+     380,
+     1300
+    ],
+    "rcv": [
+     150,
+     450
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 10,
+   "activeSkill": "s502",
+   "leaderSkill": "l502",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "fixed",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c504",
+   "name": "影織傀儡師・諾瓦",
+   "attribute": "dark",
+   "race": "nether",
+   "rarity": 5,
+   "maxLevel": 90,
+   "stats": {
+    "hp": [
+     1000,
+     3300
+    ],
+    "atk": [
+     380,
+     1300
+    ],
+    "rcv": [
+     150,
+     450
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 10,
+   "activeSkill": "s504",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "combo",
+     "role": "core"
+    },
+    {
+     "id": "skillcycle",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c506",
+   "name": "沉船幽靈・莉薇",
+   "attribute": "dark",
+   "race": "nether",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s506",
+   "leaderSkill": "l506",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "dual",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c507",
+   "name": "血契狂戰士・格雷",
+   "attribute": "dark",
+   "race": "human",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s507",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "berserk",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c508",
+   "name": "夜梟哨兵・烏爾",
+   "attribute": "dark",
+   "race": "beast",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s508",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "control",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c509",
+   "name": "蝕晶幼龍・蓋布",
+   "attribute": "dark",
+   "race": "dragon",
+   "rarity": 3,
+   "maxLevel": 50,
+   "stats": {
+    "hp": [
+     400,
+     1300
+    ],
+    "atk": [
+     150,
+     520
+    ],
+    "rcv": [
+     60,
+     210
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 6,
+   "activeSkill": "s509",
+   "leaderSkill": "l509",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "chain",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c511",
+   "name": "發條蝙蝠・奇克",
+   "attribute": "dark",
+   "race": "machina",
+   "rarity": 3,
+   "maxLevel": 50,
+   "stats": {
+    "hp": [
+     400,
+     1300
+    ],
+    "atk": [
+     150,
+     520
+    ],
+    "rcv": [
+     60,
+     210
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 6,
+   "activeSkill": "s511",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "skillcycle",
+     "role": "core"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c601",
+   "name": "金鬃獅王・格魯",
+   "attribute": "light",
+   "race": "beast",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s601",
+   "leaderSkill": "l601",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "race",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c602",
+   "name": "冥火司書・薇絲珀",
+   "attribute": "fire",
+   "race": "nether",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s602",
+   "leaderSkill": "l602",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "race",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  },
+  {
+   "id": "c603",
+   "name": "無名見證者・雷恩",
+   "attribute": "wood",
+   "race": "human",
+   "rarity": 4,
+   "maxLevel": 70,
+   "stats": {
+    "hp": [
+     700,
+     2300
+    ],
+    "atk": [
+     260,
+     900
+    ],
+    "rcv": [
+     100,
+     330
+    ]
+   },
+   "growthCurve": 1,
+   "cost": 8,
+   "activeSkill": "s603",
+   "leaderSkill": "l603",
+   "expValue": 100,
+   "sellValue": 100,
+   "archetypes": [
+    {
+     "id": "race",
+     "role": "leader"
+    }
+   ],
+   "art": {},
+   "flavor": ""
+  }
+ ],
+ "skills": [
+  {
+   "id": "s101",
+   "name": "萬焰歸冕",
+   "cooldown": {
+    "max": 14,
+    "min": 8
+   },
+   "effects": [
+    {
+     "type": "convertOrbs",
+     "from": [
+      "water",
+      "wood",
+      "light"
+     ],
+     "to": "fire"
+    },
+    {
+     "type": "buffAttack",
+     "target": {
+      "attribute": "fire"
+     },
+     "multiplier": 1.5,
+     "turns": 1
+    }
+   ],
+   "description": "潮、森、輝珠轉為焰珠，本回合焰屬性攻擊 1.5 倍。"
+  },
+  {
+   "id": "s102",
+   "name": "裂鱗",
+   "cooldown": {
+    "max": 10,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "selfDamage",
+     "percentCurrentHp": 50
+    },
+    {
+     "type": "buffAttack",
+     "multiplier": 2,
+     "turns": 1
+    }
+   ],
+   "description": "自身扣除目前生命 50%，本回合全隊攻擊 2 倍。"
+  },
+  {
+   "id": "s104",
+   "name": "熔軌鋪設",
+   "cooldown": {
+    "max": 12,
+    "min": 7
+   },
+   "effects": [
+    {
+     "type": "convertOrbs",
+     "from": [
+      "wood",
+      "heart"
+     ],
+     "to": "fire"
+    }
+   ],
+   "description": "森、心珠轉為焰珠。"
+  },
+  {
+   "id": "s106",
+   "name": "學徒的火花",
+   "cooldown": {
+    "max": 8,
+    "min": 4
+   },
+   "effects": [
+    {
+     "type": "convertOrbs",
+     "from": "wood",
+     "to": "fire"
+    }
+   ],
+   "description": "森珠轉為焰珠。"
+  },
+  {
+   "id": "s107",
+   "name": "長長的火",
+   "cooldown": {
+    "max": 9,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "convertOrbs",
+     "from": "dark",
+     "to": "fire"
+    },
+    {
+     "type": "extendMoveTime",
+     "seconds": 1,
+     "turns": 1
+    }
+   ],
+   "description": "蝕珠轉為焰珠，轉珠時間延長 1 秒（1 回合）。"
+  },
+  {
+   "id": "s108",
+   "name": "慢一拍",
+   "cooldown": {
+    "max": 9,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "delayEnemy",
+     "turns": 1
+    },
+    {
+     "type": "extendMoveTime",
+     "seconds": 1,
+     "turns": 1
+    }
+   ],
+   "description": "敵人行動延遲 1 回合，轉珠時間延長 1 秒（1 回合）。"
+  },
+  {
+   "id": "s109",
+   "name": "舔傷",
+   "cooldown": {
+    "max": 8,
+    "min": 4
+   },
+   "effects": [
+    {
+     "type": "selfDamage",
+     "percentCurrentHp": 30
+    },
+    {
+     "type": "buffAttack",
+     "multiplier": 1.5,
+     "turns": 1
+    }
+   ],
+   "description": "自身扣除目前生命 30%，本回合全隊攻擊 1.5 倍。"
+  },
+  {
+   "id": "s111",
+   "name": "添柴",
+   "cooldown": {
+    "max": 8,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "enhanceOrbs",
+     "orbs": "fire"
+    }
+   ],
+   "description": "強化全部焰珠。"
+  },
+  {
+   "id": "s201",
+   "name": "退潮之刻",
+   "cooldown": {
+    "max": 15,
+    "min": 9
+   },
+   "effects": [
+    {
+     "type": "delayEnemy",
+     "turns": 2
+    },
+    {
+     "type": "damageOverTime",
+     "target": "all",
+     "multiplier": 3,
+     "turns": 3
+    }
+   ],
+   "description": "敵人行動延遲 2 回合，並對全體敵人施加 3 回合持續傷害（每回合自身攻擊 3 倍）。"
+  },
+  {
+   "id": "s202",
+   "name": "碎浪",
+   "cooldown": {
+    "max": 10,
+    "min": 6
+   },
+   "effects": [
+    {
+     "type": "extendMoveTime",
+     "seconds": 3,
+     "turns": 1
+    }
+   ],
+   "description": "轉珠時間延長 3 秒（1 回合）。"
+  },
+  {
+   "id": "s204",
+   "name": "月映潮",
+   "cooldown": {
+    "max": 11,
+    "min": 6
+   },
+   "effects": [
+    {
+     "type": "convertOrbs",
+     "from": "fire",
+     "to": "water"
+    },
+    {
+     "type": "convertOrbs",
+     "from": "dark",
+     "to": "light"
+    }
+   ],
+   "description": "焰珠轉為潮珠，蝕珠轉為輝珠。"
+  },
+  {
+   "id": "s206",
+   "name": "快打旗語",
+   "cooldown": {
+    "max": 7,
+    "min": 4
+   },
+   "effects": [
+    {
+     "type": "extendMoveTime",
+     "seconds": 2,
+     "turns": 1
+    }
+   ],
+   "description": "轉珠時間延長 2 秒（1 回合）。"
+  },
+  {
+   "id": "s207",
+   "name": "兩色墨",
+   "cooldown": {
+    "max": 9,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "convertOrbs",
+     "from": "fire",
+     "to": "water"
+    },
+    {
+     "type": "convertOrbs",
+     "from": "wood",
+     "to": "dark"
+    }
+   ],
+   "description": "焰珠轉為潮珠，森珠轉為蝕珠。"
+  },
+  {
+   "id": "s208",
+   "name": "白沫",
+   "cooldown": {
+    "max": 8,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "heal",
+     "mode": "percentMaxHp",
+     "value": 25
+    },
+    {
+     "type": "setSkyfallRate",
+     "orb": "heart",
+     "rate": 0.3,
+     "turns": 3
+    }
+   ],
+   "description": "回復生命上限 25%，3 回合內心珠天降機率提升到 30%。"
+  },
+  {
+   "id": "s209",
+   "name": "慢慢來",
+   "cooldown": {
+    "max": 8,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "delayEnemy",
+     "turns": 1
+    }
+   ],
+   "description": "敵人行動延遲 1 回合。"
+  },
+  {
+   "id": "s211",
+   "name": "別掉下來",
+   "cooldown": {
+    "max": 8,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "noSkyfallCombo",
+     "turns": 1
+    },
+    {
+     "type": "extendMoveTime",
+     "seconds": 1,
+     "turns": 1
+    }
+   ],
+   "description": "本回合天降不造成消除，轉珠時間延長 1 秒。"
+  },
+  {
+   "id": "s301",
+   "name": "心花盛放",
+   "cooldown": {
+    "max": 15,
+    "min": 9
+   },
+   "effects": [
+    {
+     "type": "convertOrbs",
+     "from": [
+      "fire",
+      "dark"
+     ],
+     "to": "heart"
+    },
+    {
+     "type": "rcvToAtk",
+     "ratio": 2,
+     "turns": 2
+    }
+   ],
+   "description": "焰、蝕珠轉為心珠，2 回合內把回復力的 2 倍加到攻擊上。"
+  },
+  {
+   "id": "s302",
+   "name": "播晶",
+   "cooldown": {
+    "max": 11,
+    "min": 6
+   },
+   "effects": [
+    {
+     "type": "enhanceOrbs",
+     "orbs": [
+      "wood",
+      "heart"
+     ]
+    }
+   ],
+   "description": "強化全部森珠與心珠。"
+  },
+  {
+   "id": "s304",
+   "name": "一滴之差",
+   "cooldown": {
+    "max": 12,
+    "min": 7
+   },
+   "effects": [
+    {
+     "type": "damage",
+     "target": "all",
+     "mode": "fixed",
+     "value": 30000,
+     "ignoreDefense": true,
+     "ignoreShield": true
+    },
+    {
+     "type": "heal",
+     "mode": "percentMaxHp",
+     "value": 15
+    }
+   ],
+   "description": "對全體敵人造成 30000 固定傷害（無視防禦與護盾），回復生命上限 15%。"
+  },
+  {
+   "id": "s306",
+   "name": "縮成一團",
+   "cooldown": {
+    "max": 8,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "convertOrbs",
+     "from": "dark",
+     "to": "heart"
+    }
+   ],
+   "description": "蝕珠轉為心珠。"
+  },
+  {
+   "id": "s307",
+   "name": "定量",
+   "cooldown": {
+    "max": 9,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "damage",
+     "target": "single",
+     "mode": "fixed",
+     "value": 15000,
+     "ignoreDefense": true
+    }
+   ],
+   "description": "對單體敵人造成 15000 固定傷害（無視防禦）。"
+  },
+  {
+   "id": "s308",
+   "name": "化為山",
+   "cooldown": {
+    "max": 9,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "reduceDamage",
+     "percent": 50,
+     "turns": 2
+    }
+   ],
+   "description": "受到傷害減少 50%（2 回合）。"
+  },
+  {
+   "id": "s309",
+   "name": "播種歌",
+   "cooldown": {
+    "max": 8,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "enhanceOrbs",
+     "orbs": "wood"
+    }
+   ],
+   "description": "強化全部森珠。"
+  },
+  {
+   "id": "s311",
+   "name": "集合笛",
+   "cooldown": {
+    "max": 9,
+    "min": 6
+   },
+   "effects": [
+    {
+     "type": "buffAttack",
+     "target": {
+      "race": "sylph"
+     },
+     "multiplier": 1.5,
+     "turns": 1
+    }
+   ],
+   "description": "靈仙攻擊 1.5 倍（1 回合）。"
+  },
+  {
+   "id": "s401",
+   "name": "虹之唱名",
+   "cooldown": {
+    "max": 14,
+    "min": 8
+   },
+   "effects": [
+    {
+     "type": "balanceBoard"
+    },
+    {
+     "type": "buffAttack",
+     "multiplier": 1.5,
+     "turns": 1
+    }
+   ],
+   "description": "盤面重整為各色平均，本回合全隊攻擊 1.5 倍。"
+  },
+  {
+   "id": "s402",
+   "name": "提前預言",
+   "cooldown": {
+    "max": 10,
+    "min": 6
+   },
+   "effects": [
+    {
+     "type": "reduceAllyCooldown",
+     "turns": 2
+    }
+   ],
+   "description": "全部隊友技能冷卻減少 2 回合。"
+  },
+  {
+   "id": "s404",
+   "name": "龍族集結",
+   "cooldown": {
+    "max": 11,
+    "min": 6
+   },
+   "effects": [
+    {
+     "type": "buffAttack",
+     "target": {
+      "race": "dragon"
+     },
+     "multiplier": 1.8,
+     "turns": 2
+    }
+   ],
+   "description": "龍嗣攻擊 1.8 倍（2 回合）。"
+  },
+  {
+   "id": "s406",
+   "name": "折射",
+   "cooldown": {
+    "max": 9,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "balanceBoard"
+    }
+   ],
+   "description": "盤面重整為各色平均。"
+  },
+  {
+   "id": "s407",
+   "name": "重新編隊",
+   "cooldown": {
+    "max": 9,
+    "min": 6
+   },
+   "effects": [
+    {
+     "type": "buffAttack",
+     "target": {
+      "race": "machina"
+     },
+     "multiplier": 1.5,
+     "turns": 1
+    },
+    {
+     "type": "reduceDamage",
+     "percent": 30,
+     "turns": 1
+    }
+   ],
+   "description": "機構攻擊 1.5 倍（1 回合），受到傷害減少 30%（1 回合）。"
+  },
+  {
+   "id": "s408",
+   "name": "點燭",
+   "cooldown": {
+    "max": 8,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "cleanse"
+    },
+    {
+     "type": "heal",
+     "mode": "percentMaxHp",
+     "value": 10
+    }
+   ],
+   "description": "解除隊伍身上的異常狀態（含珠子鎖定、暗珠），回復生命上限 10%。"
+  },
+  {
+   "id": "s409",
+   "name": "提醒",
+   "cooldown": {
+    "max": 9,
+    "min": 6
+   },
+   "effects": [
+    {
+     "type": "reduceAllyCooldown",
+     "turns": 1
+    }
+   ],
+   "description": "全部隊友技能冷卻減少 1 回合。"
+  },
+  {
+   "id": "s411",
+   "name": "灑粉",
+   "cooldown": {
+    "max": 9,
+    "min": 6
+   },
+   "effects": [
+    {
+     "type": "refreshBoard"
+    },
+    {
+     "type": "extendMoveTime",
+     "seconds": 1,
+     "turns": 1
+    }
+   ],
+   "description": "重整盤面，轉珠時間延長 1 秒。"
+  },
+  {
+   "id": "s501",
+   "name": "一口吞盡",
+   "cooldown": {
+    "max": 14,
+    "min": 8
+   },
+   "effects": [
+    {
+     "type": "convertOrbs",
+     "from": [
+      "water",
+      "heart"
+     ],
+     "to": "dark"
+    },
+    {
+     "type": "enhanceOrbs",
+     "orbs": "dark"
+    }
+   ],
+   "description": "潮珠與心珠轉為蝕珠，並強化全部蝕珠。"
+  },
+  {
+   "id": "s502",
+   "name": "渡資",
+   "cooldown": {
+    "max": 12,
+    "min": 7
+   },
+   "effects": [
+    {
+     "type": "damage",
+     "target": "all",
+     "mode": "fixed",
+     "value": 40000,
+     "ignoreShield": true
+    }
+   ],
+   "description": "對全體敵人造成 40000 固定傷害（無視護盾）。"
+  },
+  {
+   "id": "s504",
+   "name": "影絲",
+   "cooldown": {
+    "max": 10,
+    "min": 6
+   },
+   "effects": [
+    {
+     "type": "extendMoveTime",
+     "seconds": 2,
+     "turns": 1
+    },
+    {
+     "type": "noSkyfallCombo",
+     "turns": 1
+    },
+    {
+     "type": "reduceAllyCooldown",
+     "turns": 1
+    }
+   ],
+   "description": "轉珠時間延長 2 秒，本回合天降不造成消除，其他隊友技能冷卻減少 1 回合。"
+  },
+  {
+   "id": "s506",
+   "name": "沉錨",
+   "cooldown": {
+    "max": 9,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "convertOrbs",
+     "from": "light",
+     "to": "dark"
+    }
+   ],
+   "description": "輝珠轉為蝕珠。"
+  },
+  {
+   "id": "s507",
+   "name": "血契",
+   "cooldown": {
+    "max": 9,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "selfDamage",
+     "percentCurrentHp": 40
+    },
+    {
+     "type": "surviveOnce",
+     "turns": 2
+    }
+   ],
+   "description": "自身扣除目前生命 40%，獲得 2 回合瀕死保命。"
+  },
+  {
+   "id": "s508",
+   "name": "長夜",
+   "cooldown": {
+    "max": 10,
+    "min": 6
+   },
+   "effects": [
+    {
+     "type": "delayEnemy",
+     "turns": 2
+    }
+   ],
+   "description": "敵人行動延遲 2 回合。"
+  },
+  {
+   "id": "s509",
+   "name": "晶石噴嚏",
+   "cooldown": {
+    "max": 8,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "convertOrbs",
+     "from": "heart",
+     "to": "dark"
+    }
+   ],
+   "description": "心珠轉為蝕珠。"
+  },
+  {
+   "id": "s511",
+   "name": "上發條",
+   "cooldown": {
+    "max": 8,
+    "min": 5
+   },
+   "effects": [
+    {
+     "type": "reduceAllyCooldown",
+     "turns": 1
+    }
+   ],
+   "description": "全部隊友技能冷卻減少 1 回合。"
+  },
+  {
+   "id": "s601",
+   "name": "王之吼",
+   "cooldown": {
+    "max": 10,
+    "min": 6
+   },
+   "effects": [
+    {
+     "type": "buffAttack",
+     "target": {
+      "race": "beast"
+     },
+     "multiplier": 1.5,
+     "turns": 2
+    }
+   ],
+   "description": "獸裔攻擊 1.5 倍（2 回合）。"
+  },
+  {
+   "id": "s602",
+   "name": "翻頁",
+   "cooldown": {
+    "max": 10,
+    "min": 6
+   },
+   "effects": [
+    {
+     "type": "buffAttack",
+     "target": {
+      "race": "nether"
+     },
+     "multiplier": 1.5,
+     "turns": 1
+    },
+    {
+     "type": "damage",
+     "target": "all",
+     "mode": "fixed",
+     "value": 10000
+    }
+   ],
+   "description": "冥裔攻擊 1.5 倍（1 回合），對全體敵人造成 10000 固定傷害。"
+  },
+  {
+   "id": "s603",
+   "name": "並肩",
+   "cooldown": {
+    "max": 10,
+    "min": 6
+   },
+   "effects": [
+    {
+     "type": "buffAttack",
+     "target": {
+      "race": "human"
+     },
+     "multiplier": 1.5,
+     "turns": 1
+    },
+    {
+     "type": "reduceDamage",
+     "percent": 30,
+     "turns": 1
+    }
+   ],
+   "description": "人傑攻擊 1.5 倍（1 回合），受到傷害減少 30%（1 回合）。"
+  }
+ ],
+ "leaderSkills": [
+  {
+   "id": "l101",
+   "name": "熔冠王令",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "target": {
+        "attribute": "fire"
+       },
+       "value": 3.5
+      },
+      {
+       "type": "hpMultiplier",
+       "target": {
+        "attribute": "fire"
+       },
+       "value": 1.3
+      }
+     ]
+    }
+   ],
+   "description": "焰屬性攻擊 3.5 倍、生命 1.3 倍。"
+  },
+  {
+   "id": "l102",
+   "name": "瀕火之誓",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "hpBelow",
+       "percent": 30
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 4
+      }
+     ]
+    }
+   ],
+   "description": "生命 < 30% 時全隊攻擊 4 倍。"
+  },
+  {
+   "id": "l106",
+   "name": "點爐",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "target": {
+        "attribute": "fire"
+       },
+       "value": 2.5
+      }
+     ]
+    }
+   ],
+   "description": "焰屬性攻擊 2.5 倍。"
+  },
+  {
+   "id": "l109",
+   "name": "亡命",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "hpBelow",
+       "percent": 50
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 2
+      }
+     ]
+    }
+   ],
+   "description": "生命 < 50% 時全隊攻擊 2 倍。"
+  },
+  {
+   "id": "l201",
+   "name": "停潮",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "enemyCooldownPlus",
+       "turns": 1
+      },
+      {
+       "type": "damageReduction",
+       "percent": 35
+      },
+      {
+       "type": "atkMultiplier",
+       "target": {
+        "attribute": "water"
+       },
+       "value": 2.5
+      }
+     ]
+    }
+   ],
+   "description": "敵人攻擊倒數永遠 +1；全隊受到傷害減少 35%；潮屬性攻擊 2.5 倍。"
+  },
+  {
+   "id": "l202",
+   "name": "一拍接一拍",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "comboAtLeast",
+       "combo": 6
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 2.5,
+       "perStep": 0.5,
+       "maxValue": 4
+      }
+     ]
+    }
+   ],
+   "description": "Combo ≥ 6 時全隊攻擊 2.5 倍，每多 1 Combo +0.5 倍，最高 4 倍。"
+  },
+  {
+   "id": "l204",
+   "name": "雙月",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "attributesMatched",
+       "count": 2,
+       "attributes": [
+        "water",
+        "light"
+       ]
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 3.5
+      }
+     ]
+    }
+   ],
+   "description": "同時消除潮珠與輝珠時全隊攻擊 3.5 倍。"
+  },
+  {
+   "id": "l206",
+   "name": "打拍子",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "comboAtLeast",
+       "combo": 5
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 2,
+       "perStep": 0.25,
+       "maxValue": 3
+      }
+     ]
+    }
+   ],
+   "description": "Combo ≥ 5 時全隊攻擊 2 倍，每多 1 Combo +0.25 倍，最高 3 倍。"
+  },
+  {
+   "id": "l209",
+   "name": "慢潮",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "enemyCooldownPlus",
+       "turns": 1
+      }
+     ]
+    }
+   ],
+   "description": "敵人攻擊倒數永遠 +1。"
+  },
+  {
+   "id": "l301",
+   "name": "根之庇護",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "rcvMultiplier",
+       "value": 2
+      },
+      {
+       "type": "damageReduction",
+       "percent": 40
+      }
+     ]
+    },
+    {
+     "conditions": [
+      {
+       "type": "heartsMatched",
+       "count": 3
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 3.5
+      }
+     ]
+    }
+   ],
+   "description": "全隊回復 2 倍、受到傷害減少 40%；消除 3 顆以上心珠時全隊攻擊 3.5 倍。"
+  },
+  {
+   "id": "l302",
+   "name": "晶花滿開",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "enhancedOrbsMatched",
+       "count": 3
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 2.5,
+       "perStep": 0.25,
+       "maxValue": 4
+      }
+     ]
+    }
+   ],
+   "description": "消除 3 顆以上強化珠時全隊攻擊 2.5 倍，每多 1 顆 +0.25 倍，最高 4 倍。"
+  },
+  {
+   "id": "l306",
+   "name": "苔背",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "rcvMultiplier",
+       "value": 1.5
+      },
+      {
+       "type": "damageReduction",
+       "percent": 20
+      }
+     ]
+    },
+    {
+     "conditions": [
+      {
+       "type": "heartsMatched",
+       "count": 3
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 2.5
+      }
+     ]
+    }
+   ],
+   "description": "全隊回復 1.5 倍、受到傷害減少 20%；消除 3 顆以上心珠時全隊攻擊 2.5 倍。"
+  },
+  {
+   "id": "l307",
+   "name": "藤毒",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "heartsMatched",
+       "count": 3
+      }
+     ],
+     "effects": [
+      {
+       "type": "followUpDamage",
+       "mode": "fixed",
+       "value": 3000
+      }
+     ]
+    },
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "hpMultiplier",
+       "value": 1.3
+      }
+     ]
+    }
+   ],
+   "description": "消除 3 顆以上心珠時追加 3000 固定傷害；全隊生命 1.3 倍。"
+  },
+  {
+   "id": "l309",
+   "name": "發芽",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "enhancedOrbsMatched",
+       "count": 3
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 2
+      }
+     ]
+    }
+   ],
+   "description": "消除 3 顆以上強化珠時全隊攻擊 2 倍。"
+  },
+  {
+   "id": "l311",
+   "name": "羽之歌",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "target": {
+        "race": "sylph"
+       },
+       "value": 2
+      },
+      {
+       "type": "rcvMultiplier",
+       "target": {
+        "race": "sylph"
+       },
+       "value": 1.2
+      }
+     ]
+    }
+   ],
+   "description": "靈仙攻擊 2 倍、回復 1.2 倍。"
+  },
+  {
+   "id": "l401",
+   "name": "七曜詠歌",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "attributesMatched",
+       "count": 4
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 4,
+       "perStep": 2,
+       "maxValue": 6
+      }
+     ]
+    },
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "hpMultiplier",
+       "value": 1.2
+      }
+     ]
+    }
+   ],
+   "description": "同時消除 4 種屬性時全隊攻擊 4 倍，消除 5 種時 6 倍；全隊生命 1.2 倍。"
+  },
+  {
+   "id": "l402",
+   "name": "星盤就位",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "skillCooldownStart",
+       "charged": true
+      }
+     ]
+    },
+    {
+     "conditions": [
+      {
+       "type": "skillUsedThisTurn"
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 3
+      }
+     ]
+    }
+   ],
+   "description": "開場全員技能冷卻已滿；本回合施放過主動技時全隊攻擊 3 倍。"
+  },
+  {
+   "id": "l404",
+   "name": "龍之血契",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "target": {
+        "race": "dragon"
+       },
+       "value": 3
+      },
+      {
+       "type": "hpMultiplier",
+       "target": {
+        "race": "dragon"
+       },
+       "value": 1.3
+      }
+     ]
+    }
+   ],
+   "description": "龍嗣攻擊 3 倍、生命 1.3 倍。"
+  },
+  {
+   "id": "l406",
+   "name": "分光",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "attributesMatched",
+       "count": 4
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 3,
+       "perStep": 1,
+       "maxValue": 4
+      }
+     ]
+    }
+   ],
+   "description": "同時消除 4 種屬性時全隊攻擊 3 倍，消除 5 種時 4 倍。"
+  },
+  {
+   "id": "l407",
+   "name": "編號點名",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "target": {
+        "race": "machina"
+       },
+       "value": 2.5
+      },
+      {
+       "type": "hpMultiplier",
+       "target": {
+        "race": "machina"
+       },
+       "value": 1.3
+      }
+     ]
+    }
+   ],
+   "description": "機構攻擊 2.5 倍、生命 1.3 倍。"
+  },
+  {
+   "id": "l409",
+   "name": "預先準備",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "skillCooldownStart",
+       "charged": true
+      }
+     ]
+    }
+   ],
+   "description": "開場全員技能冷卻已滿。"
+  },
+  {
+   "id": "l501",
+   "name": "吞星",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "orbsInOneMatch",
+       "count": 6
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 3.5,
+       "perStep": 0.5,
+       "maxValue": 5
+      },
+      {
+       "type": "ignoreDefense"
+      }
+     ]
+    }
+   ],
+   "description": "一串消除 6 顆以上珠時全隊攻擊 3.5 倍，每多 1 顆 +0.5 倍，最高 5 倍，並無視防禦。"
+  },
+  {
+   "id": "l502",
+   "name": "一盞燈",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "heartsMatched",
+       "count": 3
+      }
+     ],
+     "effects": [
+      {
+       "type": "followUpDamage",
+       "mode": "fixed",
+       "value": 8000
+      }
+     ]
+    },
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "hpMultiplier",
+       "value": 1.5
+      }
+     ]
+    }
+   ],
+   "description": "消除 3 顆以上心珠時追加 8000 固定傷害；全隊生命 1.5 倍。"
+  },
+  {
+   "id": "l506",
+   "name": "兩界之船",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "attributesMatched",
+       "count": 2,
+       "attributes": [
+        "dark",
+        "water"
+       ]
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 3
+      }
+     ]
+    }
+   ],
+   "description": "同時消除蝕珠與潮珠時全隊攻擊 3 倍。"
+  },
+  {
+   "id": "l509",
+   "name": "一直線",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "orbsInOneMatch",
+       "count": 6
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "value": 2.5
+      }
+     ]
+    }
+   ],
+   "description": "一串消除 6 顆以上珠時全隊攻擊 2.5 倍。"
+  },
+  {
+   "id": "l601",
+   "name": "群聚",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "target": {
+        "race": "beast"
+       },
+       "value": 2.5
+      },
+      {
+       "type": "hpMultiplier",
+       "target": {
+        "race": "beast"
+       },
+       "value": 1.5
+      }
+     ]
+    }
+   ],
+   "description": "獸裔攻擊 2.5 倍、生命 1.5 倍。"
+  },
+  {
+   "id": "l602",
+   "name": "亡者名錄",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "target": {
+        "race": "nether"
+       },
+       "value": 2.5
+      },
+      {
+       "type": "hpMultiplier",
+       "target": {
+        "race": "nether"
+       },
+       "value": 1.3
+      }
+     ]
+    }
+   ],
+   "description": "冥裔攻擊 2.5 倍、生命 1.3 倍。"
+  },
+  {
+   "id": "l603",
+   "name": "眾人之盾",
+   "rules": [
+    {
+     "conditions": [
+      {
+       "type": "always"
+      }
+     ],
+     "effects": [
+      {
+       "type": "atkMultiplier",
+       "target": {
+        "race": "human"
+       },
+       "value": 2.5
+      },
+      {
+       "type": "hpMultiplier",
+       "target": {
+        "race": "human"
+       },
+       "value": 1.3
+      },
+      {
+       "type": "rcvMultiplier",
+       "target": {
+        "race": "human"
+       },
+       "value": 1.3
+      }
+     ]
+    }
+   ],
+   "description": "人傑攻擊 2.5 倍、生命 1.3 倍、回復 1.3 倍。"
+  }
+ ],
+ "starterTeams": {
+  "mono": [
+   "c106",
+   "c107",
+   "c111",
+   "c109",
+   "c108"
+  ],
+  "rainbow": [
+   "c406",
+   "c411",
+   "c107",
+   "c206",
+   "c306"
+  ],
+  "combo": [
+   "c206",
+   "c211",
+   "c209",
+   "c208",
+   "c207"
+  ],
+  "chain": [
+   "c509",
+   "c107",
+   "c506",
+   "c511",
+   "c508"
+  ],
+  "heart": [
+   "c306",
+   "c208",
+   "c308",
+   "c307",
+   "c309"
+  ],
+  "race": [
+   "c311",
+   "c111",
+   "c211",
+   "c309",
+   "c411"
+  ],
+  "enhance": [
+   "c309",
+   "c111",
+   "c308",
+   "c108",
+   "c208"
+  ],
+  "control": [
+   "c209",
+   "c508",
+   "c108",
+   "c308",
+   "c208"
+  ],
+  "berserk": [
+   "c109",
+   "c507",
+   "c107",
+   "c111",
+   "c208"
+  ],
+  "dual": [
+   "c506",
+   "c207",
+   "c508",
+   "c209",
+   "c211"
+  ],
+  "skillcycle": [
+   "c409",
+   "c511",
+   "c108",
+   "c508",
+   "c408"
+  ],
+  "fixed": [
+   "c307",
+   "c208",
+   "c306",
+   "c308",
+   "c408"
+  ]
+ }
+}
