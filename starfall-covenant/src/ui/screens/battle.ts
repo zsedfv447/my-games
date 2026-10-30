@@ -7,6 +7,7 @@ import type { StageDef } from '../../core/types';
 import { startBattle, type Battle, type BattleData, type BattleState, type EnemyState, type TurnSummary } from '../../battle/battle-state';
 import { BoardView } from '../../battle/view/board-view';
 import { completeStage, type StageClearResult } from '../../progression/stages';
+import { CONTINUE_COST_GEMS, payContinue } from '../../progression/continue';
 import { enemySvg } from '../art/enemy';
 import { ATTRIBUTE_NAMES } from '../art/palette';
 import { resolveArtPath, userAsset } from '../assets';
@@ -15,6 +16,7 @@ import { badge, bar, button, emptyState, iconButton, resourceIcon } from '../com
 import { cardThumb } from '../components/card-thumb';
 import { confirmDialog, openDialog, toast, type DialogHandle } from '../components/overlay';
 import { DEMO_DATA, DEMO_HELPER, DEMO_STAGE, DEMO_TEAM } from '../demo';
+import { stageContext } from '../stage-nav';
 import { buildSortieTeam } from '../sortie';
 import { commit, getSave, getSettings, growth } from '../state';
 import type { Navigator, ScreenDef } from '../router';
@@ -23,8 +25,6 @@ import { enemyChips, teamChips, STATUS_NAMES, type StatusChip } from '../status-
 import { storyBox } from '../components/story';
 import { markStorySeen } from './story';
 
-/** 續戰花費的星晶（GDD 2.1：用星晶續戰；數值待關卡與經濟確認） */
-export const CONTINUE_GEMS = 5;
 const CELL = 63;
 
 // 出戰確認扣過體力才發「入場券」；重新整理戰鬥頁不會白白再扣一次，也不能免費重打
@@ -298,12 +298,14 @@ class BattleView {
     const after = this.s.battle.getState();
     const speed = this.speed;
 
-    await this.boardView.playClear(res.summary.groups, (combo) => {
+    // 逐段播放：消除 → 落下 → 天降連鎖；傷害在全部消完後一次結算
+    await this.boardView.playSteps(res.summary.steps, (combo) => {
       this.showCombo(combo);
       audio.play('match', combo);
     }, speed);
     await this.animateHits(before, res.summary);
-    await this.boardView.playRefill(after.board, speed);
+    // 主動技或敵人技能在結算後改變了盤面時，最後再對齊一次
+    this.boardView.setBoard(after.board);
 
     // 回復與毒
     if (res.summary.heal > 0) floatText(this.hpHost, `+${res.summary.heal.toLocaleString()}`, 'heal');
@@ -409,7 +411,7 @@ class BattleView {
     let clear: StageClearResult | null = null;
     if (!this.s.practice) {
       const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
-      const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, { stages: gameData.stages }, gameData.config, createRng(), Date.now());
+      const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages), gameData.config, createRng(), Date.now());
       commit(done.save);
       clear = done.result;
       bus.emit('stageCleared', { stageId: this.s.stage.id, turns: result.turns, stars: clear.stars });
@@ -451,17 +453,17 @@ class BattleView {
   private onLose(): void {
     audio.play('lose');
     const gems = getSave().player.gems;
-    const cost = this.s.practice ? 0 : CONTINUE_GEMS;
+    const cost = this.s.practice ? 0 : CONTINUE_COST_GEMS;
     const giveUp = () => {
       this.dialog?.close();
       if (!this.s.practice) bus.emit('stageFailed', { stageId: this.s.stage.id });
       this.nav.back();
     };
     const doContinue = () => {
-      if (cost > 0) {
-        const save = getSave();
-        if (save.player.gems < cost) return toast('星晶不足');
-        commit({ ...save, player: { ...save.player, gems: save.player.gems - cost } });
+      if (!this.s.practice) {
+        const paid = payContinue(getSave());
+        if (!paid.ok) return toast('星晶不足');
+        commit(paid.save);
       }
       const r = this.s.battle.continueBattle();
       if (!r.ok) return toast(r.reason);

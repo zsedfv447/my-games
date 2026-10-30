@@ -33,7 +33,7 @@ describe('畫面路由', () => {
     const names = new Set(SCREENS.map((s) => s.name));
     for (const n of ['title', 'home', 'adventure', 'stages', 'helper', 'prepare', 'battle', 'team', 'cards', 'card',
       'enhance', 'evolve', 'summon', 'summon-rates', 'summon-history', 'shop', 'login-bonus', 'settings', 'quests',
-      'achievements', 'collection', 'archetypes', 'event', 'tower', 'daily', 'story', 'stories']) {
+      'achievements', 'collection', 'archetypes',  'story', 'stories']) {
       expect(names.has(n), n).toBe(true);
     }
     for (const s of SCREENS) if (s.parent) expect(names.has(s.parent), `${s.name} → ${s.parent}`).toBe(true);

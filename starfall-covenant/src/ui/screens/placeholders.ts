@@ -16,14 +16,7 @@ interface Stub {
 }
 
 const STUBS: Stub[] = [
-  { name: 'stages', title: '關卡列表', chrome: 'sub', parent: 'adventure', icon: 'adventure', waitsFor: '關卡資料（progression）' },
   { name: 'helper', title: '選擇助戰', chrome: 'sub', parent: 'adventure', icon: 'team', waitsFor: 'NPC 助戰名單（progression）' },
-  { name: 'daily', title: '每日關卡', chrome: 'sub', parent: 'adventure', icon: 'history', waitsFor: '每日關卡資料（progression）' },
-  { name: 'event', title: '限時活動', chrome: 'sub', parent: 'adventure', icon: 'event', waitsFor: '活動資料與兌換商店（progression）' },
-  { name: 'tower', title: '挑戰之塔', chrome: 'sub', parent: 'adventure', icon: 'tower', waitsFor: '塔樓層資料（progression）' },
-  { name: 'team', title: '隊伍編成', chrome: 'full', tab: 'team', parent: 'home', icon: 'team', waitsFor: '存檔與卡片資料（save、growth）' },
-  { name: 'cards', title: '卡片背包', chrome: 'full', tab: 'cards', parent: 'home', icon: 'cards', waitsFor: '背包（growth）' },
-  { name: 'card', title: '卡片詳情', chrome: 'sub', parent: 'cards', icon: 'cards', waitsFor: '卡片資料（growth）' },
   { name: 'enhance', title: '強化', chrome: 'sub', parent: 'cards', icon: 'cards', waitsFor: '強化（growth）' },
   { name: 'evolve', title: '進化', chrome: 'sub', parent: 'cards', icon: 'cards', waitsFor: '進化（growth）' },
   { name: 'summon', title: '召喚', chrome: 'full', tab: 'summon', parent: 'home', icon: 'summon', waitsFor: '卡池與召喚（progression）' },
