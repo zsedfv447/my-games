@@ -62,7 +62,8 @@ function intelPanel(stage: StageDef): HTMLElement {
   const intel = stageIntel(stage, gameData.enemies, gameData.config.battle);
   return panel(
     { title: '敵人情報' },
-    intel.suggested.length > 0 && h('div', { class: 'row wrap intel-suggest' }, h('span', { class: 'small-text' }, '建議屬性'), intel.suggested.map(attrChip)),
+    intel.suggested.length > 0 && h('div', { class: 'row wrap intel-suggest' }, h('span', { class: 'small-text' }, '建議屬性'), intel.suggested.map(attrChip),
+      intel.notes.length > 0 && h('span', { class: 'small-text dim' }, `（${intel.notes.join('、')}）`)),
     h('div', { class: 'intel-waves' }, intel.waves.map((w, i) => h('div', { class: `intel-wave${w.boss ? ' boss' : ''}` },
       h('div', { class: 'intel-wave-title small-text' }, `第 ${i + 1} 波`, w.boss && badge('BOSS', 'gold')),
       w.enemies.map((e) => h('div', { class: 'intel-enemy' },
