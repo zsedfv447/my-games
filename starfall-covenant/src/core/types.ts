@@ -220,6 +220,15 @@ export interface StageDef {
   story?: { before?: string; beforeBoss?: string; after?: string };
 }
 
+/** 主線章節：每章對應一個星座與種族，集滿章節星章領 starReward */
+export interface ChapterDef {
+  chapter: number;
+  name: string;
+  constellation: string;
+  race: Race;
+  starReward: Reward;
+}
+
 // ---------- 經濟 ----------
 export interface Reward {
   coin?: number;

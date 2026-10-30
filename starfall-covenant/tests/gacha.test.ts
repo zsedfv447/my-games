@@ -7,7 +7,8 @@ import {
   checkGachaPool, displayRates, GACHA_HISTORY_LIMIT, isPoolOpen, pullGacha, pullsUntilPity, type PullResult,
 } from '../src/progression/gacha';
 
-const config = gameData.config;
+// 測試不受初始卡影響
+const config = { ...gameData.config, newPlayer: { ...gameData.config.newPlayer, starterCards: [] } };
 const NOW = Date.UTC(2026, 9, 30);
 
 const standard: GachaPoolDef = {

@@ -19,6 +19,20 @@ export const fixtureData: BattleData = {
 
 export const benchmarkStages = benchmark.stages as StageDef[];
 
+/** 正式敵人與關卡（data/*.json）＋提案 001 的暫定卡片 */
+export const gameStageData: BattleData = { ...fixtureData, enemies: gameData.enemies };
+
+/** 流派試煉的借用隊伍 */
+export function fixedTeamOf(stage: StageDef): SimTeam | null {
+  if (!stage.fixedTeam || !stage.archetype) return null;
+  const toInput = (m: { card: string; level: number; skillLevel?: number }) => ({ cardId: m.card, level: m.level, skillLevel: m.skillLevel });
+  return {
+    archetype: stage.archetype,
+    members: stage.fixedTeam.members.map(toInput),
+    helper: stage.fixedTeam.helper ? toInput(stage.fixedTeam.helper) : null,
+  };
+}
+
 /** 提案 001 第 8 節的免抽入門隊；全員滿等，助戰帶同一張隊長 */
 export function starterTeams(cards: CardDef[] = proposalCards): SimTeam[] {
   const byId = new Map(cards.map((c) => [c.id, c]));

@@ -142,7 +142,8 @@ export function formatReport(results: CellResult[], stageNames: Record<string, s
   const stages = [...new Set(results.map((r) => r.stageId))];
   const archetypes = [...new Set(results.map((r) => r.archetype))];
   const cell = (a: ArchetypeId, s: string) => {
-    const r = results.find((x) => x.archetype === a && x.stageId === s)!;
+    const r = results.find((x) => x.archetype === a && x.stageId === s);
+    if (!r) return '';
     const pct = `${Math.round(r.winRate * 100)}%`;
     return r.avgTurns === null ? `${pct}／—` : `${pct}／${r.avgTurns.toFixed(1)}`;
   };

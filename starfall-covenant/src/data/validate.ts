@@ -1,7 +1,7 @@
 // 資料檔驗證：檢查欄位與交叉引用，錯誤的資料在測試（CI）階段就擋下
 import {
   ARCHETYPE_IDS, ATTRIBUTES, ORB_TYPES, RACES,
-  type ActiveSkillDef, type ArchetypeDef, type CardDef, type EnemyDef, type GachaPoolDef,
+  type ActiveSkillDef, type ArchetypeDef, type CardDef, type ChapterDef, type EnemyDef, type GachaPoolDef,
   type GameConfig, type LeaderSkillDef, type QuestDef, type ShopItemDef, type StageDef,
 } from '../core/types';
 
@@ -13,6 +13,7 @@ export interface GameData {
   leaderSkills: LeaderSkillDef[];
   enemies: EnemyDef[];
   stages: StageDef[];
+  chapters: ChapterDef[];
   gachaPools: GachaPoolDef[];
   shop: ShopItemDef[];
   quests: QuestDef[];
@@ -84,6 +85,20 @@ export function validateGameData(d: GameData): string[] {
       if (!cardIds.has(drop.card)) err(w, `掉落卡 ${drop.card} 不存在`);
       if (drop.rate <= 0 || drop.rate > 1) err(w, `掉落率 ${drop.rate} 需介於 0–1`);
     }
+  }
+
+  const chapterNums = new Set(d.chapters.map((c) => c.chapter));
+  d.chapters.forEach((c, i) => {
+    const w = `chapters/${c.chapter}`;
+    if (c.chapter !== i + 1) err(w, `章節編號要從 1 連續排列，第 ${i + 1} 筆是 ${c.chapter}`);
+    if (!RACES.includes(c.race)) err(w, `未知種族 ${c.race}`);
+    for (const r of c.starReward.cards ?? []) if (!cardIds.has(r.card)) err(w, `星章獎勵卡 ${r.card} 不存在`);
+    if (!d.stages.some((s) => s.kind === 'main' && s.chapter === c.chapter)) err(w, '這一章沒有任何主線關卡');
+  });
+  for (const s of d.stages) {
+    if (s.kind === 'main' && s.chapter !== undefined && !chapterNums.has(s.chapter)) err(`stages/${s.id}`, `章節 ${s.chapter} 不在 chapters.json`);
+    for (const r of s.rewards.firstClear?.cards ?? []) if (!cardIds.has(r.card)) err(`stages/${s.id}`, `首通獎勵卡 ${r.card} 不存在`);
+    for (const day of s.weekdays ?? []) if (day < 0 || day > 6) err(`stages/${s.id}`, `星期 ${day} 需介於 0–6`);
   }
 
   for (const p of d.gachaPools) {

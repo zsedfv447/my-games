@@ -11,7 +11,8 @@ import {
 } from '../src/progression/quests';
 import { grantReward, mergeRewards } from '../src/progression/rewards';
 
-const config = gameData.config;
+// 測試不受初始卡影響
+const config = { ...gameData.config, newPlayer: { ...gameData.config.newPlayer, starterCards: [] } };
 const DAY = 86_400_000;
 const MON = new Date(2026, 10, 2, 12).getTime();
 const fresh = (): SaveData => createNewSave(config, MON);

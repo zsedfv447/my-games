@@ -24,7 +24,7 @@ function battleState(archetype: (typeof ARCHETYPE_IDS)[number], rows?: string[])
 
 describe('模擬器資料', () => {
   it('提案 001 的暫定資料能通過資料驗證', () => {
-    const data = { ...gameData, ...fixtureData, stages: benchmarkStages };
+    const data = { ...gameData, ...fixtureData, stages: benchmarkStages, chapters: [] };
     expect(validateGameData(data)).toEqual([]);
   });
 
