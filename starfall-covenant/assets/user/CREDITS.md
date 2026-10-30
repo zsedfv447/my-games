@@ -15,3 +15,10 @@
 
 | 檔案 | 來源 | 授權 | 提供者 |
 |---|---|---|---|
+
+## 字型
+
+| 字型 | 來源 | 授權 | 用途 |
+|---|---|---|---|
+| Noto Sans TC | Google Fonts（`index.html` 外連載入，未放入 repo） | SIL Open Font License 1.1 | 內文 |
+| Noto Serif TC | Google Fonts（`index.html` 外連載入，未放入 repo） | SIL Open Font License 1.1 | 標題、卡片名字 |
