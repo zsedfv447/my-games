@@ -13,8 +13,20 @@ import type { Navigator, ScreenDef } from '../router';
 import { questDestination } from '../quest-goto';
 import { commit, getSave } from '../state';
 
-type QuestTab = 'daily' | 'weekly';
-let questTab: QuestTab = 'daily';
+type QuestTab = 'starter' | 'daily' | 'weekly';
+let questTab: QuestTab | null = null;
+
+const BANNER_SUB: Record<QuestTab, string> = {
+  starter: '一步步熟悉契約的每個角落，完成可領星晶（只能領一次）',
+  daily: '每日任務於午夜 00:00 重置',
+  weekly: '每週任務於週一 00:00 重置',
+};
+
+/** 新手契約還有沒領完的（全部領完後分頁隱藏） */
+function starterOpen(): boolean {
+  const claimed = new Set(getSave().quests.claimed);
+  return gameData.quests.some((q) => q.kind === 'starter' && !claimed.has(q.id));
+}
 
 /** 一鍵領取（規則在 progression/quests.ts 的 claimAllQuests）；回傳領取數 */
 export function claimAll(kinds: QuestDef['kind'][]): number {
@@ -79,20 +91,30 @@ export const questsScreen: ScreenDef = {
   parent: 'home',
   render({ nav }) {
     const banner = h('div');
+    const tabBar = h('div');
     const body = h('div', { class: 'quest-list' });
     const footer = h('div');
     const refresh = () => {
       clear(banner);
+      clear(tabBar);
       clear(body);
       clear(footer);
-      banner.append(screenBanner('quest-banner', '契印師的日課', questTab === 'daily' ? '每日任務於午夜 00:00 重置' : '每週任務於週一 00:00 重置'));
-      body.append(...questList([questTab], refresh, nav));
-      footer.append(claimAllButton([questTab], refresh));
+      // 新手契約全部領完就隱藏分頁；沒選過分頁時，新手先看新手契約
+      const starter = starterOpen();
+      const tab: QuestTab = questTab === 'starter' && !starter ? 'daily' : questTab ?? (starter ? 'starter' : 'daily');
+      banner.append(screenBanner('quest-banner', '契印師的日課', BANNER_SUB[tab]));
+      tabBar.append(tabs([
+        ...(starter ? [{ id: 'starter' as const, label: '新手契約' }] : []),
+        { id: 'daily' as const, label: '每日任務' },
+        { id: 'weekly' as const, label: '每週任務' },
+      ], tab, (id) => { questTab = id; refresh(); }));
+      body.append(...questList([tab], refresh, nav));
+      footer.append(claimAllButton([tab], refresh));
     };
     refresh();
     return h('div', { class: 'economy-screen' },
       banner,
-      tabs([{ id: 'daily', label: '每日任務' }, { id: 'weekly', label: '每週任務' }], questTab, (id) => { questTab = id; refresh(); }),
+      tabBar,
       footer,
       body,
       button('查看成就', { variant: 'ghost', block: true, icon: 'trophy', onClick: () => nav.go('achievements') }));

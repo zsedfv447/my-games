@@ -299,7 +299,8 @@ export interface ShopItemDef {
 
 export interface QuestDef {
   id: string;
-  kind: 'daily' | 'weekly' | 'achievement';
+  /** starter：新手契約，一次性、不重置（存檔結構與成就相同） */
+  kind: 'daily' | 'weekly' | 'achievement' | 'starter';
   name: string;
   /** 由 progression 模組定義的計數器名稱，例如 'combo10'、'stageClear' */
   counter: string;
