@@ -4,7 +4,7 @@ import type { GameConfig, SaveData } from '../core/types';
 import { bus } from '../core/events';
 
 export const SAVE_KEY = 'starfall.save';
-export const CURRENT_SAVE_VERSION = 3;
+export const CURRENT_SAVE_VERSION = 4;
 
 /** 寫入 localStorage 的外層：存檔本體＋校驗碼（校驗碼只防手動改壞，不防作弊） */
 interface SaveEnvelope {
@@ -40,6 +40,7 @@ export function createNewSave(config: GameConfig, now: number): SaveData {
     activeTeam: 0,
     progress: { clearedStages: [], stars: {}, towerFloor: 0, tutorialDone: false, storySeen: [], chapterRewardsClaimed: [] },
     tutorial: { step: 'battle', giftGiven: false },
+    activeBattle: null,
     gacha: { pityCounter: {}, history: [] },
     collection: { seen: starterIds, owned: starterIds, claimed: [] },
     quests: { counters: {}, claimed: [], dailyResetAt: '', weeklyResetAt: '' },
@@ -70,6 +71,8 @@ const MIGRATIONS: Record<number, Migration> = {
     const claimed = Array.isArray(progress.chapterRewardsClaimed) ? progress.chapterRewardsClaimed : [];
     return { ...old, progress: { ...progress, chapterRewardsClaimed: claimed } };
   },
+  // v3 → v4：加入進行中的戰鬥（中斷續戰）。舊存檔沒有進行中的戰鬥
+  3: (old) => ({ ...old, activeBattle: old.activeBattle ?? null }),
 };
 
 export function migrate(

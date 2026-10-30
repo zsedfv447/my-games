@@ -21,8 +21,7 @@ import { cardThumb } from '../components/card-thumb';
 import { confirmDialog, openDialog, toast, type DialogHandle } from '../components/overlay';
 import { DEMO_DATA, DEMO_HELPER, DEMO_STAGE, DEMO_TEAM } from '../demo';
 import { stageContext } from '../stage-nav';
-import { buildSortieTeam } from '../sortie';
-import { commit, getSave, getSettings, growth } from '../state';
+import { commit, getSave, getSettings } from '../state';
 import type { Navigator, ScreenDef } from '../router';
 import { starText } from './prepare';
 import { enemyChips, teamChips, STATUS_NAMES, type StatusChip } from '../status-labels';
@@ -36,16 +35,14 @@ import { TutorialBattleGuide, texts as guideTexts, type BattleGuide } from '../t
 import { advanceTutorial, skipTutorial } from '../tutorial/flow';
 import { BattleHud } from '../components/battle-hud';
 import { canAct, reenableAfterCancel } from '../battle-guard';
-import { grantClearExp, nextStageButton, sortieUids, unlockNotice } from '../stage-clear';
+import { grantClearExp, nextStageButton, unlockNotice } from '../stage-clear';
+import { endBattle, openStageBattle, saveBattle } from '../battle-session';
 import type { CardExpGain } from '../../growth';
 
 const CELL = 63;
 
-// 出戰確認扣過體力才發「入場券」；重新整理戰鬥頁不會白白再扣一次，也不能免費重打
-let ticket: string | null = null;
-export function armBattle(stageId: string): void {
-  ticket = stageId;
-}
+// 出戰確認扣過體力才發「入場券」（寫在存檔，見 battle-session.ts）；重新整理會從中斷處繼續，不會重扣也不能重打
+export { armBattle } from '../battle-session';
 
 function enemyArt(e: EnemyState, boss: boolean): Element {
   const url = userAsset('enemies', e.def.id) ?? resolveArtPath(e.def.art.sprite);
@@ -76,6 +73,9 @@ interface Setup {
   battle: Battle;
   /** 出戰的玩家卡 uid（不含助戰），結算發卡片經驗用 */
   memberUids?: string[];
+  /** 正式關卡：結算掉落的亂數種子、是否從中斷處還原 */
+  dropSeed?: number;
+  resumed?: boolean;
   /** 新手教學戰鬥的引導層 */
   guide?: BattleGuide;
 }
@@ -94,14 +94,8 @@ function setup(stageId: string, nav: Navigator): Setup | string {
   }
   const stage = gameData.stages.find((s) => s.id === stageId);
   if (!stage) return '找不到這一關';
-  if (ticket !== stageId) return '戰鬥已中斷，請重新出發';
-  ticket = null;
-  const team = buildSortieTeam(stage, getSave(), growth.card);
-  try {
-    return { stage, data: gameData, practice: false, battle: startBattle(stage, team.members, team.helper, createRng(), gameData), memberUids: sortieUids(team) };
-  } catch (err) {
-    return err instanceof Error ? err.message : String(err);
-  }
+  const opened = openStageBattle(stage);
+  return typeof opened === 'string' ? opened : { stage, data: gameData, practice: false, ...opened };
 }
 
 export const battleScreen: ScreenDef = {
@@ -185,6 +179,7 @@ class BattleView {
       ev.on('poisonTick', (e) => this.queue.push({ kind: 'poison', damage: e.damage })),
     );
     if (!s.practice) this.maybeBossStory();
+    if (s.resumed) queueMicrotask(() => this.afterResume());
     s.guide?.attach({
       root: this.element,
       board: this.boardView.element,
@@ -193,6 +188,18 @@ class BattleView {
       setBoardEnabled: (on) => this.boardView.setEnabled(on),
       getState: () => this.state,
     });
+  }
+
+  /** 從中斷處還原：已分出勝負的直接進結算或失敗選單 */
+  private afterResume(): void {
+    toast('已回到中斷的戰鬥');
+    if (this.state.phase === 'won') void this.onWin();
+    else if (this.state.phase === 'lost') this.onLose();
+  }
+
+  /** 正式關卡每次行動結算後存檔 */
+  private persist(): void {
+    if (!this.s.practice) saveBattle(this.s.battle);
   }
 
   destroy(): void {
@@ -355,6 +362,7 @@ class BattleView {
     const before = this.state;
     const r = this.s.battle.useSkill(i);
     if (!r.ok) return toast(r.reason);
+    this.persist();
     this.resolving = true;
     try {
       await this.playSkill(i, before, r);
@@ -424,6 +432,7 @@ class BattleView {
       this.enableBoard();
       return;
     }
+    this.persist();
     this.resolving = true;
     try {
       await this.playTurn(before, res);
@@ -589,10 +598,11 @@ class BattleView {
     let expGains: CardExpGain[] = [];
     if (!this.s.practice) {
       const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
-      const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages), gameData.config, createRng(), Date.now());
+      const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages), gameData.config, createRng(this.s.dropSeed), Date.now());
       const exp = grantClearExp(done.save, this.s.memberUids ?? [], done.result.cardExp);
       expGains = exp.gains;
-      commit(exp.save);
+      // 發獎與清掉進行中的戰鬥同一次寫入，重新整理不會重複領或重骰掉落
+      commit({ ...exp.save, activeBattle: null });
       clear = done.result;
       bus.emit('stageCleared', { stageId: this.s.stage.id, turns: result.turns, stars: clear.stars });
       for (const d of clear.drops) bus.emit('cardObtained', { cardId: d.cardId, uid: d.uid, source: 'drop' });
@@ -648,6 +658,7 @@ class BattleView {
       }
       const r = this.s.battle.continueBattle();
       if (!r.ok) return toast(r.reason);
+      this.persist();
       this.dialog?.close();
       this.state = this.s.battle.getState();
       this.shownHp = this.state.hp;
@@ -663,6 +674,7 @@ class BattleView {
   /** 失敗離場：正式關卡先顯示失敗引導（components/defeat-guide.ts），練習與教學直接返回 */
   private leaveDefeated(): void {
     if (this.s.practice || this.s.guide) return this.nav.back();
+    endBattle();
     showDefeatGuide(this.s.stage, { wave: this.state.wave, waveCount: this.state.waveCount, hasHelper: this.state.team.some((m) => m.isHelper) }, this.nav);
   }
 }
