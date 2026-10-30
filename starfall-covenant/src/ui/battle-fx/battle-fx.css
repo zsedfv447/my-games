@@ -140,3 +140,9 @@
 
 /* 練習場：暫停選單的練習敵人切換 */
 .pause-practice { display: flex; flex-direction: column; gap: 4px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+
+/* 星紋封印：頭像灰階＋鎖鏈，低特效時一樣顯示（沒有動畫） */
+.team-row .card-thumb.sealed > img, .team-row .card-thumb.sealed > svg { filter: grayscale(1) brightness(0.6); }
+.team-row .card-thumb.sealed { animation: none; box-shadow: none; }
+.seal-chain { position: absolute; inset: 0; z-index: 3; pointer-events: none; display: flex; align-items: center; justify-content: center; }
+.seal-chain svg { width: 92%; height: 92%; filter: drop-shadow(0 1px 2px #000); }

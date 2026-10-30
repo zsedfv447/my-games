@@ -79,23 +79,8 @@ export const DEMO_HELPER: TeamMemberInput = { cardId: 'demo-c6', level: 40 };
 
 export type PracticeMode = 'normal' | 'darkOrbs' | 'attributeSeal';
 
-/** 練習用的機制敵人：生命低、攻擊弱，只為了看效果 */
-const MECHANIC_ENEMIES: Record<Exclude<PracticeMode, 'normal'>, EnemyDef> = {
-  darkOrbs: {
-    ...enemy('demo-m1', '示範・幕影蛾', 'dark', 60000, 300, 3),
-    abilities: [
-      { status: 'darkOrbs', trigger: 'onStart', value: 6, turns: 2 },
-      { status: 'darkOrbs', trigger: 'everyNTurns', value: 6, turns: 2, params: { n: 3 } },
-    ],
-  },
-  attributeSeal: {
-    ...enemy('demo-m2', '示範・封紋影', 'light', 60000, 300, 3),
-    abilities: [
-      { status: 'attributeSeal', trigger: 'onStart', turns: 2, params: { attribute: 'leader' } },
-      { status: 'attributeSeal', trigger: 'everyNTurns', turns: 2, params: { n: 3, attribute: 'water,wood' } },
-    ],
-  },
-};
+/** 練習用的機制敵人：正式資料裡的示範敵人（e0046 幕紗星蛾、e0047 封紋司祭，不在任何關卡），生命與攻擊調低方便看效果 */
+const MECHANIC_ENEMIES: Record<Exclude<PracticeMode, 'normal'>, string> = { darkOrbs: 'e0046', attributeSeal: 'e0047' };
 
 export const PRACTICE_MODES: { id: PracticeMode; label: string }[] = [
   { id: 'normal', label: '一般' },
@@ -107,10 +92,10 @@ export const isPracticeMode = (v: string | undefined): v is PracticeMode => PRAC
 
 /** 練習場的關卡與資料；機制模式換成一隻會放該機制的示範敵人 */
 export function practiceSetup(mode: PracticeMode = 'normal'): { stage: StageDef; data: BattleData } {
-  if (mode === 'normal') return { stage: DEMO_STAGE, data: DEMO_DATA };
-  const def = MECHANIC_ENEMIES[mode];
+  const def = mode === 'normal' ? undefined : gameData.enemies.find((e) => e.id === MECHANIC_ENEMIES[mode]);
+  if (!def) return { stage: DEMO_STAGE, data: DEMO_DATA };
   return {
     stage: { ...DEMO_STAGE, name: `練習場・${PRACTICE_MODES.find((m) => m.id === mode)!.label}`, waves: [{ enemies: [def.id], boss: true }] },
-    data: { ...DEMO_DATA, enemies: [...DEMO_DATA.enemies, def] },
+    data: { ...DEMO_DATA, enemies: [...DEMO_DATA.enemies, { ...def, hp: 60000, atk: 300 }] },
   };
 }

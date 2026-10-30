@@ -6,6 +6,7 @@ import { createRng } from '../../core/rng';
 import type { StageDef } from '../../core/types';
 import { startBattle, type Battle, type BattleData, type BattleState, type EnemyState, type TurnSummary } from '../../battle/battle-state';
 import { BoardView } from '../../battle/view/board-view';
+import { isMemberSealed } from '../../battle/skills/status';
 import { completeStage, liveStarStatus, type StageClearResult } from '../../progression/stages';
 import { plannedCards, type DropPlan } from '../../progression/drops';
 import { chestBadge, DropCounter } from '../battle-fx/drops';
@@ -15,7 +16,7 @@ import { enemyArtUrl } from '../art/enemy-art';
 import { ATTRIBUTE_NAMES } from '../art/palette';
 import { buzz, flashClass, skillCutin } from '../battle-fx/effects';
 import { openPauseMenu, type PauseHandle } from '../battle-fx/pause';
-import { clearCombo, finishCombo, flashReadySkills, markMatchups, renderCombo, renderIntent, weakHint } from '../battle-fx/readability';
+import { clearCombo, finishCombo, flashReadySkills, markMatchups, markSeals, renderCombo, renderIntent, weakHint } from '../battle-fx/readability';
 import { playStrikes } from '../battle-fx/strikes';
 import { userAsset } from '../assets';
 import { audio } from '../audio';
@@ -304,6 +305,7 @@ class BattleView {
       this.teamRow.appendChild(thumb);
     }
     markMatchups(this.teamRow, this.state, this.s.data.config.battle);
+    markSeals(this.teamRow, this.state);
   }
 
   private renderHp(previous?: number): void {
@@ -381,10 +383,11 @@ class BattleView {
     if (!m || !skill) return toast(`${m?.card.name ?? ''}沒有主動技`);
     const blocked = this.s.guide?.checkSkill(i);
     if (blocked) return toast(blocked);
-    const ready = m.skillCooldown === 0;
+    const sealed = isMemberSealed(this.state, i);
+    const ready = m.skillCooldown === 0 && !sealed;
     const dlg = openDialog(skill.name, h('div', null,
       h('p', null, skill.description),
-      h('p', { class: 'small-text dim' }, ready ? '可以施放' : `冷卻中，還要 ${m.skillCooldown} 回合`),
+      h('p', { class: 'small-text dim' }, sealed ? '被星紋封印，暫時不能施放' : ready ? '可以施放' : `冷卻中，還要 ${m.skillCooldown} 回合`),
     ), [
       button('取消', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
       button('施放', { variant: 'primary', disabled: !ready, onClick: () => { dlg.close(); void this.castSkill(i); } }),

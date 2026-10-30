@@ -124,3 +124,47 @@ describe('練習場的機制切換', async () => {
     expect(isPracticeMode('x')).toBe(false);
   });
 });
+
+describe('星紋封印：被封印的隊員不能施放主動技', async () => {
+  const { isMemberSealed } = await import('../src/battle/skills/status');
+  const withSkills = (abilities: EnemyAbility[]) => {
+    const enemy: EnemyDef = { id: 'e', name: '測試敵人', attribute: 'light', hp: 10_000_000, atk: 10, def: 0, cd: 99, abilities, art: {} };
+    const skill = (id: string) => ({ id, name: id, cooldown: { max: 2, min: 2 }, effects: [{ type: 'damage' as const, target: 'single' as const, mode: 'fixed' as const, value: 100 }], description: '' });
+    const data: BattleData = {
+      config: gameConfig as GameConfig,
+      cards: [{ ...card('a', 'fire'), activeSkill: 's1', leaderSkill: 'ls' }, { ...card('b', 'water'), activeSkill: 's2' }],
+      skills: [skill('s1'), skill('s2')],
+      leaderSkills: [{ id: 'ls', name: '充能', description: '', rules: [{ conditions: [{ type: 'always' }], effects: [{ type: 'skillCooldownStart', charged: true }] }] }],
+      enemies: [enemy],
+    };
+    const stage: StageDef = { id: 's-seal', kind: 'main', name: '封印', stamina: 0, unlockAfter: null, waves: [{ enemies: ['e'] }], rewards: { coin: 0, playerExp: 0 }, drops: [] };
+    return { battle: startBattle(stage, [{ cardId: 'a', level: 1 }, { cardId: 'b', level: 1 }], null, createRng(1), data), data, stage };
+  };
+
+  it('被封印的拒絕，沒被封印的照常；到期後恢復', () => {
+    const { battle } = withSkills([{ status: 'attributeSeal', trigger: 'onStart', turns: 1, params: { attribute: 'fire' } }]);
+    expect(isMemberSealed(battle.getState(), 0)).toBe(true);
+    expect(battle.useSkill(0)).toEqual({ ok: false, reason: '這名隊員被星紋封印' });
+    expect(battle.useSkill(1).ok).toBe(true);
+    battle.submitMove([]);
+    expect(isMemberSealed(battle.getState(), 0)).toBe(false);
+    expect(battle.useSkill(0).ok).toBe(true);
+  });
+
+  it('續戰還原後仍然擋下被封印的隊員', () => {
+    const { battle, data, stage } = withSkills([{ status: 'attributeSeal', trigger: 'onStart', turns: 2, params: { attribute: 'leader' } }]);
+    const resumed = resumeBattle(stage, viaJson(battle.snapshot()), data);
+    expect(resumed.useSkill(0)).toEqual({ ok: false, reason: '這名隊員被星紋封印' });
+  });
+});
+
+describe('示範敵人資料', async () => {
+  const { gameData } = await import('../src/data/load');
+  it('e0046（隱藏珠）、e0047（星紋封印）存在，且不在任何關卡裡', () => {
+    const ids = ['e0046', 'e0047'];
+    const defs = ids.map((id) => gameData.enemies.find((e) => e.id === id));
+    expect(defs[0]?.abilities.some((a) => a.status === 'darkOrbs')).toBe(true);
+    expect(defs[1]?.abilities.some((a) => a.status === 'attributeSeal')).toBe(true);
+    for (const st of gameData.stages) for (const w of st.waves) for (const e of w.enemies) expect(ids).not.toContain(e);
+  });
+});

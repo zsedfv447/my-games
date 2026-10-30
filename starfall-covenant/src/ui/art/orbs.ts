@@ -23,17 +23,38 @@ export interface OrbOptions {
 }
 
 const POISON = { base: '#5b3a6e', light: '#b48ccf', dark: '#2a1636' };
-const HIDDEN = { base: '#2a2f4a', light: '#596089', dark: '#12152a' };
 function orbTexture(kind: OrbKind, opts: OrbOptions): string | undefined {
   return userAsset('ui', `orb-${kind}${opts.enhanced ? '-enhanced' : ''}${opts.locked ? '-locked' : ''}`);
 }
 const POISON_SYMBOL = 'M50 26a18 17 0 0 0-18 17c0 7 3 11 7 13v8h22v-8c4-2 7-6 7-13a18 17 0 0 0-18-17zM42 44a4 4 0 1 0 0 .1zm16 0a4 4 0 1 0 0 .1zM44 64v6M50 64v6M56 64v6';
 
+/**
+ * 被星幕蓋住的珠（hiddenOrbs／darkOrbs）：深靛色布幕上織著菱格紋與星點，中間一顆空心星，外圈金色虛線。
+ * 完全靜態，低特效模式也一樣清楚；看不出原本的顏色與強化，但鎖定照常疊上去。
+ */
+function hiddenCoverSvg(opts: OrbOptions): string {
+  const weave = [-30, -15, 0, 15, 30].map((d) => `<path d="M${20 + d} 15 L${80 + d} 85M${80 - d} 15 L${20 - d} 85"/>`).join('');
+  const dots = [[30, 34], [70, 32], [26, 64], [74, 66], [50, 80], [50, 20]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.2"/>`).join('');
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img">
+    <defs>
+      <radialGradient id="veil-g" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#3b4378"/><stop offset=".6" stop-color="#232853"/><stop offset="1" stop-color="#11142c"/></radialGradient>
+      <clipPath id="veil-c"><circle cx="50" cy="50" r="40"/></clipPath>
+    </defs>
+    <circle cx="50" cy="50" r="42" fill="url(#veil-g)" stroke="#0b0d1f" stroke-width="3"/>
+    <g clip-path="url(#veil-c)" stroke="#8d95c9" stroke-width="1.6" opacity=".55">${weave}</g>
+    <g fill="#dfe6ff" opacity=".9">${dots}</g>
+    <path d="M50 30l5.5 14.5L70 50l-14.5 5.5L50 70l-5.5-14.5L30 50l14.5-5.5z" fill="#232853" stroke="#f2d27a" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="50" cy="50" r="46" fill="none" stroke="#f2d27a" stroke-width="2.5" stroke-dasharray="5 4" opacity=".85"/>
+    ${opts.locked ? `<g stroke="#d8dbe6" stroke-width="5" stroke-linecap="round" opacity=".9"><path d="M18 18 82 82M82 18 18 82"/></g>` : ''}
+  </svg>`;
+}
+
 export function orbSvg(kind: OrbKind, opts: OrbOptions = {}): string {
   const texture = orbTexture(kind, opts);
   if (texture) return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img"><image href="${texture}" width="100" height="100"/></svg>`;
-  const c = kind === 'poison' ? POISON : kind === 'hidden' ? HIDDEN : ORB_COLORS[kind];
-  const symbol = kind === 'poison' ? POISON_SYMBOL : kind === 'hidden' ? '' : ORB_SYMBOLS[kind];
+  if (kind === 'hidden') return hiddenCoverSvg(opts);
+  const c = kind === 'poison' ? POISON : ORB_COLORS[kind];
+  const symbol = kind === 'poison' ? POISON_SYMBOL : ORB_SYMBOLS[kind];
   const id = `orb-${kind}${opts.enhanced ? '-e' : ''}`;
   const isStroke = kind === 'wood' || kind === 'poison';
   const parts: string[] = [];
@@ -46,16 +67,12 @@ export function orbSvg(kind: OrbKind, opts: OrbOptions = {}): string {
     parts.push(`<circle cx="50" cy="50" r="48" fill="none" stroke="#fff6d8" stroke-width="3" stroke-dasharray="6 5" opacity=".9"/>`);
   }
   parts.push(`<circle cx="50" cy="50" r="42" fill="url(#${id}-g)" stroke="${c.dark}" stroke-width="3"/>`);
-  if (symbol) {
-    // 白色符號＋深色描邊，任何底色都看得清楚
-    parts.push(
-      isStroke
-        ? `<path d="${symbol}" fill="#fff" fill-opacity=".92" stroke="${c.dark}" stroke-width="3" stroke-linejoin="round"/>`
-        : `<path d="${symbol}" fill="#fff" fill-opacity=".92" stroke="${c.dark}" stroke-width="2.5" stroke-linejoin="round"/>`,
-    );
-  } else {
-    parts.push(`<text x="50" y="62" text-anchor="middle" font-size="34" font-weight="700" fill="${c.light}">?</text>`);
-  }
+  // 白色符號＋深色描邊，任何底色都看得清楚
+  parts.push(
+    isStroke
+      ? `<path d="${symbol}" fill="#fff" fill-opacity=".92" stroke="${c.dark}" stroke-width="3" stroke-linejoin="round"/>`
+      : `<path d="${symbol}" fill="#fff" fill-opacity=".92" stroke="${c.dark}" stroke-width="2.5" stroke-linejoin="round"/>`,
+  );
   parts.push(`<ellipse cx="36" cy="28" rx="13" ry="7" fill="#fff" opacity=".35" transform="rotate(-25 36 28)"/>`);
   if (opts.enhanced) {
     parts.push(`<path d="M80 6l3.5 9 9 3.5-9 3.5L80 31l-3.5-9-9-3.5 9-3.5z" fill="#fff6d8" stroke="#a0700f" stroke-width="1.5"/>`);
