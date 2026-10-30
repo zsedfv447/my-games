@@ -75,6 +75,11 @@ export function validateGameData(d: GameData): string[] {
     if (s.unlockAfter && !stageIds.has(s.unlockAfter)) err(w, `解鎖條件關卡 ${s.unlockAfter} 不存在`);
     if (s.waves.length === 0) err(w, '至少要有一波敵人');
     for (const wave of s.waves) for (const en of wave.enemies) if (!enemyIds.has(en)) err(w, `找不到敵人 ${en}`);
+    for (const m of [...(s.fixedTeam?.members ?? []), ...(s.fixedTeam?.helper ? [s.fixedTeam.helper] : [])]) {
+      if (!cardIds.has(m.card)) err(w, `借用隊伍的卡 ${m.card} 不存在`);
+    }
+    for (const id of s.teamRule?.requiredCards ?? []) if (!cardIds.has(id)) err(w, `隊伍限制的卡 ${id} 不存在`);
+    if (s.kind === 'trial' && (!s.archetype || !s.fixedTeam)) err(w, '流派試煉要指定 archetype 與 fixedTeam');
     for (const drop of s.drops) {
       if (!cardIds.has(drop.card)) err(w, `掉落卡 ${drop.card} 不存在`);
       if (drop.rate <= 0 || drop.rate > 1) err(w, `掉落率 ${drop.rate} 需介於 0–1`);
