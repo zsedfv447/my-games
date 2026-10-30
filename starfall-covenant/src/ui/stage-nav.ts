@@ -1,7 +1,7 @@
 // 關卡導覽：把關卡資料與存檔整理成冒險地圖、關卡列表要顯示的狀態（純函式，方便測試）
 import type { SaveData, StageDef } from '../core/types';
 import { openEventIds, type EventDef } from '../progression/events';
-import { stageLockReason, type StageContext, type StageLockReason } from '../progression/stages';
+import { STARS_PER_STAGE, stageLockReason, type StageContext, type StageLockReason } from '../progression/stages';
 
 /** 依 data/events.json 的檔期決定哪些活動開放；沒給活動資料時視為全部開放（測試用） */
 export function stageContext(stages: StageDef[], events?: EventDef[], now = Date.now()): StageContext {
@@ -70,15 +70,20 @@ export interface ChapterProgress {
   unlocked: boolean;
 }
 
-export function chapterProgress(save: SaveData, chapter: number, ctx: StageContext, now: number): ChapterProgress {
+/**
+ * 章節卡的進度。stageCount 傳 ChapterDef.stageCount：章節分批上線時，總關數與星章總數以預定關數計算
+ * （例如第 6 章先上 3 關，要顯示「3 / 9」而不是「3 / 3」），和 chapterStars 的算法一致。
+ */
+export function chapterProgress(save: SaveData, chapter: number, ctx: StageContext, now: number, stageCount?: number): ChapterProgress {
   const list = ctx.stages.filter((s) => s.kind === 'main' && s.chapter === chapter);
   const rows = list.map((s) => stageRow(save, s, ctx, now));
+  const notYet = Math.max(0, (stageCount ?? 0) - rows.length);
   return {
     chapter,
     cleared: rows.filter((r) => r.status === 'cleared').length,
-    total: rows.length,
+    total: rows.length + notYet,
     stars: rows.reduce((n, r) => n + r.stars.filter(Boolean).length, 0),
-    maxStars: rows.reduce((n, r) => n + r.stars.length, 0),
+    maxStars: rows.reduce((n, r) => n + r.stars.length, 0) + notYet * STARS_PER_STAGE,
     unlocked: rows.some((r) => isPlayable(r.status)),
   };
 }

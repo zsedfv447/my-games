@@ -29,6 +29,7 @@ import type { Navigator, ScreenDef } from '../router';
 import { starText } from './prepare';
 import { enemyChips, teamChips, STATUS_NAMES, type StatusChip } from '../status-labels';
 import { storyBox } from '../components/story';
+import { stageStoryToPlay } from '../../progression/stage-story';
 import { openClearResult, type ResultNote } from '../components/reward-reveal';
 import { grantLorePage, loreNotes } from '../../progression/lore';
 import { clearItems, levelUpView } from '../reward-plan';
@@ -546,9 +547,10 @@ class BattleView {
 
   /** 進入 Boss 波時播放 beforeBoss 劇情（看過的不再播）。有播放時回傳 true，播完才開放轉珠 */
   private async maybeBossStory(): Promise<boolean> {
-    const id = this.s.stage.story?.beforeBoss;
-    const lines = id ? gameData.story[id] : undefined;
-    if (!id || !lines || !this.s.stage.waves[this.state.wave]?.boss || getSave().progress.storySeen.includes(id)) return false;
+    const save = getSave();
+    const id = this.s.practice ? undefined : stageStoryToPlay(this.s.stage, 'beforeBoss', gameData.story, save.progress.storySeen, !save.progress.clearedStages.includes(this.s.stage.id));
+    if (!id || !this.s.stage.waves[this.state.wave]?.boss) return false;
+    const lines = gameData.story[id];
     this.boardView.setEnabled(false);
     await wait(900);
     await new Promise<void>((resolve) => {
@@ -652,9 +654,9 @@ class BattleView {
     const leave = (then?: string) => {
       this.dialog?.close();
       const target = then ?? (this.s.practice ? 'back' : stageListPath(this.s.stage));
-      const after = this.s.stage.story?.after;
-      // 通關後的劇情只在第一次播放
-      if (after && gameData.story[after] && !getSave().progress.storySeen.includes(after)) this.nav.replace('story', [after], { next: target });
+      // 通關後的劇情只在首次通關時播放
+      const after = stageStoryToPlay(this.s.stage, 'after', gameData.story, getSave().progress.storySeen, firstClear);
+      if (after) this.nav.replace('story', [after], { next: target });
       else if (target === 'back') this.nav.back();
       else this.nav.backTo(target);
     };
