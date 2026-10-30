@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import gameConfig from '../data/config.json';
 import { startBattle, type BattleData } from '../src/battle/battle-state';
 import {
-  effectiveMultiplier, effectiveMultipliers, effectiveWeakTo, liveReductions, plannedReductions, reducedWeaknesses, type AttributeReduction,
+  effectiveMatchup, effectiveMultiplier, effectiveMultipliers, effectiveWeakTo, liveReductions, plannedReductions, reducedWeaknesses, type AttributeReduction,
 } from '../src/battle/feedback';
 import { createRng } from '../src/core/rng';
 import type { CardDef, EnemyAbility, EnemyDef, GameConfig, StageDef } from '../src/core/types';
@@ -88,5 +88,17 @@ describe('出戰確認的建議屬性', () => {
     const intel = stageIntel({ waves: [{ enemies: ['g'] }, { enemies: ['b'], boss: true }] }, enemies, config);
     expect(intel.suggested).toEqual(['fire']);
     expect(intel.notes).toEqual(['Boss 開場對潮減傷 50%']);
+  });
+});
+
+describe('隊員頭像的 ▲／▼（和名牌一致）', () => {
+  const def: EnemyDef = { id: 'b', name: '炎王', attribute: 'fire', hp: 1, atk: 1, def: 0, cd: 1, abilities: [], art: {} };
+  it('剋制且減傷後仍大於 1 倍才標 ▲；被減到 1 倍以下不標；被剋照舊標 ▼', () => {
+    expect(effectiveMatchup('water', { def, statuses: [], turnsOnField: 0 }, config)).toBe('advantage');
+    expect(effectiveMatchup('water', { def, statuses: [{ id: 'attributeShield', turns: null, value: 50, params: { attribute: 'water' } }], turnsOnField: 0 }, config)).toBe('neutral');
+    expect(effectiveMatchup('water', { def, statuses: [{ id: 'shield', turns: 1 }], turnsOnField: 0 }, config)).toBe('neutral');
+    expect(effectiveMatchup('water', { def, statuses: [{ id: 'attributeShield', turns: null, value: 20, params: { attribute: 'water' } }], turnsOnField: 0 }, config)).toBe('advantage');
+    expect(effectiveMatchup('wood', { def, statuses: [{ id: 'attributeShield', turns: null, value: 50, params: { attribute: 'water' } }], turnsOnField: 0 }, config)).toBe('disadvantage');
+    expect(effectiveMatchup('light', { def, statuses: [], turnsOnField: 0 }, config)).toBe('neutral');
   });
 });

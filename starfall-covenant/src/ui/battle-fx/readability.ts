@@ -1,7 +1,7 @@
 // 戰鬥可讀性：屬性剋制提示（提案 25）、敵人下一招預告（提案 5）、Combo 演出（提案 6）、技能就緒（提案 15）
 import type { BattleState, EnemyState } from '../../battle/battle-state';
 import type { BattleConfig } from '../../battle/damage';
-import { comboBonusText, comboTier, effectiveWeakTo, enemyAbilityList, liveReductions, matchup, newlyReadySkills, predictEnemyIntent, reducedWeaknesses, weakTo, type IntentAbility } from '../../battle/feedback';
+import { comboBonusText, comboTier, effectiveMatchup, effectiveWeakTo, enemyAbilityList, liveReductions, newlyReadySkills, predictEnemyIntent, reducedWeaknesses, weakTo, type IntentAbility } from '../../battle/feedback';
 import { ATTRIBUTE_NAMES } from '../art/palette';
 import { audio } from '../audio';
 import { button } from '../components/basic';
@@ -36,7 +36,8 @@ export function markMatchups(teamRow: HTMLElement, state: BattleState, config: B
     const m = state.team[i];
     thumb.querySelector('.matchup-tag')?.remove();
     if (!m || !target) return;
-    const mu = matchup(m.card.attribute, target.def.attribute, config);
+    // 和名牌的「弱：X」一致：扣掉目標目前的減傷
+    const mu = effectiveMatchup(m.card.attribute, target, config);
     if (mu !== 'neutral') thumb.appendChild(h('span', { class: `matchup-tag ${mu}`, 'aria-label': mu === 'advantage' ? '剋制目標' : '被目標剋制' }, mu === 'advantage' ? '▲' : '▼'));
   });
 }

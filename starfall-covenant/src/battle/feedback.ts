@@ -51,6 +51,16 @@ export function effectiveWeakTo(defender: Attribute, reductions: readonly Attrib
   return weakTo(defender, config).filter((a) => effectiveMultiplier(a, defender, reductions, config) > 1);
 }
 
+/**
+ * 隊員頭像對目標的標記：剋制且扣掉目前減傷後仍大於 1 倍才算 advantage（▲）；被剋照舊是 disadvantage（▼）；
+ * 剋制但被減傷壓到 1 倍以下就不標。
+ */
+export function effectiveMatchup(attacker: Attribute, enemy: Pick<EnemyState, 'def' | 'statuses' | 'turnsOnField'>, config: BattleConfig): Matchup {
+  const base = matchup(attacker, enemy.def.attribute, config);
+  if (base !== 'advantage') return base;
+  return effectiveMultiplier(attacker, enemy.def.attribute, liveReductions(enemy), config) > 1 ? 'advantage' : 'neutral';
+}
+
 /** 本來剋制、但被減傷壓到 1 倍以下的屬性 */
 export function reducedWeaknesses(defender: Attribute, reductions: readonly AttributeReduction[], config: BattleConfig): Attribute[] {
   return weakTo(defender, config).filter((a) => effectiveMultiplier(a, defender, reductions, config) <= 1);
