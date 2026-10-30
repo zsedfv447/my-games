@@ -90,11 +90,13 @@
 
 /* ---------- 契約結算（戰鬥勝利） ---------- */
 .result-layer {
-  position: absolute; inset: 0; z-index: 40; overflow: hidden;
-  display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 12px; padding: 24px 18px;
+  position: absolute; inset: 0; z-index: 40; overflow-x: hidden; overflow-y: auto;
+  display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 10px; padding: 24px 18px 32px;
   background: radial-gradient(80% 50% at 50% 30%, rgba(42, 58, 133, 0.92), rgba(6, 10, 31, 0.96));
   animation: fade-in 240ms ease-out both;
 }
+/* 內容放得下時置中，放不下時從上面開始捲動（不會把標題或按鈕切掉） */
+.result-layer::before, .result-layer::after { content: ''; flex: 1 0 0; }
 .result-layer.closing { animation: fade-out 140ms ease-in both; }
 .result-title {
   position: relative; text-align: center; font-family: var(--font-title); font-size: 34px; letter-spacing: 0.2em;

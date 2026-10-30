@@ -29,6 +29,7 @@ import { enemyChips, teamChips, STATUS_NAMES, type StatusChip } from '../status-
 import { storyBox } from '../components/story';
 import { openClearResult, type ResultNote } from '../components/reward-reveal';
 import { clearItems, levelUpView } from '../reward-plan';
+import { resultConstellation, shareClear } from '../clear-extras';
 import { showDefeatGuide } from '../components/defeat-guide';
 import { markStorySeen } from './story';
 import { createTutorialBattle } from '../tutorial/battle-setup';
@@ -623,6 +624,8 @@ class BattleView {
       instantCount: getSettings().lowFx,
       levelUp: clear?.levelUp && levelUpView(clear.levelUp, gameData.config),
       notes,
+      constellation: resultConstellation(this.s.stage, clear),
+      share: () => shareClear(this.s.stage, this.state.team, this.s.memberUids ?? [], result, clear, firstClear, (this.s.stage.stars ?? []).map(starText)),
       actions: [
         button(next ? '再戰' : '再戰一次', { variant: next ? 'ghost' : undefined, onClick: () => { this.dialog?.close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', [this.s.stage.id]); } }),
         button('返回', { variant: next ? undefined : 'primary', onClick: () => leave() }),
