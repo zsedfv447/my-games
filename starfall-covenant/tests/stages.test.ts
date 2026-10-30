@@ -8,7 +8,8 @@ import {
 } from '../src/progression/stages';
 import { expToNext } from '../src/progression/player';
 
-const config = gameData.config;
+// 測試不受初始卡影響
+const config = { ...gameData.config, newPlayer: { ...gameData.config.newPlayer, starterCards: [] } };
 // 2026-11-02 是週一（當地時間）
 const MON = new Date(2026, 10, 2, 12).getTime();
 

@@ -15,11 +15,11 @@ export function maxStamina(level: number, config: GameConfig): number {
   return config.stamina.baseMax + config.stamina.maxPerLevel * (level - 1);
 }
 
-/** 隊伍空間上限：Lv1 為 20，之後每級 +2，Lv50 後每級 +1 */
+/** 隊伍空間上限：Lv1 為 30（5 張 4★ 剛好排得下），之後每級 +2，Lv50 後每級 +1 */
 export function teamCostLimit(level: number): number {
   const fast = Math.min(level, 50) - 1;
   const slow = Math.max(level - 50, 0);
-  return 20 + fast * 2 + slow;
+  return 30 + fast * 2 + slow;
 }
 
 export interface LevelUpInfo {

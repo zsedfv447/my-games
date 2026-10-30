@@ -25,6 +25,12 @@
   "newPlayer": {
     "coin": 1000,
     "gems": 50,
-    "starterCards": []
+    "starterCards": [
+      "c106",
+      "c108",
+      "c208",
+      "c308",
+      "c408"
+    ]
   }
 }

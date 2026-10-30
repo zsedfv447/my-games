@@ -1,0 +1,52 @@
+[
+  {
+    "chapter": 1,
+    "name": "焦骨荒原",
+    "constellation": "獸座",
+    "race": "beast",
+    "starReward": {
+      "gems": 5
+    }
+  },
+  {
+    "chapter": 2,
+    "name": "鏽齒工坊",
+    "constellation": "工匠座",
+    "race": "machina",
+    "starReward": {
+      "gems": 5
+    }
+  },
+  {
+    "chapter": 3,
+    "name": "雲林",
+    "constellation": "羽座",
+    "race": "sylph",
+    "starReward": {
+      "gems": 5
+    }
+  },
+  {
+    "chapter": 4,
+    "name": "龍脊火山",
+    "constellation": "龍座",
+    "race": "dragon",
+    "starReward": {
+      "cards": [
+        {
+          "card": "c604",
+          "count": 1
+        }
+      ]
+    }
+  },
+  {
+    "chapter": 5,
+    "name": "冥河下游",
+    "constellation": "冥河座",
+    "race": "nether",
+    "starReward": {
+      "gems": 5
+    }
+  }
+]
