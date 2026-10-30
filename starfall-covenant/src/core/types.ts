@@ -203,6 +203,15 @@ export interface FixedTeam {
   helper?: { card: string; level: number; skillLevel?: number };
 }
 
+/** 劇情對白一句；沒有 speaker 的是旁白 */
+export interface StoryLine {
+  speaker?: string;
+  text: string;
+}
+
+/** data/story.json：劇情 id → 對白 */
+export type StoryData = Record<string, StoryLine[]>;
+
 export interface StageDef {
   id: string;
   kind: StageKind;

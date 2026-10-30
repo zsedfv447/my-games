@@ -1,4 +1,4 @@
-// 模擬器的暫定資料：提案 001 的角色與技能＋基準關卡。正式資料寫進 data/ 後改用 gameData。
+// 模擬器資料：卡片與技能優先用 data/ 的正式資料（空的時候退回提案 001 暫定資料）＋基準關卡。
 import type { ActiveSkillDef, ArchetypeId, CardDef, EnemyDef, LeaderSkillDef, StageDef } from '../../src/core/types';
 import { ARCHETYPE_IDS } from '../../src/core/types';
 import { gameData } from '../../src/data/load';
@@ -7,13 +7,15 @@ import proposal from './fixtures/proposal-001.json';
 import benchmark from './fixtures/benchmark.json';
 import type { SimTeam } from './simulate';
 
-export const proposalCards = proposal.cards as CardDef[];
+const useGameData = gameData.cards.length > 0;
+
+export const proposalCards = (useGameData ? gameData.cards : proposal.cards) as CardDef[];
 
 export const fixtureData: BattleData = {
   config: gameData.config,
   cards: proposalCards,
-  skills: proposal.skills as ActiveSkillDef[],
-  leaderSkills: proposal.leaderSkills as LeaderSkillDef[],
+  skills: (useGameData ? gameData.skills : proposal.skills) as ActiveSkillDef[],
+  leaderSkills: (useGameData ? gameData.leaderSkills : proposal.leaderSkills) as LeaderSkillDef[],
   enemies: benchmark.enemies as EnemyDef[],
 };
 

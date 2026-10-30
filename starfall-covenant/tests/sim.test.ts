@@ -7,8 +7,10 @@ import { validateGameData } from '../src/data/validate';
 import { gameData } from '../src/data/load';
 import { benchmarkStages, fixtureData, starterTeams } from '../tools/sim/fixtures';
 import { planMove, scoreBoard } from '../tools/sim/planner';
-import { balanceFlags, castOrder, formatReport, shouldCast, simulateBattle, simulateMatrix, type CellResult } from '../tools/sim/simulate';
+import { balanceFlags, formatReport, simulateBattle, simulateMatrix, type CellResult } from '../tools/sim/simulate';
 import { STRATEGIES } from '../tools/sim/strategies';
+import { chooseSkills } from '../tools/sim/skills';
+import type { ActiveSkillDef } from '../src/core/types';
 
 const config = fixtureData.config.battle;
 const FAST = { maxTurns: 40, planner: { stepsPerSecond: 4, beamWidth: 8, maxSteps: 12 } };
@@ -92,23 +94,42 @@ describe('戰鬥模擬', () => {
   });
 });
 
-describe('主動技施放時機', () => {
-  const skill = (effects: import('../src/core/types').SkillEffect[]) => ({ id: 's', name: 's', cooldown: { max: 1, min: 1 }, effects, description: '' });
-  const at = (hp: number, enemyCd = 3) => ({ hp, maxHp: 100, enemies: [{ hp: 1, cooldown: enemyCd }] }) as never;
+describe('主動技施放策略', () => {
+  const skill = (id: string, effects: ActiveSkillDef['effects']): ActiveSkillDef => ({
+    id, name: id, description: '', cooldown: { max: 5, min: 5 }, effects,
+  });
+  const heal = skill('heal', [{ type: 'heal', mode: 'percentMaxHp', value: 25 }]);
+  const guard = skill('guard', [{ type: 'reduceDamage', percent: 50, turns: 1 }]);
+  const convert = skill('convert', [{ type: 'convertOrbs', from: 'wood', to: 'fire' }]);
+  const haste = skill('haste', [{ type: 'reduceAllyCooldown', turns: 1 }]);
+  const blood = skill('blood', [{ type: 'selfDamage', percentCurrentHp: 50 }, { type: 'buffAttack', multiplier: 2, turns: 1 }]);
+  const kit = [heal, guard, convert, haste, blood];
 
-  it('回血低血才放、自損高血才放、減傷在敵人要攻擊時放', () => {
-    expect(shouldCast(skill([{ type: 'heal', mode: 'percentMaxHp', value: 30 }]), at(80))).toBe(false);
-    expect(shouldCast(skill([{ type: 'heal', mode: 'percentMaxHp', value: 30 }]), at(30))).toBe(true);
-    expect(shouldCast(skill([{ type: 'selfDamage', percentCurrentHp: 50 }, { type: 'buffAttack', multiplier: 2, turns: 1 }]), at(90))).toBe(true);
-    expect(shouldCast(skill([{ type: 'selfDamage', percentCurrentHp: 50 }]), at(20))).toBe(false);
-    expect(shouldCast(skill([{ type: 'reduceDamage', percent: 50, turns: 1 }]), at(90, 3))).toBe(false);
-    expect(shouldCast(skill([{ type: 'reduceDamage', percent: 50, turns: 1 }]), at(90, 1))).toBe(true);
-    expect(shouldCast(skill([{ type: 'convertOrbs', from: 'water', to: 'fire' }]), at(90))).toBe(true);
+  function readyState(hpPercent: number, enemyCooldown: number) {
+    const { state } = battleState('combo');
+    state.hp = Math.round((state.maxHp * hpPercent) / 100);
+    state.team.forEach((m) => (m.skillCooldown = 0));
+    // 助戰（第 6 位）在冷卻中，讓冷卻縮減有意義
+    state.team[5].skillCooldown = 3;
+    state.enemies.forEach((e) => (e.cooldown = enemyCooldown));
+    return state;
+  }
+
+  it('滿血、敵人還不會出手：只放進攻類，冷卻縮減最先放', () => {
+    expect(chooseSkills(readyState(100, 3), (i) => kit[i], 'combo')).toEqual([3, 2, 4]);
   });
 
-  it('改盤面的技能最後放', () => {
-    expect(castOrder(skill([{ type: 'convertOrbs', from: 'water', to: 'fire' }])))
-      .toBeGreaterThan(castOrder(skill([{ type: 'buffAttack', multiplier: 2, turns: 1 }])));
-    expect(castOrder(skill([{ type: 'heal', mode: 'percentMaxHp', value: 30 }]))).toBe(0);
+  it('低血量、敵人要出手：回復與減傷也會放，自損不放', () => {
+    expect(chooseSkills(readyState(40, 1), (i) => kit[i], 'combo')).toEqual([3, 2, 0, 1]);
+  });
+
+  it('背水隊在低血量仍會放自損', () => {
+    expect(chooseSkills(readyState(40, 3), (i) => kit[i], 'berserk')).toContain(4);
+  });
+
+  it('被封印主動技時不放', () => {
+    const s = readyState(40, 1);
+    s.teamStatuses = [{ id: 'skillSeal', turns: 2 }];
+    expect(chooseSkills(s, (i) => kit[i], 'combo')).toEqual([]);
   });
 });

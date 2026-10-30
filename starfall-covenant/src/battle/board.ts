@@ -49,11 +49,35 @@ export interface MatchGroup {
   cascade: number;
 }
 
+/** 一顆珠的落下：from 為原本的列，新補的珠從盤面上方進來（-1 = 最靠近盤面的那顆，往上依序 -2、-3…） */
+export interface OrbDrop {
+  col: number;
+  from: number;
+  to: number;
+  isNew: boolean;
+}
+
+/** 結算中的一段：消除 → 落下補珠，介面據此逐段播放 */
+export interface ResolveStep {
+  /** 0 = 玩家轉珠造成，1 以後 = 第幾次落下連鎖 */
+  cascade: number;
+  /** 這一段消除前的盤面 */
+  before: Board;
+  /** 這一段消除的組 */
+  groups: MatchGroup[];
+  /** 落下補珠的移動（沒有移動的珠不列出） */
+  drops: OrbDrop[];
+  /** 落下補珠後的盤面 */
+  after: Board;
+}
+
 export interface ResolveResult {
   board: Board;
   /** 依消除順序排列的所有組；每一組 = 1 Combo */
   groups: MatchGroup[];
   combo: number;
+  /** 逐段的消除與落下，依時間順序 */
+  steps: ResolveStep[];
 }
 
 export const MIN_MATCH = 3;
@@ -321,6 +345,24 @@ export function dropAndFill(board: Board, cleared: Iterable<number>, rng: Rng, o
   return { cols, rows, cells: cells as Orb[] };
 }
 
+/** 移除指定格子後，每一欄的珠怎麼落下（與 dropAndFill 的規則相同） */
+export function computeDrops(board: Pick<Board, 'cols' | 'rows'>, cleared: Iterable<number>): OrbDrop[] {
+  const { cols, rows } = board;
+  const removed = new Set(cleared);
+  const drops: OrbDrop[] = [];
+  for (let c = 0; c < cols; c++) {
+    let write = rows - 1;
+    for (let r = rows - 1; r >= 0; r--) {
+      if (removed.has(r * cols + c)) continue;
+      if (write !== r) drops.push({ col: c, from: r, to: write, isNew: false });
+      write--;
+    }
+    // 剩下的 0..write 由新珠補上，最下面的新珠離盤面最近
+    for (let to = write, k = 1; to >= 0; to--, k++) drops.push({ col: c, from: -k, to, isNew: true });
+  }
+  return drops;
+}
+
 /** 安全上限，避免設定錯誤時無限連鎖 */
 const MAX_CASCADES = 50;
 
@@ -333,13 +375,17 @@ export interface ResolveOptions extends SkyfallOptions {
 export function resolveBoard(board: Board, rng: Rng, options: ResolveOptions = {}): ResolveResult {
   let current = board;
   const groups: MatchGroup[] = [];
+  const steps: ResolveStep[] = [];
   for (let cascade = 0; cascade < MAX_CASCADES; cascade++) {
     const found = findMatches(current, cascade, options.sealedOrbs);
     if (found.length === 0) break;
     groups.push(...found);
-    current = dropAndFill(current, found.flatMap((g) => g.cells), rng, options);
+    const cleared = found.flatMap((g) => g.cells);
+    const after = dropAndFill(current, cleared, rng, options);
+    steps.push({ cascade, before: current, groups: found, drops: computeDrops(current, cleared), after });
+    current = after;
   }
-  return { board: current, groups, combo: groups.length };
+  return { board: current, groups, combo: groups.length, steps };
 }
 
 // ---------- 主動技與敵人用的盤面操作 ----------

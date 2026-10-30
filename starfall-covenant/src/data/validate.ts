@@ -2,7 +2,7 @@
 import {
   ARCHETYPE_IDS, ATTRIBUTES, ORB_TYPES, RACES,
   type ActiveSkillDef, type ArchetypeDef, type CardDef, type ChapterDef, type EnemyDef, type GachaPoolDef,
-  type GameConfig, type LeaderSkillDef, type QuestDef, type ShopItemDef, type StageDef,
+  type GameConfig, type LeaderSkillDef, type QuestDef, type ShopItemDef, type StageDef, type StoryData,
 } from '../core/types';
 
 export interface GameData {
@@ -17,6 +17,7 @@ export interface GameData {
   gachaPools: GachaPoolDef[];
   shop: ShopItemDef[];
   quests: QuestDef[];
+  story: StoryData;
 }
 
 export function validateGameData(d: GameData): string[] {
@@ -80,6 +81,9 @@ export function validateGameData(d: GameData): string[] {
       if (!cardIds.has(m.card)) err(w, `借用隊伍的卡 ${m.card} 不存在`);
     }
     for (const id of s.teamRule?.requiredCards ?? []) if (!cardIds.has(id)) err(w, `隊伍限制的卡 ${id} 不存在`);
+    for (const [slot, id] of Object.entries(s.story ?? {})) {
+      if (id && !(id in d.story)) err(w, `劇情 ${slot} 引用的 ${id} 不存在`);
+    }
     if (s.kind === 'trial' && (!s.archetype || !s.fixedTeam)) err(w, '流派試煉要指定 archetype 與 fixedTeam');
     for (const drop of s.drops) {
       if (!cardIds.has(drop.card)) err(w, `掉落卡 ${drop.card} 不存在`);
@@ -99,6 +103,11 @@ export function validateGameData(d: GameData): string[] {
     if (s.kind === 'main' && s.chapter !== undefined && !chapterNums.has(s.chapter)) err(`stages/${s.id}`, `章節 ${s.chapter} 不在 chapters.json`);
     for (const r of s.rewards.firstClear?.cards ?? []) if (!cardIds.has(r.card)) err(`stages/${s.id}`, `首通獎勵卡 ${r.card} 不存在`);
     for (const day of s.weekdays ?? []) if (day < 0 || day > 6) err(`stages/${s.id}`, `星期 ${day} 需介於 0–6`);
+  }
+
+  for (const [id, lines] of Object.entries(d.story)) {
+    if (lines.length === 0) err(`story/${id}`, '劇情至少要有一句');
+    for (const [i, line] of lines.entries()) if (!line.text) err(`story/${id}`, `第 ${i + 1} 句沒有內容`);
   }
 
   for (const p of d.gachaPools) {

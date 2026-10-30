@@ -5,8 +5,10 @@ import { adventureScreen } from './adventure';
 import { archetypesScreen } from './archetypes';
 import { settingsScreen } from './settings';
 import { galleryScreen } from './gallery';
-import { storyScreen } from './story';
+import { storiesScreen, storyScreen } from './story';
 import { placeholderScreens } from './placeholders';
+import { prepareScreen } from './prepare';
+import { battleScreen } from './battle';
 
 /** GDD 2.5 全部畫面；正式畫面完成後取代同名的建置中畫面 */
 export const SCREENS: ScreenDef[] = [
@@ -18,4 +20,7 @@ export const SCREENS: ScreenDef[] = [
   settingsScreen,
   galleryScreen,
   storyScreen,
+  storiesScreen,
+  prepareScreen,
+  battleScreen,
 ];

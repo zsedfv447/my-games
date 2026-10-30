@@ -1,8 +1,9 @@
 // 戰鬥模擬：讓自動轉珠策略打完一場戰鬥，或跑「流派 × 關卡」矩陣並整理成報表。
-import type { ActiveSkillDef, ArchetypeId, CardDef, LeaderSkillDef, SkillEffect, StageDef } from '../../src/core/types';
+import type { ArchetypeId, CardDef, LeaderSkillDef, StageDef } from '../../src/core/types';
 import { createRng } from '../../src/core/rng';
-import { startBattle, type BattleData, type BattleState, type TeamMemberInput } from '../../src/battle/battle-state';
+import { startBattle, type BattleData, type TeamMemberInput } from '../../src/battle/battle-state';
 import { DEFAULT_PLANNER, planMove, type PlannerOptions } from './planner';
+import { castSkills } from './skills';
 import { STRATEGIES } from './strategies';
 
 export interface SimTeam {
@@ -42,69 +43,33 @@ export function simulateBattle(
     return id ? leaderById.get(id) : undefined;
   };
   const leaders = [leaderOf(team.members[0]), leaderOf(team.helper)];
-  const skillById = new Map<string, ActiveSkillDef>(data.skills.map((sk) => [sk.id, sk]));
   const inputs = team.helper ? [...team.members, team.helper] : team.members;
-  const memberSkills = inputs.map((m) => {
-    const id = cardById.get(m.cardId)?.activeSkill;
+  const skillById = new Map(data.skills.map((s) => [s.id, s]));
+  const skillOf = (member: number) => {
+    const id = cardById.get(inputs[member]?.cardId ?? '')?.activeSkill;
     return id ? skillById.get(id) : undefined;
-  });
+  };
 
   let state = battle.getState();
   while (state.phase === 'player' && state.turns < opts.maxTurns) {
-    // 依施放時機與順序放主動技（被封印時 useSkill 會回傳失敗，直接略過）
-    let skillUsed = false;
-    const ready = state.team
-      .map((m, i) => ({ i, skill: memberSkills[i], cd: m.skillCooldown }))
-      .filter((x) => x.skill && x.cd === 0)
-      .sort((a, b) => castOrder(a.skill!) - castOrder(b.skill!));
-    for (const { i, skill } of ready) {
-      if (!shouldCast(skill!, battle.getState())) continue;
-      if (battle.useSkill(i).ok) skillUsed = true;
-    }
-    // 打血最少的敵人，加快清場
-    const alive = state.enemies.map((e, i) => ({ e, i })).filter((x) => x.e.hp > 0);
-    if (alive.length > 0) battle.setTarget(alive.reduce((a, b) => (b.e.hp < a.e.hp ? b : a)).i);
+    // 打血最少的敵人，加快清場（單體傷害技能也會打這隻）
+    const pickTarget = () => {
+      const alive = state.enemies.map((e, i) => ({ e, i })).filter((x) => x.e.hp > 0);
+      if (alive.length > 0) battle.setTarget(alive.reduce((a, b) => (b.e.hp < a.e.hp ? b : a)).i);
+    };
+    pickTarget();
+    // 依技能效果與戰況施放主動技（skills.ts）；技能可能直接清掉這一波
+    const usedSkill = castSkills(battle, skillOf, team.archetype);
     state = battle.getState();
-    const { path } = planMove(state, leaders, strategy, data.config.battle, opts.planner, skillUsed);
+    if (state.phase !== 'player') break;
+    pickTarget();
+    state = battle.getState();
+    const { path } = planMove(state, leaders, strategy, data.config.battle, opts.planner, usedSkill);
     const r = battle.submitMove(path);
     if (!r.ok) break;
     state = battle.getState();
   }
   return { win: state.phase === 'won', turns: state.turns, maxCombo: state.maxCombo };
-}
-
-// ---------- 主動技施放時機 ----------
-
-/** 轉珠前施放的順序：先保命、再增益、最後改盤面（改完盤面才轉珠） */
-const CAST_ORDER: Record<SkillEffect['type'], number> = {
-  heal: 0, cleanse: 0, reduceDamage: 1, surviveOnce: 1, delayEnemy: 1, lockEnemy: 1,
-  selfDamage: 2, buffAttack: 3, rcvToAtk: 3, chainOnSkill: 3, reduceAllyCooldown: 3, extendMoveTime: 3,
-  damage: 4, damageOverTime: 4, setSkyfallRate: 5, noSkyfallCombo: 5,
-  setEnhancedSkyfallRate: 5,
-  convertOrbs: 6, enhanceOrbs: 6, refreshBoard: 6, balanceBoard: 6, fillMissingOrbs: 6,
-};
-
-const has = (skill: ActiveSkillDef, type: SkillEffect['type']) => skill.effects.some((e) => e.type === type);
-
-/**
- * 這回合要不要放這個技能：
- * - 回血技能只在生命低於 50% 時放；
- * - 自損技能在生命高於 40% 時放（背水：先壓血再攻擊），快死時不放；
- * - 減傷、延遲在敵人下回合要攻擊時放；
- * - 其他（轉珠、強化、增益、傷害）好了就放。
- */
-export function shouldCast(skill: ActiveSkillDef, state: BattleState): boolean {
-  const hp = (state.hp / state.maxHp) * 100;
-  const pureHeal = skill.effects.every((e) => e.type === 'heal' || e.type === 'cleanse');
-  if (pureHeal) return hp < 50;
-  if (has(skill, 'selfDamage')) return hp > 40;
-  const defensive = skill.effects.every((e) => ['reduceDamage', 'delayEnemy', 'lockEnemy', 'surviveOnce'].includes(e.type));
-  if (defensive) return state.enemies.some((e) => e.hp > 0 && e.cooldown <= 1);
-  return true;
-}
-
-export function castOrder(skill: ActiveSkillDef): number {
-  return Math.max(...skill.effects.map((e) => CAST_ORDER[e.type] ?? 3));
 }
 
 export interface CellResult {
@@ -188,8 +153,7 @@ export function formatReport(results: CellResult[], stageNames: Record<string, s
   const stages = [...new Set(results.map((r) => r.stageId))];
   const archetypes = [...new Set(results.map((r) => r.archetype))];
   const cell = (a: ArchetypeId, s: string) => {
-    const r = results.find((x) => x.archetype === a && x.stageId === s);
-    if (!r) return '';
+    const r = results.find((x) => x.archetype === a && x.stageId === s)!;
     const pct = `${Math.round(r.winRate * 100)}%`;
     return r.avgTurns === null ? `${pct}／—` : `${pct}／${r.avgTurns.toFixed(1)}`;
   };

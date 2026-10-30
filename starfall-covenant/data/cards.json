@@ -1,1 +1,3516 @@
-[]
+[
+  {
+    "id": "c101",
+    "name": "燼冕女王・伊格菈",
+    "attribute": "fire",
+    "race": "human",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1300,
+        4200
+      ],
+      "atk": [
+        500,
+        1650
+      ],
+      "rcv": [
+        190,
+        560
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s101",
+    "leaderSkill": "l101",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "fire",
+        "percent": 10
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      },
+      {
+        "type": "resistStatus",
+        "status": "attributeShield",
+        "percent": 30
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "mono",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "七曜碎裂前統治「熔爐王朝」的最後一位君主。王朝被星骸吞沒時，她把整座王城熔進自己的冠冕，從此只回應願意把一切燒成同一種顏色的契印師。"
+  },
+  {
+    "id": "c102",
+    "name": "赤鱗狂嗣・薩爾姆",
+    "attribute": "fire",
+    "race": "dragon",
+    "rarity": 5,
+    "maxLevel": 90,
+    "stats": {
+      "hp": [
+        900,
+        2970
+      ],
+      "atk": [
+        440,
+        1490
+      ],
+      "rcv": [
+        140,
+        430
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s102",
+    "leaderSkill": "l102",
+    "awakenings": [
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 500
+      },
+      {
+        "type": "resistStatus",
+        "status": "poison",
+        "percent": 50
+      },
+      {
+        "type": "orbDamageUp",
+        "orb": "fire",
+        "percent": 10
+      }
+    ],
+    "evolution": {
+      "to": "c103",
+      "materials": [
+        "c916",
+        "c916",
+        "c916"
+      ],
+      "coin": 50000
+    },
+    "expValue": 1500,
+    "sellValue": 1000,
+    "archetypes": [
+      {
+        "id": "berserk",
+        "role": "leader"
+      },
+      {
+        "id": "chain",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "龍座墜落時被碎片擊中心臟的龍嗣，傷口從未癒合。他越接近死亡，心火就越旺，因此總是第一個衝進墜域。"
+  },
+  {
+    "id": "c103",
+    "name": "焚心龍騎・薩爾姆",
+    "attribute": "fire",
+    "race": "dragon",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1170,
+        3780
+      ],
+      "atk": [
+        580,
+        1900
+      ],
+      "rcv": [
+        180,
+        530
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s103",
+    "leaderSkill": "l103",
+    "awakenings": [
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 500
+      },
+      {
+        "type": "resistStatus",
+        "status": "poison",
+        "percent": 50
+      },
+      {
+        "type": "orbDamageUp",
+        "orb": "fire",
+        "percent": 10
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "berserk",
+        "role": "leader"
+      },
+      {
+        "id": "chain",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "龍座墜落時被碎片擊中心臟的龍嗣，傷口從未癒合。他越接近死亡，心火就越旺，因此總是第一個衝進墜域。"
+  },
+  {
+    "id": "c104",
+    "name": "熔軌工匠・卡朵",
+    "attribute": "fire",
+    "race": "machina",
+    "rarity": 5,
+    "maxLevel": 90,
+    "stats": {
+      "hp": [
+        1100,
+        3630
+      ],
+      "atk": [
+        340,
+        1170
+      ],
+      "rcv": [
+        150,
+        450
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s104",
+    "awakenings": [
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      },
+      {
+        "type": "orbDamageUp",
+        "orb": "fire",
+        "percent": 10
+      }
+    ],
+    "evolution": {
+      "to": "c105",
+      "materials": [
+        "c916",
+        "c916",
+        "c916"
+      ],
+      "coin": 50000
+    },
+    "expValue": 1500,
+    "sellValue": 1000,
+    "archetypes": [
+      {
+        "id": "chain",
+        "role": "core"
+      },
+      {
+        "id": "mono",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "工匠座的維修機。主人在墜落時失蹤，她靠著鋪設熔軌把散落的零件一路串起來，相信只要軌道夠長，總有一天會接回主人身邊。"
+  },
+  {
+    "id": "c105",
+    "name": "熔爐巨匠・卡朵",
+    "attribute": "fire",
+    "race": "machina",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1430,
+        4620
+      ],
+      "atk": [
+        450,
+        1480
+      ],
+      "rcv": [
+        190,
+        560
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s105",
+    "awakenings": [
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      },
+      {
+        "type": "orbDamageUp",
+        "orb": "fire",
+        "percent": 10
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "chain",
+        "role": "core"
+      },
+      {
+        "id": "mono",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "工匠座的維修機。主人在墜落時失蹤，她靠著鋪設熔軌把散落的零件一路串起來，相信只要軌道夠長，總有一天會接回主人身邊。"
+  },
+  {
+    "id": "c106",
+    "name": "焰紋見習・蘿希",
+    "attribute": "fire",
+    "race": "human",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        700,
+        2300
+      ],
+      "atk": [
+        260,
+        900
+      ],
+      "rcv": [
+        100,
+        330
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s106",
+    "leaderSkill": "l106",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "mono",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "灰燈港鐵匠的女兒，和主角同一天覺醒，是主角的第一位契約夥伴。嘴上說要當最強的契印師，其實只是想把熄掉的爐火重新點起來。主線劇情的固定搭檔。"
+  },
+  {
+    "id": "c107",
+    "name": "岩漿蜥・波吉",
+    "attribute": "fire",
+    "race": "dragon",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        630,
+        2070
+      ],
+      "atk": [
+        300,
+        1040
+      ],
+      "rcv": [
+        100,
+        310
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s107",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "chain",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "龍嗣裡最小的一支，族人嫌牠不像龍。牠的夢想是吐出一道「從這頭到那頭」的火焰，所以每天練習把火吐得更長。"
+  },
+  {
+    "id": "c108",
+    "name": "煙囪鐘匠・諾斯",
+    "attribute": "fire",
+    "race": "machina",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        770,
+        2530
+      ],
+      "atk": [
+        230,
+        810
+      ],
+      "rcv": [
+        100,
+        330
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s108",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "control",
+        "role": "core"
+      },
+      {
+        "id": "mono",
+        "role": "support"
+      },
+      {
+        "id": "combo",
+        "role": "support"
+      }
+    ],
+    "art": {},
+    "flavor": "負責灰燈港報時的鐘機。他把敲鐘的時間往後撥一點點，全鎮的人就能多睡一會兒；對敵人也一樣。"
+  },
+  {
+    "id": "c109",
+    "name": "灰燼傭兵・拉卡",
+    "attribute": "fire",
+    "race": "beast",
+    "rarity": 3,
+    "maxLevel": 50,
+    "stats": {
+      "hp": [
+        460,
+        1490
+      ],
+      "atk": [
+        150,
+        520
+      ],
+      "rcv": [
+        50,
+        180
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 4,
+    "activeSkill": "s109",
+    "leaderSkill": "l109",
+    "evolution": {
+      "to": "c110",
+      "materials": [
+        "c916"
+      ],
+      "coin": 5000
+    },
+    "expValue": 300,
+    "sellValue": 100,
+    "archetypes": [
+      {
+        "id": "berserk",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "墜域邊境最便宜的傭兵，因為他接的都是別人不敢接的工作。他說活得夠久的秘訣就是：每一場都當最後一場打。"
+  },
+  {
+    "id": "c110",
+    "name": "燼牙頭目・拉卡",
+    "attribute": "fire",
+    "race": "beast",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        800,
+        2640
+      ],
+      "atk": [
+        260,
+        900
+      ],
+      "rcv": [
+        80,
+        280
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s110",
+    "leaderSkill": "l110",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "berserk",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "墜域邊境最便宜的傭兵，因為他接的都是別人不敢接的工作。他說活得夠久的秘訣就是：每一場都當最後一場打。"
+  },
+  {
+    "id": "c111",
+    "name": "爐心精・小炭",
+    "attribute": "fire",
+    "race": "sylph",
+    "rarity": 3,
+    "maxLevel": 50,
+    "stats": {
+      "hp": [
+        360,
+        1170
+      ],
+      "atk": [
+        140,
+        490
+      ],
+      "rcv": [
+        80,
+        260
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 4,
+    "activeSkill": "s111",
+    "evolution": {
+      "to": "c112",
+      "materials": [
+        "c916"
+      ],
+      "coin": 5000
+    },
+    "expValue": 300,
+    "sellValue": 100,
+    "archetypes": [
+      {
+        "id": "enhance",
+        "role": "core"
+      },
+      {
+        "id": "mono",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "住在蘿希家火爐裡的精靈，靠吃火星長大。把她放進珠子裡，珠子就會亮起來。"
+  },
+  {
+    "id": "c112",
+    "name": "爐心精靈・炭華",
+    "attribute": "fire",
+    "race": "sylph",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        630,
+        2070
+      ],
+      "atk": [
+        250,
+        860
+      ],
+      "rcv": [
+        120,
+        410
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s112",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "enhance",
+        "role": "core"
+      },
+      {
+        "id": "mono",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "住在蘿希家火爐裡的精靈，靠吃火星長大。把她放進珠子裡，珠子就會亮起來。"
+  },
+  {
+    "id": "c201",
+    "name": "潮刻守時者・瑟琳",
+    "attribute": "water",
+    "race": "nether",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1360,
+        4410
+      ],
+      "atk": [
+        480,
+        1570
+      ],
+      "rcv": [
+        180,
+        530
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s201",
+    "leaderSkill": "l201",
+    "awakenings": [
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 600
+      },
+      {
+        "type": "resistStatus",
+        "status": "skillSeal",
+        "percent": 50
+      },
+      {
+        "type": "statUp",
+        "stat": "rcv",
+        "value": 150
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "control",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "冥河座下負責「把時間退回去」的守時者。七曜碎裂那一刻，她把那一秒往回撥了無數次，卻始終阻止不了。如今她讓敵人的時間停在原地，好讓別人有機會做她做不到的事。"
+  },
+  {
+    "id": "c202",
+    "name": "浪花舞姬・蜜瑟",
+    "attribute": "water",
+    "race": "human",
+    "rarity": 5,
+    "maxLevel": 90,
+    "stats": {
+      "hp": [
+        1000,
+        3300
+      ],
+      "atk": [
+        380,
+        1300
+      ],
+      "rcv": [
+        150,
+        450
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s202",
+    "leaderSkill": "l202",
+    "awakenings": [
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      },
+      {
+        "type": "resistStatus",
+        "status": "moveTimeDown",
+        "percent": 50
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "evolution": {
+      "to": "c203",
+      "materials": [
+        "c917",
+        "c917",
+        "c917"
+      ],
+      "coin": 50000
+    },
+    "expValue": 1500,
+    "sellValue": 1000,
+    "archetypes": [
+      {
+        "id": "combo",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "灰燈港碼頭的街頭舞者。她發現自己跳的每一步都能讓星紋珠跟著節拍落下，於是把舞步編成了契印術。她最討厭的是「只跳一個大動作」的表演。"
+  },
+  {
+    "id": "c203",
+    "name": "潮宴舞后・蜜瑟",
+    "attribute": "water",
+    "race": "human",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1300,
+        4200
+      ],
+      "atk": [
+        500,
+        1650
+      ],
+      "rcv": [
+        190,
+        560
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s203",
+    "leaderSkill": "l203",
+    "awakenings": [
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      },
+      {
+        "type": "resistStatus",
+        "status": "moveTimeDown",
+        "percent": 50
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "combo",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "灰燈港碼頭的街頭舞者。她發現自己跳的每一步都能讓星紋珠跟著節拍落下，於是把舞步編成了契印術。她最討厭的是「只跳一個大動作」的表演。"
+  },
+  {
+    "id": "c204",
+    "name": "雙月海龍・瑟恩與露恩",
+    "attribute": "water",
+    "race": "dragon",
+    "rarity": 5,
+    "maxLevel": 90,
+    "stats": {
+      "hp": [
+        900,
+        2970
+      ],
+      "atk": [
+        440,
+        1490
+      ],
+      "rcv": [
+        140,
+        430
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s204",
+    "leaderSkill": "l204",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "water",
+        "percent": 10
+      },
+      {
+        "type": "orbDamageUp",
+        "orb": "light",
+        "percent": 10
+      },
+      {
+        "type": "resistStatus",
+        "status": "orbLock",
+        "percent": 50
+      }
+    ],
+    "evolution": {
+      "to": "c205",
+      "materials": [
+        "c917",
+        "c917",
+        "c917"
+      ],
+      "coin": 50000
+    },
+    "expValue": 1500,
+    "sellValue": 1000,
+    "archetypes": [
+      {
+        "id": "dual",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "龍座裡一對永遠不分開的雙生龍，一條掌管海面的月光，一條掌管海底的暗潮。牠們只有同時出力時才算完整，所以只聽「兩種顏色一起消」的命令。"
+  },
+  {
+    "id": "c205",
+    "name": "潮輝雙曜・瑟恩與露恩",
+    "attribute": "water",
+    "race": "dragon",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1170,
+        3780
+      ],
+      "atk": [
+        580,
+        1900
+      ],
+      "rcv": [
+        180,
+        530
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s205",
+    "leaderSkill": "l205",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "water",
+        "percent": 10
+      },
+      {
+        "type": "orbDamageUp",
+        "orb": "light",
+        "percent": 10
+      },
+      {
+        "type": "resistStatus",
+        "status": "orbLock",
+        "percent": 50
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "dual",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "龍座裡一對永遠不分開的雙生龍，一條掌管海面的月光，一條掌管海底的暗潮。牠們只有同時出力時才算完整，所以只聽「兩種顏色一起消」的命令。"
+  },
+  {
+    "id": "c206",
+    "name": "信號海豹・提米",
+    "attribute": "water",
+    "race": "beast",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        800,
+        2640
+      ],
+      "atk": [
+        260,
+        900
+      ],
+      "rcv": [
+        80,
+        280
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s206",
+    "leaderSkill": "l206",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "combo",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "灰燈港的吉祥物，負責用旗語指揮進港船隻。牠拍旗的速度快到能一口氣傳出十幾個訊號，連契印師都學牠的節奏轉珠。"
+  },
+  {
+    "id": "c207",
+    "name": "墨潮章魚・歐克",
+    "attribute": "water",
+    "race": "beast",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        800,
+        2640
+      ],
+      "atk": [
+        260,
+        900
+      ],
+      "rcv": [
+        80,
+        280
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s207",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "dual",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "沉船灣的墨商，用自己的墨汁替人染色。藍的變紫、紅的變藍，只要價錢談得攏。"
+  },
+  {
+    "id": "c208",
+    "name": "白沫醫者・珊",
+    "attribute": "water",
+    "race": "human",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        700,
+        2300
+      ],
+      "atk": [
+        260,
+        900
+      ],
+      "rcv": [
+        100,
+        330
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s208",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "heart",
+        "role": "core"
+      },
+      {
+        "id": "fixed",
+        "role": "support"
+      }
+    ],
+    "art": {},
+    "flavor": "灰燈港唯一的醫生，免費替契印師看病，條件是要聽她碎念。"
+  },
+  {
+    "id": "c209",
+    "name": "潮汐鐘機・咕嚕",
+    "attribute": "water",
+    "race": "machina",
+    "rarity": 3,
+    "maxLevel": 50,
+    "stats": {
+      "hp": [
+        440,
+        1430
+      ],
+      "atk": [
+        140,
+        470
+      ],
+      "rcv": [
+        60,
+        210
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 4,
+    "activeSkill": "s209",
+    "leaderSkill": "l209",
+    "evolution": {
+      "to": "c210",
+      "materials": [
+        "c917"
+      ],
+      "coin": 5000
+    },
+    "expValue": 300,
+    "sellValue": 100,
+    "archetypes": [
+      {
+        "id": "control",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "工匠座用來測量潮汐的儀器。牠走得很慢，但牠在的地方，連時間都會跟著慢下來。"
+  },
+  {
+    "id": "c210",
+    "name": "大潮鐘機・咕嚕咕",
+    "attribute": "water",
+    "race": "machina",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        770,
+        2530
+      ],
+      "atk": [
+        230,
+        810
+      ],
+      "rcv": [
+        100,
+        330
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s209",
+    "leaderSkill": "l210",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "control",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "工匠座用來測量潮汐的儀器。牠走得很慢，但牠在的地方，連時間都會跟著慢下來。"
+  },
+  {
+    "id": "c211",
+    "name": "泡泡水母・啵啵",
+    "attribute": "water",
+    "race": "sylph",
+    "rarity": 3,
+    "maxLevel": 50,
+    "stats": {
+      "hp": [
+        360,
+        1170
+      ],
+      "atk": [
+        140,
+        490
+      ],
+      "rcv": [
+        80,
+        260
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 4,
+    "activeSkill": "s211",
+    "evolution": {
+      "to": "c212",
+      "materials": [
+        "c917"
+      ],
+      "coin": 5000
+    },
+    "expValue": 300,
+    "sellValue": 100,
+    "archetypes": [
+      {
+        "id": "combo",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "羽座裡最愛玩的靈仙，喜歡把東西拆成一顆一顆的小泡泡。她不懂「一次解決」有什麼好玩。"
+  },
+  {
+    "id": "c212",
+    "name": "泡沫女王・啵啵菈",
+    "attribute": "water",
+    "race": "sylph",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        630,
+        2070
+      ],
+      "atk": [
+        250,
+        860
+      ],
+      "rcv": [
+        120,
+        410
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s212",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "combo",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "羽座裡最愛玩的靈仙，喜歡把東西拆成一顆一顆的小泡泡。她不懂「一次解決」有什麼好玩。"
+  },
+  {
+    "id": "c301",
+    "name": "千年樹母・艾菈蒂",
+    "attribute": "wood",
+    "race": "sylph",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1170,
+        3780
+      ],
+      "atk": [
+        480,
+        1570
+      ],
+      "rcv": [
+        240,
+        700
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s301",
+    "leaderSkill": "l301",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "heart",
+        "percent": 15
+      },
+      {
+        "type": "resistStatus",
+        "status": "heartSeal",
+        "percent": 50
+      },
+      {
+        "type": "statUp",
+        "stat": "rcv",
+        "value": 200
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "heart",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "羽座之下最古老的靈仙，墜落時把根扎進了大地，從此再也無法離開。她把所有吸進來的星骸毒素轉成養分，也把契印師受的傷轉成反擊的力量。"
+  },
+  {
+    "id": "c302",
+    "name": "苔晶園丁・葛瑞",
+    "attribute": "wood",
+    "race": "machina",
+    "rarity": 5,
+    "maxLevel": 90,
+    "stats": {
+      "hp": [
+        1100,
+        3630
+      ],
+      "atk": [
+        340,
+        1170
+      ],
+      "rcv": [
+        150,
+        450
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s302",
+    "leaderSkill": "l302",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "wood",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 500
+      },
+      {
+        "type": "resistStatus",
+        "status": "orbLock",
+        "percent": 30
+      }
+    ],
+    "evolution": {
+      "to": "c303",
+      "materials": [
+        "c918",
+        "c918",
+        "c918"
+      ],
+      "coin": 50000
+    },
+    "expValue": 1500,
+    "sellValue": 1000,
+    "archetypes": [
+      {
+        "id": "enhance",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "工匠座造來照顧星座花園的園丁。花園碎了，他就在每顆珠子裡種下一點晶苗，等它們一起開花。"
+  },
+  {
+    "id": "c303",
+    "name": "晶園主・葛瑞",
+    "attribute": "wood",
+    "race": "machina",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1430,
+        4620
+      ],
+      "atk": [
+        450,
+        1480
+      ],
+      "rcv": [
+        190,
+        560
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s303",
+    "leaderSkill": "l303",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "wood",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 500
+      },
+      {
+        "type": "resistStatus",
+        "status": "orbLock",
+        "percent": 30
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "enhance",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "工匠座造來照顧星座花園的園丁。花園碎了，他就在每顆珠子裡種下一點晶苗，等它們一起開花。"
+  },
+  {
+    "id": "c304",
+    "name": "荊棘藥師・薇妮",
+    "attribute": "wood",
+    "race": "human",
+    "rarity": 5,
+    "maxLevel": 90,
+    "stats": {
+      "hp": [
+        1000,
+        3300
+      ],
+      "atk": [
+        380,
+        1300
+      ],
+      "rcv": [
+        150,
+        450
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s304",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "heart",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "rcv",
+        "value": 150
+      },
+      {
+        "type": "resistStatus",
+        "status": "poison",
+        "percent": 50
+      }
+    ],
+    "evolution": {
+      "to": "c305",
+      "materials": [
+        "c918",
+        "c918",
+        "c918"
+      ],
+      "coin": 50000
+    },
+    "expValue": 1500,
+    "sellValue": 1000,
+    "archetypes": [
+      {
+        "id": "fixed",
+        "role": "core"
+      },
+      {
+        "id": "heart",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "墜域的瘟疫醫生。她的藥一半救人一半殺人，用量差一滴而已。她說星骸再硬也有血管，只要找得到就能毒倒。"
+  },
+  {
+    "id": "c305",
+    "name": "荊冠藥聖・薇妮",
+    "attribute": "wood",
+    "race": "human",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1300,
+        4200
+      ],
+      "atk": [
+        500,
+        1650
+      ],
+      "rcv": [
+        190,
+        560
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s305",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "heart",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "rcv",
+        "value": 150
+      },
+      {
+        "type": "resistStatus",
+        "status": "poison",
+        "percent": 50
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "fixed",
+        "role": "core"
+      },
+      {
+        "id": "heart",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "墜域的瘟疫醫生。她的藥一半救人一半殺人，用量差一滴而已。她說星骸再硬也有血管，只要找得到就能毒倒。"
+  },
+  {
+    "id": "c306",
+    "name": "苔背刺蝟・波可",
+    "attribute": "wood",
+    "race": "beast",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        800,
+        2640
+      ],
+      "atk": [
+        260,
+        900
+      ],
+      "rcv": [
+        80,
+        280
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s306",
+    "leaderSkill": "l306",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "heart",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "苔原上的膽小鬼，誰都打不贏，但誰也打不穿牠。牠會把同伴藏進自己的苔背裡。"
+  },
+  {
+    "id": "c307",
+    "name": "毒藤刺客・絲蔓",
+    "attribute": "wood",
+    "race": "nether",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        740,
+        2420
+      ],
+      "atk": [
+        250,
+        860
+      ],
+      "rcv": [
+        100,
+        310
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s307",
+    "leaderSkill": "l307",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "fixed",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "被冥河座收留的森之亡魂。她早就感覺不到疼痛，所以也不在乎敵人有多強壯，只計算要多少毒才夠。"
+  },
+  {
+    "id": "c308",
+    "name": "苔甲地龍・歐登",
+    "attribute": "wood",
+    "race": "dragon",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        630,
+        2070
+      ],
+      "atk": [
+        300,
+        1040
+      ],
+      "rcv": [
+        100,
+        310
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s308",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "heart",
+        "role": "support"
+      },
+      {
+        "id": "enhance",
+        "role": "support"
+      },
+      {
+        "id": "control",
+        "role": "support"
+      },
+      {
+        "id": "berserk",
+        "role": "support"
+      }
+    ],
+    "art": {},
+    "flavor": "龍嗣裡唯一不會飛的一支。別的龍嗣去戰鬥，牠負責站在原地，讓所有人有地方可以回來。"
+  },
+  {
+    "id": "c309",
+    "name": "種子鳥・啾波",
+    "attribute": "wood",
+    "race": "sylph",
+    "rarity": 3,
+    "maxLevel": 50,
+    "stats": {
+      "hp": [
+        360,
+        1170
+      ],
+      "atk": [
+        140,
+        490
+      ],
+      "rcv": [
+        80,
+        260
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 4,
+    "activeSkill": "s309",
+    "leaderSkill": "l309",
+    "evolution": {
+      "to": "c310",
+      "materials": [
+        "c918"
+      ],
+      "coin": 5000
+    },
+    "expValue": 300,
+    "sellValue": 100,
+    "archetypes": [
+      {
+        "id": "enhance",
+        "role": "leader"
+      },
+      {
+        "id": "enhance",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "專門把種子播進星紋珠的小鳥。牠每唱一首歌，就有一顆珠子發芽。"
+  },
+  {
+    "id": "c310",
+    "name": "森歌鳥・啾波琳",
+    "attribute": "wood",
+    "race": "sylph",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        630,
+        2070
+      ],
+      "atk": [
+        250,
+        860
+      ],
+      "rcv": [
+        120,
+        410
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s309",
+    "leaderSkill": "l310",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "enhance",
+        "role": "leader"
+      },
+      {
+        "id": "enhance",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "專門把種子播進星紋珠的小鳥。牠每唱一首歌，就有一顆珠子發芽。"
+  },
+  {
+    "id": "c311",
+    "name": "羽葉精靈・琪雅",
+    "attribute": "wood",
+    "race": "sylph",
+    "rarity": 3,
+    "maxLevel": 50,
+    "stats": {
+      "hp": [
+        360,
+        1170
+      ],
+      "atk": [
+        140,
+        490
+      ],
+      "rcv": [
+        80,
+        260
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 4,
+    "activeSkill": "s311",
+    "leaderSkill": "l311",
+    "evolution": {
+      "to": "c312",
+      "materials": [
+        "c918"
+      ],
+      "coin": 5000
+    },
+    "expValue": 300,
+    "sellValue": 100,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "羽座合唱團的領唱。星座碎了，同伴四散各地，她一路吹著集合的笛聲，聽到的靈仙都會飛回來。"
+  },
+  {
+    "id": "c312",
+    "name": "羽座領唱・琪雅",
+    "attribute": "wood",
+    "race": "sylph",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        630,
+        2070
+      ],
+      "atk": [
+        250,
+        860
+      ],
+      "rcv": [
+        120,
+        410
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s312",
+    "leaderSkill": "l312",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "羽座合唱團的領唱。星座碎了，同伴四散各地，她一路吹著集合的笛聲，聽到的靈仙都會飛回來。"
+  },
+  {
+    "id": "c401",
+    "name": "虹羽聖詠・菈米耶",
+    "attribute": "light",
+    "race": "sylph",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1170,
+        3780
+      ],
+      "atk": [
+        480,
+        1570
+      ],
+      "rcv": [
+        240,
+        700
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s401",
+    "leaderSkill": "l401",
+    "awakenings": [
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      },
+      {
+        "type": "resistStatus",
+        "status": "orbLock",
+        "percent": 50
+      },
+      {
+        "type": "resistStatus",
+        "status": "darkOrbs",
+        "percent": 50
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "rainbow",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "七曜還完整時，她負責在每晚為七個星座依序唱名。如今星座碎了，她仍每晚唱完整首歌，少了哪個音就停下來等。"
+  },
+  {
+    "id": "c402",
+    "name": "星盤占卜師・歐倫",
+    "attribute": "light",
+    "race": "human",
+    "rarity": 5,
+    "maxLevel": 90,
+    "stats": {
+      "hp": [
+        1000,
+        3300
+      ],
+      "atk": [
+        380,
+        1300
+      ],
+      "rcv": [
+        150,
+        450
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s402",
+    "leaderSkill": "l402",
+    "awakenings": [
+      {
+        "type": "resistStatus",
+        "status": "skillSeal",
+        "percent": 50
+      },
+      {
+        "type": "resistStatus",
+        "status": "skillSeal",
+        "percent": 50
+      },
+      {
+        "type": "statUp",
+        "stat": "rcv",
+        "value": 150
+      }
+    ],
+    "evolution": {
+      "to": "c403",
+      "materials": [
+        "c919",
+        "c919",
+        "c919"
+      ],
+      "coin": 50000
+    },
+    "expValue": 1500,
+    "sellValue": 1000,
+    "archetypes": [
+      {
+        "id": "skillcycle",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "灰燈港天文台的台長，是第一個算出「七曜還會再碎一次」的人。沒人相信他，所以他只好讓每一個契印師都比預定更早準備好。"
+  },
+  {
+    "id": "c403",
+    "name": "天機觀星者・歐倫",
+    "attribute": "light",
+    "race": "human",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1300,
+        4200
+      ],
+      "atk": [
+        500,
+        1650
+      ],
+      "rcv": [
+        190,
+        560
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s403",
+    "leaderSkill": "l403",
+    "awakenings": [
+      {
+        "type": "resistStatus",
+        "status": "skillSeal",
+        "percent": 50
+      },
+      {
+        "type": "resistStatus",
+        "status": "skillSeal",
+        "percent": 50
+      },
+      {
+        "type": "statUp",
+        "stat": "rcv",
+        "value": 150
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "skillcycle",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "灰燈港天文台的台長，是第一個算出「七曜還會再碎一次」的人。沒人相信他，所以他只好讓每一個契印師都比預定更早準備好。"
+  },
+  {
+    "id": "c404",
+    "name": "金曜聖龍・艾斯特拉",
+    "attribute": "light",
+    "race": "dragon",
+    "rarity": 5,
+    "maxLevel": 90,
+    "stats": {
+      "hp": [
+        900,
+        2970
+      ],
+      "atk": [
+        440,
+        1490
+      ],
+      "rcv": [
+        140,
+        430
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s404",
+    "leaderSkill": "l404",
+    "awakenings": [
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 800
+      },
+      {
+        "type": "orbDamageUp",
+        "orb": "light",
+        "percent": 10
+      },
+      {
+        "type": "resistStatus",
+        "status": "multiHit",
+        "percent": 30
+      }
+    ],
+    "evolution": {
+      "to": "c405",
+      "materials": [
+        "c919",
+        "c919",
+        "c919"
+      ],
+      "coin": 50000
+    },
+    "expValue": 1500,
+    "sellValue": 1000,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "龍座的守星者，在碎裂時用身體擋住了最大的一塊碎片，因此失去了半數的記憶。她記得每一位同族的名字，只要同族聚在她身邊，她就能想起更多。"
+  },
+  {
+    "id": "c405",
+    "name": "曜冠龍皇・艾斯特拉",
+    "attribute": "light",
+    "race": "dragon",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1170,
+        3780
+      ],
+      "atk": [
+        580,
+        1900
+      ],
+      "rcv": [
+        180,
+        530
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s405",
+    "leaderSkill": "l405",
+    "awakenings": [
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 800
+      },
+      {
+        "type": "orbDamageUp",
+        "orb": "light",
+        "percent": 10
+      },
+      {
+        "type": "resistStatus",
+        "status": "multiHit",
+        "percent": 30
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "龍座的守星者，在碎裂時用身體擋住了最大的一塊碎片，因此失去了半數的記憶。她記得每一位同族的名字，只要同族聚在她身邊，她就能想起更多。"
+  },
+  {
+    "id": "c406",
+    "name": "稜鏡少女・普莉茲",
+    "attribute": "light",
+    "race": "human",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        700,
+        2300
+      ],
+      "atk": [
+        260,
+        900
+      ],
+      "rcv": [
+        100,
+        330
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s406",
+    "leaderSkill": "l406",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "rainbow",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "歐倫的學徒，研究為什麼星光穿過稜鏡會分成七色。她相信只要把七種光重新疊起來，就能拼回碎掉的星座。"
+  },
+  {
+    "id": "c407",
+    "name": "黃銅守衛・M-7「麥塔」",
+    "attribute": "light",
+    "race": "machina",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        770,
+        2530
+      ],
+      "atk": [
+        230,
+        810
+      ],
+      "rcv": [
+        100,
+        330
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s407",
+    "leaderSkill": "l407",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "工匠座的第七號守衛，是唯一還能運作的指揮型號。它會把散落各地的機構重新編號，編進同一支隊伍裡。"
+  },
+  {
+    "id": "c408",
+    "name": "燭光修士・亞柏",
+    "attribute": "light",
+    "race": "nether",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        740,
+        2420
+      ],
+      "atk": [
+        250,
+        860
+      ],
+      "rcv": [
+        100,
+        310
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s408",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "rainbow",
+        "role": "support"
+      },
+      {
+        "id": "dual",
+        "role": "support"
+      },
+      {
+        "id": "fixed",
+        "role": "support"
+      }
+    ],
+    "art": {},
+    "flavor": "冥河座的引路人，專門替迷路的亡魂點燈。他死了很久，卻是全隊最溫柔的一位。"
+  },
+  {
+    "id": "c409",
+    "name": "齒輪書記・帕奇",
+    "attribute": "light",
+    "race": "machina",
+    "rarity": 3,
+    "maxLevel": 50,
+    "stats": {
+      "hp": [
+        440,
+        1430
+      ],
+      "atk": [
+        140,
+        470
+      ],
+      "rcv": [
+        60,
+        210
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 4,
+    "activeSkill": "s409",
+    "leaderSkill": "l409",
+    "evolution": {
+      "to": "c410",
+      "materials": [
+        "c919"
+      ],
+      "coin": 5000
+    },
+    "expValue": 300,
+    "sellValue": 100,
+    "archetypes": [
+      {
+        "id": "skillcycle",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "天文台的記錄機，替歐倫抄寫所有預言。它記得每個技能上次用了多久，總會在剛好的時候提醒大家。"
+  },
+  {
+    "id": "c410",
+    "name": "機要書記・帕奇",
+    "attribute": "light",
+    "race": "machina",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        770,
+        2530
+      ],
+      "atk": [
+        230,
+        810
+      ],
+      "rcv": [
+        100,
+        330
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s410",
+    "leaderSkill": "l410",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "skillcycle",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "天文台的記錄機，替歐倫抄寫所有預言。它記得每個技能上次用了多久，總會在剛好的時候提醒大家。"
+  },
+  {
+    "id": "c411",
+    "name": "光蝶・芙洛",
+    "attribute": "light",
+    "race": "sylph",
+    "rarity": 3,
+    "maxLevel": 50,
+    "stats": {
+      "hp": [
+        360,
+        1170
+      ],
+      "atk": [
+        140,
+        490
+      ],
+      "rcv": [
+        80,
+        260
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 4,
+    "activeSkill": "s411",
+    "evolution": {
+      "to": "c412",
+      "materials": [
+        "c919"
+      ],
+      "coin": 5000
+    },
+    "expValue": 300,
+    "sellValue": 100,
+    "archetypes": [
+      {
+        "id": "rainbow",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "菈米耶歌聲裡誕生的小靈仙，哪裡少了顏色，牠就飛過去把光粉灑上。"
+  },
+  {
+    "id": "c412",
+    "name": "虹翅光蝶・芙洛菈",
+    "attribute": "light",
+    "race": "sylph",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        630,
+        2070
+      ],
+      "atk": [
+        250,
+        860
+      ],
+      "rcv": [
+        120,
+        410
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s412",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "rainbow",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "菈米耶歌聲裡誕生的小靈仙，哪裡少了顏色，牠就飛過去把光粉灑上。"
+  },
+  {
+    "id": "c501",
+    "name": "深淵吞星者・莫爾德",
+    "attribute": "dark",
+    "race": "dragon",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1170,
+        3780
+      ],
+      "atk": [
+        580,
+        1900
+      ],
+      "rcv": [
+        180,
+        530
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s501",
+    "leaderSkill": "l501",
+    "awakenings": [
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      },
+      {
+        "type": "orbDamageUp",
+        "orb": "dark",
+        "percent": 10
+      },
+      {
+        "type": "resistStatus",
+        "status": "comboShield",
+        "percent": 30
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "chain",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "傳說他就是擊碎七曜的元凶之一，但他自己不記得。他唯一的本能是「一口吞下一整串」，因此成為最可怕也最可靠的契約者。（第 5 章揭露的伏筆角色，總監可決定是否採用此設定）"
+  },
+  {
+    "id": "c502",
+    "name": "冥燈渡者・伊薩",
+    "attribute": "dark",
+    "race": "nether",
+    "rarity": 5,
+    "maxLevel": 90,
+    "stats": {
+      "hp": [
+        1050,
+        3460
+      ],
+      "atk": [
+        360,
+        1240
+      ],
+      "rcv": [
+        140,
+        430
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s502",
+    "leaderSkill": "l502",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "heart",
+        "percent": 10
+      },
+      {
+        "type": "resistStatus",
+        "status": "heartSeal",
+        "percent": 50
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 600
+      }
+    ],
+    "evolution": {
+      "to": "c503",
+      "materials": [
+        "c920",
+        "c920",
+        "c920"
+      ],
+      "coin": 50000
+    },
+    "expValue": 1500,
+    "sellValue": 1000,
+    "archetypes": [
+      {
+        "id": "fixed",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "冥河座的擺渡人，只收「一盞燈」作為船資。他不在乎客人生前多強大，每個人都只換得到一盞燈的重量，對敵人也是一樣。"
+  },
+  {
+    "id": "c503",
+    "name": "冥河燈主・伊薩",
+    "attribute": "dark",
+    "race": "nether",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1360,
+        4410
+      ],
+      "atk": [
+        480,
+        1570
+      ],
+      "rcv": [
+        180,
+        530
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s503",
+    "leaderSkill": "l503",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "heart",
+        "percent": 10
+      },
+      {
+        "type": "resistStatus",
+        "status": "heartSeal",
+        "percent": 50
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 600
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "fixed",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "冥河座的擺渡人，只收「一盞燈」作為船資。他不在乎客人生前多強大，每個人都只換得到一盞燈的重量，對敵人也是一樣。"
+  },
+  {
+    "id": "c504",
+    "name": "影織傀儡師・諾瓦",
+    "attribute": "dark",
+    "race": "nether",
+    "rarity": 5,
+    "maxLevel": 90,
+    "stats": {
+      "hp": [
+        1050,
+        3460
+      ],
+      "atk": [
+        360,
+        1240
+      ],
+      "rcv": [
+        140,
+        430
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s504",
+    "awakenings": [
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      },
+      {
+        "type": "resistStatus",
+        "status": "moveTimeDown",
+        "percent": 50
+      },
+      {
+        "type": "resistStatus",
+        "status": "skillSeal",
+        "percent": 30
+      }
+    ],
+    "evolution": {
+      "to": "c505",
+      "materials": [
+        "c920",
+        "c920",
+        "c920"
+      ],
+      "coin": 50000
+    },
+    "expValue": 1500,
+    "sellValue": 1000,
+    "archetypes": [
+      {
+        "id": "combo",
+        "role": "core"
+      },
+      {
+        "id": "skillcycle",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "冥河邊的流浪藝人，他的觀眾全是影子。他能讓影子替人轉珠，一場戲演完，台下的契印師才發現自己什麼都沒動。"
+  },
+  {
+    "id": "c505",
+    "name": "千影傀儡師・諾瓦",
+    "attribute": "dark",
+    "race": "nether",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1360,
+        4410
+      ],
+      "atk": [
+        480,
+        1570
+      ],
+      "rcv": [
+        180,
+        530
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s505",
+    "awakenings": [
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      },
+      {
+        "type": "resistStatus",
+        "status": "moveTimeDown",
+        "percent": 50
+      },
+      {
+        "type": "resistStatus",
+        "status": "skillSeal",
+        "percent": 30
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "combo",
+        "role": "core"
+      },
+      {
+        "id": "skillcycle",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "冥河邊的流浪藝人，他的觀眾全是影子。他能讓影子替人轉珠，一場戲演完，台下的契印師才發現自己什麼都沒動。"
+  },
+  {
+    "id": "c506",
+    "name": "沉船幽靈・莉薇",
+    "attribute": "dark",
+    "race": "nether",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        740,
+        2420
+      ],
+      "atk": [
+        250,
+        860
+      ],
+      "rcv": [
+        100,
+        310
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s506",
+    "leaderSkill": "l506",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "dual",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "沉船灣那艘幽靈船的船長，一直在等永遠不會回來的船員。她的船一半在海上、一半在冥河，所以只有潮與蝕一起出現時，船才能靠岸。"
+  },
+  {
+    "id": "c507",
+    "name": "血契狂戰士・格雷",
+    "attribute": "dark",
+    "race": "human",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        700,
+        2300
+      ],
+      "atk": [
+        260,
+        900
+      ],
+      "rcv": [
+        100,
+        330
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s507",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "berserk",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "曾經是英雄座的護衛隊長，用血與星骸簽下「只要還有一口氣就不倒下」的契約。代價是他永遠只剩一口氣。"
+  },
+  {
+    "id": "c508",
+    "name": "夜梟哨兵・烏爾",
+    "attribute": "dark",
+    "race": "beast",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        800,
+        2640
+      ],
+      "atk": [
+        260,
+        900
+      ],
+      "rcv": [
+        80,
+        280
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s508",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "control",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "墜域邊界的守夜人，負責在黑暗裡盯住敵人。被他盯上的東西會不自覺地停下來，以為天還沒亮。"
+  },
+  {
+    "id": "c509",
+    "name": "蝕晶幼龍・蓋布",
+    "attribute": "dark",
+    "race": "dragon",
+    "rarity": 3,
+    "maxLevel": 50,
+    "stats": {
+      "hp": [
+        360,
+        1170
+      ],
+      "atk": [
+        170,
+        600
+      ],
+      "rcv": [
+        60,
+        200
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 4,
+    "activeSkill": "s509",
+    "leaderSkill": "l509",
+    "evolution": {
+      "to": "c510",
+      "materials": [
+        "c920"
+      ],
+      "coin": 5000
+    },
+    "expValue": 300,
+    "sellValue": 100,
+    "archetypes": [
+      {
+        "id": "chain",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "在星骸礦坑裡孵化的龍嗣，從小吃晶石長大。牠吐出的晶石總是排成一直線，因為牠只會往前噴。"
+  },
+  {
+    "id": "c510",
+    "name": "蝕晶龍・蓋布瑞",
+    "attribute": "dark",
+    "race": "dragon",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        630,
+        2070
+      ],
+      "atk": [
+        300,
+        1040
+      ],
+      "rcv": [
+        100,
+        310
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s510",
+    "leaderSkill": "l510",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "chain",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "在星骸礦坑裡孵化的龍嗣，從小吃晶石長大。牠吐出的晶石總是排成一直線，因為牠只會往前噴。"
+  },
+  {
+    "id": "c511",
+    "name": "發條蝙蝠・奇克",
+    "attribute": "dark",
+    "race": "machina",
+    "rarity": 3,
+    "maxLevel": 50,
+    "stats": {
+      "hp": [
+        440,
+        1430
+      ],
+      "atk": [
+        140,
+        470
+      ],
+      "rcv": [
+        60,
+        210
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 4,
+    "activeSkill": "s511",
+    "evolution": {
+      "to": "c512",
+      "materials": [
+        "c920"
+      ],
+      "coin": 5000
+    },
+    "expValue": 300,
+    "sellValue": 100,
+    "archetypes": [
+      {
+        "id": "skillcycle",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "住在天文台鐘塔裡的機械蝙蝠，帕奇的搭檔。牠白天睡覺，晚上幫所有人上發條。"
+  },
+  {
+    "id": "c512",
+    "name": "鐘塔蝙蝠・奇克斯",
+    "attribute": "dark",
+    "race": "machina",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        770,
+        2530
+      ],
+      "atk": [
+        230,
+        810
+      ],
+      "rcv": [
+        100,
+        330
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s512",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "skillcycle",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "住在天文台鐘塔裡的機械蝙蝠，帕奇的搭檔。牠白天睡覺，晚上幫所有人上發條。"
+  },
+  {
+    "id": "c601",
+    "name": "金鬃獅王・格魯",
+    "attribute": "light",
+    "race": "beast",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        800,
+        2640
+      ],
+      "atk": [
+        260,
+        900
+      ],
+      "rcv": [
+        80,
+        280
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s601",
+    "leaderSkill": "l601",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "獸座崩落後四散的部族中，唯一還能把所有人叫回來的老王。首發活動「獸王的召集令」的主角。"
+  },
+  {
+    "id": "c602",
+    "name": "冥火司書・薇絲珀",
+    "attribute": "fire",
+    "race": "nether",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        740,
+        2420
+      ],
+      "atk": [
+        250,
+        860
+      ],
+      "rcv": [
+        100,
+        310
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s602",
+    "leaderSkill": "l602",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "冥河座的圖書館員，把所有渡河者的名字抄進書裡。挑戰之塔的每一層，都是她書中的一章。"
+  },
+  {
+    "id": "c603",
+    "name": "無名見證者・雷恩",
+    "attribute": "wood",
+    "race": "human",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        700,
+        2300
+      ],
+      "atk": [
+        260,
+        900
+      ],
+      "rcv": [
+        100,
+        330
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s603",
+    "leaderSkill": "l603",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "英雄座的星靈之一，卻不記得自己做過什麼偉大的事。他相信英雄不是一個人，而是一群願意站在一起的普通人。塔頂的獎勵，也是主角未來的導師。"
+  },
+  {
+    "id": "c604",
+    "name": "龍脊信使・艾嵐",
+    "attribute": "water",
+    "race": "dragon",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        630,
+        2070
+      ],
+      "atk": [
+        300,
+        1040
+      ],
+      "rcv": [
+        100,
+        310
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s604",
+    "leaderSkill": "l604",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "住在龍脊山頂燈塔的信使，負責替四散的龍嗣傳話。他把每一條龍的名字刻在燈籠裡，燈越亮，代表回來的龍越多。"
+  },
+  {
+    "id": "c901",
+    "name": "焰塵靈・微光",
+    "attribute": "fire",
+    "race": "material",
+    "rarity": 2,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 1000,
+    "sellValue": 50,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚焰屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c902",
+    "name": "焰塵靈・燭光",
+    "attribute": "fire",
+    "race": "material",
+    "rarity": 3,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 5000,
+    "sellValue": 200,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚焰屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c903",
+    "name": "焰塵靈・烈光",
+    "attribute": "fire",
+    "race": "material",
+    "rarity": 4,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 20000,
+    "sellValue": 800,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚焰屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c904",
+    "name": "潮塵靈・微光",
+    "attribute": "water",
+    "race": "material",
+    "rarity": 2,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 1000,
+    "sellValue": 50,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚潮屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c905",
+    "name": "潮塵靈・燭光",
+    "attribute": "water",
+    "race": "material",
+    "rarity": 3,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 5000,
+    "sellValue": 200,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚潮屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c906",
+    "name": "潮塵靈・烈光",
+    "attribute": "water",
+    "race": "material",
+    "rarity": 4,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 20000,
+    "sellValue": 800,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚潮屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c907",
+    "name": "森塵靈・微光",
+    "attribute": "wood",
+    "race": "material",
+    "rarity": 2,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 1000,
+    "sellValue": 50,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚森屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c908",
+    "name": "森塵靈・燭光",
+    "attribute": "wood",
+    "race": "material",
+    "rarity": 3,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 5000,
+    "sellValue": 200,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚森屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c909",
+    "name": "森塵靈・烈光",
+    "attribute": "wood",
+    "race": "material",
+    "rarity": 4,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 20000,
+    "sellValue": 800,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚森屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c910",
+    "name": "輝塵靈・微光",
+    "attribute": "light",
+    "race": "material",
+    "rarity": 2,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 1000,
+    "sellValue": 50,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚輝屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c911",
+    "name": "輝塵靈・燭光",
+    "attribute": "light",
+    "race": "material",
+    "rarity": 3,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 5000,
+    "sellValue": 200,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚輝屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c912",
+    "name": "輝塵靈・烈光",
+    "attribute": "light",
+    "race": "material",
+    "rarity": 4,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 20000,
+    "sellValue": 800,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚輝屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c913",
+    "name": "蝕塵靈・微光",
+    "attribute": "dark",
+    "race": "material",
+    "rarity": 2,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 1000,
+    "sellValue": 50,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚蝕屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c914",
+    "name": "蝕塵靈・燭光",
+    "attribute": "dark",
+    "race": "material",
+    "rarity": 3,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 5000,
+    "sellValue": 200,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚蝕屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c915",
+    "name": "蝕塵靈・烈光",
+    "attribute": "dark",
+    "race": "material",
+    "rarity": 4,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 20000,
+    "sellValue": 800,
+    "archetypes": [],
+    "art": {},
+    "flavor": "凝聚蝕屬星紋的星塵，越亮蘊含的經驗越多。用來強化卡片，同屬性效果 1.5 倍。"
+  },
+  {
+    "id": "c916",
+    "name": "焰星核",
+    "attribute": "fire",
+    "race": "material",
+    "rarity": 4,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 1000,
+    "sellValue": 500,
+    "archetypes": [],
+    "art": {},
+    "flavor": "內部有星座紋路緩緩轉動的水晶球。焰屬卡片進化與星紋覺醒的素材。"
+  },
+  {
+    "id": "c917",
+    "name": "潮星核",
+    "attribute": "water",
+    "race": "material",
+    "rarity": 4,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 1000,
+    "sellValue": 500,
+    "archetypes": [],
+    "art": {},
+    "flavor": "內部有星座紋路緩緩轉動的水晶球。潮屬卡片進化與星紋覺醒的素材。"
+  },
+  {
+    "id": "c918",
+    "name": "森星核",
+    "attribute": "wood",
+    "race": "material",
+    "rarity": 4,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 1000,
+    "sellValue": 500,
+    "archetypes": [],
+    "art": {},
+    "flavor": "內部有星座紋路緩緩轉動的水晶球。森屬卡片進化與星紋覺醒的素材。"
+  },
+  {
+    "id": "c919",
+    "name": "輝星核",
+    "attribute": "light",
+    "race": "material",
+    "rarity": 4,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 1000,
+    "sellValue": 500,
+    "archetypes": [],
+    "art": {},
+    "flavor": "內部有星座紋路緩緩轉動的水晶球。輝屬卡片進化與星紋覺醒的素材。"
+  },
+  {
+    "id": "c920",
+    "name": "蝕星核",
+    "attribute": "dark",
+    "race": "material",
+    "rarity": 4,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 1000,
+    "sellValue": 500,
+    "archetypes": [],
+    "art": {},
+    "flavor": "內部有星座紋路緩緩轉動的水晶球。蝕屬卡片進化與星紋覺醒的素材。"
+  }
+]

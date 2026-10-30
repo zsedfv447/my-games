@@ -25,6 +25,8 @@ export const adventureScreen: ScreenDef = {
         listItem({ leading: icon('history'), title: '每日關卡', sub: '素材、進化素材、金幣關每日輪替', onClick: () => nav.go('daily') }),
         listItem({ leading: icon('event'), title: '限時活動', sub: '活動 Boss 與兌換商店', onClick: () => nav.go('event') }),
         listItem({ leading: icon('tower'), title: '挑戰之塔', sub: '不耗體力，共 30 層', onClick: () => nav.go('tower') }),
+        listItem({ leading: icon('constellation'), title: '流派試煉', sub: '借一支現成隊伍體驗各流派', onClick: () => nav.go('archetypes') }),
+        listItem({ leading: icon('sword'), title: '練習場', sub: '用示範隊伍練習轉珠，不耗體力', onClick: () => nav.go('battle', ['practice']) }),
       ),
     );
   },

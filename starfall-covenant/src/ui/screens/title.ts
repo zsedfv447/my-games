@@ -4,6 +4,8 @@ import { logoSvg } from '../art/scenery';
 import { userAsset } from '../assets';
 import { audio } from '../audio';
 import type { ScreenDef } from '../router';
+import { gameData } from '../../data/load';
+import { getSave } from '../state';
 
 export const titleScreen: ScreenDef = {
   name: 'title',
@@ -30,7 +32,9 @@ export const titleScreen: ScreenDef = {
     el.addEventListener('click', () => {
       audio.unlock();
       audio.play('confirm');
-      nav.replace('home');
+      // 新遊戲第一次進入先播序章
+      if (gameData.story.prologue && !getSave().progress.storySeen.includes('prologue')) nav.replace('story', ['prologue'], { next: 'home' });
+      else nav.replace('home');
     }, { once: true });
     return el;
   },

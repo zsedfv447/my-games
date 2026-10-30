@@ -10,8 +10,9 @@ import chapters from '../../data/chapters.json';
 import gachaPools from '../../data/gacha-pools.json';
 import shop from '../../data/shop.json';
 import quests from '../../data/quests.json';
+import story from '../../data/story.json';
 import type { GameData } from './validate';
 
 export const gameData = {
-  config, archetypes, cards, skills, leaderSkills, enemies, stages, chapters, gachaPools, shop, quests,
+  config, archetypes, cards, skills, leaderSkills, enemies, stages, chapters, gachaPools, shop, quests, story,
 } as unknown as GameData;
