@@ -34,7 +34,9 @@ export function unlockNotice(stage: StageDef): { row: HTMLElement | null; text?:
   const newChapter = opened.find((s) => s.kind === 'main' && s.chapter !== undefined && s.chapter !== stage.chapter);
   const chapter = newChapter && gameData.chapters.find((c) => c.chapter === newChapter.chapter);
   if (chapter) {
-    const text = `第 ${chapter.chapter} 章「${chapter.name}」開放！`;
+    // 同時開放的外傳章也一起提一句
+    const side = opened.some((s) => s.kind === 'side') ? '外傳「灰燈港夜話」也開放了' : '';
+    const text = `第 ${chapter.chapter} 章「${chapter.name}」開放！${side && `　${side}`}`;
     return { row: h('div', { class: 'unlock-note gold-text' }, text), text, chapter: chapter.chapter };
   }
   if (opened.length) {

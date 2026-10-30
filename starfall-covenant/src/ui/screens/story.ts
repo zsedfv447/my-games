@@ -23,6 +23,8 @@ export function storyTitle(id: string): string {
   if (m) return `第 ${m[1]} 章・${PART_NAMES[m[2]] ?? m[2]}`;
   m = /^tower-(\d+)$/.exec(id);
   if (m) return `挑戰之塔・第 ${m[1]} 層`;
+  m = /^side-harbor-(\w+)$/.exec(id);
+  if (m) return `外傳・灰燈港夜話・${m[1] === 'end' ? '尾聲' : `第 ${m[1]} 話`}`;
   m = /^ev-[a-z]+-(\w+)$/.exec(id);
   if (m) return `活動・${m[1] === 'end' ? '尾聲' : `第 ${m[1]} 話`}`;
   return id;

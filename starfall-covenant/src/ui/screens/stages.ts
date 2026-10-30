@@ -1,4 +1,4 @@
-// 關卡列表：#/stages/<章節> 或 #/stages/daily|event|tower
+// 關卡列表：#/stages/<章節> 或 #/stages/daily|event|tower|side
 import { eventBanner } from '../components/event-banner';
 import { h } from '../dom';
 import { gameData } from '../../data/load';
@@ -7,7 +7,7 @@ import { chapterRewardStatus, chapterStars, claimChapterStarReward } from '../..
 import { badge, bar, button, emptyState, icon, listItem, panel } from '../components/basic';
 import { rewardChips } from '../components/rewards';
 import { toast } from '../components/overlay';
-import { isPlayable, LOCK_TEXT, stageContext, takeJustUnlocked, stageRow, weekdayText, type StageRow } from '../stage-nav';
+import { isPlayable, lockText, stageContext, takeJustUnlocked, stageRow, weekdayText, type StageRow } from '../stage-nav';
 import { commit, getSave } from '../state';
 import type { ChapterDef } from '../../core/types';
 import type { Navigator, ScreenDef } from '../router';
@@ -22,7 +22,7 @@ function row(r: StageRow, nav: Navigator, leading: IconName, fresh = new Set<str
   if (s.stamina > 0) sub.push(`體力 ${s.stamina}`);
   else sub.push('不耗體力');
   if (s.kind === 'daily') sub.push(weekdayText(s.weekdays));
-  if (!playable) sub.push(LOCK_TEXT[r.status as keyof typeof LOCK_TEXT]);
+  if (!playable) sub.push(lockText(r, gameData.stages));
   const trailing = h('div', { class: 'row', style: { gap: '4px' } },
     firstClearChip(s.rewards.firstClear, getSave().progress.clearedStages.includes(s.id)),
     r.stars.length > 0 && h('span', { class: 'stars small-text' }, r.stars.map((g) => h('span', { style: { opacity: g ? '1' : '0.25' } }, '★'))),
@@ -33,7 +33,7 @@ function row(r: StageRow, nav: Navigator, leading: IconName, fresh = new Set<str
     title: s.name,
     sub: sub.join('・'),
     trailing,
-    onClick: () => (playable ? nav.go('prepare', [s.id]) : toast(LOCK_TEXT[r.status as keyof typeof LOCK_TEXT])),
+    onClick: () => (playable ? nav.go('prepare', [s.id]) : toast(lockText(r, gameData.stages))),
   });
   if (!playable) item.classList.add('dimmed');
   if (fresh.has(s.id)) item.classList.add('just-unlocked');
@@ -68,6 +68,7 @@ const GROUPS: Record<string, { title: string; kind: StageDef['kind']; icon: Icon
   daily: { title: '每日關卡', kind: 'daily', icon: 'history' },
   event: { title: '限時活動', kind: 'event', icon: 'event' },
   tower: { title: '挑戰之塔', kind: 'tower', icon: 'tower' },
+  side: { title: '外傳・灰燈港夜話', kind: 'side', icon: 'scroll' },
 };
 
 export const stagesScreen: ScreenDef = {
@@ -98,6 +99,7 @@ export const stagesScreen: ScreenDef = {
         null,
         h('h2', { class: 'section-title' }, group.title),
         group.kind === 'event' && gameData.events.map((e) => eventBanner(e, { nav, onLeave })),
+        group.kind === 'side' && panel(null, h('p', { class: 'small-text dim', style: { margin: '0' } }, '第一部開始前的那個晚上，灰燈港的燈一盞一盞熄滅。港口的海豹提米和鐵匠赫姆，度過了漫長的一夜。')),
         group.kind === 'tower' && panel(null, h('p', { class: 'small-text dim' }, `目前到達第 ${save.progress.towerFloor} 層，共 ${gameData.stages.filter((s) => s.kind === 'tower').length} 層。每 10 層有星晶獎勵。`)),
         rows.length ? h('div', { class: 'list' }, rows.map((r) => row(r, nav, group.icon, fresh))) : emptyState(group.icon, '目前沒有關卡'),
       );

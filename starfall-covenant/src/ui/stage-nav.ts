@@ -42,6 +42,25 @@ export const LOCK_TEXT: Record<Exclude<StageStatus, 'open' | 'cleared'>, string>
   towerAhead: '先通過下面的樓層',
 };
 
+/** 鎖定說明；解鎖條件是另一種關卡（例如外傳要先通過主線某關）時寫出那一關的名稱 */
+export function lockText(r: StageRow, stages: StageDef[]): string {
+  if (isPlayable(r.status)) return '';
+  const before = r.status === 'locked' && r.stage.unlockAfter ? stages.find((s) => s.id === r.stage.unlockAfter) : undefined;
+  if (before && before.kind !== r.stage.kind) return `通過${before.kind === 'main' ? `第 ${before.chapter} 章「${before.name}」` : `「${before.name}」`}後開放`;
+  return LOCK_TEXT[r.status as keyof typeof LOCK_TEXT];
+}
+
+/** 外傳章的進度：開放了沒、通關幾關 */
+export function sideStoryProgress(save: SaveData, ctx: StageContext, now: number): { open: boolean; cleared: number; total: number; lock: string } {
+  const rows = ctx.stages.filter((s) => s.kind === 'side').map((s) => stageRow(save, s, ctx, now));
+  return {
+    open: rows.some((r) => isPlayable(r.status)),
+    cleared: rows.filter((r) => r.status === 'cleared').length,
+    total: rows.length,
+    lock: rows[0] ? lockText(rows[0], ctx.stages) : '',
+  };
+}
+
 export interface ChapterProgress {
   chapter: number;
   cleared: number;
