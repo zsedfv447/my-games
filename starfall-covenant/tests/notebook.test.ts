@@ -5,7 +5,8 @@ import { createNewSave, parseSave, serializeSave } from '../src/save/save';
 import {
   applyBattleRecord, archetypeCounts, emptyRecords, favoriteLeader, leaderRanking, recordsOf, recordText, starCount, turnDamage, winRate,
 } from '../src/progression/records';
-import { CARD_LINES, DEFAULT_VICTORY, leaderLineOf, victoryLine } from '../src/ui/victory-line';
+import { DEFAULT_VICTORY, leaderLineOf, victoryLine } from '../src/ui/victory-line';
+import { validateGameData, VICTORY_LINE_MAX } from '../src/data/validate';
 
 const NOW = new Date(2026, 10, 2, 12).getTime();
 const fresh = (): SaveData => createNewSave(gameData.config, NOW);
@@ -87,22 +88,24 @@ describe('契印師手札：戰績', () => {
 describe('隊長勝利台詞', () => {
   const battleCards = gameData.cards.filter((c) => c.archetypes.length > 0);
 
-  it('每張戰鬥卡都有專屬台詞', () => {
-    expect(battleCards.length).toBeGreaterThan(0);
-    for (const c of battleCards) expect(CARD_LINES[c.id]?.victory, c.id).toBeTruthy();
+  it('4★ 以上的戰鬥卡都有專屬台詞（目前全部戰鬥卡都有）', () => {
+    for (const c of battleCards.filter((x) => x.rarity >= 4)) expect(c.lines?.victory, c.id).toBeTruthy();
+    for (const c of battleCards) expect(c.lines?.victory, c.id).toBeTruthy();
   });
 
-  it('台詞檔沒有不存在的卡號，長度適中', () => {
-    const ids = new Set(gameData.cards.map((c) => c.id));
-    for (const [id, l] of Object.entries(CARD_LINES)) {
-      expect(ids.has(id), id).toBe(true);
-      expect([...(l.victory ?? '')].length).toBeLessThanOrEqual(30);
-    }
+  it('validate 檢查台詞字數上限', () => {
+    expect(validateGameData(gameData)).toEqual([]);
+    const card = { ...gameData.cards[0], lines: { victory: '長'.repeat(VICTORY_LINE_MAX + 1) } };
+    const issues = validateGameData({ ...gameData, cards: [card, ...gameData.cards.slice(1)] });
+    expect(issues.some((i) => i.includes('勝利台詞'))).toBe(true);
+    const blank = { ...gameData.cards[0], lines: { victory: '  ' } };
+    expect(validateGameData({ ...gameData, cards: [blank, ...gameData.cards.slice(1)] }).some((i) => i.includes('勝利台詞'))).toBe(true);
   });
 
   it('沒有專屬台詞時用屬性預設句', () => {
-    expect(victoryLine({ id: 'nope', attribute: 'water' })).toBe(DEFAULT_VICTORY.water);
-    expect(victoryLine({ id: 'c106', attribute: 'fire' })).toBe(CARD_LINES.c106.victory);
+    expect(victoryLine({ attribute: 'water' })).toBe(DEFAULT_VICTORY.water);
+    const rosy = gameData.cards.find((c) => c.id === 'c106')!;
+    expect(victoryLine(rosy)).toBe('看到沒？我們的火，比誰都旺！');
   });
 
   it('結算台詞由第一位非助戰成員說', () => {

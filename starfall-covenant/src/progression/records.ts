@@ -1,7 +1,21 @@
 // 契印師手札：個人戰績（最高 Combo、單回合最高傷害、最快通關、隊長與流派的通關次數）。純邏輯，操作 SaveData。
-import type { PlayerRecords, SaveData } from '../core/types';
+import type { SaveData } from '../core/types';
 
-export type { PlayerRecords };
+/** 契印師手札：個人戰績（存在 SaveData.records，選填） */
+export interface PlayerRecords {
+  /** 正式關卡的出戰次數（不含練習與教學） */
+  battles: number;
+  wins: number;
+  maxCombo: number;
+  /** 單回合（一次轉珠）對敵人造成的總傷害最高值 */
+  maxTurnDamage: number;
+  /** 關卡 id → 最少通關回合數 */
+  fastestTurns: Record<string, number>;
+  /** 隊長卡號 → 通關次數 */
+  leaderClears: Record<string, number>;
+  /** 流派 id → 通關次數（依出戰隊伍的主流派） */
+  archetypeClears: Record<string, number>;
+}
 
 export type RecordKind = 'maxCombo' | 'maxTurnDamage' | 'fastest';
 
