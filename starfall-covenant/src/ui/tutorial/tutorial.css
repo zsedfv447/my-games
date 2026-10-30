@@ -1,0 +1,78 @@
+/* ---------- 新手教學引導層 ---------- */
+.tut-layer { position: absolute; inset: 0; z-index: 40; pointer-events: none; }
+
+.tut-bubble {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: auto;
+  animation: pop-in 220ms ease-out both;
+}
+.tut-bubble.tut-bottom { bottom: calc(var(--navbar-h) + 10px + var(--safe-bottom, 0px)); }
+.tut-bubble.tut-top { top: calc(44px + var(--safe-top, 0px)); }
+.tut-bubble.has-more { cursor: pointer; }
+
+.tut-portrait {
+  flex: none;
+  width: 104px;
+  height: 138px;
+  margin-right: -22px;
+  object-fit: cover;
+  object-position: 50% 0;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.55));
+  position: relative;
+  z-index: 1;
+}
+.tut-top .tut-portrait { width: 80px; height: 106px; }
+
+.tut-box {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  padding: 10px 14px 10px 30px;
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(22, 32, 74, 0.97), rgba(6, 10, 31, 0.97));
+  border: 1px solid var(--gold-deep);
+  box-shadow: var(--shadow), var(--glow-gold);
+}
+.tut-name { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--gold); font-family: var(--font-title); font-size: 13px; letter-spacing: 0.06em; }
+.tut-skip { background: none; border: 0; padding: 2px 0; color: var(--text-faint); font-size: 11px; font-family: var(--font); text-decoration: underline; cursor: pointer; }
+.tut-text { margin: 4px 0 0; font-size: 14px; line-height: 1.55; color: var(--text); }
+.tut-more { position: absolute; right: 12px; bottom: 6px; font-size: 10px; color: var(--gold-soft); animation: tut-bob 900ms ease-in-out infinite; }
+.tut-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.tut-actions:not(:empty) { margin-top: 8px; }
+
+/* 手指：指尖在圖片約 (25%, 10%)，所以往左上偏移讓指尖對準目標中心 */
+.tut-finger { position: absolute; width: 56px; height: 56px; margin: -6px 0 0 -14px; pointer-events: none; z-index: 2; }
+.tut-finger img { width: 100%; height: 100%; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6)); }
+.tut-finger.no-art::before { content: ''; position: absolute; left: 6px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: rgba(247, 220, 152, 0.85); box-shadow: 0 0 12px var(--gold); }
+.tut-tap { animation: tut-tap 1100ms ease-in-out infinite; }
+.tut-trace { animation: tut-trace 1800ms ease-in-out infinite; }
+
+.tut-ring {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 3px solid var(--gold);
+  box-shadow: 0 0 16px var(--gold), inset 0 0 10px var(--gold);
+  animation: tut-pulse 1100ms ease-in-out infinite;
+}
+
+.tut-focus { outline: 2px solid var(--gold); outline-offset: 3px; box-shadow: 0 0 18px rgba(242, 196, 90, 0.7); animation: tut-glow 1100ms ease-in-out infinite; }
+
+@keyframes tut-bob { 0%, 100% { transform: none; } 50% { transform: translateY(3px); } }
+@keyframes tut-tap { 0%, 100% { transform: translate(6px, 8px); } 50% { transform: none; } }
+@keyframes tut-trace {
+  0%, 15% { left: var(--x0); top: var(--y0); opacity: 0; }
+  25% { left: var(--x0); top: var(--y0); opacity: 1; }
+  75% { left: var(--x1); top: var(--y1); opacity: 1; }
+  100% { left: var(--x1); top: var(--y1); opacity: 0; }
+}
+@keyframes tut-pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+@keyframes tut-glow { 0%, 100% { outline-color: rgba(242, 196, 90, 0.5); } 50% { outline-color: var(--gold); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .tut-tap, .tut-ring, .tut-focus, .tut-more { animation: none; }
+}

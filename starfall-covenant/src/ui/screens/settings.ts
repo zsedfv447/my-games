@@ -3,7 +3,8 @@ import { APP_VERSION } from '../version';
 import { audio } from '../audio';
 import { button, panel, slider, toggle } from '../components/basic';
 import { confirmDialog, openDialog, toast } from '../components/overlay';
-import { exportCode, getSettings, importCode, resetAll, updateSettings } from '../state';
+import { commit, exportCode, getSave, getSettings, importCode, resetAll, updateSettings } from '../state';
+import { isTutorialActive, restartTutorial, skipTutorial } from '../tutorial/flow';
 import type { ScreenDef } from '../router';
 
 function showExport(): void {
@@ -63,6 +64,16 @@ export const settingsScreen: ScreenDef = {
         { title: '戰鬥' },
         toggle('顯示轉珠倒數', s.showMoveTimer, (v) => updateSettings({ showMoveTimer: v })),
         toggle('戰鬥加速 ×2', s.battleSpeed === 2, (v) => updateSettings({ battleSpeed: v ? 2 : 1 })),
+      ),
+      panel(
+        { title: '新手教學' },
+        h('p', { class: 'small-text dim' }, isTutorialActive(getSave()) ? '新手教學進行中，離開設定後會從中斷的地方繼續。' : '教學已完成，可以從轉珠戰鬥開始重看一次。'),
+        h(
+          'div',
+          { class: 'row' },
+          button('重看教學', { small: true, onClick: () => { commit(restartTutorial(getSave())); toast('從轉珠戰鬥開始重看教學'); nav.go('home'); } }),
+          isTutorialActive(getSave()) && button('略過教學', { small: true, variant: 'ghost', onClick: () => { commit(skipTutorial(getSave())); toast('已略過新手教學'); nav.replace('settings'); } }),
+        ),
       ),
       panel(
         { title: '存檔' },
