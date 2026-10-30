@@ -133,10 +133,28 @@ describe('防禦與護盾', () => {
     ).toBe(1500);
   });
 
-  it('傷害吸收：單次超過門檻變 0', () => {
-    const absorb = { ...enemy, def: 0, damageAbsorb: 5000 };
-    expect(damageAgainst({ member: 0, attribute: 'light', target: 'single', amount: 6000 }, absorb, ctx)).toBe(0);
-    expect(damageAgainst({ member: 0, attribute: 'light', target: 'single', amount: 4000 }, absorb, ctx)).toBe(4000);
+  it('護盾 100% 完全擋下，無視護盾可穿透', () => {
+    const immune = { ...enemy, shieldPercent: 100 };
+    expect(damageAgainst({ member: 0, attribute: 'fire', target: 'single', amount: 1000 }, immune, ctx)).toBe(0);
+    expect(damageAgainst({ member: -1, target: 'single', amount: 500, fixed: true, ignoreShield: true }, immune, ctx)).toBe(500);
+  });
+
+  it('傷害吸收：一回合累計超過門檻的部分改為回復，固定傷害不受影響', () => {
+    const absorb: EnemyTarget = { attribute: 'light', def: 0, hp: 50000, maxHp: 60000, damageAbsorb: 5000 };
+    const hit = (amount: number) => ({ member: 0, attribute: 'light' as const, target: 'single' as const, amount });
+    const { results, hp, taken } = applyHits(
+      [hit(3000), hit(4000), { member: -1, target: 'single', amount: 2000, fixed: true }],
+      [absorb],
+      0,
+      ctx,
+    );
+    // 3000 正常；第二下只剩 2000 額度，超出的 2000 變回復 → 淨 0
+    expect(results.map((r) => r.damage)).toEqual([3000, 0, 2000]);
+    expect(hp).toEqual([45000]);
+    expect(taken).toEqual([7000]);
+    const healed = applyHits([hit(20000)], [{ ...absorb, hp: 59000 }], 0, ctx);
+    expect(healed.hp).toEqual([60000]);
+    expect(healed.results[0].damage).toBe(-1000);
   });
 });
 

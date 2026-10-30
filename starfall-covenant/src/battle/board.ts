@@ -1,7 +1,7 @@
 // 盤面：建立、轉珠路徑、消除判定、天降補珠、強化珠與干擾珠。
 // 純邏輯，不碰 DOM／Canvas；隨機一律透過 Rng。
 
-import { ORB_TYPES, type GameConfig, type OrbSource, type OrbType } from '../core/types';
+import { ATTRIBUTES, ORB_TYPES, type GameConfig, type OrbSource, type OrbType } from '../core/types';
 import type { Rng } from '../core/rng';
 
 export interface Orb {
@@ -235,7 +235,7 @@ export function applyPath(board: Board, path: Pos[]): PathResult {
  * 找出盤面上所有可消除的組：
  * 橫或直連續 3 顆以上同色的格子會被標記，再把上下左右相連的同色標記格合併成同一組（L、T、十字算 1 Combo）。
  */
-export function findMatches(board: Board, cascade = 0): MatchGroup[] {
+export function findMatches(board: Board, cascade = 0, sealedOrbs: readonly OrbType[] = []): MatchGroup[] {
   const { cols, rows, cells } = board;
   const marked = new Array<boolean>(cells.length).fill(false);
 
@@ -244,7 +244,9 @@ export function findMatches(board: Board, cascade = 0): MatchGroup[] {
       let start = 0;
       for (let i = 1; i <= inner; i++) {
         if (i < inner && cells[idx(o, i)].type === cells[idx(o, start)].type) continue;
-        if (i - start >= MIN_MATCH) for (let k = start; k < i; k++) marked[idx(o, k)] = true;
+        if (i - start >= MIN_MATCH && !sealedOrbs.includes(cells[idx(o, start)].type)) {
+          for (let k = start; k < i; k++) marked[idx(o, k)] = true;
+        }
         start = i;
       }
     }
@@ -322,12 +324,17 @@ export function dropAndFill(board: Board, cleared: Iterable<number>, rng: Rng, o
 /** 安全上限，避免設定錯誤時無限連鎖 */
 const MAX_CASCADES = 50;
 
+export interface ResolveOptions extends SkyfallOptions {
+  /** 被封住、不能消除的珠種（敵人技能 lockedOrbs） */
+  sealedOrbs?: OrbType[];
+}
+
 /** 轉珠結束後結算：反覆消除 → 落下 → 天降，直到盤面沒有可消除的組 */
-export function resolveBoard(board: Board, rng: Rng, options: SkyfallOptions = {}): ResolveResult {
+export function resolveBoard(board: Board, rng: Rng, options: ResolveOptions = {}): ResolveResult {
   let current = board;
   const groups: MatchGroup[] = [];
   for (let cascade = 0; cascade < MAX_CASCADES; cascade++) {
-    const found = findMatches(current, cascade);
+    const found = findMatches(current, cascade, options.sealedOrbs);
     if (found.length === 0) break;
     groups.push(...found);
     current = dropAndFill(current, found.flatMap((g) => g.cells), rng, options);
@@ -406,4 +413,31 @@ export function countOrbs(board: Board): Record<OrbType, number> {
   const counts = Object.fromEntries(ORB_TYPES.map((t) => [t, 0])) as Record<OrbType, number>;
   for (const o of board.cells) counts[o.type]++;
   return counts;
+}
+
+/**
+ * 補缺色：盤面上沒有出現的屬性（五屬，不含心）各補 count 顆。
+ * 從目前數量最多的顏色挑珠子轉換，並且不會讓原本有的顏色被轉光；封鎖珠不會被轉換。
+ */
+export function fillMissingOrbs(board: Board, rng: Rng, count: number): Board {
+  const next = cloneBoard(board);
+  const counts = countOrbs(next);
+  const missing = ATTRIBUTES.filter((a) => counts[a] === 0);
+  for (const attr of missing) {
+    for (let n = 0; n < count; n++) {
+      // 從原本就有、數量最多且至少還剩 2 顆的顏色轉一顆過來
+      const donors = ORB_TYPES.filter((t) => !(missing as readonly OrbType[]).includes(t) && counts[t] > 1).sort(
+        (a, b) => counts[b] - counts[a],
+      );
+      const cells = donors.length
+        ? next.cells.map((o, i) => (o.type === donors[0] && !o.locked ? i : -1)).filter((i) => i >= 0)
+        : [];
+      if (cells.length === 0) break;
+      const i = rng.pick(cells);
+      counts[next.cells[i].type]--;
+      counts[attr]++;
+      next.cells[i] = { ...next.cells[i], type: attr, poison: false, hidden: false };
+    }
+  }
+  return next;
 }
