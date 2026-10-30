@@ -4,7 +4,7 @@ import { createRng } from '../src/core/rng';
 import { gameData } from '../src/data/load';
 import { createNewSave } from '../src/save/save';
 import {
-  chapterStars, checkStar, checkTeamRule, completeStage, enterStage, stageLockReason, teamUnits, type BattleSummary,
+  chapterRewardStatus, chapterStars, liveStarStatus, nextStageAfter, stagesUnlockedBy, checkStar, claimChapterStarReward, claimableChapterRewards, checkTeamRule, completeStage, enterStage, stageLockReason, teamUnits, type BattleSummary,
 } from '../src/progression/stages';
 import { expToNext } from '../src/progression/player';
 
@@ -158,5 +158,80 @@ describe('通關結算', () => {
   it('流派試煉首通送卡', () => {
     const { save } = completeStage(fresh(), trial, summary(), ctx, config, createRng(1), MON);
     expect(save.inventory.cards.map((c) => c.cardId)).toEqual(['c2011']);
+  });
+});
+
+describe('章節星章獎勵', () => {
+  const chapters = [
+    { chapter: 1, name: '一', constellation: '甲', race: 'beast' as const, starReward: { gems: 5 } },
+    { chapter: 2, name: '二', constellation: '乙', race: 'beast' as const, starReward: { gems: 5 } },
+  ];
+  const stages = [s11, s12];
+  const withStars = (stars: Record<string, boolean[]>): SaveData => {
+    const s = createNewSave(config, MON);
+    return { ...s, progress: { ...s.progress, stars } };
+  };
+
+  it('星章沒集滿不能領；沒有星章的章節也不能領', () => {
+    const save = withStars({ 'st-1-1': [true, true, true], 'st-1-2': [true, false] });
+    expect(chapterRewardStatus(save, 1, stages)).toBe('incomplete');
+    expect(chapterRewardStatus(save, 2, stages)).toBe('incomplete');
+    expect(claimableChapterRewards(save, chapters, stages)).toEqual([]);
+    expect(claimChapterStarReward(save, 1, chapters, stages, config, MON)).toEqual({ ok: false, reason: 'notComplete' });
+    expect(claimChapterStarReward(save, 9, chapters, stages, config, MON)).toEqual({ ok: false, reason: 'unknownChapter' });
+  });
+
+  it('集滿可領一次，領完紀錄在存檔，不能重複領', () => {
+    const save = withStars({ 'st-1-1': [true, true, true], 'st-1-2': [true, true] });
+    expect(claimableChapterRewards(save, chapters, stages)).toEqual([1]);
+    const r = claimChapterStarReward(save, 1, chapters, stages, config, MON);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.reward).toEqual({ gems: 5 });
+    expect(r.save.player.gems).toBe(save.player.gems + 5);
+    expect(r.save.progress.chapterRewardsClaimed).toEqual([1]);
+    expect(chapterRewardStatus(r.save, 1, stages)).toBe('claimed');
+    expect(claimableChapterRewards(r.save, chapters, stages)).toEqual([]);
+    expect(claimChapterStarReward(r.save, 1, chapters, stages, config, MON)).toEqual({ ok: false, reason: 'alreadyClaimed' });
+  });
+});
+
+describe('戰鬥中的星章狀態', () => {
+  const live = (over: Partial<BattleSummary>, won = false) => (c: Parameters<typeof liveStarStatus>[0]) => liveStarStatus(c, summary(over), won);
+
+  it('回合條件：打完第 N 回合還沒贏就失敗', () => {
+    const c = { type: 'clearWithinTurns' as const, turns: 5 };
+    expect(live({ turns: 4 })(c)).toBe('pending');
+    expect(live({ turns: 5 })(c)).toBe('failed');
+    expect(live({ turns: 5 }, true)(c)).toBe('done');
+    expect(live({ turns: 6 }, true)(c)).toBe('failed');
+  });
+
+  it('不用主動技／不續戰：犯規立刻失敗，否則等結果', () => {
+    expect(live({})({ type: 'noActiveSkill' })).toBe('pending');
+    expect(live({ usedActiveSkill: true })({ type: 'noActiveSkill' })).toBe('failed');
+    expect(live({ continues: 1 })({ type: 'noContinue' })).toBe('failed');
+    expect(live({}, true)({ type: 'noContinue' })).toBe('done');
+  });
+
+  it('Combo 條件達成就亮；隊伍條件出戰時決定', () => {
+    expect(live({ maxCombo: 5 })({ type: 'maxCombo', combo: 6 })).toBe('pending');
+    expect(live({ maxCombo: 6 })({ type: 'maxCombo', combo: 6 })).toBe('done');
+    const fire = { type: 'teamAll' as const, filter: { attribute: 'fire' as const } };
+    expect(live({ team: [{ attribute: 'fire', race: 'human' }] })(fire)).toBe('done');
+    expect(live({ team: [{ attribute: 'water', race: 'human' }] })(fire)).toBe('failed');
+  });
+});
+
+describe('下一關', () => {
+  it('找出被這一關開放的關卡，優先同類型', () => {
+    expect(stagesUnlockedBy('st-1-1', ctx.stages).map((s) => s.id)).toEqual(['st-1-2']);
+    expect(nextStageAfter(s11, ctx.stages)?.id).toBe('st-1-2');
+    expect(nextStageAfter(tower[0], ctx.stages)?.id).toBe('tw-2');
+    expect(nextStageAfter(tower[2], ctx.stages)).toBeUndefined();
+    const side = stage({ id: 'ev-x', kind: 'event', unlockAfter: 'st-1-2' });
+    const s13 = stage({ id: 'st-2-1', chapter: 2, unlockAfter: 'st-1-2' });
+    expect(nextStageAfter(s12, [side, s13])?.id).toBe('st-2-1');
+    expect(nextStageAfter(s12, [side])?.id).toBe('ev-x');
   });
 });

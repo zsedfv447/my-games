@@ -341,6 +341,8 @@ export interface SaveData {
     towerFloor: number;
     tutorialDone: boolean;
     storySeen: string[];
+    /** 已領取星章獎勵的章節（存檔 v3 起） */
+    chapterRewardsClaimed: number[];
   };
   /** 新手教學進度（存檔 v2 起，讀檔時一定會補上）；step 為 done 時 progress.tutorialDone 也是 true */
   tutorial?: { step: TutorialStep; giftGiven: boolean };

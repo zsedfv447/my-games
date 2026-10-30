@@ -6,6 +6,7 @@ import { gameData } from '../data/load';
 import loginRewardsJson from '../../data/login-rewards.json';
 import { canClaimLogin, type LoginRewardDef } from '../progression/login';
 import { claimableQuests, derivedCounters, type DerivedCounters } from '../progression/quests';
+import { claimableChapterRewards } from '../progression/stages';
 import type { ShopFail } from '../progression/shop';
 
 export const loginRewards = loginRewardsJson as LoginRewardDef[];
@@ -99,6 +100,8 @@ export interface HomeBadges {
   login: boolean;
   quests: boolean;
   achievements: boolean;
+  /** 有章節星章集滿、還沒領獎 */
+  chapters: boolean;
 }
 
 export function homeBadges(save: SaveData, now: number, quests: QuestDef[] = gameData.quests): HomeBadges {
@@ -107,6 +110,7 @@ export function homeBadges(save: SaveData, now: number, quests: QuestDef[] = gam
     login: canClaimLogin(save, now),
     quests: ready.some((q) => q.kind !== 'achievement'),
     achievements: ready.some((q) => q.kind === 'achievement'),
+    chapters: claimableChapterRewards(save, gameData.chapters, gameData.stages).length > 0,
   };
 }
 

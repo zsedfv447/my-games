@@ -27,6 +27,8 @@ import { markStorySeen } from './story';
 import { createTutorialBattle } from '../tutorial/battle-setup';
 import { TutorialBattleGuide, texts as guideTexts, type BattleGuide } from '../tutorial/battle-guide';
 import { advanceTutorial, skipTutorial } from '../tutorial/flow';
+import { BattleHud } from '../components/battle-hud';
+import { grantClearExp, nextStageButton, sortieUids, unlockNotice } from '../stage-clear';
 
 const CELL = 63;
 
@@ -63,6 +65,8 @@ interface Setup {
   data: BattleData;
   practice: boolean;
   battle: Battle;
+  /** 出戰的玩家卡 uid（不含助戰），結算發卡片經驗用 */
+  memberUids?: string[];
   /** 新手教學戰鬥的引導層 */
   guide?: BattleGuide;
 }
@@ -85,7 +89,7 @@ function setup(stageId: string, nav: Navigator): Setup | string {
   ticket = null;
   const team = buildSortieTeam(stage, getSave(), growth.card);
   try {
-    return { stage, data: gameData, practice: false, battle: startBattle(stage, team.members, team.helper, createRng(), gameData) };
+    return { stage, data: gameData, practice: false, battle: startBattle(stage, team.members, team.helper, createRng(), gameData), memberUids: sortieUids(team) };
   } catch (err) {
     return err instanceof Error ? err.message : String(err);
   }
@@ -113,6 +117,7 @@ class BattleView {
   readonly element: HTMLElement;
   private enemyZone = h('div', { class: 'enemy-zone' });
   private waveLabel = h('div', { class: 'wave-label' });
+  private hud: BattleHud;
   private teamRow = h('div', { class: 'team-row' });
   private hpHost = h('div', { class: 'team-hp' });
   private teamChipsHost = h('div');
@@ -130,6 +135,7 @@ class BattleView {
     this.state = s.battle.getState();
     this.shownHp = this.state.hp;
     this.speed = getSettings().battleSpeed;
+    this.hud = new BattleHud(s.stage);
     this.boardView = new BoardView({
       cellSize: CELL,
       moveSeconds: () => this.state.moveTimeSeconds,
@@ -141,7 +147,7 @@ class BattleView {
       'div',
       { class: 'battle' },
       h('div', { class: 'battle-top safe-top' },
-        this.waveLabel,
+        h('div', null, this.waveLabel, this.hud.element),
         h('div', { class: 'stage-name' }, s.stage.name),
         iconButton('close', '撤退', () => void this.askRetreat())),
       this.enemyZone,
@@ -234,6 +240,7 @@ class BattleView {
     this.teamChipsHost.replaceChildren(chipRow(teamChips(this.state), 'team-chips'));
     clear(this.hpHost);
     this.hpHost.appendChild(bar({ value: this.state.hp, max: this.state.maxHp, variant: 'hp', label: true, previous }));
+    this.hud.update(this.state);
   }
 
   private showCombo(combo: number): void {
@@ -443,15 +450,19 @@ class BattleView {
     if (this.s.guide) return this.s.guide.onWin();
     const result = this.s.battle.getResult()!;
     let clear: StageClearResult | null = null;
+    const firstClear = !this.s.practice && !getSave().progress.clearedStages.includes(this.s.stage.id);
+    let expRows: HTMLElement[] = [];
     if (!this.s.practice) {
       const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
       const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages), gameData.config, createRng(), Date.now());
-      commit(done.save);
+      const exp = grantClearExp(done.save, this.s.memberUids ?? [], done.result.cardExp);
+      expRows = exp.rows;
+      commit(exp.save);
       clear = done.result;
       bus.emit('stageCleared', { stageId: this.s.stage.id, turns: result.turns, stars: clear.stars });
       for (const d of clear.drops) bus.emit('cardObtained', { cardId: d.cardId, uid: d.uid, source: 'drop' });
     }
-    const rows = [
+    const rows: HTMLElement[] = [
       h('div', { class: 'row between' }, h('span', null, '回合數'), h('strong', null, `${result.turns}`)),
       h('div', { class: 'row between' }, h('span', null, '最高 Combo'), h('strong', null, `${result.maxCombo}`)),
     ];
@@ -459,6 +470,7 @@ class BattleView {
       rows.push(
         h('div', { class: 'row between' }, h('span', null, '金幣'), h('strong', { class: 'row' }, resourceIcon('coin'), `+${clear.coin.toLocaleString()}`)),
         h('div', { class: 'row between' }, h('span', null, '玩家經驗'), h('strong', null, `+${clear.playerExp}`)),
+        ...expRows,
       );
       if (clear.firstClear?.gems) rows.push(h('div', { class: 'row between' }, h('span', null, '首通獎勵'), h('strong', { class: 'row' }, resourceIcon('gem'), `+${clear.firstClear.gems}`)));
       if (clear.levelUp) rows.push(h('p', { class: 'gold-text' }, `玩家等級提升到 Lv.${clear.levelUp.to}！體力已補滿`));
@@ -472,16 +484,24 @@ class BattleView {
         })));
       }
     }
-    const leave = () => {
+    if (firstClear) {
+      const notice = unlockNotice(this.s.stage);
+      if (notice.row) rows.unshift(notice.row);
+      if (notice.chapter) this.banner('新章節開放');
+    }
+    // then：離開後要去的 hash 路徑（下一關）；沒給就回上一頁
+    const leave = (then?: string) => {
       this.dialog?.close();
       const after = this.s.stage.story?.after;
       // 通關後的劇情只在第一次播放
-      if (after && gameData.story[after] && !getSave().progress.storySeen.includes(after)) this.nav.replace('story', [after], { next: 'back' });
+      if (after && gameData.story[after] && !getSave().progress.storySeen.includes(after)) this.nav.replace('story', [after], { next: then ?? 'back' });
+      else if (then) this.nav.replace(then.split('/')[0], then.split('/').slice(1));
       else this.nav.back();
     };
     this.dialog = openDialog('勝利！', h('div', { class: 'list' }, rows), [
       button('再戰一次', { onClick: () => { this.dialog?.close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', [this.s.stage.id]); } }),
-      button('返回', { variant: 'primary', onClick: leave }),
+      button('返回', { variant: 'primary', onClick: () => leave() }),
+      ...(this.s.practice ? [] : [nextStageButton(this.s.stage, getSave(), leave)].filter((b): b is HTMLButtonElement => !!b)),
     ], { dismissible: false });
   }
 

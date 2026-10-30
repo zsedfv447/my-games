@@ -11,3 +11,4 @@ export * from './awaken';
 export * from './inventory';
 export * from './collection';
 export * from './archetype';
+export * from './battle-exp';

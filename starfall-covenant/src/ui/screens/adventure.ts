@@ -3,6 +3,7 @@ import { h } from '../dom';
 import { gameData } from '../../data/load';
 import { RACE_NAMES } from '../art/palette';
 import { badge, bar, icon, listItem, sectionTitle } from '../components/basic';
+import { chapterRewardStatus } from '../../progression/stages';
 import { chapterProgress, nextMainStage, stageContext } from '../stage-nav';
 import { getSave } from '../state';
 import { userAsset } from '../assets';
@@ -48,6 +49,7 @@ export const adventureScreen: ScreenDef = {
                 h('div', { style: { flex: '1' } }, bar({ value: p.cleared, max: p.total, variant: 'gold', label: `通關 ${p.cleared}/${p.total}` })),
                 h('span', { class: 'stars small-text' }, `★ ${p.stars}/${p.maxStars}`))
               : h('div', { class: 'small-text faint', style: { marginTop: '6px' } }, '通過上一章後開放'),
+            chapterRewardStatus(save, c.chapter, gameData.stages) === 'claimable' && h('span', { class: 'badge dot', 'aria-label': '星章集滿，可領取章節獎勵' }),
           );
         }),
       ),
