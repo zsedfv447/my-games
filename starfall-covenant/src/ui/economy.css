@@ -75,3 +75,6 @@
 /* 常駐活動：不倒數，顯示「常駐」標籤 */
 .event-banner[data-state='always'] .event-countdown { padding: 1px 8px; border: 1px solid var(--gold-deep); border-radius: 3px; background: #f2c45a22; color: var(--gold-soft); letter-spacing: 2px; }
 .shop-list > .event-banner { margin: 6px 0 0; }
+
+/* 還沒開放的冒險入口（例如克星週在第 3 章前）：變灰，副標寫開放條件 */
+.adv-tile.locked { opacity: 0.55; filter: grayscale(0.6); }

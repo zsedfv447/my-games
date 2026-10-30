@@ -3,6 +3,7 @@ import type { GameConfig, Reward } from '../core/types';
 import type { ResourceIcon } from './art/icons';
 import type { SfxName } from './audio';
 import { rewardParts, tokenName } from './economy';
+import { gameData } from '../data/load';
 import { maxStamina, teamCostLimit, type LevelUpInfo } from '../progression/player';
 import type { StageClearResult } from '../progression/stages';
 
@@ -153,10 +154,16 @@ export function levelUpView(info: LevelUpInfo, config: GameConfig): LevelUpView 
 /** 首通 chip 最多列幾種獎勵（星晶放最前面，其他照原順序） */
 const MAX_CHIP_PARTS = 2;
 
-function chipParts(items: RevealItem[]): { parts: { icon: ResourceIcon | 'card'; amount: number }[]; more: boolean } {
+/** chip 上卡片類獎勵的名稱：素材卡（星核、塵靈）寫名稱，戰鬥卡寫「卡」 */
+function chipCardName(cardId: string): string {
+  const def = gameData.cards.find((c) => c.id === cardId);
+  return def?.race === 'material' ? def.name : '卡';
+}
+
+function chipParts(items: RevealItem[]): { parts: { icon: ResourceIcon | 'card'; amount: number; name?: string }[]; more: boolean } {
   const all = items.map((it) => (it.kind === 'count'
     ? { icon: (it.icon === 'exp' ? 'gem' : it.icon) as ResourceIcon, amount: it.amount }
-    : { icon: 'card' as const, amount: it.kind === 'card' ? it.count : 1 }));
+    : { icon: 'card' as const, amount: it.kind === 'card' ? it.count : 1, name: it.kind === 'card' ? chipCardName(it.cardId) : '卡' }));
   // 星晶在 rewardItems 裡排最後（演出壓軸），chip 上放最前面
   const ordered = [...all.filter((p) => p.icon === 'gem'), ...all.filter((p) => p.icon !== 'gem')];
   return { parts: ordered.slice(0, MAX_CHIP_PARTS), more: ordered.length > MAX_CHIP_PARTS };
@@ -168,8 +175,8 @@ function chipParts(items: RevealItem[]): { parts: { icon: ResourceIcon | 'card';
  */
 export function firstClearPreview(reward: Reward | undefined, cleared: boolean, label = '首通'): {
   text: string; full: string; claimed: boolean; icon: ResourceIcon | 'card';
-  /** chip 上的圖示＋數字（星晶、代幣等），最多兩種；more 表示還有其他獎勵沒列出 */
-  parts: { icon: ResourceIcon | 'card'; amount: number }[]; more: boolean;
+  /** chip 上的圖示＋數字（星晶、代幣等），最多兩種；卡片類帶 name（素材卡為名稱，例如「焰星核」）；more 表示還有其他獎勵沒列出 */
+  parts: { icon: ResourceIcon | 'card'; amount: number; name?: string }[]; more: boolean;
 } | null {
   if (!reward) return null;
   const items = rewardItems(reward);

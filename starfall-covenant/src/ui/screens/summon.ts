@@ -13,6 +13,7 @@ import type { ScreenContext, ScreenDef } from '../router';
 import { commit, getSave } from '../state';
 import { tutorialFirstPull } from '../tutorial/flow';
 import '../summon.css';
+import { bannerCopy } from '../summon-copy';
 
 /** 新手教學的第一抽：限定和隊長合得來的夥伴（見 tutorial/flow.ts） */
 function firstPullOptions(save: SaveData, pool: GachaPoolDef): { firstFrom?: string[] } {
@@ -141,18 +142,19 @@ export const summonScreen: ScreenDef = {
       clear(root);
       const save = getSave();
       const open = isPoolOpen(selected, Date.now());
-      const featured = (selected.rateUp?.map((u) => u.card) ?? ['c101', 'c201']).map((id) => cardById.get(id)!).filter(Boolean);
+      const copy = bannerCopy(selected);
+      const featured = copy.featured.map((id) => cardById.get(id)!).filter(Boolean);
       root.append(h('div', { class: 'seal-titlebar' }, h('span', null, '召 喚'),
         h('div', { class: 'seal-tools' },
           button('紀錄', { small: true, variant: 'ghost', onClick: () => ctx.nav.go('summon-history') }),
           button('機率', { small: true, variant: 'ghost', onClick: () => ctx.nav.go('summon-rates', [selected.id]) }))),
         tabs(poolList.map((p) => ({ id: p.id, label: p.name })), selected.id, (id) => { selected = poolList.find((p) => p.id === id)!; selectedPoolId = selected.id; paint(); }),
         h('section', { class: 'seal-banner' },
-          h('span', { class: 'seal-pool-tag' }, selected.rateUp?.length ? '光闇角色機率提升' : '常駐封印'),
+          h('span', { class: 'seal-pool-tag' }, copy.tag),
           h('div', { class: 'seal-featured', 'aria-hidden': 'true' }, featured.map((c) => cardPortrait(c))),
           portal(),
-          h('div', { class: 'seal-banner-copy' }, h('small', null, 'ANCIENT COVENANT'), h('h1', null, selected.name),
-            h('p', null, selected.rateUp?.length ? '聖詠與深淵　交織命運的刻印' : '沉睡於星海的力量　聆聽你的呼喚'))),
+          h('div', { class: 'seal-banner-copy' }, h('small', null, copy.en), h('h1', null, selected.name),
+            h('p', null, copy.flavor), h('p', { class: 'seal-banner-facts' }, copy.facts))),
         h('div', { class: 'seal-pity-strip' }, h('span', null, `十連必得 ${selected.tenPullGuarantee.minRarity}★ 以上`),
           h('strong', null, `再 ${pullsUntilPity(save, selected)} 抽必得 ${selected.pity.rarity}★`)),
         h('div', { class: 'seal-pull-actions' },
