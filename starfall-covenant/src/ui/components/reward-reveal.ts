@@ -91,8 +91,8 @@ function layout(host: HTMLElement, items: RevealItem[]): Built[] {
   return built;
 }
 
-/** 在 host 裡逐一跳出項目；speed 為戰鬥速度倍率 */
-export function playReveal(host: HTMLElement, items: RevealItem[], speed = 1): RevealHandle {
+/** 在 host 裡逐一跳出項目；speed 為戰鬥速度倍率；instantCount 時數字直接顯示最終值（低特效） */
+export function playReveal(host: HTMLElement, items: RevealItem[], speed = 1, instantCount = false): RevealHandle {
   const built = layout(host, items);
   const { starts, total } = revealSchedule(items, speed);
   const timers: number[] = [];
@@ -117,7 +117,7 @@ export function playReveal(host: HTMLElement, items: RevealItem[], speed = 1): R
       window.setTimeout(() => { if (!finished) audio.play('levelup'); }, (countDuration(item.amount) + 120) / Math.max(0.25, speed));
     }
     if (item.kind !== 'count' && item.kind !== 'team') return;
-    const dur = countDuration(item.amount) / Math.max(0.25, speed);
+    const dur = instantCount ? 0 : countDuration(item.amount) / Math.max(0.25, speed);
     if (dur <= 0) return finalize(i);
     const t0 = performance.now();
     const every = tickInterval(dur);
@@ -186,6 +186,8 @@ export interface ClearResultOptions {
   items: RevealItem[];
   /** 戰鬥速度倍率 */
   speed?: number;
+  /** 低特效：數字不滾動，直接顯示最終值 */
+  instantCount?: boolean;
   /** 有升級時，項目播完後跳升級卡 */
   levelUp?: LevelUpView;
   /** 演出最後出現的開放提示 */
@@ -212,7 +214,7 @@ export function openClearResult(host: HTMLElement, opts: ClearResultOptions): { 
   host.appendChild(layer);
   void (async () => {
     await new Promise((r) => setTimeout(r, 450));
-    const play = playReveal(reveal, opts.items, opts.speed);
+    const play = playReveal(reveal, opts.items, opts.speed, opts.instantCount);
     layer.addEventListener('click', () => play.skip());
     await play.done;
     hint.remove();

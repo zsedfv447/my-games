@@ -128,4 +128,25 @@ describe('存檔 v2 → v3 遷移（章節星章獎勵）', () => {
     const again = importSaveCode(exportSaveCode(r.save), config, NOW);
     expect(again).toEqual({ ok: true, save: r.save });
   });
+  it('凍結的 v2 舊匯出碼：校驗碼通過、升到 v3、其他進度原樣保留', () => {
+    // 由 v2 版本格式手寫的存檔產生，不經過現在的 createNewSave，用來防止格式變動弄壞舊存檔碼
+    const OLD_V2_CODE = 'eyJkYXRhIjp7InZlcnNpb24iOjIsInBsYXllciI6eyJuYW1lIjoi6IiK546p5a62IiwibGV2ZWwiOjcsImV4cCI6MTIsImNvaW4iOjM0NTYsImdlbXMiOjIxLCJ0b2tlbnMiOnt9fSwic3RhbWluYSI6eyJjdXJyZW50IjoyMCwibGFzdFVwZGF0ZSI6MTc5MzMwMDAwMDAwMH0sImludmVudG9yeSI6eyJjYXBhY2l0eSI6MTAwLCJjYXJkcyI6W3sidWlkIjoidTEiLCJjYXJkSWQiOiJjMTA2IiwibGV2ZWwiOjE1LCJleHAiOjkwMCwic2tpbGxMZXZlbCI6MSwibGltaXRCcmVhayI6MCwiYXdha2VuZWQiOjAsImxvY2tlZCI6ZmFsc2UsIm9idGFpbmVkQXQiOjE3OTMzMDAwMDAwMDB9XX0sInRlYW1zIjpbeyJuYW1lIjoi6ZqK5LyNMSIsIm1lbWJlcnMiOlsidTEiLG51bGwsbnVsbCxudWxsLG51bGxdfV0sImFjdGl2ZVRlYW0iOjAsInByb2dyZXNzIjp7ImNsZWFyZWRTdGFnZXMiOlsic3QtMS0xIiwic3QtMS0yIl0sInN0YXJzIjp7InN0LTEtMSI6W3RydWUsdHJ1ZSxmYWxzZV19LCJ0b3dlckZsb29yIjozLCJ0dXRvcmlhbERvbmUiOnRydWUsInN0b3J5U2VlbiI6WyJwcm9sb2d1ZSJdfSwidHV0b3JpYWwiOnsic3RlcCI6ImRvbmUiLCJnaWZ0R2l2ZW4iOnRydWV9LCJnYWNoYSI6eyJwaXR5Q291bnRlciI6e30sImhpc3RvcnkiOltdfSwiY29sbGVjdGlvbiI6eyJzZWVuIjpbImMxMDYiXSwib3duZWQiOlsiYzEwNiJdLCJjbGFpbWVkIjpbXX0sInF1ZXN0cyI6eyJjb3VudGVycyI6e30sImNsYWltZWQiOltdLCJkYWlseVJlc2V0QXQiOiIiLCJ3ZWVrbHlSZXNldEF0IjoiIn0sImRhaWx5Ijp7ImxvZ2luRGF5IjoyLCJsYXN0TG9naW4iOiIyMDI2LTEwLTMwIiwic2hvcFB1cmNoYXNlcyI6e319LCJzZXR0aW5ncyI6eyJiZ20iOjAuOCwic2Z4IjowLjgsImJhdHRsZVNwZWVkIjoxfX0sImNoZWNrc3VtIjoiYmM3ZTYxNjkifQ==';
+    const r = importSaveCode(OLD_V2_CODE, config, NOW);
+    expect(r.ok && r.migratedFrom).toBe(2);
+    if (!r.ok) return;
+    expect(r.save.version).toBe(3);
+    expect(r.save.player).toMatchObject({ name: '舊玩家', level: 7, coin: 3456, gems: 21 });
+    expect(r.save.progress).toEqual({
+      clearedStages: ['st-1-1', 'st-1-2'], stars: { 'st-1-1': [true, true, false] }, towerFloor: 3, tutorialDone: true,
+      storySeen: ['prologue'], chapterRewardsClaimed: [],
+    });
+    expect(r.save.tutorial).toEqual({ step: 'done', giftGiven: true });
+    expect(r.save.inventory.cards[0]).toMatchObject({ uid: 'u1', cardId: 'c106', level: 15, exp: 900 });
+  });
+
+  it('冪等：v3 存檔再跑遷移不會改變任何東西', () => {
+    const v3 = createNewSave(config, NOW);
+    v3.progress.chapterRewardsClaimed = [1, 2];
+    expect(migrate(v3 as unknown as Record<string, unknown>)).toEqual(v3);
+  });
 });
