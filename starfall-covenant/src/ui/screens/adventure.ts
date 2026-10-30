@@ -8,6 +8,7 @@ import { chapterProgress, nextMainStage, stageContext } from '../stage-nav';
 import { getSave } from '../state';
 import { userAsset } from '../assets';
 import { eventStatusText } from '../../progression/events';
+import { puzzleEntrySub } from './puzzle';
 import type { ScreenDef } from '../router';
 
 export const adventureScreen: ScreenDef = {
@@ -63,6 +64,7 @@ export const adventureScreen: ScreenDef = {
         listItem({ leading: icon('tower'), title: '挑戰之塔', sub: `不耗體力・目前第 ${save.progress.towerFloor} 層`, onClick: () => nav.go('stages', ['tower']) }),
         listItem({ leading: icon('constellation'), title: '流派試煉', sub: `借一支現成隊伍體驗各流派・已開放 ${trialsOpen} 關`, onClick: () => nav.go('archetypes') }),
         listItem({ leading: icon('sword'), title: '練習場', sub: '用示範隊伍練習轉珠，不耗體力', onClick: () => nav.go('battle', ['practice']) }),
+        listItem({ leading: icon('constellation'), title: '星紋謎題', sub: puzzleEntrySub(), onClick: () => nav.go('puzzle') }),
       ),
     );
   },

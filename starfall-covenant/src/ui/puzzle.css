@@ -1,0 +1,11 @@
+/* 星紋謎題每日一題 */
+.puzzle-screen { display: flex; flex-direction: column; gap: 10px; padding-bottom: 12px; }
+.puzzle-head { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-dim); }
+.puzzle-steps { font-weight: 800; color: var(--gold-soft); }
+.puzzle-steps.over { color: var(--danger); }
+.puzzle-goal { font-family: var(--font-title); font-size: 18px; font-weight: 800; color: var(--gold); margin: 4px 0 2px; }
+.puzzle-reward { margin-top: 6px; color: var(--gold-soft); }
+.puzzle-board { display: flex; justify-content: center; }
+.puzzle-status { text-align: center; font-size: 14px; color: var(--text-dim); min-height: 20px; }
+.puzzle-status.ok { color: #7ff0b2; font-weight: 800; }
+.puzzle-status.fail { color: #ffb4a8; }

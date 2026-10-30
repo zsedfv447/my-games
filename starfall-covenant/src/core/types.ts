@@ -373,4 +373,6 @@ export interface SaveData {
   settings: { bgm: number; sfx: number; battleSpeed: 1 | 2 };
   /** 契印師手札的個人戰績（可選；讀取一律經過 progression/records.ts 的 recordsOf 補預設值） */
   records?: import('../progression/records').PlayerRecords;
+  /** 星紋謎題每日一題的紀錄（可選；讀取一律經過 progression/puzzle.ts 的 puzzleOf 補預設值） */
+  puzzle?: import('../progression/puzzle').PuzzleRecord;
 }
