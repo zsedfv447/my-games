@@ -53,11 +53,13 @@ export function previewEnhance(
 
   const raw = mats.reduce((sum, m) => sum + materialExp(def, m.def, m.owned, ctx), 0);
   const cap = maxExp(def, ctx.rules);
-  const newExp = Math.min(cap, owned.exp + raw);
+  // 經驗表調整前的存檔，經驗可能已超過新的滿級經驗：先截到上限再算
+  const current = Math.min(owned.exp, cap);
+  const newExp = Math.min(cap, current + raw);
   return {
     ok: true,
-    expGained: newExp - owned.exp,
-    expWasted: owned.exp + raw - newExp,
+    expGained: newExp - current,
+    expWasted: current + raw - newExp,
     coin: enhanceCost(owned.level, mats.length, ctx),
     levelBefore: owned.level,
     levelAfter: levelForExp(def, newExp, ctx.rules),
@@ -77,7 +79,7 @@ export function enhance(
   if (save.player.coin < preview.coin) return fail('notEnoughCoin', `金幣不足，需要 ${preview.coin}`);
 
   const owned = save.inventory.cards.find((c) => c.uid === targetUid)!;
-  const card: OwnedCard = { ...owned, exp: owned.exp + preview.expGained, level: preview.levelAfter };
+  const card: OwnedCard = { ...owned, exp: Math.min(owned.exp, maxExp(ctx.card(owned.cardId)!, ctx.rules)) + preview.expGained, level: preview.levelAfter };
   const next = addCoin(replaceCard(save, card, materialUids), -preview.coin);
   const { ok: _ok, ...detail } = preview;
   return { ok: true, save: next, ...detail, card };

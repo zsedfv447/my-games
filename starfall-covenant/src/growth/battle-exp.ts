@@ -1,7 +1,7 @@
 // 關卡結算：把關卡的卡片經驗發給出戰隊員（助戰、借來的隊伍不算）
 import type { OwnedCard, SaveData } from '../core/types';
 import type { GrowthContext } from './context';
-import { levelForExp, maxExp } from './level';
+import { levelForExp, maxExp, normalizeCardExp } from './level';
 import { withCards } from './save-ops';
 
 export interface CardExpGain {
@@ -34,4 +34,16 @@ export function grantBattleExp(
     return newExp > c.exp ? { ...c, exp: newExp, level } : c;
   });
   return { save: withCards(save, cards), gains };
+}
+
+/** 讀檔時對背包所有卡套用 normalizeCardExp（經驗表改版）；沒有任何變動時回傳原存檔 */
+export function normalizeSaveCardExp(save: SaveData, ctx: GrowthContext): SaveData {
+  let changed = false;
+  const cards = save.inventory.cards.map((c) => {
+    const def = ctx.card(c.cardId);
+    const next = def ? normalizeCardExp(c, def, ctx.rules) : c;
+    if (next !== c) changed = true;
+    return next;
+  });
+  return changed ? withCards(save, cards) : save;
 }
