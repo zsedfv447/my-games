@@ -101,7 +101,7 @@ export const prepareScreen: ScreenDef = {
       if (check === 'resume') return nav.go('battle', [stage.id]);
       if (check === 'cancel') return;
       const now = Date.now();
-      const entered = enterStage(getSave(), stage, stageContext(gameData.stages), gameData.config, now,
+      const entered = enterStage(getSave(), stage, stageContext(gameData.stages, gameData.events), gameData.config, now,
         team.borrowed ? undefined : { members: team.cards, helper: team.helperCard });
       if (!entered.ok) return toast(ENTER_ERRORS[entered.reason] ?? entered.reason);
       commit(entered.save);

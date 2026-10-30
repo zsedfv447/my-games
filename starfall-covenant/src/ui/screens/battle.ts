@@ -627,7 +627,7 @@ class BattleView {
     let expGains: CardExpGain[] = [];
     if (!this.s.practice) {
       const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
-      const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages), gameData.config, createRng(this.s.dropSeed), Date.now(), this.s.drops && plannedCards(this.s.drops));
+      const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages, gameData.events), gameData.config, createRng(this.s.dropSeed), Date.now(), this.s.drops && plannedCards(this.s.drops));
       const exp = grantClearExp(done.save, this.s.memberUids ?? [], done.result.cardExp);
       expGains = exp.gains;
       // 發獎與清掉進行中的戰鬥同一次寫入，重新整理不會重複領或重骰掉落
