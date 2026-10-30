@@ -5,7 +5,7 @@ import { validateGameData } from '../src/data/validate';
 import { eventStatusText, eventWindow, formatCountdown, isEventOpen, openEventIds, type EventDef } from '../src/progression/events';
 import { stageLockReason } from '../src/progression/stages';
 import { createNewSave } from '../src/save/save';
-import { buildVersion, cacheableSize, entriesToTrim, RUNTIME_CACHE_LIMIT, shellFiles, strategyFor } from '../src/pwa/strategy';
+import { buildVersion, cacheableSize, entriesToTrim, keysToDelete, RUNTIME_CACHE_LIMIT, shellFiles, strategyFor } from '../src/pwa/strategy';
 import { stageContext } from '../src/ui/stage-nav';
 
 const at = (s: string) => new Date(s).getTime();
@@ -97,6 +97,11 @@ describe('PWA 快取規則', () => {
     expect(cacheableSize('40000', '/assets/tap-x.m4a')).toBe(true);
     expect(cacheableSize(null, '/assets/home-x.m4a')).toBe(false);
     expect(cacheableSize(null, '/assets/c101-x.webp')).toBe(true);
+  });
+
+  it('改版時保留上一版外殼一次，再上一版才刪', () => {
+    expect(keysToDelete(['starfall-shell-a', 'starfall-shell-b', 'starfall-11tfkbl'], 'starfall-shell-b')).toEqual(['starfall-shell-a', 'starfall-11tfkbl']);
+    expect(keysToDelete([], undefined)).toEqual([]);
   });
 
   it('檔案或內容改變就換版本（舊快取會被清掉）', () => {

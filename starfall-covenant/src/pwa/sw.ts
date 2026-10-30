@@ -1,6 +1,6 @@
 // Service worker：建置時由 tools/pwa-plugin.ts 打包成 dist/sw.js，並填入版本與檔案清單
 // 只處理網路請求與 Cache Storage，不碰 localStorage 的存檔。
-import { cacheableSize, entriesToTrim, shellFiles, strategyFor } from './strategy';
+import { cacheableSize, entriesToTrim, keysToDelete, shellFiles, strategyFor } from './strategy';
 
 declare const __SW_VERSION__: string;
 declare const __SW_FILES__: string[];
@@ -19,7 +19,7 @@ interface SwScope {
 const sw = self as unknown as SwScope;
 /** 外殼快取跟著版本走，新版啟用時刪掉舊的 */
 const SHELL = `starfall-shell-${__SW_VERSION__}`;
-/** 素材（雜湊檔名，內容不變）跨版本共用，超過上限刪最舊的 */
+/** 素材（雜湊檔名，內容不變）跨版本共用、改版不清空，超過上限刪最舊的 */
 const ASSETS = 'starfall-assets';
 const FONTS = 'starfall-fonts';
 const KEEP = new Set([SHELL, ASSETS, FONTS]);
@@ -35,7 +35,10 @@ sw.addEventListener('install', (e) => {
 
 sw.addEventListener('activate', (e) => {
   e.waitUntil((async () => {
-    for (const key of await caches.keys()) if (key.startsWith('starfall-') && !KEEP.has(key)) await caches.delete(key);
+    // 上一版的外殼留到下一次改版才刪：新版接手後、玩家回到主城重新整理前，舊頁面還能從這裡拿舊檔
+    const keys = (await caches.keys()).filter((k) => k.startsWith('starfall-') && !KEEP.has(k));
+    const previous = keys.filter((k) => k.startsWith('starfall-shell-')).at(-1);
+    for (const key of keysToDelete(keys, previous)) await caches.delete(key);
     await sw.clients.claim();
   })());
 });
