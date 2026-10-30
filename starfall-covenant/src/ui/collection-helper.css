@@ -1,0 +1,106 @@
+/* 圖鑑與選擇助戰 */
+
+/* ---------- 圖鑑 ---------- */
+.codex-rarity { gap: 4px 12px; margin: 8px 0; }
+.codex-filters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.codex-select {
+  min-width: 0;
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--bg-elev);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+}
+.codex-grid { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); }
+.codex-grid .card-thumb { position: relative; }
+.card-thumb.codex-seen { filter: grayscale(0.85) brightness(0.65); }
+.card-thumb.codex-unseen > img,
+.card-thumb.codex-unseen > svg { visibility: hidden; }
+.card-thumb.codex-unseen { background: radial-gradient(circle at 50% 40%, var(--bg-elev), var(--bg-deep)); }
+.card-thumb.codex-unseen::after {
+  content: '?';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-title);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-faint);
+}
+.codex-no {
+  position: absolute;
+  left: 2px;
+  bottom: 2px;
+  padding: 0 3px;
+  border-radius: 4px;
+  background: rgba(6, 10, 31, 0.8);
+  color: var(--text-dim);
+  font-size: 9px;
+  line-height: 14px;
+}
+.codex-claim {
+  position: absolute;
+  right: -2px;
+  top: -2px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--gold);
+  color: #2a1b00;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 15px;
+  box-shadow: 0 0 6px rgba(242, 196, 90, 0.7);
+}
+.codex-detail { display: flex; flex-direction: column; gap: 10px; }
+.codex-detail .stat-row > div { display: flex; flex-direction: column; }
+.codex-seen-art .card-portrait { filter: grayscale(0.7) drop-shadow(0 8px 20px rgba(0, 0, 0, 0.5)); }
+.codex-unseen-art .card-portrait img,
+.codex-unseen-art .card-portrait svg { filter: brightness(0) opacity(0.6); }
+.codex-list { margin: 0; padding-left: 20px; line-height: 1.7; }
+
+/* ---------- 助戰 ---------- */
+.npc-avatar {
+  --avatar: 64px;
+  flex: none;
+  width: var(--avatar);
+  height: var(--avatar);
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--gold-deep);
+  background: radial-gradient(circle at 35% 30%, var(--bg-elev-2), var(--bg-deep));
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0 2px rgba(6, 10, 31, 0.6);
+}
+.npc-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.npc-avatar span { font-family: var(--font-title); font-size: calc(var(--avatar) * 0.42); color: var(--gold-soft); }
+
+.helper-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-l, 14px);
+  background: var(--bg-elev);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.helper-row:active:not(:disabled) { transform: scale(0.99); }
+.helper-row.selected { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold), 0 0 14px rgba(242, 196, 90, 0.25); }
+.helper-row.blocked { opacity: 0.5; cursor: not-allowed; }
+.helper-head { display: flex; align-items: center; gap: 10px; }
+.helper-head .grow { flex: 1; min-width: 0; }
+.helper-name { font-weight: 800; font-size: 15px; }
+.helper-card-name { color: var(--gold-soft); }
+.helper-leader { padding: 6px 8px; border-radius: 8px; background: rgba(6, 10, 31, 0.45); }
+.helper-leader strong { color: var(--gold); font-size: 12px; }
+.helper-leader p { margin: 2px 0 0; font-size: 12px; line-height: 1.5; }
+.helper-quote { font-style: italic; }

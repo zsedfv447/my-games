@@ -14,6 +14,8 @@ import { teamScreen } from './team';
 import { cardScreen, cardsScreen } from './cards';
 import { summonScreen, summonRatesScreen, summonHistoryScreen } from './summon';
 import { summonRitualScreen } from './summon-ritual';
+import { collectionCardScreen, collectionScreen } from './collection';
+import { helperScreen } from './helper';
 
 /** GDD 2.5 全部畫面；正式畫面完成後取代同名的建置中畫面 */
 export const SCREENS: ScreenDef[] = [
@@ -36,4 +38,7 @@ export const SCREENS: ScreenDef[] = [
   summonRatesScreen,
   summonHistoryScreen,
   summonRitualScreen,
+  collectionScreen,
+  collectionCardScreen,
+  helperScreen,
 ];
