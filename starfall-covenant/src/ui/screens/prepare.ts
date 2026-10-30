@@ -15,8 +15,8 @@ import { HELPER_NPCS, stageAllowsHelper } from '../../progression/helpers';
 import type { ScreenDef } from '../router';
 import { stageRewardPanel } from '../components/reward-reveal';
 import { enemySvg } from '../art/enemy';
+import { enemyArtUrl } from '../art/enemy-art';
 import { ATTRIBUTE_NAMES, ORB_COLORS } from '../art/palette';
-import { resolveArtPath, userAsset } from '../assets';
 import { stageIntel } from '../stage-intel';
 import { recordsOf } from '../../progression/records';
 import '../convenience.css';
@@ -51,7 +51,7 @@ function attrChip(a: Attribute): HTMLElement {
 }
 
 function enemyPortrait(e: EnemyDef, boss: boolean): Element {
-  const url = userAsset('enemies', e.id) ?? resolveArtPath(e.art.sprite);
+  const url = enemyArtUrl(e);
   return url ? h('img', { src: url, alt: '', loading: 'lazy' }) : svg(enemySvg({ ...e, boss }));
 }
 

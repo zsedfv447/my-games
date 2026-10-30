@@ -6,17 +6,18 @@ import { createRng } from '../../core/rng';
 import type { StageDef } from '../../core/types';
 import { startBattle, type Battle, type BattleData, type BattleState, type EnemyState, type TurnSummary } from '../../battle/battle-state';
 import { BoardView } from '../../battle/view/board-view';
-import { completeStage, type StageClearResult } from '../../progression/stages';
+import { completeStage, liveStarStatus, type StageClearResult } from '../../progression/stages';
 import { planDrops, planMatches, plannedCards, type DropPlan } from '../../progression/drops';
 import { chestBadge, DropCounter } from '../battle-fx/drops';
 import { CONTINUE_COST_GEMS, payContinue } from '../../progression/continue';
 import { enemySvg } from '../art/enemy';
+import { enemyArtUrl } from '../art/enemy-art';
 import { ATTRIBUTE_NAMES } from '../art/palette';
 import { buzz, flashClass, skillCutin } from '../battle-fx/effects';
 import { openPauseMenu } from '../battle-fx/pause';
 import { clearCombo, finishCombo, flashReadySkills, markMatchups, renderCombo, renderIntent, weakHint } from '../battle-fx/readability';
 import { playStrikes } from '../battle-fx/strikes';
-import { resolveArtPath, userAsset } from '../assets';
+import { userAsset } from '../assets';
 import { audio } from '../audio';
 import { badge, bar, button, emptyState, iconButton } from '../components/basic';
 import { cardThumb } from '../components/card-thumb';
@@ -38,7 +39,7 @@ import { markStorySeen } from './story';
 import { createTutorialBattle } from '../tutorial/battle-setup';
 import { TutorialBattleGuide, texts as guideTexts, type BattleGuide } from '../tutorial/battle-guide';
 import { advanceTutorial, skipTutorial } from '../tutorial/flow';
-import { BattleHud } from '../components/battle-hud';
+import { BattleHud, liveSummary } from '../components/battle-hud';
 import { canAct, reenableAfterCancel } from '../battle-guard';
 import { grantClearExp, nextStageButton, sortieUids, unlockNotice } from '../stage-clear';
 import type { CardExpGain } from '../../growth';
@@ -54,7 +55,7 @@ export function armBattle(stageId: string, drops?: DropPlan): void {
 }
 
 function enemyArt(e: EnemyState, boss: boolean): Element {
-  const url = userAsset('enemies', e.def.id) ?? resolveArtPath(e.def.art.sprite);
+  const url = enemyArtUrl(e.def);
   return url ? h('img', { src: url, alt: e.def.name, draggable: 'false' }) : svg(enemySvg({ ...e.def, boss }));
 }
 
@@ -319,7 +320,7 @@ class BattleView {
       this.element.classList.toggle('low-fx', getSettings().lowFx);
     };
     openPauseMenu({
-      stars: this.s.practice ? [] : this.s.stage.stars ?? [],
+      stars: this.s.practice ? [] : (this.s.stage.stars ?? []).map((cond) => ({ cond, status: liveStarStatus(cond, liveSummary(this.state), false) })),
       onResume: () => {
         close();
         // 結算動畫中按繼續不開放盤面，動畫播完會自己開
