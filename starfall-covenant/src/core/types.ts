@@ -246,6 +246,8 @@ export interface ChapterDef {
   constellation: string;
   race: Race;
   starReward: Reward;
+  /** 預定的關數；章節分批上線時，星章總數以它計算（還沒上線的關卡算未取得），避免提早領到章節獎勵 */
+  stageCount?: number;
 }
 
 /** 中斷續戰用：出戰時就決定好隊伍與亂數種子，重新整理不能重骰開場盤面或掉落 */

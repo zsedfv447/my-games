@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { gameData } from '../src/data/load';
 import {
-  chapterStarMask, chapterStarSlots, constellationLayout, constellationSvg, freshStars,
+  chapterStarMask, chapterStarSlots, constellationLayout, constellationSvg, freshStars, plannedStarCount,
 } from '../src/ui/art/constellation';
 import { memberSlots, SHARE_W, shareDate, sharePlan, type ShareInput } from '../src/ui/share-plan';
 
@@ -50,6 +50,11 @@ describe('星座圖', () => {
     const mask = chapterStarMask(slots, { 'st-1-1': [true, false, true], 'st-1-2': [false, true] });
     expect(mask.slice(0, 6)).toEqual([true, false, true, false, true, false]);
     expect(mask.filter(Boolean)).toHaveLength(3);
+  });
+  it('分批上線的章節：星座照預定星數畫，不會少於已上線的星', () => {
+    expect(plannedStarCount(9, 9)).toBe(27);
+    expect(plannedStarCount(undefined, 27)).toBe(27);
+    expect(plannedStarCount(3, 12)).toBe(12);
   });
   it('新點亮的星：之前沒紀錄時不算新的', () => {
     expect(freshStars(undefined, [true, false])).toEqual([false, false]);
@@ -108,7 +113,7 @@ describe('星座資料', () => {
   it('每章都有資料、星數等於該章星章數、連線是 n-1 條且索引有效', () => {
     for (const c of gameData.chapters) {
       const d = (constellations as { chapter: number; stars: number[][]; edges: number[][] }[]).find((x) => x.chapter === c.chapter)!;
-      const n = chapterStarSlots(gameData.stages, c.chapter).length;
+      const n = plannedStarCount(c.stageCount, chapterStarSlots(gameData.stages, c.chapter).length);
       expect(d.stars).toHaveLength(n);
       expect(d.edges).toHaveLength(n - 1);
       for (const [a, b] of d.edges) { expect(a).toBeLessThan(n); expect(b).toBeLessThan(n); }
