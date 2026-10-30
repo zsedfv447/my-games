@@ -2,10 +2,10 @@
 // 執行：npx vite-node tools/gen-constellations.ts
 import { writeFileSync } from 'node:fs';
 import { gameData } from '../src/data/load';
-import { chapterStarSlots, constellationLayout } from '../src/ui/art/constellation';
+import { chapterStarSlots, constellationLayout, plannedStarCount } from '../src/ui/art/constellation';
 
 const out = gameData.chapters.map((c) => {
-  const count = chapterStarSlots(gameData.stages, c.chapter).length;
+  const count = plannedStarCount(c.stageCount, chapterStarSlots(gameData.stages, c.chapter).length);
   const { width, height, stars, edges } = constellationLayout(String(c.chapter), count);
   return { chapter: c.chapter, width, height, stars: stars.map((s) => [s.x, s.y, s.r]), edges };
 });

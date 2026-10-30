@@ -43,8 +43,8 @@ function row(r: StageRow, nav: Navigator, leading: IconName, fresh = new Set<str
 /** 章節星章進度與獎勵；領取後原地重畫 */
 function chapterReward(info: ChapterDef): HTMLElement {
   const save = getSave();
-  const stars = chapterStars(save, info.chapter, gameData.stages);
-  const status = chapterRewardStatus(save, info.chapter, gameData.stages);
+  const stars = chapterStars(save, info.chapter, gameData.stages, gameData.chapters);
+  const status = chapterRewardStatus(save, info.chapter, gameData.stages, gameData.chapters);
   const el: HTMLElement = h('div', { class: ['chapter-reward', status] },
     h('div', { class: 'chapter-reward-bar' }, bar({ value: stars.got, max: stars.total, variant: 'gold', label: `星章 ${stars.got}/${stars.total}` })),
     h('div', { class: 'row between' },
@@ -113,7 +113,7 @@ export const stagesScreen: ScreenDef = {
       panel(
         { gold: true },
         h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, `第 ${chapter} 章・${info?.name ?? ''}`), info && badge(info.constellation, 'gold')),
-        info && chapterConstellation(info, { claimable: chapterRewardStatus(save, info.chapter, gameData.stages) === 'claimable' }),
+        info && chapterConstellation(info, { claimable: chapterRewardStatus(save, info.chapter, gameData.stages, gameData.chapters) === 'claimable' }),
         info && chapterReward(info),
       ),
       h('div', { class: 'list' }, rows.map((r) => row(r, nav, 'adventure', fresh))),
