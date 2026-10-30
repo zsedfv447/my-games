@@ -5,7 +5,8 @@ import './flow.css';
 import './battle-fx/battle-fx.css';
 import { installStageScaling } from './scale';
 import { Shell } from './components/shell';
-import { Router } from './router';
+import { parseHash, Router } from './router';
+import { applyUpdateIfReady } from '../pwa/register';
 import { SCREENS } from './screens';
 import { audio } from './audio';
 import { button } from './components/basic';
@@ -31,6 +32,8 @@ export function startApp(stage: HTMLElement): Router {
   window.addEventListener('pointerdown', () => audio.unlock(), { once: true });
   // 任務與成就計數：戰鬥、抽卡、強化等事件累加到存檔
   subscribeQuestCounters(bus, (fn) => commit(fn(getSave())), gameData.quests, (id) => gameData.stages.find((s) => s.id === id)?.kind);
+  // 有新版本時，等玩家回到主城再重新整理
+  window.addEventListener('hashchange', () => applyUpdateIfReady(parseHash(location.hash).name));
   router.start();
   warnBrokenSave();
   return router;

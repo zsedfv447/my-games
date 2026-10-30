@@ -42,7 +42,7 @@ export const homeScreen: ScreenDef = {
     const members = save.teams[save.activeTeam].members.map((uid) => save.inventory.cards.find((c) => c.uid === uid));
     const leader = members[0] && growth.card(members[0].cardId);
     const portrait = leader && cardPortraitUrl(leader);
-    const ctx = stageContext(gameData.stages);
+    const ctx = stageContext(gameData.stages, gameData.events);
     const next = nextMainStage(save, ctx, Date.now());
     const chapter = gameData.chapters.find((c) => c.chapter === next?.chapter);
     const progress = chapter && chapterProgress(save, chapter.chapter, ctx, Date.now());

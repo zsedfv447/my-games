@@ -7,6 +7,7 @@ import {
 } from '../core/types';
 import { checkLeaderEvolution, checkLeaderTier, lintLeaderSkill } from '../battle/leader';
 import { isKnownCounter } from '../progression/quests';
+import type { EventDef } from '../progression/events';
 
 export interface GameData {
   config: GameConfig;
@@ -21,6 +22,7 @@ export interface GameData {
   shop: ShopItemDef[];
   quests: QuestDef[];
   story: StoryData;
+  events: EventDef[];
 }
 
 /** 卡片勝利台詞（lines.victory）的字數上限 */
@@ -146,6 +148,15 @@ export function validateGameData(d: GameData): string[] {
     for (const c of r.cards ?? []) if (!cardIds.has(c.card)) err(w, `獎勵卡 ${c.card} 不存在`);
     if (!r.coin && !r.gems && !r.stamina && !r.cards?.length && !Object.keys(r.tokens ?? {}).length) err(w, '獎勵是空的');
   };
+
+  const eventIds = uniqueIds('events', d.events);
+  for (const e of d.events) {
+    if (e.period && !(Date.parse(e.period.end) > Date.parse(e.period.start))) err(`events/${e.id}`, '結束時間要晚於開始時間');
+    if (e.period?.repeatDays !== undefined && e.period.repeatDays * 86_400_000 < Date.parse(e.period.end) - Date.parse(e.period.start)) {
+      err(`events/${e.id}`, 'repeatDays 比一檔活動還短');
+    }
+  }
+  for (const s of d.stages) if (s.kind === 'event' && (!s.event || !eventIds.has(s.event))) err(`stages/${s.id}`, `活動 ${s.event} 不在 events.json`);
 
   for (const item of d.shop) {
     const w = `shop/${item.id}`;

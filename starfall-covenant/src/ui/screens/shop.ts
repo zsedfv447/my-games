@@ -7,6 +7,7 @@ import { audio } from '../audio';
 import { button, emptyState, icon, resource, resourceIcon, tabs } from '../components/basic';
 import { confirmDialog, toast } from '../components/overlay';
 import { rewardArt, screenBanner } from '../components/rewards';
+import { eventBanner } from '../components/event-banner';
 import { clear, h } from '../dom';
 import { limitText, SHOP_FAIL_TEXT, shopItemDetail, shopPrice, shopTab, tokenName, type ShopTab } from '../economy';
 import type { ScreenDef } from '../router';
@@ -76,13 +77,16 @@ export const shopScreen: ScreenDef = {
   title: '商店',
   chrome: 'full',
   tab: 'shop',
-  render() {
+  render({ route, nav, onLeave }) {
+    if (TABS.some((t) => t.id === route.args[0])) activeTab = route.args[0] as ShopTab;
+    const events = h('div', null, gameData.events.filter((e) => e.token).map((e) => eventBanner(e, { nav, onLeave, showShop: false })));
     const list = h('div', { class: 'shop-list' });
     const wallet = h('div', { class: 'shop-wallet' });
     const refresh = () => {
       clear(list);
       clear(wallet);
       const save = getSave();
+      events.hidden = activeTab !== 'event';
       if (activeTab === 'event') {
         const ids = new Set(gameData.shop.flatMap((i) => Object.keys(i.price.tokens ?? {})));
         wallet.append(...[...ids].map((t) => resource('token', `${tokenName(t)} ${(save.player.tokens[t] ?? 0).toLocaleString()}`)));
@@ -95,6 +99,7 @@ export const shopScreen: ScreenDef = {
     return h('div', { class: 'economy-screen' },
       screenBanner('shop-banner', '星骸商會', '每日限購於午夜 00:00 重置'),
       tabs(TABS, activeTab, (id) => { activeTab = id; refresh(); }),
+      events,
       wallet,
       list);
   },

@@ -1,4 +1,5 @@
 // 關卡列表：#/stages/<章節> 或 #/stages/daily|event|tower
+import { eventBanner } from '../components/event-banner';
 import { h } from '../dom';
 import { gameData } from '../../data/load';
 import type { StageDef } from '../../core/types';
@@ -72,10 +73,10 @@ export const stagesScreen: ScreenDef = {
   title: '關卡列表',
   chrome: 'sub',
   parent: 'adventure',
-  render({ route, nav }) {
+  render({ route, nav, onLeave }) {
     const save = getSave();
     const now = Date.now();
-    const ctx = stageContext(gameData.stages);
+    const ctx = stageContext(gameData.stages, gameData.events);
     const key = route.args[0] ?? '1';
     const group = GROUPS[key];
 
@@ -94,6 +95,7 @@ export const stagesScreen: ScreenDef = {
         'div',
         null,
         h('h2', { class: 'section-title' }, group.title),
+        group.kind === 'event' && gameData.events.map((e) => eventBanner(e, { nav, onLeave })),
         group.kind === 'tower' && panel(null, h('p', { class: 'small-text dim' }, `目前到達第 ${save.progress.towerFloor} 層，共 ${gameData.stages.filter((s) => s.kind === 'tower').length} 層。每 10 層有星晶獎勵。`)),
         rows.length ? h('div', { class: 'list' }, rows.map((r) => row(r, nav, group.icon, fresh))) : emptyState(group.icon, '目前沒有關卡'),
       );
