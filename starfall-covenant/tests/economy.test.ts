@@ -10,6 +10,7 @@ import {
   addQuestCounters, claimQuest, countersForEvent, isKnownCounter, questProgress, resetQuestsIfNeeded, subscribeQuestCounters,
 } from '../src/progression/quests';
 import { grantReward, mergeRewards } from '../src/progression/rewards';
+import { canPayContinue, CONTINUE_COST_GEMS, payContinue } from '../src/progression/continue';
 
 // 測試不受初始卡影響
 const config = { ...gameData.config, newPlayer: { ...gameData.config.newPlayer, starterCards: [] } };
@@ -178,5 +179,16 @@ describe('任務與成就', () => {
     expect(s.quests.counters['d:stageClear']).toBe(2);
     expect(s.quests.counters['stageClear:main']).toBe(2);
     expect(questProgress(s, quests[0]).done).toBe(true);
+  });
+});
+
+describe('續戰', () => {
+  it('扣 5 星晶；不夠時失敗', () => {
+    const r = payContinue(fresh());
+    expect(r.ok && r.save.player.gems).toBe(config.newPlayer.gems - CONTINUE_COST_GEMS);
+    expect(CONTINUE_COST_GEMS).toBe(5);
+    const poor = { ...fresh(), player: { ...fresh().player, gems: 4 } };
+    expect(canPayContinue(poor)).toBe(false);
+    expect(payContinue(poor)).toEqual({ ok: false, reason: 'notEnoughGems' });
   });
 });
