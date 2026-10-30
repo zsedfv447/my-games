@@ -1,1 +1,644 @@
-[]
+[
+  {
+    "id": "d-login",
+    "kind": "daily",
+    "name": "領取今日的登入獎勵",
+    "counter": "login",
+    "target": 1,
+    "reward": {
+      "coin": 500
+    }
+  },
+  {
+    "id": "d-clear",
+    "kind": "daily",
+    "name": "通關任意關卡 3 次",
+    "counter": "stageClear",
+    "target": 3,
+    "reward": {
+      "coin": 2000
+    }
+  },
+  {
+    "id": "d-daily-stage",
+    "kind": "daily",
+    "name": "通關每日關卡 1 次",
+    "counter": "stageClear:daily",
+    "target": 1,
+    "reward": {
+      "coin": 3000
+    }
+  },
+  {
+    "id": "d-combo5",
+    "kind": "daily",
+    "name": "單回合達成 5 Combo 5 次",
+    "counter": "combo5",
+    "target": 5,
+    "reward": {
+      "stamina": 10
+    }
+  },
+  {
+    "id": "d-orbs",
+    "kind": "daily",
+    "name": "累計消除 150 顆珠",
+    "counter": "orbsCleared",
+    "target": 150,
+    "reward": {
+      "coin": 1500
+    }
+  },
+  {
+    "id": "d-all",
+    "kind": "daily",
+    "name": "領取 5 個每日任務",
+    "counter": "questClaim:daily",
+    "target": 5,
+    "reward": {
+      "gems": 1
+    }
+  },
+  {
+    "id": "w-login",
+    "kind": "weekly",
+    "name": "本週領取登入獎勵 5 天",
+    "counter": "login",
+    "target": 5,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "w-clear",
+    "kind": "weekly",
+    "name": "通關任意關卡 20 次",
+    "counter": "stageClear",
+    "target": 20,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "w-daily-stage",
+    "kind": "weekly",
+    "name": "通關每日關卡 6 次",
+    "counter": "stageClear:daily",
+    "target": 6,
+    "reward": {
+      "coin": 10000
+    }
+  },
+  {
+    "id": "w-combo8",
+    "kind": "weekly",
+    "name": "單回合達成 8 Combo 10 次",
+    "counter": "combo8",
+    "target": 10,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "w-enhance",
+    "kind": "weekly",
+    "name": "強化卡片 10 次",
+    "counter": "cardEnhance",
+    "target": 10,
+    "reward": {
+      "coin": 8000
+    }
+  },
+  {
+    "id": "w-gacha",
+    "kind": "weekly",
+    "name": "召喚 10 次",
+    "counter": "gachaPull",
+    "target": 10,
+    "reward": {
+      "stamina": 30
+    }
+  },
+  {
+    "id": "w-shop",
+    "kind": "weekly",
+    "name": "在商店購買 3 次",
+    "counter": "shopPurchase",
+    "target": 3,
+    "reward": {
+      "coin": 5000
+    }
+  },
+  {
+    "id": "w-dailies",
+    "kind": "weekly",
+    "name": "本週領取 25 個每日任務",
+    "counter": "questClaim:daily",
+    "target": 25,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-stageClear-1",
+    "kind": "achievement",
+    "name": "初次凱旋",
+    "counter": "stageClear",
+    "target": 1,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "a-stageClear-10",
+    "kind": "achievement",
+    "name": "踏實的步伐",
+    "counter": "stageClear",
+    "target": 10,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "a-stageClear-50",
+    "kind": "achievement",
+    "name": "百戰契印師",
+    "counter": "stageClear",
+    "target": 50,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-stageClear-100",
+    "kind": "achievement",
+    "name": "星路行者",
+    "counter": "stageClear",
+    "target": 100,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-stageClear-300",
+    "kind": "achievement",
+    "name": "不倦的遠征",
+    "counter": "stageClear",
+    "target": 300,
+    "reward": {
+      "gems": 10
+    }
+  },
+  {
+    "id": "a-mainCleared-9",
+    "kind": "achievement",
+    "name": "獸座的回響（主線通關 9 關）",
+    "counter": "mainCleared",
+    "target": 9,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-mainCleared-18",
+    "kind": "achievement",
+    "name": "工匠座的回響（主線通關 18 關）",
+    "counter": "mainCleared",
+    "target": 18,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-mainCleared-27",
+    "kind": "achievement",
+    "name": "羽座的回響（主線通關 27 關）",
+    "counter": "mainCleared",
+    "target": 27,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-mainCleared-36",
+    "kind": "achievement",
+    "name": "龍座的回響（主線通關 36 關）",
+    "counter": "mainCleared",
+    "target": 36,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-mainCleared-45",
+    "kind": "achievement",
+    "name": "冥河彼岸（主線全部通關）",
+    "counter": "mainCleared",
+    "target": 45,
+    "reward": {
+      "gems": 10
+    }
+  },
+  {
+    "id": "a-towerFloor-10",
+    "kind": "achievement",
+    "name": "英雄座・十層",
+    "counter": "towerFloor",
+    "target": 10,
+    "reward": {
+      "coin": 20000
+    }
+  },
+  {
+    "id": "a-towerFloor-20",
+    "kind": "achievement",
+    "name": "英雄座・二十層",
+    "counter": "towerFloor",
+    "target": 20,
+    "reward": {
+      "coin": 30000
+    }
+  },
+  {
+    "id": "a-towerFloor-30",
+    "kind": "achievement",
+    "name": "英雄座・登頂",
+    "counter": "towerFloor",
+    "target": 30,
+    "reward": {
+      "gems": 10
+    }
+  },
+  {
+    "id": "a-trialCleared-1",
+    "kind": "achievement",
+    "name": "流派入門",
+    "counter": "trialCleared",
+    "target": 1,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "a-trialCleared-6",
+    "kind": "achievement",
+    "name": "流派行家",
+    "counter": "trialCleared",
+    "target": 6,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-trialCleared-12",
+    "kind": "achievement",
+    "name": "十二流派大師",
+    "counter": "trialCleared",
+    "target": 12,
+    "reward": {
+      "gems": 10
+    }
+  },
+  {
+    "id": "a-stageClear-daily-10",
+    "kind": "achievement",
+    "name": "素材收集家",
+    "counter": "stageClear:daily",
+    "target": 10,
+    "reward": {
+      "coin": 10000
+    }
+  },
+  {
+    "id": "a-stageClear-daily-50",
+    "kind": "achievement",
+    "name": "日課不輟",
+    "counter": "stageClear:daily",
+    "target": 50,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-stageClear-daily-150",
+    "kind": "achievement",
+    "name": "素材寶庫",
+    "counter": "stageClear:daily",
+    "target": 150,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-stageClear-event-5",
+    "kind": "achievement",
+    "name": "召集令響應者",
+    "counter": "stageClear:event",
+    "target": 5,
+    "reward": {
+      "tokens": {
+        "token-beast": 20
+      }
+    }
+  },
+  {
+    "id": "a-stageClear-event-30",
+    "kind": "achievement",
+    "name": "獸王的盟友",
+    "counter": "stageClear:event",
+    "target": 30,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-stageClear3Stars-1",
+    "kind": "achievement",
+    "name": "完美契約",
+    "counter": "stageClear3Stars",
+    "target": 1,
+    "reward": {
+      "gems": 1
+    }
+  },
+  {
+    "id": "a-stageClear3Stars-10",
+    "kind": "achievement",
+    "name": "星章收藏家",
+    "counter": "stageClear3Stars",
+    "target": 10,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-stageClear3Stars-50",
+    "kind": "achievement",
+    "name": "星章滿天",
+    "counter": "stageClear3Stars",
+    "target": 50,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-comboBest-5",
+    "kind": "achievement",
+    "name": "五連星紋",
+    "counter": "comboBest",
+    "target": 5,
+    "reward": {
+      "coin": 2000
+    }
+  },
+  {
+    "id": "a-comboBest-8",
+    "kind": "achievement",
+    "name": "八連星紋",
+    "counter": "comboBest",
+    "target": 8,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "a-comboBest-10",
+    "kind": "achievement",
+    "name": "十連星紋",
+    "counter": "comboBest",
+    "target": 10,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-combo10-10",
+    "kind": "achievement",
+    "name": "連擊熟手",
+    "counter": "combo10",
+    "target": 10,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-combo10-100",
+    "kind": "achievement",
+    "name": "連擊狂潮",
+    "counter": "combo10",
+    "target": 100,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-comboTotal-1000",
+    "kind": "achievement",
+    "name": "千道星紋",
+    "counter": "comboTotal",
+    "target": 1000,
+    "reward": {
+      "coin": 10000
+    }
+  },
+  {
+    "id": "a-orbsCleared-1000",
+    "kind": "achievement",
+    "name": "拆星者",
+    "counter": "orbsCleared",
+    "target": 1000,
+    "reward": {
+      "coin": 5000
+    }
+  },
+  {
+    "id": "a-orbsCleared-10000",
+    "kind": "achievement",
+    "name": "萬珠歸塵",
+    "counter": "orbsCleared",
+    "target": 10000,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-gachaPull-1",
+    "kind": "achievement",
+    "name": "第一份契約",
+    "counter": "gachaPull",
+    "target": 1,
+    "reward": {
+      "gems": 1
+    }
+  },
+  {
+    "id": "a-gachaPull-10",
+    "kind": "achievement",
+    "name": "十道封印",
+    "counter": "gachaPull",
+    "target": 10,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "a-gachaPull-100",
+    "kind": "achievement",
+    "name": "封印鑑定師",
+    "counter": "gachaPull",
+    "target": 100,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-cardsOwned-10",
+    "kind": "achievement",
+    "name": "十位星靈",
+    "counter": "cardsOwned",
+    "target": 10,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "a-cardsOwned-25",
+    "kind": "achievement",
+    "name": "星靈同伴",
+    "counter": "cardsOwned",
+    "target": 25,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-cardsOwned-40",
+    "kind": "achievement",
+    "name": "星靈之友",
+    "counter": "cardsOwned",
+    "target": 40,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-cardsOwned-60",
+    "kind": "achievement",
+    "name": "星骸圖錄",
+    "counter": "cardsOwned",
+    "target": 60,
+    "reward": {
+      "gems": 10
+    }
+  },
+  {
+    "id": "a-cardEnhance-1",
+    "kind": "achievement",
+    "name": "第一次強化",
+    "counter": "cardEnhance",
+    "target": 1,
+    "reward": {
+      "coin": 1000
+    }
+  },
+  {
+    "id": "a-cardEnhance-50",
+    "kind": "achievement",
+    "name": "鍛星工匠",
+    "counter": "cardEnhance",
+    "target": 50,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-cardEvolve-1",
+    "kind": "achievement",
+    "name": "第一次進化",
+    "counter": "cardEvolve",
+    "target": 1,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "a-cardEvolve-10",
+    "kind": "achievement",
+    "name": "蛻變之光",
+    "counter": "cardEvolve",
+    "target": 10,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-playerLevel-10",
+    "kind": "achievement",
+    "name": "契印師 Lv.10",
+    "counter": "playerLevel",
+    "target": 10,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "a-playerLevel-20",
+    "kind": "achievement",
+    "name": "契印師 Lv.20",
+    "counter": "playerLevel",
+    "target": 20,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-playerLevel-30",
+    "kind": "achievement",
+    "name": "契印師 Lv.30",
+    "counter": "playerLevel",
+    "target": 30,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-playerLevel-50",
+    "kind": "achievement",
+    "name": "契印師 Lv.50",
+    "counter": "playerLevel",
+    "target": 50,
+    "reward": {
+      "gems": 10
+    }
+  },
+  {
+    "id": "a-login-7",
+    "kind": "achievement",
+    "name": "一週的約定",
+    "counter": "login",
+    "target": 7,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "a-login-30",
+    "kind": "achievement",
+    "name": "月下的誓約",
+    "counter": "login",
+    "target": 30,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-stageFail-1",
+    "kind": "achievement",
+    "name": "失敗也是契約的一部分",
+    "counter": "stageFail",
+    "target": 1,
+    "reward": {
+      "coin": 1000
+    }
+  }
+]

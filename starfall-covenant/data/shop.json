@@ -1,1 +1,577 @@
-[]
+[
+  {
+    "id": "gem-refill",
+    "name": "體力補滿",
+    "price": {
+      "gems": 2
+    },
+    "reward": {
+      "type": "refillStamina"
+    },
+    "limit": {
+      "count": 3,
+      "per": "day"
+    }
+  },
+  {
+    "id": "gem-expand",
+    "name": "背包擴充 +5",
+    "price": {
+      "gems": 1
+    },
+    "reward": {
+      "type": "expandInventory",
+      "amount": 5
+    },
+    "limit": {
+      "count": 50,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "gem-coin",
+    "name": "金幣袋",
+    "price": {
+      "gems": 3
+    },
+    "reward": {
+      "coin": 10000
+    },
+    "limit": {
+      "count": 1,
+      "per": "day"
+    }
+  },
+  {
+    "id": "coin-fire-mid",
+    "name": "焰塵靈・燭光",
+    "price": {
+      "coin": 2000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c902",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 2,
+      "per": "day"
+    }
+  },
+  {
+    "id": "coin-water-mid",
+    "name": "潮塵靈・燭光",
+    "price": {
+      "coin": 2000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c905",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 2,
+      "per": "day"
+    }
+  },
+  {
+    "id": "coin-wood-mid",
+    "name": "森塵靈・燭光",
+    "price": {
+      "coin": 2000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c908",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 2,
+      "per": "day"
+    }
+  },
+  {
+    "id": "coin-light-mid",
+    "name": "輝塵靈・燭光",
+    "price": {
+      "coin": 2000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c911",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 2,
+      "per": "day"
+    }
+  },
+  {
+    "id": "coin-dark-mid",
+    "name": "蝕塵靈・燭光",
+    "price": {
+      "coin": 2000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c914",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 2,
+      "per": "day"
+    }
+  },
+  {
+    "id": "coin-fire-high",
+    "name": "焰塵靈・烈光",
+    "price": {
+      "coin": 10000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c903",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "coin-water-high",
+    "name": "潮塵靈・烈光",
+    "price": {
+      "coin": 10000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c906",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "coin-wood-high",
+    "name": "森塵靈・烈光",
+    "price": {
+      "coin": 10000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c909",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "coin-light-high",
+    "name": "輝塵靈・烈光",
+    "price": {
+      "coin": 10000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c912",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "coin-dark-high",
+    "name": "蝕塵靈・烈光",
+    "price": {
+      "coin": 10000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c915",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "coin-fire-core",
+    "name": "焰星核",
+    "price": {
+      "coin": 20000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c916",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "coin-water-core",
+    "name": "潮星核",
+    "price": {
+      "coin": 20000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c917",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "coin-wood-core",
+    "name": "森星核",
+    "price": {
+      "coin": 20000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c918",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "coin-light-core",
+    "name": "輝星核",
+    "price": {
+      "coin": 20000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c919",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "coin-dark-core",
+    "name": "蝕星核",
+    "price": {
+      "coin": 20000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c920",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "ev-c601",
+    "name": "金鬃獅王・格魯",
+    "price": {
+      "tokens": {
+        "token-beast": 200
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c601",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "event"
+    }
+  },
+  {
+    "id": "ev-c109",
+    "name": "灰燼傭兵・拉卡",
+    "price": {
+      "tokens": {
+        "token-beast": 40
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c109",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "event"
+    }
+  },
+  {
+    "id": "ev-c206",
+    "name": "信號海豹・提米",
+    "price": {
+      "tokens": {
+        "token-beast": 40
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c206",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "event"
+    }
+  },
+  {
+    "id": "ev-c207",
+    "name": "墨潮章魚・歐克",
+    "price": {
+      "tokens": {
+        "token-beast": 40
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c207",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "event"
+    }
+  },
+  {
+    "id": "ev-c306",
+    "name": "苔背刺蝟・波可",
+    "price": {
+      "tokens": {
+        "token-beast": 40
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c306",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "event"
+    }
+  },
+  {
+    "id": "ev-c508",
+    "name": "夜梟哨兵・烏爾",
+    "price": {
+      "tokens": {
+        "token-beast": 40
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c508",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "event"
+    }
+  },
+  {
+    "id": "ev-fire-core",
+    "name": "焰星核",
+    "price": {
+      "tokens": {
+        "token-beast": 30
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c916",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "ev-water-core",
+    "name": "潮星核",
+    "price": {
+      "tokens": {
+        "token-beast": 30
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c917",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "ev-wood-core",
+    "name": "森星核",
+    "price": {
+      "tokens": {
+        "token-beast": 30
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c918",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "ev-light-core",
+    "name": "輝星核",
+    "price": {
+      "tokens": {
+        "token-beast": 30
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c919",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "ev-dark-core",
+    "name": "蝕星核",
+    "price": {
+      "tokens": {
+        "token-beast": 30
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c920",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "ev-gems",
+    "name": "星晶 ×3",
+    "price": {
+      "tokens": {
+        "token-beast": 30
+      }
+    },
+    "reward": {
+      "gems": 3
+    },
+    "limit": {
+      "count": 5,
+      "per": "event"
+    }
+  }
+]

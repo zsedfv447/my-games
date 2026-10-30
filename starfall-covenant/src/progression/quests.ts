@@ -15,6 +15,9 @@ import { dateKey, weekKey } from './time';
  * - orbsCleared：累計消除珠數
  * - gachaPull：召喚次數（十連算 10）
  * - cardObtained、cardEnhance、cardEvolve
+ * - login：領取每日登入獎勵的天數；shopPurchase：商店購買次數；questClaim:daily：領取每日任務的個數
+ *   （這三個不是 bus 事件，由介面在領取／購買成功後呼叫 addQuestCounters）
+ * - 成就專用、由存檔推算的數值（見 derivedCounters）：playerLevel、cardsOwned、towerFloor、mainCleared、trialCleared
  */
 export const COMBO_THRESHOLDS = [5, 8, 10] as const;
 const MAX_COUNTERS = new Set(['comboBest']);
@@ -24,10 +27,27 @@ const KNOWN_COUNTERS = new Set([
   'gachaPull', 'cardObtained', 'cardEnhance', 'cardEvolve',
   ...COMBO_THRESHOLDS.map((t) => `combo${t}`),
   ...['main', 'daily', 'event', 'tower', 'trial'].map((k) => `stageClear:${k}`),
+  'login', 'shopPurchase', 'questClaim:daily',
 ]);
 
+/** 由存檔直接推算、不靠事件累加的數值；舊存檔也能立即反映，只給成就使用 */
+export const DERIVED_COUNTERS = ['playerLevel', 'cardsOwned', 'towerFloor', 'mainCleared', 'trialCleared'] as const;
+export type DerivedCounters = Partial<Record<(typeof DERIVED_COUNTERS)[number], number>>;
+
+export function derivedCounters(save: SaveData, stageKindOf: (stageId: string) => string | undefined): DerivedCounters {
+  const cleared = (kind: string) => save.progress.clearedStages.filter((id) => stageKindOf(id) === kind).length;
+  return {
+    playerLevel: save.player.level,
+    cardsOwned: save.collection.owned.length,
+    towerFloor: save.progress.towerFloor,
+    mainCleared: cleared('main'),
+    trialCleared: cleared('trial'),
+  };
+}
+
 /** quests.json 的 counter 只能用上面列出的名稱 */
-export const isKnownCounter = (name: string) => KNOWN_COUNTERS.has(name);
+export const isKnownCounter = (name: string, kind: QuestDef['kind'] = 'achievement') =>
+  KNOWN_COUNTERS.has(name) || (kind === 'achievement' && (DERIVED_COUNTERS as readonly string[]).includes(name));
 
 export type QuestCounterDelta = Record<string, number>;
 
@@ -97,8 +117,13 @@ export function addQuestCounters(save: SaveData, delta: QuestCounterDelta, quest
   return { ...s, quests: { ...s.quests, counters } };
 }
 
-export function questProgress(save: SaveData, quest: QuestDef): { value: number; done: boolean; claimed: boolean } {
-  const value = Math.min(quest.target, save.quests.counters[keyFor(quest.kind, quest.counter)] ?? 0);
+export function questProgress(
+  save: SaveData,
+  quest: QuestDef,
+  derived: DerivedCounters = {},
+): { value: number; done: boolean; claimed: boolean } {
+  const fromSave = quest.kind === 'achievement' ? derived[quest.counter as keyof DerivedCounters] : undefined;
+  const value = Math.min(quest.target, fromSave ?? save.quests.counters[keyFor(quest.kind, quest.counter)] ?? 0);
   return { value, done: value >= quest.target, claimed: save.quests.claimed.includes(quest.id) };
 }
 
@@ -108,13 +133,24 @@ export function claimQuest(
   quests: QuestDef[],
   config: GameConfig,
   now: number,
+  derived: DerivedCounters = {},
 ): SaveResult<'notDone' | 'alreadyClaimed'> {
   const s = resetQuestsIfNeeded(save, quests, now);
-  const p = questProgress(s, quest);
+  const p = questProgress(s, quest, derived);
   if (p.claimed) return fail('alreadyClaimed');
   if (!p.done) return fail('notDone');
   const granted = grantReward(s, quest.reward, config, now).save;
-  return ok({ ...granted, quests: { ...granted.quests, claimed: [...granted.quests.claimed, quest.id] } });
+  const claimed = { ...granted, quests: { ...granted.quests, claimed: [...granted.quests.claimed, quest.id] } };
+  return ok(quest.kind === 'daily' ? addQuestCounters(claimed, { 'questClaim:daily': 1 }, quests, now) : claimed);
+}
+
+/** 目前可以領取（達標但未領）的任務；用於紅點與「全部領取」 */
+export function claimableQuests(save: SaveData, quests: QuestDef[], now: number, derived: DerivedCounters = {}): QuestDef[] {
+  const s = resetQuestsIfNeeded(save, quests, now);
+  return quests.filter((q) => {
+    const p = questProgress(s, q, derived);
+    return p.done && !p.claimed;
+  });
 }
 
 /**

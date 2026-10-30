@@ -3,7 +3,9 @@ import {
   ARCHETYPE_IDS, ATTRIBUTES, ORB_TYPES, RACES,
   type ActiveSkillDef, type ArchetypeDef, type CardDef, type ChapterDef, type EnemyDef, type GachaPoolDef,
   type GameConfig, type LeaderSkillDef, type QuestDef, type ShopItemDef, type StageDef, type StoryData,
+  type Reward,
 } from '../core/types';
+import { isKnownCounter } from '../progression/quests';
 
 export interface GameData {
   config: GameConfig;
@@ -118,6 +120,27 @@ export function validateGameData(d: GameData): string[] {
       if (!(Number(rarity) in p.rates)) err(w, `${rarity}★ 有卡片但沒有機率`);
       for (const id of list ?? []) if (!cardIds.has(id)) err(w, `卡池卡片 ${id} 不存在`);
     }
+  }
+
+  const checkReward = (w: string, r: Reward) => {
+    for (const c of r.cards ?? []) if (!cardIds.has(c.card)) err(w, `獎勵卡 ${c.card} 不存在`);
+    if (!r.coin && !r.gems && !r.stamina && !r.cards?.length && !Object.keys(r.tokens ?? {}).length) err(w, '獎勵是空的');
+  };
+
+  for (const item of d.shop) {
+    const w = `shop/${item.id}`;
+    const { gems = 0, coin = 0, tokens = {} } = item.price;
+    const amounts = [gems, coin, ...Object.values(tokens)];
+    if (amounts.some((n) => n < 0) || !amounts.some((n) => n > 0)) err(w, '價格要大於 0');
+    if (item.limit && item.limit.count < 1) err(w, '限購次數至少 1');
+    if (!('type' in item.reward)) checkReward(w, item.reward);
+  }
+
+  for (const q of d.quests) {
+    const w = `quests/${q.id}`;
+    if (!isKnownCounter(q.counter, q.kind)) err(w, `未知的計數器 ${q.counter}`);
+    if (!(q.target >= 1)) err(w, `目標 ${q.target} 至少要 1`);
+    checkReward(w, q.reward);
   }
 
   return errors;

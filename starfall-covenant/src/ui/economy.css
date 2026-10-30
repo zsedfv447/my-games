@@ -1,0 +1,65 @@
+/* 商店、每日登入、任務、成就（沿用 covenant-skin 的古銅金色調） */
+.economy-screen { display: flex; flex-direction: column; gap: 10px; }
+
+/* 主城捷徑紅點 */
+.home-side-links button, .sanctuary .tile { position: relative; }
+.home-side-links .badge.dot, .sanctuary .tile .badge.dot { top: -4px; right: -4px; border-color: #161b15; }
+
+/* 頂部橫幅 */
+.screen-banner { position: relative; min-height: 64px; flex: none; display: flex; align-items: flex-end; padding: 10px 14px; overflow: hidden; border: 2px ridge #b9a174; border-radius: 4px; background: linear-gradient(100deg, #292e24, #4a4734, #252a23); box-shadow: inset 0 0 20px #070e0bbb; }
+.screen-banner.has-art { aspect-ratio: 358 / 110; }
+.screen-banner > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.screen-banner.has-art::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 35%, #0b0d09d9); }
+.screen-banner-copy { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 2px; text-shadow: 0 2px 4px #000; }
+.screen-banner-copy strong { font-family: var(--font-title); font-size: 20px; letter-spacing: 3px; color: #ffe9b4; }
+.screen-banner-copy small { font-size: 11px; color: #d9cba6; }
+
+/* 獎勵標籤 */
+.reward-chips { display: flex; flex-wrap: wrap; gap: 4px 8px; }
+.reward-chip { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; color: #e6d6ad; }
+.reward-chip > svg { width: 15px; height: 15px; }
+.reward-chip .card-thumb { --thumb: 22px; pointer-events: none; }
+.reward-art { width: 56px; height: 56px; flex: none; display: grid; place-items: center; object-fit: contain; }
+.reward-art > svg { width: 40px; height: 40px; }
+.reward-art .card-thumb { pointer-events: none; }
+
+/* 商店 */
+.shop-wallet { display: flex; flex-wrap: wrap; gap: 8px; }
+.shop-wallet:empty { display: none; }
+.shop-list { display: flex; flex-direction: column; gap: 8px; }
+.shop-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid #6a573c; border-radius: 4px; background: linear-gradient(120deg, #38352ce8, #191b18f5); box-shadow: inset 0 0 0 2px #1119; }
+.shop-item.sold-out { opacity: 0.55; }
+.shop-item-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.shop-item-copy strong { font-size: 14px; color: #f4e3b8; }
+.shop-item-copy small { font-size: 11px; color: #c9bd9d; }
+.shop-item-copy .shop-limit { color: #a8b99a; }
+.shop-item .btn { flex: none; }
+
+/* 7 日登入 */
+.login-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.login-day { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 3px 7px; text-align: center; border: 1px solid #6a573c; border-radius: 4px; background: linear-gradient(#34352a, #1a1d17); }
+.login-day.big { grid-column: span 2; }
+.login-day.big .reward-art { width: 64px; height: 64px; }
+.login-day-no { font-size: 10px; letter-spacing: 1px; color: #d8c395; }
+.login-day .reward-art { width: 44px; height: 44px; }
+.login-day .reward-chips { justify-content: center; }
+.login-day .reward-chip > svg { display: none; }
+.login-day.today { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold-deep), 0 0 12px #f2c45a66; animation: login-pulse 1.6s ease-in-out infinite; }
+.login-day.claimed > :not(.login-stamp), .login-day.claimedToday > :not(.login-stamp) { opacity: 0.4; }
+.login-stamp { white-space: nowrap; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-14deg); padding: 2px 8px; border: 2px solid #c9473f; border-radius: 3px; font-family: var(--font-title); font-size: 14px; letter-spacing: 2px; color: #ff8a7a; background: #1a0d0bcc; }
+@keyframes login-pulse { 50% { box-shadow: 0 0 0 1px var(--gold-deep), 0 0 20px #f2c45aaa; } }
+.login-popup { max-height: 60vh; overflow: auto; }
+
+/* 任務與成就 */
+.quest-list { display: flex; flex-direction: column; gap: 7px; }
+.quest-row { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 1px solid #6a573c; border-radius: 4px; background: linear-gradient(120deg, #38352ce8, #191b18f5); }
+.quest-row.ready { border-color: var(--gold-deep); box-shadow: 0 0 10px #f2c45a44; }
+.quest-row.claimed { opacity: 0.5; }
+.quest-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.quest-row-main strong { font-size: 13px; color: #f4e3b8; }
+.quest-row .bar { height: 14px; }
+.quest-row .bar .label { font-size: 10px; }
+.quest-row > .btn, .quest-row > .badge { flex: none; }
+.achievement-summary { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px; color: #d8c395; font-size: 12px; letter-spacing: 1px; }
+.achievement-summary strong { font-family: var(--font-title); font-size: 18px; color: #ffe9b4; }
+.economy-screen > div > .btn.block { margin-top: 8px; }
