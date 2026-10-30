@@ -1,0 +1,24 @@
+/* 卡片背包：篩選、批次販賣、容量提醒 */
+.bag-screen { display: flex; flex-direction: column; gap: var(--gap); }
+.bag-warn-text { color: #ffb36b; }
+.bag-warning { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border-radius: var(--radius-s); font-size: 13px; background: rgba(255, 179, 107, 0.12); border: 1px solid rgba(255, 179, 107, 0.55); }
+.bag-warning.full { background: rgba(255, 93, 108, 0.14); border-color: var(--danger); }
+
+.bag-filter { display: flex; flex-direction: column; gap: 6px; padding: 10px; }
+.chip-row { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+.chip-label { width: 30px; font-size: 12px; color: var(--text-dim); }
+.filter-chip { min-height: 28px; padding: 0 10px; border-radius: 14px; font: inherit; font-size: 12px; color: var(--text-dim); background: rgba(6, 10, 31, 0.6); border: 1px solid rgba(154, 164, 214, 0.35); cursor: pointer; }
+.filter-chip.on { color: #2a1d05; background: var(--gold); border-color: var(--gold); font-weight: 700; }
+.filter-chip.attr-fire.on { background: var(--orb-fire); border-color: var(--orb-fire); }
+.filter-chip.attr-water.on { background: var(--orb-water); border-color: var(--orb-water); }
+.filter-chip.attr-wood.on { background: var(--orb-wood); border-color: var(--orb-wood); }
+.filter-chip.attr-light.on { background: var(--orb-light); border-color: var(--orb-light); }
+.filter-chip.attr-dark.on { background: var(--orb-dark); border-color: var(--orb-dark); color: #fff; }
+
+.bag-cell { position: relative; }
+.bag-cell .team-mark { position: absolute; top: 2px; left: 2px; padding: 0 4px; border-radius: 3px; font-size: 10px; line-height: 16px; background: rgba(6, 10, 31, 0.85); color: var(--gold-soft); border: 1px solid var(--gold-deep); pointer-events: none; }
+.card-grid.selling .card-thumb.unsellable { filter: grayscale(0.9) brightness(0.5); }
+.card-grid.selling .card-thumb.selected { outline: 3px solid var(--danger); }
+
+.bag-sell-bar { position: sticky; bottom: 0; z-index: 2; display: flex; flex-direction: column; gap: 6px; padding: 10px; border-radius: var(--radius); background: rgba(6, 10, 31, 0.94); border: 1px solid var(--gold-deep); box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.5); }
+.bag-sell-bar .row .btn { flex: 1; }

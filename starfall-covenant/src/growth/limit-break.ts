@@ -1,6 +1,7 @@
 import type { OwnedCard, SaveData } from '../core/types';
 import type { GrowthContext } from './context';
 import { fail, type GrowthResult } from './result';
+import { isMaterialFor } from './materials';
 import { isFailure, replaceCard, resolveMaterials, resolveTarget } from './save-ops';
 
 /** 突破：吞同名卡（同一條進化鏈的任何型態），每張 +1 階，最多 +5 */
@@ -17,8 +18,7 @@ export function limitBreak(
   }
   const mats = resolveMaterials(save, ctx, materialUids, targetUid);
   if (isFailure(mats)) return mats;
-  const family = ctx.family(def.id);
-  const wrong = mats.find((m) => ctx.family(m.def.id) !== family);
+  const wrong = mats.find((m) => !isMaterialFor('limitBreak', { def, owned }, m.def, ctx));
   if (wrong) return fail('wrongMaterial', '突破需要同名卡', wrong.owned.uid);
 
   const card: OwnedCard = { ...owned, limitBreak: owned.limitBreak + mats.length };

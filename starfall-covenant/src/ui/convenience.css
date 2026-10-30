@@ -71,3 +71,19 @@
 .defeat-advice.helper .defeat-advice-icon { background: #8a5cc4; }
 .defeat-advice.tip .defeat-advice-icon { background: var(--gold-deep); color: #2a1b00; }
 .defeat-advice .btn { flex: none; }
+
+/* ---------- 契印師手札 ---------- */
+.sanctuary .home-tiles { grid-template-columns: repeat(6, 1fr); }
+.note-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
+.note-stat { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 4px; border-radius: var(--radius-s); background: rgba(6, 10, 31, 0.45); border: 1px solid var(--line); text-align: center; }
+.note-stat small { color: var(--text-dim); font-size: 10px; }
+.note-stat strong { font-size: 15px; font-variant-numeric: tabular-nums; }
+.note-quote { margin: 6px 0 0; color: var(--gold-soft); font-size: 13px; line-height: 1.6; }
+.note-rank { gap: 8px; }
+.note-rank-no { width: 18px; height: 18px; display: grid; place-items: center; border-radius: 50%; background: var(--line-strong); font-size: 10px; font-weight: 700; }
+.note-arch { display: grid; grid-template-columns: 72px 1fr; align-items: center; gap: 8px; }
+
+/* ---------- 結算：隊長勝利台詞 ---------- */
+.result-leader-line { display: flex; align-items: center; gap: 10px; max-width: 340px; margin: 4px auto 6px; padding: 6px 12px 6px 6px; border-radius: 10px; background: rgba(6, 10, 31, 0.6); border: 1px solid var(--gold-deep); text-align: left; animation: pop-in 320ms 250ms ease-out both; }
+.result-leader-name { color: var(--gold-soft); font-size: 11px; font-weight: 700; }
+.result-leader-line p { margin: 2px 0 0; font-size: 13px; line-height: 1.5; }

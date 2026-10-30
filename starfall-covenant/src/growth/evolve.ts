@@ -2,7 +2,8 @@ import type { OwnedCard, SaveData } from '../core/types';
 import type { GrowthContext } from './context';
 import { markOwned } from './collection';
 import { fail, type GrowthResult } from './result';
-import { addCoin, isFailure, replaceCard, resolveMaterials, resolveTarget, teamUids } from './save-ops';
+import { freeCards } from './materials';
+import { addCoin, isFailure, replaceCard, resolveMaterials, resolveTarget } from './save-ops';
 import { maxSkillLevel } from './skill';
 
 /**
@@ -52,9 +53,7 @@ export function pickEvolutionMaterials(
   const owned = save.inventory.cards.find((c) => c.uid === targetUid);
   const evo = owned ? ctx.card(owned.cardId)?.evolution : undefined;
   if (!evo) return { uids: [], missing: [] };
-  const inTeam = teamUids(save);
-  const pool = save.inventory.cards
-    .filter((c) => c.uid !== targetUid && !c.locked && !inTeam.has(c.uid))
+  const pool = freeCards(save, targetUid)
     .sort((a, b) => a.level - b.level || a.obtainedAt - b.obtainedAt);
   const used = new Set<string>();
   const uids: string[] = [];

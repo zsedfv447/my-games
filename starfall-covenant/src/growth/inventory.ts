@@ -94,8 +94,60 @@ export function sellPrice(owned: Pick<OwnedCard, 'level'>, def: CardDef, ctx: Gr
   return Math.floor(def.sellValue * (1 + ctx.rules.sellLevelBonus * (owned.level - 1)));
 }
 
-/** 批次販賣：上鎖或在隊伍中的卡會整批拒絕，避免誤賣 */
-export function sellCards(save: SaveData, ctx: GrowthContext, uids: string[]): GrowthResult<{ coin: number; sold: string[] }> {
+export type SellBlockReason = 'locked' | 'inTeam';
+
+/** 這張卡能不能賣；能賣回傳 null */
+export function sellBlockReason(save: SaveData, uid: string, inTeam = teamUids(save)): SellBlockReason | null {
+  const c = findCard(save, uid);
+  if (c?.locked) return 'locked';
+  if (inTeam.has(uid)) return 'inTeam';
+  return null;
+}
+
+export interface SellPreview {
+  /** 可以賣的卡（已排除上鎖、隊伍中、找不到的） */
+  sellable: string[];
+  blocked: { uid: string; reason: SellBlockReason }[];
+  coin: number;
+  /** 達到 sellConfirmRarity 的卡，販賣前要二次確認 */
+  highRarity: string[];
+  needsConfirm: boolean;
+}
+
+/** 販賣預覽：把選取的卡分成可賣與不可賣，算出金幣與是否需要二次確認（不改存檔） */
+export function previewSell(save: SaveData, ctx: GrowthContext, uids: string[]): SellPreview {
+  const inTeam = teamUids(save);
+  const sellable: string[] = [];
+  const blocked: SellPreview['blocked'] = [];
+  const highRarity: string[] = [];
+  let coin = 0;
+  for (const uid of new Set(uids)) {
+    const owned = findCard(save, uid);
+    const def = owned && ctx.card(owned.cardId);
+    if (!owned || !def) continue;
+    const reason = sellBlockReason(save, uid, inTeam);
+    if (reason) { blocked.push({ uid, reason }); continue; }
+    sellable.push(uid);
+    coin += sellPrice(owned, def, ctx);
+    if (def.rarity >= ctx.rules.sellConfirmRarity) highRarity.push(uid);
+  }
+  return { sellable, blocked, coin, highRarity, needsConfirm: highRarity.length > 0 };
+}
+
+/** 背包提醒：滿了、快滿了或不需要提醒 */
+export function inventoryWarning(save: SaveData, ctx: GrowthContext): 'full' | 'almostFull' | null {
+  const { free } = inventoryUsage(save);
+  if (free <= 0) return 'full';
+  return free <= ctx.rules.inventoryWarnFree ? 'almostFull' : null;
+}
+
+/**
+ * 批次販賣：上鎖或在隊伍中的卡會整批拒絕，避免誤賣。
+ * 包含高星卡（sellConfirmRarity 以上，預設 5★）時，必須帶 confirmHighRarity 才會執行。
+ */
+export function sellCards(
+  save: SaveData, ctx: GrowthContext, uids: string[], opts: { confirmHighRarity?: boolean } = {},
+): GrowthResult<{ coin: number; sold: string[] }> {
   const picks = resolveMaterials(save, ctx, uids);
   if (isFailure(picks)) {
     const map: Partial<Record<string, ['cardLocked' | 'cardInTeam', string]>> = {
@@ -104,6 +156,10 @@ export function sellCards(save: SaveData, ctx: GrowthContext, uids: string[]): G
     };
     const remap = map[picks.error.code];
     return remap ? fail(remap[0], remap[1], picks.error.subject) : picks;
+  }
+  const high = picks.filter((p) => p.def.rarity >= ctx.rules.sellConfirmRarity);
+  if (high.length && !opts.confirmHighRarity) {
+    return fail('confirmRequired', `包含 ${high.length} 張 ${ctx.rules.sellConfirmRarity}★ 以上的卡，請再次確認`, high[0].owned.uid);
   }
   const coin = picks.reduce((sum, p) => sum + sellPrice(p.owned, p.def, ctx), 0);
   const remove = new Set(uids);
