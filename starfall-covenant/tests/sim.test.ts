@@ -9,7 +9,7 @@ import { benchmarkStages, fixtureData, starterTeams } from '../tools/sim/fixture
 import { planMove, scoreBoard } from '../tools/sim/planner';
 import { balanceFlags, formatReport, simulateBattle, simulateMatrix, type CellResult } from '../tools/sim/simulate';
 import { STRATEGIES } from '../tools/sim/strategies';
-import { chooseSkills } from '../tools/sim/skills';
+import { chooseSkills, predictedDamage } from '../tools/sim/skills';
 import type { ActiveSkillDef } from '../src/core/types';
 
 const config = fixtureData.config.battle;
@@ -125,6 +125,26 @@ describe('主動技施放策略', () => {
 
   it('背水隊在低血量仍會放自損', () => {
     expect(chooseSkills(readyState(40, 3), (i) => kit[i], 'berserk')).toContain(4);
+  });
+
+  it('背水隊只在預測會被打死時才補血', () => {
+    const lethal = (s: ReturnType<typeof readyState>, atk: number) => s.enemies.forEach((e) => (e.def = { ...e.def, atk }));
+    // 敵人這回合不出手：低血量也不補
+    expect(chooseSkills(readyState(10, 3), (i) => kit[i], 'berserk')).not.toContain(0);
+    // 敵人要出手但打不死：不補
+    const safe = readyState(30, 1);
+    lethal(safe, 1);
+    expect(chooseSkills(safe, (i) => kit[i], 'berserk')).not.toContain(0);
+    // 敵人要出手且會打死：補，自損也不放
+    const danger = readyState(30, 1);
+    lethal(danger, danger.hp);
+    expect(predictedDamage(danger)).toBeGreaterThanOrEqual(danger.hp);
+    const chosen = chooseSkills(danger, (i) => kit[i], 'berserk');
+    expect(chosen).toContain(0);
+    expect(chosen).not.toContain(4);
+    // 有瀕死保命時不補
+    danger.buffs = [{ kind: 'surviveOnce', turns: 1 }];
+    expect(chooseSkills(danger, (i) => kit[i], 'berserk')).not.toContain(0);
   });
 
   it('被封印主動技時不放', () => {

@@ -3,12 +3,15 @@
 // 原則（模仿一般玩家）：
 // - 進攻類（轉珠、強化、盤面整理、攻擊 buff、傷害、持續傷害、技能連鎖、天降、延長轉珠時間）：好了就放。
 // - 防守類（減傷、瀕死保命、延遲、鎖定敵人）：有敵人這回合會出手，或血量低於一半時才放。
-// - 回復：血量低於 65% 才放（背水隊 20%）；解除異常：身上有異常、盤面干擾珠夠多或血量偏低時才放。
-// - 自損：放完後血量仍高於安全線才放（背水隊的安全線較低，因為低血量正是它要的）。
+// - 回復：血量低於 65% 才放；背水隊只在預測這回合會被打死時才放；解除異常：身上有異常、盤面干擾珠夠多或血量偏低時才放。
+// - 自損：放完後血量要在一半以上；背水隊只要放完後撐得過這回合就放（低血量正是它要的）。
 // - 冷卻縮減：有其他隊友在冷卻中才放，而且最先放，放完再看有沒有新的技能好了。
 // - 技能循環流派：任何技能好了就放（隊長技要「本回合施放過主動技」）。
 import type { ActiveSkillDef, ArchetypeId, SkillEffect } from '../../src/core/types';
 import type { Battle, BattleState } from '../../src/battle/battle-state';
+import { incomingDamage } from '../../src/battle/damage';
+import { buffDamageReductions, buffsOf } from '../../src/battle/skills/buffs';
+import { enemyAtkMultiplier, enemyHitCount, poisonPercent } from '../../src/battle/skills/status';
 
 type Need = 'always' | 'defense' | 'heal' | 'cleanse' | 'cooldown' | 'never';
 
@@ -30,6 +33,25 @@ function needOf(e: SkillEffect): Need {
 
 const hpPercent = (s: BattleState) => (s.hp / s.maxHp) * 100;
 
+/**
+ * 預估這回合結束前我方會受到的傷害：會出手的敵人攻擊（含狂暴、主動技減傷）加上中毒。
+ * 不計隊長技減傷，所以估得偏高、偏保守。
+ */
+export function predictedDamage(s: BattleState): number {
+  const reductions = buffDamageReductions(s);
+  const attacks = s.enemies
+    .filter((e) => e.hp > 0 && e.lockedTurns === 0 && e.cooldown <= 1)
+    .reduce((sum, e) => sum + enemyHitCount(e) * incomingDamage((e.def.atk * enemyAtkMultiplier(e)) / enemyHitCount(e), reductions), 0);
+  return attacks + Math.floor((s.maxHp * poisonPercent(s)) / 100);
+}
+
+/** 以 hp 的血量撐不撐得過這回合（有瀕死保命且敵人不是連擊時算撐得過） */
+function survives(s: BattleState, hp: number): boolean {
+  if (hp > predictedDamage(s)) return true;
+  const multiHit = s.enemies.some((e) => e.hp > 0 && enemyHitCount(e) > 1);
+  return buffsOf(s, 'surviveOnce').length > 0 && !multiHit;
+}
+
 /** 這回合是否有敵人會出手（倒數到 1 且沒被鎖定） */
 const enemyAttacksSoon = (s: BattleState) => s.enemies.some((e) => e.hp > 0 && e.lockedTurns === 0 && e.cooldown <= 1);
 
@@ -40,8 +62,8 @@ function isUseful(need: Need, s: BattleState, caster: number, archetype: Archety
     case 'defense':
       return enemyAttacksSoon(s) || hpPercent(s) < 50;
     case 'heal':
-      // 背水隊要維持低血量，快死才補
-      return hpPercent(s) < (archetype === 'berserk' ? 20 : 65);
+      // 背水隊要維持低血量吃倍率，只在預測下一次敵人攻擊會致死時才補
+      return archetype === 'berserk' ? !survives(s, s.hp) : hpPercent(s) < 65;
     case 'cleanse': {
       const interference = s.board.cells.filter((o) => o.locked || o.poison || o.hidden).length;
       return s.teamStatuses.length > 0 || interference >= 3 || hpPercent(s) < 50;
@@ -57,8 +79,9 @@ function isUseful(need: Need, s: BattleState, caster: number, archetype: Archety
 function selfDamageSafe(skill: ActiveSkillDef, s: BattleState, archetype: ArchetypeId): boolean {
   const loss = skill.effects.reduce((p, e) => (e.type === 'selfDamage' ? p + e.percentCurrentHp : p), 0);
   if (loss === 0) return true;
-  const after = hpPercent(s) * (1 - loss / 100);
-  return after >= (archetype === 'berserk' ? 10 : 50);
+  const after = s.hp * (1 - loss / 100);
+  // 背水隊：自損後仍撐得過這回合就放；其他隊：自損後血量要在一半以上
+  return archetype === 'berserk' ? survives(s, after) : (after / s.maxHp) * 100 >= 50;
 }
 
 /** 施放順序：冷卻縮減 → 盤面變化 → 其他 */
