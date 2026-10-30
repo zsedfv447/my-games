@@ -1,14 +1,15 @@
-// 卡片背包畫面的篩選狀態：畫面上的勾選 → growth 的 CardFilter
-import { ATTRIBUTES, RACES, type Attribute, type Race, type Rarity } from '../../core/types';
+// 卡片背包畫面的篩選狀態：畫面上的勾選 → growth 的 CardFilter（只放記憶體，不進存檔）
+import { ATTRIBUTES, RACES, type ArchetypeId, type Attribute, type Race, type Rarity } from '../../core/types';
 import type { CardFilter } from '../../growth';
 
 export interface BagFilterState {
   attribute: Attribute[];
   rarity: Rarity[];
   race: Race[];
+  archetype: ArchetypeId[];
 }
 
-export const emptyBagFilter = (): BagFilterState => ({ attribute: [], rarity: [], race: [] });
+export const emptyBagFilter = (): BagFilterState => ({ attribute: [], rarity: [], race: [], archetype: [] });
 
 /** 稀有度按鈕：低星合併成一顆，方便挑出素材與低星卡 */
 export const RARITY_CHIPS: { label: string; values: Rarity[] }[] = [
@@ -28,9 +29,9 @@ export function toggleValues<T>(list: T[], values: T[]): T[] {
 }
 
 export function activeFilterCount(f: BagFilterState): number {
-  return f.attribute.length + RARITY_CHIPS.filter((c) => c.values.every((v) => f.rarity.includes(v))).length + f.race.length;
+  return f.attribute.length + RARITY_CHIPS.filter((c) => c.values.every((v) => f.rarity.includes(v))).length + f.race.length + f.archetype.length;
 }
 
 export function toCardFilter(f: BagFilterState): CardFilter {
-  return { attribute: f.attribute, rarity: f.rarity, race: f.race };
+  return { attribute: f.attribute, rarity: f.rarity, race: f.race, archetype: f.archetype };
 }

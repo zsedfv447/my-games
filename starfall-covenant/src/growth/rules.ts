@@ -57,7 +57,7 @@ export const GROWTH_RULES: GrowthRules = {
   awakenMaterialByAttribute: { fire: 'c916', water: 'c917', wood: 'c918', light: 'c919', dark: 'c920' },
   maxInventoryCapacity: 300,
   sellLevelBonus: 0.05,
-  sellConfirmRarity: 5,
+  sellConfirmRarity: 4,
   inventoryWarnFree: 5,
   collectionGems: { 1: 0, 2: 0, 3: 1, 4: 1, 5: 3, 6: 5 },
 };

@@ -2,10 +2,9 @@
 // 規則本身在 growth/，這裡只整理成畫面需要的樣子，方便測試。
 import type { CardDef, OwnedCard, PassiveEffect, SaveData } from '../../core/types';
 import {
-  computeStats, expForLevel, isSkillMaterial, materialExp, maxSkillLevel, nextAwakening,
-  type CardStats, type GrowthContext,
+  computeStats, expForLevel, freeCards, materialCandidates, materialExp, maxSkillLevel, nextAwakening,
+  type CardStats, type GrowthContext, type MaterialUse,
 } from '../../growth';
-import { teamUids } from '../../growth/save-ops';
 import { ORB_NAMES } from '../art/palette';
 import { STATUS_NAMES } from '../status-labels';
 
@@ -30,11 +29,7 @@ export interface MaterialOption {
   sameAttribute: boolean;
 }
 
-/** 可當素材的卡：不是目標、沒上鎖、不在隊伍裡 */
-function usable(save: SaveData, targetUid: string): OwnedCard[] {
-  const inTeam = teamUids(save);
-  return save.inventory.cards.filter((c) => c.uid !== targetUid && !c.locked && !inTeam.has(c.uid));
-}
+const USE: Record<GrowthMode, MaterialUse> = { enhance: 'enhance', skill: 'skill', limit: 'limitBreak', awaken: 'awaken' };
 
 /** 排序鍵：素材卡在前、同屬性在前、低稀有度在前 */
 const sortKey = (m: MaterialOption) => (m.def.race === 'material' ? 0 : 100) + (m.sameAttribute ? 0 : 10) + m.def.rarity;
@@ -44,20 +39,9 @@ export function materialOptions(save: SaveData, ctx: GrowthContext, targetUid: s
   const target = save.inventory.cards.find((c) => c.uid === targetUid);
   const tdef = target && ctx.card(target.cardId);
   if (!target || !tdef) return [];
-  const awakenId = mode === 'awaken' ? nextAwakening(tdef, target, ctx)?.material : undefined;
-  const family = ctx.family(tdef.id);
-  const list: MaterialOption[] = [];
-  for (const owned of usable(save, targetUid)) {
-    const def = ctx.card(owned.cardId);
-    if (!def) continue;
-    const ok =
-      mode === 'enhance' ? !Object.values(ctx.rules.awakenMaterialByAttribute).includes(def.id)
-        : mode === 'skill' ? isSkillMaterial(tdef, def, ctx)
-          : mode === 'limit' ? ctx.family(def.id) === family
-            : def.id === awakenId;
-    if (!ok) continue;
-    list.push({ owned, def, exp: materialExp(tdef, def, owned, ctx), sameAttribute: def.attribute === tdef.attribute });
-  }
+  const list: MaterialOption[] = materialCandidates(save, ctx, targetUid, USE[mode]).map(({ owned, def }) => ({
+    owned, def, exp: materialExp(tdef, def, owned, ctx), sameAttribute: def.attribute === tdef.attribute,
+  }));
   return list.sort((a, b) => sortKey(a) - sortKey(b) || a.owned.level - b.owned.level || a.owned.obtainedAt - b.owned.obtainedAt);
 }
 
@@ -130,7 +114,7 @@ export function evolutionNeeds(save: SaveData, ctx: GrowthContext, targetUid: st
   const owned = save.inventory.cards.find((c) => c.uid === targetUid);
   const evo = owned && ctx.card(owned.cardId)?.evolution;
   if (!evo) return [];
-  const pool = usable(save, targetUid);
+  const pool = freeCards(save, targetUid);
   const counts = new Map<string, number>();
   for (const id of evo.materials) counts.set(id, (counts.get(id) ?? 0) + 1);
   return [...counts].map(([id, need]) => ({ id, need, have: pool.filter((c) => c.cardId === id).length }));
