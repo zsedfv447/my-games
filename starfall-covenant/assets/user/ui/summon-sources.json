@@ -92,6 +92,77 @@
       "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
       "download_url": "https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets.xcassets/11%20%E6%A8%A1%E6%8B%9F%E6%8A%BD%E5%8D%A1/%E6%8A%BD%E5%8D%A1%E9%83%A8%E4%BB%B606.imageset/%E6%8A%BD%E5%8D%A1%E9%83%A8%E4%BB%B606%402x.png",
       "source_sha256": "4e50fe6b363b48728ab42c79315e05b10129c5254697c3e41d4e93e8d51c970b"
+    },
+    {
+      "output": "assets/user/ui/summon-clamp-rim-left.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/抽卡部件01.imageset/抽卡部件01@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "source_sha256": "84a9b52d6ad5fe62009f78a5f38938e822ead24d7c8577807021029beeb7cb09",
+      "transformation": "None; original PNG bytes copied unchanged."
+    },
+    {
+      "output": "assets/user/ui/summon-clamp-rim-right.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/抽卡部件02.imageset/抽卡部件02@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "source_sha256": "c508c2f9d7a5138a05705d69ca02504b75f742cb14fe2e5899a17622106d6e5e",
+      "transformation": "None; original PNG bytes copied unchanged."
+    },
+    {
+      "output": "assets/user/ui/summon-clamp-eye-a.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/抽卡部件03.imageset/抽卡部件03@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "source_sha256": "4db68d9265677eafe16c0148c9832a1a3bec9a26b7e1d5bf1ff7b3f7ffda658b",
+      "transformation": "None; original PNG bytes copied unchanged."
+    },
+    {
+      "output": "assets/user/ui/summon-clamp-eye-b.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/抽卡部件04.imageset/抽卡部件04@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "source_sha256": "d8d170c9cd348fd46653e82050b70f1b3d20868681f30e5b59f7e86be14af077",
+      "transformation": "None; original PNG bytes copied unchanged."
+    },
+    {
+      "output": "assets/user/ui/summon-clamp-left.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/抽卡部件05.imageset/抽卡部件05@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "source_sha256": "4d4789e9b76a2dc86d4caf977adb6c4bc0d1535668b59e6168aa368c3900dcbe",
+      "transformation": "None; original PNG bytes copied unchanged."
+    },
+    {
+      "output": "assets/user/ui/summon-clamp-right.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/抽卡部件06.imageset/抽卡部件06@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "source_sha256": "4e50fe6b363b48728ab42c79315e05b10129c5254697c3e41d4e93e8d51c970b",
+      "transformation": "None; original PNG bytes copied unchanged."
+    },
+    {
+      "output": "assets/user/ui/summon-clamp-inner-07.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/抽卡部件07.imageset/抽卡部件07@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "source_sha256": "8faa7cef97d3affd2b05eeb2a5b30f849fcfde21837fb197a47e94e213cb4b91",
+      "transformation": "None; original PNG bytes copied unchanged."
+    },
+    {
+      "output": "assets/user/ui/summon-clamp-inner-08.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/抽卡部件08.imageset/抽卡部件08@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "source_sha256": "997292b40485e39634bcd373d14777907a5b9aa401cb378c9708f6695ef84055",
+      "transformation": "None; original PNG bytes copied unchanged."
+    },
+    {
+      "output": "assets/user/ui/summon-clamp-inner-09.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/抽卡部件09.imageset/抽卡部件09@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "source_sha256": "f0ea738c11929a025623875a2a60a0b9478292213bd62556c83a036ae8e5db63",
+      "transformation": "None; original PNG bytes copied unchanged."
     }
-  ]
+  ],
+  "clampAssembly": {
+    "source": "jordengit/TowerOfSaviorsHelper SKSealCard.sks and SKSealCard.swift",
+    "designWidth": 640,
+    "scale": "Original 320-unit scene positions and sizes doubled; uniform CSS scale to viewport width.",
+    "layers": "Background; rims; card; inner parts; side sliders; eye overlay.",
+    "eyes": "Parts03 and04 overlap at the original single dragon-eye position; they are not separate left and right eyes.",
+    "timing": "1s entry, 0.5s return; 0.2s exit + 0.1s wait + 0.5s rise/1.2x + 2s original halo."
+  }
 }

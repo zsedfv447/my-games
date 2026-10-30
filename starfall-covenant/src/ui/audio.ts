@@ -1,7 +1,7 @@
 // BGM 與音效：有使用者提供的檔案就播檔案，沒有就用 Web Audio 合成簡單音效（GDD 2.6）
 import { userAsset } from './assets';
 
-export type SfxName = 'tap' | 'confirm' | 'back' | 'match' | 'skill' | 'win' | 'lose' | 'summon';
+export type SfxName = 'tap' | 'confirm' | 'back' | 'match' | 'skill' | 'win' | 'lose' | 'summon' | 'summon-pull' | 'summon-release';
 
 /** 消除音隨 Combo 升高：以五聲音階往上爬，避免刺耳 */
 export function comboFrequency(combo: number): number {
@@ -118,6 +118,8 @@ export class AudioManager {
       void el.play().catch(() => { this.activeSfx.delete(el); });
       return;
     }
+    // 來源專屬抽卡音效缺檔時保持安靜，避免以合成音冒充原素材。
+    if (name === 'summon-pull' || name === 'summon-release') return;
     this.synth(name, comboStep);
   }
 

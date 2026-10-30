@@ -40,3 +40,34 @@
 @keyframes seal-flash{from{opacity:1}to{opacity:0}}
 @keyframes seal-halo{to{transform:translate(-50%,-50%) rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.summon-screen *, .summon-theatre *{animation:none!important;transition:none!important}}
+
+/* SKSealCard.sks 原圖機關：640基準，所有圖層以同一比例縮放，未拉伸單張素材。 */
+.ritual.real-clamp{padding:0!important;background:#100c08;touch-action:none;overflow:hidden;isolation:isolate}
+.dragon-clamp-stage{position:absolute;left:50%;top:calc(48px * var(--clamp-scale));width:640px;height:1304px;transform:translateX(-50%) scale(var(--clamp-scale));transform-origin:top center;isolation:isolate}
+.dragon-clamp-stage>img,.clamp-eyes img{position:absolute;display:block;pointer-events:none;user-select:none;object-fit:contain}
+.clamp-base{left:0;top:0;width:640px;height:1304px;z-index:0}
+.clamp-rim-left{left:182.5px;top:0;width:67px;height:380px;z-index:1}.clamp-rim-right{left:388.5px;top:0;width:63px;height:380px;z-index:2}
+.dragon-clamp-card{--pull:0px;--card-progress:0;position:absolute;left:140px;top:-270px;width:360px;height:540px;z-index:3;transform:translateY(var(--pull));cursor:grab;touch-action:none;animation:clamp-card-enter 1s ease-out both}
+.dragon-clamp-card img,.clamp-extracted-card>img{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;pointer-events:none}
+.clamp-card-source{opacity:calc(1 - var(--card-progress))}.clamp-card-target{opacity:var(--card-progress)}
+.clamp-inner{mix-blend-mode:multiply}.clamp-inner-07{left:67px;top:104px;width:118px;height:172px;z-index:4}.clamp-inner-09{left:508px;top:236px;width:104px;height:212px;z-index:5}.clamp-inner-08{left:484px;top:5.5px;width:88px;height:113px;z-index:6}
+.clamp-side-left{left:1px;top:-1px;width:270px;height:1110px;z-index:7}.clamp-side-right{left:368px;top:-1px;width:272px;height:1110px;z-index:8}
+.clamp-eyes{position:absolute;inset:0;z-index:9;pointer-events:none;animation:clamp-eye-enter 1s ease-out both}
+.clamp-eye-a{left:68px;top:297px;width:52px;height:42px}.clamp-eye-b{left:67px;top:289.5px;width:62px;height:49px}
+.clamp-released .clamp-eyes{animation:clamp-eye-flash 650ms ease-out both}
+.clamp-touched .dragon-clamp-card{animation:none}.dragon-clamp-card.returning{animation:none;transition:transform .5s ease-in-out;cursor:grab}.dragon-clamp-card.clamp-moving-out{animation:none;transition:transform .2s ease-in}
+.clamp-extracted-card{position:absolute;left:50%;top:50%;width:calc(360px * var(--clamp-scale));height:calc(540px * var(--clamp-scale));transform:translate(-50%,-50%) scale(1.2);z-index:5;pointer-events:none;overflow:visible}
+.clamp-extracted-card>.clamp-card-glow{position:absolute;inset:auto;left:50%;top:50%;width:122.2222%;height:auto;aspect-ratio:1;opacity:0;transform:translate(-50%,-50%) scale(.1);animation:clamp-original-halo 1s ease-out both}
+.clamp-pull-hint{position:absolute;left:12px;right:12px;top:66%;text-align:center;pointer-events:none;display:flex;flex-direction:column;gap:10px;color:#ceb183;z-index:3;text-shadow:0 2px 8px #000;transition:opacity .3s}
+.clamp-pull-hint strong{font-family:serif;letter-spacing:6px;font-size:25px;color:#e4c389}.clamp-pull-hint span{font-size:12px;letter-spacing:1px}.clamp-touched .clamp-pull-hint,.real-clamp:not([data-phase='seal']) .clamp-pull-hint{opacity:0}
+.real-clamp:is([data-phase='reveal'],[data-phase='done']) .dragon-clamp-stage{opacity:.16;transition:opacity .5s}
+.real-clamp .ritual-results{z-index:4;background:linear-gradient(#100b07b0,#100b07eb)}.real-clamp .ritual-actions{z-index:6}.real-clamp .ritual-skip{z-index:10;color:#d5ba90;border-radius:0;border-color:#735833;background:#1b130ceb}
+.real-clamp .flip-card{aspect-ratio:2/3;border-radius:0;animation:none}.real-clamp .flip-card.big{width:225px;max-height:56%;height:auto}.real-clamp .flip-face,.real-clamp .flip-face img{border-radius:1px}.real-clamp .flip-face .card-portrait{background:radial-gradient(ellipse,#6b4a2638,transparent 70%);border:1px solid #80623b;box-shadow:inset 0 0 20px #0006}.real-clamp .flip-face .card-portrait img{object-fit:contain}
+.real-clamp .ritual-name{font-size:19px;color:#e9d1a7}.real-clamp .ritual-showcase{background:#100b07ed}.real-clamp .ritual-showcase .card-portrait{border:0;background:transparent;box-shadow:none}
+@keyframes clamp-card-enter{from{transform:translateY(-270px)}to{transform:translateY(0)}}
+@keyframes clamp-eye-enter{from{opacity:0}to{opacity:1}}
+@keyframes clamp-eye-flash{0%{opacity:1;filter:brightness(1)}18%{opacity:1;filter:brightness(5) drop-shadow(0 0 13px #b7faff)}65%{filter:brightness(2) drop-shadow(0 0 7px #5bd9ed)}100%{opacity:1;filter:brightness(1)}}
+@keyframes clamp-original-halo{from{opacity:1;transform:translate(-50%,-50%) scale(.1)}to{opacity:0;transform:translate(-50%,-50%) scale(3)}}
+@media(prefers-reduced-motion:reduce){.real-clamp *{animation:none!important;transition:none!important}}
+
+.dragon-clamp-card.returning>img{transition:opacity .5s ease-in-out}

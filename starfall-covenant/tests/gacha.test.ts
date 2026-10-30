@@ -156,4 +156,18 @@ describe('召喚', () => {
   it('data/gacha-pools.json 通過召喚規則檢查', () => {
     expect(gameData.gachaPools.flatMap(checkGachaPool)).toEqual([]);
   });
+
+  it('正式卡池只放可抽的基本型態：不含素材卡與進化後的卡', () => {
+    const evolved = new Set(gameData.cards.flatMap((c) => (c.evolution ? [c.evolution.to] : [])));
+    for (const pool of gameData.gachaPools) {
+      for (const [rarity, list] of Object.entries(pool.cards)) {
+        for (const id of list ?? []) {
+          const card = gameData.cards.find((c) => c.id === id)!;
+          expect(card.rarity, id).toBe(Number(rarity));
+          expect(card.race, id).not.toBe('material');
+          expect(evolved.has(id), id).toBe(false);
+        }
+      }
+    }
+  });
 });

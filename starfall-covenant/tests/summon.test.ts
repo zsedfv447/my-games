@@ -4,7 +4,9 @@ import { createRng } from '../src/core/rng';
 import { gameData } from '../src/data/load';
 import { createNewSave } from '../src/save/save';
 import { checkGachaPool, displayRates } from '../src/progression/gacha';
-import { createSummonSession } from '../src/ui/screens/summon';
+import { createSummonSession, setPending, startPull, takePending } from '../src/ui/screens/summon';
+import { commit, getSave } from '../src/ui/state';
+import { bus } from '../src/core/events';
 
 const NOW = Date.UTC(2026, 9, 30);
 const pool: GachaPoolDef = { id: 'test', name: '測試', cost: { gems: 5 }, rates: { 6: 1 }, pity: { rarity: 6, after: 39 }, tenPullGuarantee: { minRarity: 5 }, cards: { 6: ['c101'] }, period: null };
@@ -69,5 +71,52 @@ describe('可遊玩的本作卡池', () => {
       }
     }
     expect(gameData.gachaPools.some((p) => p.period === null)).toBe(true);
+  });
+});
+
+describe('遠端卡池與演出結果相容', () => {
+  it('沿用既有 pool-standard 保底進度，第81抽仍為五星保底', () => {
+    const oldPool = gameData.gachaPools.find((p) => p.id === 'pool-standard')!;
+    expect(oldPool).toBeDefined();
+    let save = createNewSave(gameData.config, NOW);
+    save = { ...save, gacha: { ...save.gacha, pityCounter: { 'pool-standard': 80, 'covenant-seal': 12 } } };
+    const session = createSummonSession({ read: () => save, write: (next) => { save = next; }, rng: createRng(2), now: () => NOW });
+    const result = session.begin(oldPool, 1);
+    expect(result.ok && result.results[0]).toMatchObject({ rarity: 5, pity: true });
+    expect(save.gacha.pityCounter['pool-standard']).toBe(0);
+    expect(save.gacha.pityCounter['covenant-seal']).toBe(12);
+    expect(save.gacha.history[0].pool).toBe('pool-standard');
+  });
+});
+
+
+describe('星龍演出的單次結果交接', () => {
+  it('等待演出的結果不能重複扣款，取走結果也不再抽卡', () => {
+    const initial = getSave();
+    try {
+      commit({ ...initial, player: { ...initial.player, gems: 100 }, inventory: { ...initial.inventory, cards: [], capacity: 50 } });
+      const result = startPull(pool, 1)!;
+      expect(result.results).toHaveLength(1);
+      setPending(result);
+      expect(startPull(pool, 1)).toBeNull();
+      expect(getSave().player.gems).toBe(95);
+      expect(getSave().inventory.cards).toHaveLength(1);
+      expect(takePending()).toBe(result);
+      expect(takePending()).toBeNull();
+      expect(getSave().player.gems).toBe(95);
+      expect(getSave().inventory.cards).toHaveLength(1);
+    } finally { takePending(); commit(initial); }
+  });
+  it('結算事件的重入呼叫不能造成第二筆扣款', () => {
+    const initial = getSave();
+    const attempts: unknown[] = [];
+    const unsubscribe = bus.on('gachaPulled', () => { attempts.push(startPull(pool, 1)); });
+    try {
+      commit({ ...initial, player: { ...initial.player, gems: 100 }, inventory: { ...initial.inventory, cards: [], capacity: 50 } });
+      expect(startPull(pool, 1)?.results).toHaveLength(1);
+      expect(attempts).toEqual([null]);
+      expect(getSave().player.gems).toBe(95);
+      expect(getSave().inventory.cards).toHaveLength(1);
+    } finally { unsubscribe(); takePending(); commit(initial); }
   });
 });

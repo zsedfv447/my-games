@@ -85,3 +85,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## 2026-10-31 抽卡下拉／出卡音效核對
+
+再次直接讀取來源程式與本機完整來源 ZIP，找到明確用途，新增未加工原音檔：
+
+| 本地檔案 | 原檔名 | 位元組 | 長度 | SHA-256 |
+|---|---|---:|---:|---|
+| `sfx/summon-pull.m4a` | `抽卡移动.m4a` | 6520 | 0.254667 秒 | `d9c085c1779a2ec1db49a2aa9c4a936d40cfec9e309a88a3d9f8abfec581a7f2` |
+| `sfx/summon-release.m4a` | `抽卡出卡.m4a` | 68557 | 2.388000 秒 | `a03efdbfd285b63814a26b97cc38f8fb5e94ff051301d2828de7c8c45b1b90e8` |
+
+- 下拉音效直接來源：[抽卡移动.m4a](https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets/sound%20effect/%E6%8A%BD%E5%8D%A1%E7%A7%BB%E5%8A%A8.m4a)，Git blob `031af0453344a509a36e5b73975d81da1f1868db` 已比對相符，macOS afconvert 完整解碼成功，48kHz 雙聲道 AAC。這是一聲短音；連續「嘀嘀／嘎嘎」由移動過程重複播放構成。
+- 出卡音效直接來源：[抽卡出卡.m4a](https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets/sound%20effect/%E6%8A%BD%E5%8D%A1%E5%87%BA%E5%8D%A1.m4a)，與已驗證的 `summon.m4a` 原始位元組相同。
+- [SLGloabls.swift 第123–124行](https://github.com/jordengit/TowerOfSaviorsHelper/blob/master/iOS%20Source%20Code/TowerOfSaviors/SLGloabls.swift#L123-L124) 明確把 `sealMoving` 對應「抽卡移动」、`sealMoveOut` 對應「抽卡出卡」。
+- [SKSealCard.swift 第74–85行](https://github.com/jordengit/TowerOfSaviorsHelper/blob/master/iOS%20Source%20Code/TowerOfSaviors/SKSealCard.swift#L74-L85) 載入移動音效，在卡片位置與前次發聲位置差距超過30場景單位時重播；第31行註解寫20，應以實際程式30為準。第54行先停止 BGM。第140–141行在成功抽出後播放出卡音效。
+- [SKMonsterCard.swift](https://github.com/jordengit/TowerOfSaviorsHelper/blob/master/iOS%20Source%20Code/TowerOfSaviors/SKMonsterCard.swift) 的閃光 `shine()`／`play()` 僅建立視覺動作；來源音檔與程式未找到獨立龍眼／閃光聲，故不新增 `summon-eye` 或合成冒稱。新增兩種音效在缺檔時保持靜音。
+
+這些是來源社群模擬器實際使用的抽卡素材及觸發規則；並不構成官方對照認證，沒有承諾與所有遊戲版本逐位元相同。
