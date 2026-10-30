@@ -252,6 +252,24 @@ describe('星數分級', () => {
     expect(checkLeaderTier(combined, 5)).toEqual([]);
   });
 
+  it('always 不算條件數', () => {
+    const ls = leader([{ conditions: [{ type: 'always' }, { type: 'hpBelow', percent: 50 }], effects: [{ type: 'atkMultiplier', value: 2 }] }]);
+    expect(leaderSkillProfile(ls).maxConditions).toBe(1);
+    expect(checkLeaderTier(ls, 3)).toEqual([]);
+  });
+
+  it('進化比較有浮點容差：乘積相等不算變弱', () => {
+    const atk = (rules: number[][]) => leader(rules.map((vs) => ({
+      conditions: [{ type: 'always' as const }],
+      effects: vs.map((value) => ({ type: 'atkMultiplier' as const, value })),
+    })));
+    // 0.1×0.2×3 與 0.3×0.2 在浮點下差一點點
+    const before = atk([[0.1 * 3], [0.2]]);
+    const after = atk([[0.3], [0.2]]);
+    expect(leaderSkillProfile(after).peakAtk).toBeLessThan(leaderSkillProfile(before).peakAtk);
+    expect(checkLeaderEvolution(before, after)).toEqual([]);
+  });
+
   it('進化後要保留主題並變強', () => {
     expect(checkLeaderEvolution(chain(2), chain(2.5, [{ type: 'ignoreDefense' }]))).toEqual([]);
     expect(checkLeaderEvolution(chain(2), chain(2))).toEqual(['進化前後隊長技完全相同']);

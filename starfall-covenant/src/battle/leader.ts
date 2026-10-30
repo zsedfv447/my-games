@@ -256,7 +256,7 @@ export function lintLeaderSkill(def: LeaderSkillDef): string[] {
 /** 把隊長技攤平成可比較的強度數字（條件全部成立時的上限） */
 export interface LeaderSkillProfile {
   rules: number;
-  /** 單條 rule 最多幾個條件 */
+  /** 單條 rule 最多幾個條件（always 不算） */
   maxConditions: number;
   effects: number;
   /** 所有攻擊倍率（取 maxValue）相乘 */
@@ -283,7 +283,7 @@ export function leaderSkillProfile(def: LeaderSkillDef): LeaderSkillProfile {
   };
   let taken = 1;
   for (const rule of def.rules) {
-    p.maxConditions = Math.max(p.maxConditions, rule.conditions.length);
+    p.maxConditions = Math.max(p.maxConditions, rule.conditions.filter((c) => c.type !== 'always').length);
     for (const c of rule.conditions) if (c.type !== 'always') p.conditionTypes.add(c.type);
     for (const e of rule.effects) {
       p.effects++;
@@ -358,7 +358,7 @@ export function checkLeaderEvolution(before: LeaderSkillDef, after: LeaderSkillD
   for (const t of a.conditionTypes) if (!b.conditionTypes.has(t)) issues.push(`進化後少了條件 ${t}`);
   for (const t of a.effectTypes) if (!b.effectTypes.has(t)) issues.push(`進化後少了效果 ${t}`);
   for (const k of ['peakAtk', 'hp', 'rcv', 'reduction', 'fixedFollowUp', 'moveTime'] as const) {
-    if (b[k] < a[k]) issues.push(`進化後 ${k} 變弱（${a[k]} → ${b[k]}）`);
+    if (b[k] < a[k] - 1e-9) issues.push(`進化後 ${k} 變弱（${a[k]} → ${b[k]}）`);
   }
   if (JSON.stringify(before.rules) === JSON.stringify(after.rules)) issues.push('進化前後隊長技完全相同');
   return issues;
