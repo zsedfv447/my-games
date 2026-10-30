@@ -60,7 +60,8 @@ const MIGRATIONS: Record<number, Migration> = {
     return {
       ...old,
       progress: { ...progress, tutorialDone: done },
-      tutorial: { step: done ? 'done' : 'battle', giftGiven: false },
+      // 已完成教學的老玩家之後重看教學，不再送召喚贈禮
+      tutorial: { step: done ? 'done' : 'battle', giftGiven: done },
     };
   },
 };

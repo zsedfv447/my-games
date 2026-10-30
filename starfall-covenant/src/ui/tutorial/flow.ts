@@ -65,6 +65,8 @@ export interface GuideSpec {
   lines: string[];
   /** 要指給玩家看的元素（CSS 選擇器，在目前畫面內找） */
   target?: string;
+  /** 對話框位置：目標在畫面下半部時放上面，才不會擋住要按的按鈕 */
+  placement?: 'top' | 'bottom';
   action?: GuideAction;
   /** 次要按鈕（例如先不召喚） */
   secondary?: GuideAction;
@@ -95,6 +97,7 @@ export function guideFor(step: TutorialStep, route: { name: string; args: string
         return {
           lines: ['在這裡用星晶解開封印，就能和新的夥伴締結契約。', '我送你一次單抽的星晶，按「單次封印」試試看，再把封印往下拉開！'],
           target: '.seal-pull-actions .btn',
+          placement: 'top',
           secondary: { label: '先不召喚', advance: true },
         };
       }
@@ -103,7 +106,8 @@ export function guideFor(step: TutorialStep, route: { name: string; args: string
       if (route.name === 'prepare' && route.args[0] === FIRST_STAGE) {
         return {
           lines: ['出戰前可以在這裡確認隊伍與星章條件。', '按下「出發」，前往第一章第一關！'],
-          target: '.btn.primary.block',
+          target: '[data-tut="sortie"] .btn',
+          placement: 'top',
           secondary: { label: '結束教學', advance: true },
         };
       }

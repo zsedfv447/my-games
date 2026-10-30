@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { gameData } from '../src/data/load';
 import { createRng } from '../src/core/rng';
 import { boardToStrings, findMatches } from '../src/battle/board';
-import { createNewSave, migrate, parseSave, serializeSave } from '../src/save/save';
+import { createNewSave, exportSaveCode, importSaveCode, migrate, parseSave, serializeSave } from '../src/save/save';
+import type { SaveData } from '../src/core/types';
 import {
   FIRST_STAGE, TUTORIAL_BOARD, TUTORIAL_COMBO, TUTORIAL_PATH, advanceTutorial, comboOfPath, grantSummonGift, guideFor,
   isTutorialActive, restartTutorial, setTutorialStep, skipTutorial, tutorialBoard, tutorialStep,
@@ -77,8 +78,8 @@ describe('各畫面的引導', () => {
 
   it('到了對應畫面，指向要按的元素', () => {
     expect(guideFor('team', at('team'))).toMatchObject({ target: '.team-slot', action: { advance: true } });
-    expect(guideFor('summon', at('summon'))).toMatchObject({ target: '.seal-pull-actions .btn', secondary: { advance: true } });
-    expect(guideFor('stage', at('prepare', FIRST_STAGE))?.target).toBe('.btn.primary.block');
+    expect(guideFor('summon', at('summon'))).toMatchObject({ target: '.seal-pull-actions .btn', placement: 'top', secondary: { advance: true } });
+    expect(guideFor('stage', at('prepare', FIRST_STAGE))).toMatchObject({ target: '[data-tut="sortie"] .btn', placement: 'top' });
     expect(guideFor('stage', at('prepare', 'st-1-2'))?.action?.go).toEqual(['prepare', [FIRST_STAGE]]);
   });
 
@@ -97,6 +98,49 @@ describe('存檔 v1 → v2 遷移', () => {
     const out = migrate(v1([]) as unknown as Record<string, unknown>);
     expect(out.version).toBe(2);
     expect(out.tutorial).toEqual({ step: 'battle', giftGiven: false });
+  });
+
+  const load = (save: unknown): SaveData => {
+    const r = parseSave(serializeSave(save as SaveData), config, NOW);
+    if (!r.ok) throw new Error(r.reason);
+    return r.save;
+  };
+
+  it('新存檔第一次走教學才有召喚贈禮；完成教學的舊存檔遷移後不再送', () => {
+    const newbie = load(v1([]));
+    expect(newbie.tutorial).toEqual({ step: 'battle', giftGiven: false });
+    const veteran = load(v1(['st-1-1']));
+    expect(veteran.tutorial).toEqual({ step: 'done', giftGiven: true });
+    expect(grantSummonGift(setTutorialStep(restartTutorial(veteran), 'summon'), 5).granted).toBe(0);
+  });
+
+  it('v1 存檔 tutorialDone=true 但沒有通關紀錄，也視為完成', () => {
+    const old = v1([]);
+    const s = load({ ...old, progress: { ...old.progress, tutorialDone: true } });
+    expect(tutorialStep(s)).toBe('done');
+    expect(s.progress.tutorialDone).toBe(true);
+    expect(s.tutorial?.giftGiven).toBe(true);
+  });
+
+  it('冪等：v2 存檔再存讀一次，教學進度不變', () => {
+    for (const s of [load(v1([])), load(v1(['st-1-1'])), setTutorialStep(fresh(), 'summon'), skipTutorial(fresh())]) {
+      const again = parseSave(serializeSave(s), config, NOW);
+      expect(again.ok && again.migratedFrom).toBeUndefined();
+      expect(again.ok && again.save.tutorial).toEqual(s.tutorial);
+      expect(again.ok && again.save.progress.tutorialDone).toBe(s.progress.tutorialDone);
+    }
+  });
+
+  it('v1 匯出的存檔碼匯入後通過校驗碼並遷移成 v2', () => {
+    for (const [cleared, step] of [[[], 'battle'], [['st-1-1'], 'done']] as const) {
+      const code = exportSaveCode(v1([...cleared]) as unknown as SaveData);
+      const r = importSaveCode(code, config, NOW);
+      expect(r.ok).toBe(true);
+      if (!r.ok) return;
+      expect(r.migratedFrom).toBe(1);
+      expect(r.save.version).toBe(2);
+      expect(tutorialStep(r.save)).toBe(step);
+    }
   });
 
   it('已經打過關的舊存檔視為完成教學', () => {

@@ -37,11 +37,13 @@ function toLocal(layer: HTMLElement, rect: DOMRect): { x: number; y: number; w: 
 }
 
 export class GuideLayer {
-  readonly el = h('div', { class: 'tut-layer', 'aria-live': 'polite' });
+  readonly el: HTMLElement;
   private bubble?: Bubble;
   private pointers: (() => void)[] = [];
 
-  constructor(host: HTMLElement) {
+  /** extraClass：tut-app 代表掛在整個舞台（有頂列），對話框放上方時要避開頂列 */
+  constructor(host: HTMLElement, extraClass?: string) {
+    this.el = h('div', { class: ['tut-layer', extraClass], 'aria-live': 'polite' });
     host.appendChild(this.el);
   }
 

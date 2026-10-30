@@ -12,6 +12,7 @@
 }
 .tut-bubble.tut-bottom { bottom: calc(var(--navbar-h) + 10px + var(--safe-bottom, 0px)); }
 .tut-bubble.tut-top { top: calc(44px + var(--safe-top, 0px)); }
+.tut-app .tut-bubble.tut-top { top: calc(var(--topbar-h) + 12px + var(--safe-top, 0px)); }
 .tut-bubble.has-more { cursor: pointer; }
 
 .tut-portrait {

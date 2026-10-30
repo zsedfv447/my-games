@@ -14,7 +14,7 @@ export interface TutorialController {
 }
 
 export function installTutorial(stage: HTMLElement, nav: Navigator): TutorialController {
-  const layer = new GuideLayer(stage);
+  const layer = new GuideLayer(stage, 'tut-app');
   let route: Route | null = null;
   let screenEl: HTMLElement | null = null;
   let shownKey = '';
@@ -60,7 +60,7 @@ export function installTutorial(stage: HTMLElement, nav: Navigator): TutorialCon
       variant: a === spec.secondary ? ('ghost' as const) : ('primary' as const),
       onClick: () => run(a),
     }));
-    layer.say({ lines: spec.lines, placement: 'bottom', actions, onSkip: () => void askSkip() });
+    layer.say({ lines: spec.lines, placement: spec.placement ?? 'bottom', actions, onSkip: () => void askSkip() });
     if (spec.target) {
       const host = screenEl;
       layer.pointAt(() => host?.querySelector(spec.target!));
