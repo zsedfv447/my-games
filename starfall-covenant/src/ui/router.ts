@@ -43,6 +43,8 @@ export interface Navigator {
   go(name: string, args?: (string | number)[], query?: Record<string, string | number>): void;
   replace(name: string, args?: (string | number)[], query?: Record<string, string | number>): void;
   back(): void;
+  /** 回到 hash 路徑 path：瀏覽紀錄裡有就退回那一步（中間的頁面一起丟掉），沒有就換成它 */
+  backTo(path: string): void;
 }
 
 export interface ScreenContext {
@@ -114,6 +116,17 @@ export class Router implements Navigator {
     } else {
       this.replace(target);
     }
+  }
+
+  backTo(path: string): void {
+    const r = parseHash(`#/${path}`);
+    const hash = buildHash(r.name, r.args, r.query);
+    const i = this.stack.lastIndexOf(hash);
+    if (i < 0) return this.replace(r.name, r.args, r.query);
+    const steps = this.stack.length - i;
+    // render() 會在網址回到 stack 頂端時把它彈掉
+    this.stack.length = i + 1;
+    history.go(-steps);
   }
 
   private render(): void {

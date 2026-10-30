@@ -80,3 +80,10 @@ export function takeJustUnlocked(ids: string[]): Set<string> {
   hit.forEach((id) => justUnlocked.delete(id));
   return hit;
 }
+
+/** 關卡所屬的關卡列表（hash 路徑）：主線回到那一章、活動／每日／塔回到各自列表、流派試煉回到流派頁 */
+export function stageListPath(stage: StageDef): string {
+  if (stage.kind === 'main') return `stages/${stage.chapter ?? 1}`;
+  if (stage.kind === 'trial') return 'archetypes';
+  return `stages/${stage.kind}`;
+}

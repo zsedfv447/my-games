@@ -6,7 +6,7 @@ import { userAsset } from '../assets';
 import { emptyState, icon, listItem } from '../components/basic';
 import { storyBox } from '../components/story';
 import { commit, getSave } from '../state';
-import { parseHash, type Navigator, type ScreenDef } from '../router';
+import { type Navigator, type ScreenDef } from '../router';
 
 export function markStorySeen(id: string): void {
   const save = getSave();
@@ -28,11 +28,10 @@ export function storyTitle(id: string): string {
   return id;
 }
 
-/** 播完後去哪：next=back 回上一頁；next=<hash 路徑> 換到該畫面；沒給就回上一頁 */
+/** 播完後去哪：next=back 回上一頁；next=<hash 路徑> 回到（或換到）該畫面；沒給就回上一頁 */
 function goNext(nav: Navigator, next: string | undefined): void {
   if (!next || next === 'back') return nav.back();
-  const r = parseHash(`#/${next}`);
-  nav.replace(r.name, r.args, r.query);
+  nav.backTo(next);
 }
 
 function player(id: string, next: string | undefined, nav: Navigator): HTMLElement {

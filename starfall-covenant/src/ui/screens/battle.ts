@@ -23,7 +23,7 @@ import { badge, bar, button, emptyState, iconButton } from '../components/basic'
 import { cardThumb } from '../components/card-thumb';
 import { confirmDialog, openDialog, toast, type DialogHandle } from '../components/overlay';
 import { DEMO_DATA, DEMO_HELPER, DEMO_STAGE, DEMO_TEAM } from '../demo';
-import { stageContext } from '../stage-nav';
+import { stageContext, stageListPath } from '../stage-nav';
 import { commit, getSave, getSettings } from '../state';
 import type { Navigator, ScreenDef } from '../router';
 import { starText } from './prepare';
@@ -642,14 +642,15 @@ class BattleView {
       const notice = unlockNotice(this.s.stage);
       if (notice.text) notes.push({ text: notice.text, big: notice.chapter !== undefined });
     }
-    // then：離開後要去的 hash 路徑（下一關）；沒給就回上一頁
+    // then：離開後要去的 hash 路徑（下一關）；沒給就回到這關所屬的關卡列表（練習回上一頁）
     const leave = (then?: string) => {
       this.dialog?.close();
+      const target = then ?? (this.s.practice ? 'back' : stageListPath(this.s.stage));
       const after = this.s.stage.story?.after;
       // 通關後的劇情只在第一次播放
-      if (after && gameData.story[after] && !getSave().progress.storySeen.includes(after)) this.nav.replace('story', [after], { next: then ?? 'back' });
-      else if (then) this.nav.replace(then.split('/')[0], then.split('/').slice(1));
-      else this.nav.back();
+      if (after && gameData.story[after] && !getSave().progress.storySeen.includes(after)) this.nav.replace('story', [after], { next: target });
+      else if (target === 'back') this.nav.back();
+      else this.nav.backTo(target);
     };
     const next = this.s.practice ? null : nextStageButton(this.s.stage, getSave(), leave);
     const items = clearItems(result, clear, clear ? (this.s.stage.stars ?? []).map(starText) : [], {
