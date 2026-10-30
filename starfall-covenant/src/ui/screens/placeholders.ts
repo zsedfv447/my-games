@@ -18,9 +18,6 @@ interface Stub {
 const STUBS: Stub[] = [
   { name: 'stages', title: '關卡列表', chrome: 'sub', parent: 'adventure', icon: 'adventure', waitsFor: '關卡資料（progression）' },
   { name: 'helper', title: '選擇助戰', chrome: 'sub', parent: 'adventure', icon: 'team', waitsFor: 'NPC 助戰名單（progression）' },
-  { name: 'prepare', title: '出戰確認', chrome: 'sub', parent: 'adventure', icon: 'sword', waitsFor: '關卡情報與隊伍（progression、battle）' },
-  { name: 'battle', title: '戰鬥', chrome: 'bare', parent: 'adventure', icon: 'sword', waitsFor: '戰鬥狀態機與盤面繪製（battle）' },
-  { name: 'result', title: '結算', chrome: 'bare', parent: 'adventure', icon: 'trophy', waitsFor: '戰鬥結算（battle、progression）' },
   { name: 'daily', title: '每日關卡', chrome: 'sub', parent: 'adventure', icon: 'history', waitsFor: '每日關卡資料（progression）' },
   { name: 'event', title: '限時活動', chrome: 'sub', parent: 'adventure', icon: 'event', waitsFor: '活動資料與兌換商店（progression）' },
   { name: 'tower', title: '挑戰之塔', chrome: 'sub', parent: 'adventure', icon: 'tower', waitsFor: '塔樓層資料（progression）' },

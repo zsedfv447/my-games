@@ -578,3 +578,173 @@ input[type='range'] { flex: 1.4; accent-color: var(--gold); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
 }
+
+.code-box {
+  width: 100%;
+  padding: 8px;
+  border-radius: var(--radius-s);
+  border: 1px solid var(--line-strong);
+  background: var(--bg-deep);
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  word-break: break-all;
+  resize: none;
+  user-select: text;
+  -webkit-user-select: text;
+}
+.card-thumb.unowned { filter: grayscale(0.85) brightness(0.6); }
+
+/* ---------- 戰鬥 ---------- */
+.battle {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(90% 45% at 50% 25%, #2a3a85 0%, #0b1230 70%, #060a1f 100%);
+}
+.battle.shake { animation: shake 260ms ease-in-out; }
+@keyframes shake {
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+.battle-top { display: flex; align-items: center; gap: 8px; padding: 6px 8px 0 12px; position: relative; z-index: 2; }
+.battle-top .stage-name { flex: 1; text-align: center; font-family: var(--font-title); color: var(--text-dim); font-size: 13px; }
+.wave-label { font-weight: 800; color: var(--gold); letter-spacing: 0.08em; font-size: 13px; }
+.enemy-zone { position: relative; flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.battle-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+.enemy-line { position: relative; display: flex; align-items: flex-end; justify-content: center; gap: 6px; width: 100%; padding: 0 8px; }
+.enemy {
+  position: relative;
+  flex: 0 1 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 4px;
+  border: none;
+  border-radius: var(--radius);
+  background: none;
+  cursor: pointer;
+  transition: opacity 400ms, transform 400ms;
+}
+.enemy-line.boss .enemy { flex-basis: 240px; }
+.enemy-art { width: 100%; aspect-ratio: 1; }
+.enemy-art svg, .enemy-art img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.enemy .bar { width: 100%; height: 9px; }
+.enemy-name { display: flex; align-items: center; gap: 4px; font-size: 11px; white-space: nowrap; }
+.enemy-name .badge { height: 16px; padding: 0 5px; font-size: 10px; }
+.enemy-cd {
+  position: absolute;
+  top: 0;
+  right: 6px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border-radius: 11px;
+  background: rgba(6, 10, 31, 0.85);
+  border: 1px solid var(--line-strong);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 20px;
+  text-align: center;
+  z-index: 1;
+}
+.enemy-cd.urgent { border-color: var(--danger); color: var(--danger); animation: blink 0.8s ease-in-out infinite; }
+.enemy.targeted::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  width: 0;
+  height: 0;
+  margin-left: -7px;
+  border: 7px solid transparent;
+  border-top-color: var(--gold);
+  filter: drop-shadow(0 0 4px var(--gold));
+}
+.enemy.dead { opacity: 0; transform: scale(0.8) translateY(10px); pointer-events: none; }
+.enemy.hit .enemy-art { animation: hit 300ms ease-out; }
+.enemy.attacking .enemy-art { animation: lunge 220ms ease-in-out; }
+@keyframes hit { 30% { transform: translateX(5px); filter: brightness(2.2); } }
+@keyframes lunge { 50% { transform: translateY(18px) scale(1.12); } }
+
+.float-num {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translateX(-50%);
+  font-weight: 900;
+  font-size: 20px;
+  pointer-events: none;
+  white-space: nowrap;
+  text-shadow: 0 2px 0 #000, 0 0 6px #000;
+  animation: float-up 900ms ease-out both;
+  z-index: 5;
+}
+.float-num.dmg { color: #fff6d8; }
+.float-num.heal { color: #7ff0b2; top: -6px; }
+.float-num.hurt { color: var(--danger); top: -6px; }
+@keyframes float-up { from { opacity: 0; transform: translate(-50%, 8px) scale(0.8); } 20% { opacity: 1; transform: translate(-50%, 0) scale(1.1); } to { opacity: 0; transform: translate(-50%, -26px); } }
+
+.combo-count {
+  position: absolute;
+  right: 14px;
+  top: 40%;
+  z-index: 4;
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 30px;
+  color: var(--gold);
+  text-shadow: 0 0 12px rgba(242, 196, 90, 0.7), 0 2px 0 #6b4c10;
+  pointer-events: none;
+}
+.combo-count.pop { animation: pop 220ms ease-out; }
+@keyframes pop { from { transform: scale(1.5); } to { transform: scale(1); } }
+
+.wave-banner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 28%;
+  z-index: 6;
+  padding: 10px 0;
+  text-align: center;
+  font-family: var(--font-title);
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  background: linear-gradient(90deg, transparent, rgba(6, 10, 31, 0.85) 20%, rgba(6, 10, 31, 0.85) 80%, transparent);
+  animation: banner 1.4s ease-in-out both;
+  pointer-events: none;
+}
+@keyframes banner { 0% { opacity: 0; transform: scaleY(0); } 15%, 80% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+
+.battle-bottom { flex: none; display: flex; flex-direction: column; gap: 4px; padding: 0 6px 6px; position: relative; }
+.team-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; justify-items: center; }
+.team-row .card-thumb.skill-ready { animation: ready-glow 1.2s ease-in-out infinite; border-radius: 10px; }
+@keyframes ready-glow { 50% { box-shadow: 0 0 0 2px var(--gold), 0 0 14px var(--gold); } }
+.skill-cd, .helper-tag {
+  position: absolute;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 18px;
+  text-align: center;
+}
+.skill-cd { right: 2px; bottom: 2px; background: rgba(6, 10, 31, 0.85); }
+.helper-tag { left: 2px; top: 2px; background: var(--gold); color: #2a1b00; }
+.team-hp { position: relative; }
+.team-hp .bar { height: 16px; }
+.board-view { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.board-view.disabled .board-canvas { filter: brightness(0.92); }
+.board-canvas { display: block; border-radius: 10px; border: 1px solid var(--line-strong); }
+.move-timer { width: 100%; height: 6px; border: none; visibility: hidden; }
+.move-timer .fill { transition: none; background: linear-gradient(90deg, #ffe39a, var(--gold)); }
+.move-timer.critical .fill { background: var(--danger); }
+.gold-text { color: var(--gold-soft); margin: 0; }
