@@ -54,6 +54,8 @@ export interface CardDef {
   archetypes: { id: ArchetypeId; role: ArchetypeRole }[];
   art: { portrait?: string; icon?: string };
   flavor: string;
+  /** 角色台詞（選填）；victory 是結算時的隊長勝利台詞，沒有就用屬性預設句 */
+  lines?: { victory?: string };
 }
 
 // ---------- 主動技效果積木 ----------
@@ -352,21 +354,5 @@ export interface SaveData {
   daily: { loginDay: number; lastLogin: string; shopPurchases: Record<string, number> };
   settings: { bgm: number; sfx: number; battleSpeed: 1 | 2 };
   /** 契印師手札的個人戰績（可選；讀取一律經過 progression/records.ts 的 recordsOf 補預設值） */
-  records?: PlayerRecords;
-}
-
-/** 契印師手札：個人戰績 */
-export interface PlayerRecords {
-  /** 正式關卡的出戰次數（不含練習與教學） */
-  battles: number;
-  wins: number;
-  maxCombo: number;
-  /** 單回合（一次轉珠）對敵人造成的總傷害最高值 */
-  maxTurnDamage: number;
-  /** 關卡 id → 最少通關回合數 */
-  fastestTurns: Record<string, number>;
-  /** 隊長卡號 → 通關次數 */
-  leaderClears: Record<string, number>;
-  /** 流派 id → 通關次數（依出戰隊伍的主流派） */
-  archetypeClears: Record<string, number>;
+  records?: import('../progression/records').PlayerRecords;
 }
