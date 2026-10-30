@@ -9,7 +9,8 @@ import { rewardChips, screenBanner } from '../components/rewards';
 import { revealReward } from '../components/reward-reveal';
 import { clear, h } from '../dom';
 import { questDerived, sortQuests } from '../economy';
-import type { ScreenDef } from '../router';
+import type { Navigator, ScreenDef } from '../router';
+import { questDestination } from '../quest-goto';
 import { commit, getSave } from '../state';
 
 type QuestTab = 'daily' | 'weekly';
@@ -37,7 +38,14 @@ function claimOne(q: QuestDef): void {
   void revealReward(q.kind === 'achievement' ? '成就達成' : '任務完成', q.reward, q.name);
 }
 
-function questRow(q: QuestDef, p: ReturnType<typeof questProgress>, refresh: () => void): HTMLElement {
+/** 未完成的任務：有對應畫面就「前往」，沒有就維持「進行中」 */
+function goButton(q: QuestDef, nav: Navigator): HTMLButtonElement {
+  const dest = questDestination(q, getSave(), gameData.stages, Date.now());
+  if (!dest) return button('進行中', { small: true, variant: 'ghost', disabled: true, sound: false });
+  return button('前往', { small: true, variant: 'ghost', onClick: () => nav.go(dest.name, dest.args) });
+}
+
+function questRow(q: QuestDef, p: ReturnType<typeof questProgress>, refresh: () => void, nav: Navigator): HTMLElement {
   return h('div', { class: ['quest-row', p.done && !p.claimed && 'ready', p.claimed && 'claimed'] },
     h('div', { class: 'quest-row-main' },
       h('strong', null, q.name),
@@ -45,15 +53,17 @@ function questRow(q: QuestDef, p: ReturnType<typeof questProgress>, refresh: () 
       bar({ value: p.value, max: q.target, variant: p.done ? 'gold' : 'exp', label: `${p.value.toLocaleString()} / ${q.target.toLocaleString()}` })),
     p.claimed
       ? badge('已領取')
-      : button(p.done ? '領取' : '進行中', { small: true, variant: p.done ? 'primary' : 'ghost', disabled: !p.done, sound: false, onClick: () => { claimOne(q); refresh(); } }));
+      : p.done
+        ? button('領取', { small: true, variant: 'primary', sound: false, onClick: () => { claimOne(q); refresh(); } })
+        : goButton(q, nav));
 }
 
-function questList(kinds: QuestDef['kind'][], refresh: () => void): HTMLElement[] {
+function questList(kinds: QuestDef['kind'][], refresh: () => void, nav: Navigator): HTMLElement[] {
   const save = resetQuestsIfNeeded(getSave(), gameData.quests, Date.now());
   const derived = questDerived(save);
   const rows = sortQuests(gameData.quests.filter((q) => kinds.includes(q.kind)).map((q) => ({ q, ...questProgress(save, q, derived) })));
   if (!rows.length) return [emptyState('quest', '目前沒有任務')];
-  return rows.map(({ q, ...p }) => questRow(q, p, refresh));
+  return rows.map(({ q, ...p }) => questRow(q, p, refresh, nav));
 }
 
 function claimAllButton(kinds: QuestDef['kind'][], refresh: () => void): HTMLButtonElement {
@@ -76,7 +86,7 @@ export const questsScreen: ScreenDef = {
       clear(body);
       clear(footer);
       banner.append(screenBanner('quest-banner', '契印師的日課', questTab === 'daily' ? '每日任務於午夜 00:00 重置' : '每週任務於週一 00:00 重置'));
-      body.append(...questList([questTab], refresh));
+      body.append(...questList([questTab], refresh, nav));
       footer.append(claimAllButton([questTab], refresh));
     };
     refresh();
@@ -94,7 +104,7 @@ export const achievementsScreen: ScreenDef = {
   title: '成就',
   chrome: 'sub',
   parent: 'home',
-  render() {
+  render({ nav }) {
     const head = h('div');
     const body = h('div', { class: 'quest-list' });
     const refresh = () => {
@@ -109,7 +119,7 @@ export const achievementsScreen: ScreenDef = {
         bar({ value: done, max: all.length, variant: 'gold' }),
         claimAllButton(['achievement'], refresh),
       );
-      body.append(...questList(['achievement'], refresh));
+      body.append(...questList(['achievement'], refresh, nav));
     };
     refresh();
     return h('div', { class: 'economy-screen' }, screenBanner('quest-banner', '星痕紀錄', '一生只能領一次的榮耀'), head, body);
