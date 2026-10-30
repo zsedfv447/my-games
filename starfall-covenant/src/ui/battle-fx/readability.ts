@@ -6,9 +6,10 @@ import { ATTRIBUTE_NAMES } from '../art/palette';
 import { audio } from '../audio';
 import { button } from '../components/basic';
 import { openDialog } from '../components/overlay';
-import { h } from '../dom';
+import { h, svg } from '../dom';
 import { statusName } from '../status-labels';
 import { floatLabel } from './effects';
+import { isMemberSealed } from '../../battle/skills/status';
 
 // ---------- 屬性剋制 ----------
 
@@ -39,6 +40,26 @@ export function markMatchups(teamRow: HTMLElement, state: BattleState, config: B
     if (mu !== 'neutral') thumb.appendChild(h('span', { class: `matchup-tag ${mu}`, 'aria-label': mu === 'advantage' ? '剋制目標' : '被目標剋制' }, mu === 'advantage' ? '▲' : '▼'));
   });
 }
+
+/** 被星紋封印的隊員：頭像灰階＋鎖鏈（不攻擊、不能施放主動技） */
+export function markSeals(teamRow: HTMLElement, state: BattleState): void {
+  [...teamRow.children].forEach((thumb, i) => {
+    const sealed = isMemberSealed(state, i);
+    thumb.classList.toggle('sealed', sealed);
+    thumb.querySelector('.seal-chain')?.remove();
+    if (sealed) thumb.appendChild(h('span', { class: 'seal-chain', 'aria-label': '被星紋封印' }, svg(SEAL_CHAIN_SVG)));
+  });
+}
+
+/** 原創的封印鎖鏈：兩條交叉的鏈環＋中間的星紋鎖 */
+const SEAL_CHAIN_SVG = `<svg viewBox="0 0 60 64" aria-hidden="true">
+  <g fill="none" stroke="#d9dce8" stroke-width="3.2" stroke-linecap="round">
+    ${[0, 1, 2, 3, 4].map((k) => `<ellipse cx="${8 + k * 11}" cy="${8 + k * 12}" rx="6" ry="3.6" transform="rotate(45 ${8 + k * 11} ${8 + k * 12})"/>`).join('')}
+    ${[0, 1, 2, 3, 4].map((k) => `<ellipse cx="${52 - k * 11}" cy="${8 + k * 12}" rx="6" ry="3.6" transform="rotate(-45 ${52 - k * 11} ${8 + k * 12})"/>`).join('')}
+  </g>
+  <rect x="21" y="23" width="18" height="17" rx="3" fill="#3a3f5c" stroke="#d9dce8" stroke-width="2.2"/>
+  <path d="M30 26.5l1.6 3.4 3.6.4-2.7 2.4.8 3.6-3.3-1.9-3.3 1.9.8-3.6-2.7-2.4 3.6-.4z" fill="#bff2ff"/>
+</svg>`;
 
 // ---------- 敵人預告 ----------
 

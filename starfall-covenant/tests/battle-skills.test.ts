@@ -481,9 +481,14 @@ describe('隊長技 allyCooldownPerTurn', () => {
 });
 
 describe('星紋封印 attributeSeal（#59）', () => {
-  /** 把整個盤面轉成焰珠，下一次送出就全部消除，只有焰屬性的隊長會打出傷害 */
+  /**
+   * 把整個盤面轉成焰珠，下一次送出就全部消除，只有焰屬性的隊長會打出傷害。
+   * 轉珠由第二位（潮）施放：被封印的焰隊長不能施放主動技。
+   */
   const fireTurn = (abilities: EnemyAbility[]) => {
-    const s = cast([{ type: 'convertOrbs', from: 'all', to: 'fire' }], { abilities, enemy: { cd: 99 } });
+    const s = setup({ effects2: [{ type: 'convertOrbs', from: 'all', to: 'fire' }], leader: charged, abilities, enemy: { cd: 99 } });
+    const used = s.battle.useSkill(1);
+    if (!used.ok) throw new Error(used.reason);
     const r = s.battle.submitMove(NO_MATCH);
     if (!r.ok) throw new Error(r.reason);
     return { ...s, dealt: r.summary.hits.reduce((n, h) => n + h.damage, 0) };
@@ -492,13 +497,18 @@ describe('星紋封印 attributeSeal（#59）', () => {
   it('封印焰屬性：焰隊員的轉珠攻擊無效；封印別的屬性不受影響', () => {
     expect(fireTurn([]).dealt).toBeGreaterThan(0);
     expect(fireTurn([{ status: 'attributeSeal', trigger: 'onStart', turns: 2, params: { attribute: 'fire' } }]).dealt).toBe(0);
-    expect(fireTurn([{ status: 'attributeSeal', trigger: 'onStart', turns: 2, params: { attribute: 'water,wood' } }]).dealt).toBeGreaterThan(0);
+    expect(fireTurn([{ status: 'attributeSeal', trigger: 'onStart', turns: 2, params: { attribute: 'wood,light' } }]).dealt).toBeGreaterThan(0);
   });
 
   it('leader：封印我方隊長的屬性', () => {
     const { battle, dealt } = fireTurn([{ status: 'attributeSeal', trigger: 'onStart', turns: 2, params: { attribute: 'leader' } }]);
     expect(dealt).toBe(0);
     expect(battle.getState().teamStatuses.map((s) => s.id)).toContain('attributeSeal');
+  });
+
+  it('被封印的隊員不能施放主動技', () => {
+    const { battle } = setup({ effects: [{ type: 'convertOrbs', from: 'all', to: 'fire' }], leader: charged, enemy: { cd: 99 }, abilities: [{ status: 'attributeSeal', trigger: 'onStart', turns: 2, params: { attribute: 'fire' } }] });
+    expect(battle.useSkill(0)).toEqual({ ok: false, reason: '這名隊員被星紋封印' });
   });
 
   it('回合到期後解除；星紋覺醒 resistStatus 可以抵抗', () => {

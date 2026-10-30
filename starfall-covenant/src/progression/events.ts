@@ -1,4 +1,7 @@
 // 限時活動：開放期間、循環檔期與倒數（data/events.json）
+import type { ArchetypeId } from '../core/types';
+import { dateKey } from './time';
+
 /** 一個活動。period 為 null 代表常駐開放 */
 export interface EventDef {
   id: string;
@@ -13,6 +16,10 @@ export interface EventDef {
    * repeatDays：每隔幾天重新開一檔（從 start 起算），讓單機版本的活動定期回歸。
    */
   period: { start: string; end: string; repeatDays?: number } | null;
+  /** 系列活動（例如 nemesis＝流派克星週）：不出現在限時活動列表，由各自的入口顯示 */
+  series?: string;
+  /** 本期推薦流派（入口顯示用） */
+  recommendedArchetypes?: ArchetypeId[];
 }
 
 const DAY = 86_400_000;
@@ -48,6 +55,25 @@ export function eventPeriod(event: EventDef, now: number): { index: number; star
   const repeat = (event.period.repeatDays ?? 0) * DAY;
   const index = repeat > 0 && now > start ? Math.floor((now - start) / repeat) : 0;
   return { index, start: start + index * repeat };
+}
+
+/** 檔期鍵：「@e活動 id:檔期開始日」，沒有檔期的活動只有「@e活動 id」。限購、每期首通都用這個區分期數 */
+export function eventPeriodKey(event: EventDef, now: number): string {
+  const { start } = eventPeriod(event, now);
+  return `@e${event.id}${start === null ? '' : `:${dateKey(start)}`}`;
+}
+
+/**
+ * 系列活動目前輪到哪一個：開放中的那個；都沒開（例如資料剛好有空檔）就回傳最快開放的下一個。
+ * 流派克星週：每個主題各占一週、repeatDays 為主題數 × 7，所以同一時間只會有一個開放。
+ */
+export function currentSeriesEvent(events: EventDef[], series: string, now: number): { event: EventDef; window: EventWindow } | null {
+  const list = events.filter((e) => e.series === series).map((event) => ({ event, window: eventWindow(event, now) }));
+  const open = list.find((x) => x.window.state === 'open' || x.window.state === 'always');
+  if (open) return open;
+  const next = list.filter((x) => x.window.state === 'upcoming')
+    .sort((a, b) => (a.window as { start: number }).start - (b.window as { start: number }).start)[0];
+  return next ?? null;
 }
 
 export const isEventOpen = (event: EventDef, now: number) => {
