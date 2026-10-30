@@ -1,7 +1,7 @@
 // 介面進入點：舞台縮放＋版面骨架＋畫面路由
 import './theme.css';
 import './covenant-skin.css';
-import './battle-feel.css';
+import './battle-fx/battle-fx.css';
 import { installStageScaling } from './scale';
 import { Shell } from './components/shell';
 import { Router } from './router';
