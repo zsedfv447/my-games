@@ -6,6 +6,8 @@ export interface EventDef {
   summary: string;
   /** 活動代幣 id（兌換商店用） */
   token?: string;
+  /** 代幣的顯示名稱；有 token 就必須填（validate.ts 檢查） */
+  tokenName?: string;
   /**
    * start／end 為 ISO 時間字串（不寫時區時以裝置當地時間計）。
    * repeatDays：每隔幾天重新開一檔（從 start 起算），讓單機版本的活動定期回歸。
@@ -34,6 +36,18 @@ export function eventWindow(event: EventDef, now: number): EventWindow {
   const s = start + n * repeat;
   const e = s + Math.min(end - start, repeat);
   return now < e ? { state: 'open', start: s, end: e } : { state: 'upcoming', start: s + repeat, end: e + repeat };
+}
+
+/**
+ * 目前算第幾期（0 起算）與該期開始時間：開始前算第 0 期，休息期間與結束後仍算最近一期，
+ * 所以限購要等下一期真正開始才重置。沒有檔期的活動永遠是第 0 期。
+ */
+export function eventPeriod(event: EventDef, now: number): { index: number; start: number | null } {
+  if (!event.period) return { index: 0, start: null };
+  const start = Date.parse(event.period.start);
+  const repeat = (event.period.repeatDays ?? 0) * DAY;
+  const index = repeat > 0 && now > start ? Math.floor((now - start) / repeat) : 0;
+  return { index, start: start + index * repeat };
 }
 
 export const isEventOpen = (event: EventDef, now: number) => {

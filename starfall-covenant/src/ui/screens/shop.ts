@@ -32,7 +32,7 @@ let activeTab: ShopTab = 'gems';
 /** 購買並存檔；成功回傳 true */
 export function purchase(item: ShopItemDef): boolean {
   const now = Date.now();
-  const r = buyItem(getSave(), item, gameData.config, now);
+  const r = buyItem(getSave(), item, gameData.config, now, gameData.events);
   if (!r.ok) {
     toast(SHOP_FAIL_TEXT[r.reason]);
     return false;
@@ -46,7 +46,7 @@ export function purchase(item: ShopItemDef): boolean {
 function itemCard(item: ShopItemDef, refresh: () => void): HTMLElement {
   const save = getSave();
   const now = Date.now();
-  const left = remainingPurchases(save, item, now);
+  const left = remainingPurchases(save, item, now, gameData.events);
   const price = shopPrice(item);
   const soldOut = left <= 0;
   const special = 'type' in item.reward ? item.reward.type : null;
