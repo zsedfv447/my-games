@@ -1,6 +1,6 @@
 # 提案 001：43 位角色設定與技能組合
 
-> 提案人：創意顧問｜狀態：待總監審核｜依據：`docs/card-matrix.md`、`docs/GDD.md` 2.0、`src/core/types.ts`
+> 提案人：創意顧問｜狀態：**總監已通過**（含第 8、9 節建議）｜依據：`docs/card-matrix.md`、`docs/GDD.md` 2.0、`src/core/types.ts`
 >
 > 全部角色、名稱、外觀與背景皆為本作原創，不取材任何既有作品的角色、名稱、美術或劇情，也不使用現實神話人物的名字。
 
@@ -10,7 +10,7 @@
 - 技能用 `types.ts` 現有的效果積木寫成 JSON，總監通過後可直接搬進 `skills.json`／`leader-skills.json`。數字是第一版建議值，最後以 `tools/sim/` 模擬結果為準。
 - 冷卻寫成 `最大→最小`。進化角色列出兩個型態的差異，沒寫到的部分沿用前一型態。
 - 每張 5★／6★ 的三個星紋覺醒也同樣服務流派（例：長串卡加轉珠時間、背水卡加生命抗毒）。
-- 現有積木不夠表達的地方，我在第 9 節列為「積木缺口」，並先給一個用現有積木的替代寫法，不影響通過與否。
+- 有 3 處使用總監已核准、但尚未加進 `types.ts` 的新積木（見第 9 節），等戰鬥組的 `skills/` PR 合併後再寫進資料檔。
 
 ## 1. 種族分配（card-matrix 檢查項）
 
@@ -218,8 +218,8 @@
 - **背景**：工匠座造來照顧星座花園的園丁。花園碎了，他就在每顆珠子裡種下一點晶苗，等它們一起開花。
 - **主動技（5★）「播晶」CD 11→6**：強化全部森珠與心珠。
   `[{"type":"enhanceOrbs","orbs":["wood","heart"]}]`
-- **主動技（6★）「滿園晶花」CD 12→7**：強化全部珠子，3 回合內森珠天降機率提升到 30%。
-  `[{"type":"enhanceOrbs","orbs":"all"},{"type":"setSkyfallRate","orb":"wood","rate":0.3,"turns":3}]`
+- **主動技（6★）「滿園晶花」CD 12→7**：強化全部珠子，3 回合內天降強化珠機率提升到 30%。（新積木 `setEnhancedSkyfallRate`）
+  `[{"type":"enhanceOrbs","orbs":"all"},{"type":"setEnhancedSkyfallRate","rate":0.3,"turns":3}]`
 - **隊長技（5★）「晶花滿開」**：消除 3 顆以上強化珠時全隊攻擊 2.5 倍，每多 1 顆 +0.25 倍，最高 4 倍。
   `[{"conditions":[{"type":"enhancedOrbsMatched","count":3}],"effects":[{"type":"atkMultiplier","value":2.5,"perStep":0.25,"maxValue":4}]}]`
 - **隊長技（6★）「晶園盛宴」**：同上最高改為 5 倍；全隊生命 1.2 倍。
@@ -308,8 +308,8 @@
   `[{"type":"reduceAllyCooldown","turns":2},{"type":"chainOnSkill","multiplier":5,"turns":3}]`
 - **隊長技（5★）「星盤就位」**：開場全員技能冷卻已滿；本回合施放過主動技時全隊攻擊 3 倍。
   `[{"conditions":[{"type":"always"}],"effects":[{"type":"skillCooldownStart","charged":true}]},{"conditions":[{"type":"skillUsedThisTurn"}],"effects":[{"type":"atkMultiplier","value":3}]}]`
-- **隊長技（6★）「天機」**：同上倍率改為 3.5 倍，並轉珠時間 +1 秒。
-  `[{"conditions":[{"type":"always"}],"effects":[{"type":"skillCooldownStart","charged":true},{"type":"extendMoveTime","seconds":1}]},{"conditions":[{"type":"skillUsedThisTurn"}],"effects":[{"type":"atkMultiplier","value":3.5}]}]`
+- **隊長技（6★）「天機」**：同上倍率改為 3.5 倍，並且每回合全員技能冷卻額外 −1。（新積木 `allyCooldownPerTurn`）
+  `[{"conditions":[{"type":"always"}],"effects":[{"type":"skillCooldownStart","charged":true},{"type":"allyCooldownPerTurn","turns":1}]},{"conditions":[{"type":"skillUsedThisTurn"}],"effects":[{"type":"atkMultiplier","value":3.5}]}]`
 - **星紋覺醒**：抵抗封印主動技 50%／抵抗封印主動技 50%（合計 100%，等於這隊的唯一保險）／回復 +150。
 
 ### c404 → c405 金曜聖龍・艾斯特拉 → 曜冠龍皇・艾斯特拉｜5★→6★ 輝・龍嗣｜常駐池
@@ -371,8 +371,8 @@
 - **背景**：菈米耶歌聲裡誕生的小靈仙，哪裡少了顏色，牠就飛過去把光粉灑上。
 - **主動技（3★）「灑粉」CD 9→6**：重整盤面，轉珠時間延長 1 秒。
   `[{"type":"refreshBoard"},{"type":"extendMoveTime","seconds":1,"turns":1}]`
-- **主動技（4★）「補色」CD 9→6**：盤面重整為各色平均，轉珠時間延長 1 秒。（理想寫法是「補缺色」，見第 9 節）
-  `[{"type":"balanceBoard"},{"type":"extendMoveTime","seconds":1,"turns":1}]`
+- **主動技（4★）「補色」CD 9→6**：盤面上缺少的屬性各補 3 顆，轉珠時間延長 1 秒。（新積木 `fillMissingOrbs`）
+  `[{"type":"fillMissingOrbs","count":3},{"type":"extendMoveTime","seconds":1,"turns":1}]`
 
 ## 6. 蝕屬性（深淵、冥河、影與血契）
 
@@ -503,22 +503,24 @@
 | 技能循環 | c402／c409 | c504 c511 | — | c409 + c511 c108 c508 c408 |
 | 固定傷害 | c502／c307 | c304 | c208 | c307 + c208 c306 c308 c408 |
 
-**我看到的缺口（不影響本提案通過，供總監改 card-matrix 參考）**
+**缺口與處理（總監已全部採納，card-matrix 已更新）**
 1. **強化珠增幅的免抽核心只有 c111 一張**，且是焰屬，和森屬隊長不同色。建議把 c309 的主動技也標成 `enhance` 核心（它本身就是強化森珠），或在敵人提案時讓第 3 章掉落一張森屬強化輔助。
 2. **龍嗣沒有免抽隊長**（card-matrix 已註明）。我讓龍嗣有 3 張免抽成員（c107、c308、c509），之後若要補，建議把下一個活動的種族隊長給龍嗣。
 3. **冥裔免抽成員只有 4 位**（含隊長），第 5 格要靠助戰。可以接受，或之後的活動卡優先給冥裔。
 4. **固定傷害與長串貫穿的免抽輔助較少**：建議 c408 燭光修士多掛 `fixed` 輔助（固定傷害隊最怕的是被封回復與異常）。
 5. 建議新增流派標籤：c408 → `rainbow` support、`dual` support；c308 → `heart` support、`enhance` support；c208 → `fixed` support。這些是在 card-matrix 原本角色之外的「跨流派」標籤，對應 GDD 原則 5。
 
-## 9. 積木缺口（給總監與戰鬥負責人）
+## 9. 新積木（總監已核准）
 
-現有積木已能表達以上 43 位角色。下列三處是「理想寫法」需要新積木，我都先用現有積木寫好替代版本：
+下列三個積木已核准，由戰鬥組在 `skills/` 的 PR 裡加進 `types.ts`。本提案已改用這些寫法，**等那個 PR 合併後再寫進資料檔**。
 
-| 想要的效果 | 用在 | 現在的替代寫法 | 建議新增 |
-|---|---|---|---|
-| 補缺色（盤面缺哪種屬性就補 3 顆） | c412、七彩齊攻 | `balanceBoard` | `{ type: 'fillMissingOrbs'; count: number }` |
-| 天降強化珠機率提升 | c302／c303、強化珠增幅 | 強化全部珠＋提高某色天降 | `{ type: 'setEnhancedSkyfallRate'; rate: number; turns: number }` |
-| 隊長技「每回合技能 CD 額外 −1」 | 技能循環（GDD 列為典型隊長技） | 只用開場滿 CD | 隊長效果 `{ type: 'skillCooldownPerTurn'; turns: number }` |
+| 效果 | 用在 | 型別 |
+|---|---|---|
+| 補缺色（盤面缺哪種屬性就補指定顆數） | c412 | `SkillEffect { type: 'fillMissingOrbs'; count: number }` |
+| 天降強化珠機率提升 | c303 | `SkillEffect { type: 'setEnhancedSkyfallRate'; rate: number; turns: number }` |
+| 隊長技：每回合全員技能 CD 額外減少 | c403 | `LeaderEffect { type: 'allyCooldownPerTurn'; turns: number }` |
+
+寫入 `cards.json` 時另需加上第 8 節採納的跨流派標籤：c309 `enhance` core；c408 `rainbow`、`dual`、`fixed` support；c308 `heart`、`enhance` support；c208 `fixed` support。
 
 ## 10. 素材卡命名（20 張）
 
@@ -533,7 +535,9 @@
 
 外觀統一：星塵靈是一團帶眼睛的發光星塵，越高階越亮、輪廓越像小星星；星核是一顆內部有星座紋路在轉的水晶球。卡號順序若與總監規劃不同，以總監為準。
 
-## 11. 其他可加進遊戲的創意（之後各自另開提案）
+## 11. 其他可加進遊戲的創意
+
+總監決定：1、3 納入 v0.1（流派試煉每流派 1 關，共 12 關，與星座章節一起在敵人與劇情提案中規劃）；2、4 列入 v0.2 備忘。
 
 1. **流派試煉**：流派圖鑑裡每個流派有一關「教學試煉」，強制使用該流派的免抽入門隊，通關送該流派缺的一張免抽卡。讓「入門一定拿得到」變成可玩的內容，也是最自然的流派教學。
 2. **契約羈絆對話**：特定兩張卡同隊時，戰鬥開場會有一句專屬對話並給小加成（例：c109 拉卡＋c507 格雷「背水搭檔」、c409 帕奇＋c511 奇克「天文台二人組」）。資料上可做成 `bonds.json`，用來鼓勵玩家嘗試劇情裡有關係的組合。
