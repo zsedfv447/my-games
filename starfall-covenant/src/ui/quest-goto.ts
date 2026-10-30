@@ -25,10 +25,12 @@ export function questDestination(quest: QuestDef, save: SaveData, stages: StageD
     case 'trialCleared':
       return { name: 'archetypes', args: [] };
     case 'gachaPull':
+    case 'summoned':
     case 'cardsOwned':
       return { name: 'summon', args: [] };
     case 'cardEnhance':
     case 'cardEvolve':
+    case 'evolvedOwned':
       return { name: 'cards', args: [] };
     case 'shopPurchase':
       return { name: 'shop', args: [] };

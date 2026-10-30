@@ -14,9 +14,12 @@ const fresh = () => createNewSave(gameData.config, NOW);
 /** 什麼都做過的老玩家（新手契約上線前的存檔） */
 function veteran(): SaveData {
   const s = fresh();
-  const counted = addQuestCounters(s, { cardEnhance: 12, cardEvolve: 3, gachaPull: 30 }, gameData.quests, NOW);
+  // 強化沿用終身計數器；召喚與進化由召喚紀錄、圖鑑推算（計數器上線前的老存檔也算）
+  const counted = addQuestCounters(s, { cardEnhance: 12 }, gameData.quests, NOW);
   return {
     ...counted,
+    gacha: { ...counted.gacha, history: [{ pool: 'standard', card: 'c206', at: 0 }] },
+    collection: { ...counted.collection, owned: [...counted.collection.owned, 'c109', 'c110'] },
     teams: counted.teams.map((t, i) => (i === 0 ? { ...t, members: ['u2', 'u1', 'u3', 'u4', 'u5'] } : t)),
     progress: { ...counted.progress, clearedStages: main.slice(0, 20).map((st) => st.id), chapterRewardsClaimed: [1] },
     helperBond: { 'npc-mono': 4 },
@@ -69,6 +72,15 @@ describe('新手契約進度', () => {
     expect(prog({ ...s, teams: s.teams.map((t, i) => (i === 1 ? { ...t, members: ['u1', null, null, null, null] } : t)) }, 'st-team')).toBe(true);
     expect(prog({ ...s, helperBond: { 'npc-heart': 1 } }, 'st-helper')).toBe(true);
     expect(prog({ ...s, puzzle: { lastDay: '2026-11-02', streak: 1, solvedDays: ['2026-11-02'] } }, 'st-puzzle')).toBe(true);
+  });
+
+  it('召喚看召喚紀錄、進化看圖鑑有沒有進化後的型態', () => {
+    const s = fresh();
+    const prog = (save: SaveData, id: string) => questProgress(save, starter.find((q) => q.id === id)!, questDerived(save)).done;
+    expect(prog(s, 'st-summon')).toBe(false);
+    expect(prog({ ...s, gacha: { ...s.gacha, history: [{ pool: 'standard', card: 'c206', at: 0 }] } }, 'st-summon')).toBe(true);
+    expect(prog({ ...s, collection: { ...s.collection, owned: [...s.collection.owned, 'c109'] } }, 'st-evolve')).toBe(false);
+    expect(prog({ ...s, collection: { ...s.collection, owned: [...s.collection.owned, 'c110'] } }, 'st-evolve')).toBe(true);
   });
 
   it('主城紅點會算進可領的新手契約', () => {
