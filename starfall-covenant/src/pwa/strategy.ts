@@ -48,6 +48,11 @@ export function cacheableSize(contentLength: string | null, path: string): boole
   return !/\.(m4a|mp3|ogg|wav)$/i.test(path);
 }
 
+/** 新版啟用時要刪的舊快取：保留上一版外殼（previous），其餘舊版刪除 */
+export function keysToDelete(oldKeys: string[], previous: string | undefined): string[] {
+  return oldKeys.filter((k) => k !== previous);
+}
+
 /** 版本字串：檔名（含內容雜湊）有任何變動就換新版本，舊快取會在新版啟用時清掉 */
 export function buildVersion(files: string[], salt = ''): string {
   let h = 2166136261;
