@@ -96,8 +96,9 @@ describe('玩家等級', () => {
   });
 
   it('隊伍空間上限隨等級成長', () => {
-    expect(teamCostLimit(1)).toBe(20);
-    expect(teamCostLimit(50)).toBe(118);
-    expect(teamCostLimit(60)).toBe(128);
+    expect(teamCostLimit(1)).toBe(30);
+    expect(teamCostLimit(4)).toBe(36);
+    expect(teamCostLimit(50)).toBe(128);
+    expect(teamCostLimit(60)).toBe(138);
   });
 });
