@@ -32,13 +32,14 @@ export function scoreBoard(
   leaders: (LeaderSkillDef | undefined)[],
   strategy: Strategy,
   config: BattleConfig,
+  skillUsedThisTurn = false,
 ): number {
   const groups = findMatches(board, 0);
   if (groups.length === 0) return 0;
   const combo = groups.length;
   const hpPercent = (state.hp / state.maxHp) * 100;
   const team = state.team;
-  const turn = evaluateLeaderTurn(leaders, { team, groups, combo, hpPercent, skillUsedThisTurn: false });
+  const turn = evaluateLeaderTurn(leaders, { team, groups, combo, hpPercent, skillUsedThisTurn });
   const hits = [
     ...computeAttacks({ team, groups, combo, config, atkMultipliers: turn.atkMultipliers, ignoreDefense: turn.ignoreDefense }),
     ...turn.followUps,
@@ -61,10 +62,11 @@ export function planMove(
   strategy: Strategy,
   config: BattleConfig,
   opts: PlannerOptions = DEFAULT_PLANNER,
+  skillUsedThisTurn = false,
 ): { path: Pos[]; score: number } {
   const { cols, rows } = state.board;
   const steps = Math.min(opts.maxSteps, Math.floor(state.moveTimeSeconds * opts.stepsPerSecond));
-  const evalCells = (cells: Board['cells']) => scoreBoard({ cols, rows, cells }, state, leaders, strategy, config);
+  const evalCells = (cells: Board['cells']) => scoreBoard({ cols, rows, cells }, state, leaders, strategy, config, skillUsedThisTurn);
 
   let beam: Node[] = [];
   for (let row = 0; row < rows; row++) {
