@@ -1,4 +1,5 @@
 // 關卡列表：#/stages/<章節> 或 #/stages/daily|event|tower
+import { eventBanner } from '../components/event-banner';
 import { h } from '../dom';
 import { gameData } from '../../data/load';
 import type { StageDef } from '../../core/types';
@@ -12,6 +13,7 @@ import type { ChapterDef } from '../../core/types';
 import type { Navigator, ScreenDef } from '../router';
 import type { IconName } from '../art/icons';
 import { firstClearChip, revealReward } from '../components/reward-reveal';
+import { chapterConstellation } from '../components/constellation-view';
 
 function row(r: StageRow, nav: Navigator, leading: IconName, fresh = new Set<string>()): HTMLElement {
   const s = r.stage;
@@ -56,6 +58,7 @@ function chapterReward(info: ChapterDef): HTMLElement {
     if (!r.ok) return toast(r.reason === 'alreadyClaimed' ? '已經領過了' : '星章還沒集滿');
     commit(r.save);
     void revealReward('星章獎勵', r.reward!, `第 ${info.chapter} 章・${info.name}`);
+    el.parentElement?.querySelector('.constellation-box.claimable')?.classList.remove('claimable');
     el.replaceWith(chapterReward(info));
   };
   return el;
@@ -72,10 +75,10 @@ export const stagesScreen: ScreenDef = {
   title: '關卡列表',
   chrome: 'sub',
   parent: 'adventure',
-  render({ route, nav }) {
+  render({ route, nav, onLeave }) {
     const save = getSave();
     const now = Date.now();
-    const ctx = stageContext(gameData.stages);
+    const ctx = stageContext(gameData.stages, gameData.events);
     const key = route.args[0] ?? '1';
     const group = GROUPS[key];
 
@@ -94,6 +97,7 @@ export const stagesScreen: ScreenDef = {
         'div',
         null,
         h('h2', { class: 'section-title' }, group.title),
+        group.kind === 'event' && gameData.events.map((e) => eventBanner(e, { nav, onLeave })),
         group.kind === 'tower' && panel(null, h('p', { class: 'small-text dim' }, `目前到達第 ${save.progress.towerFloor} 層，共 ${gameData.stages.filter((s) => s.kind === 'tower').length} 層。每 10 層有星晶獎勵。`)),
         rows.length ? h('div', { class: 'list' }, rows.map((r) => row(r, nav, group.icon, fresh))) : emptyState(group.icon, '目前沒有關卡'),
       );
@@ -109,6 +113,7 @@ export const stagesScreen: ScreenDef = {
       panel(
         { gold: true },
         h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, `第 ${chapter} 章・${info?.name ?? ''}`), info && badge(info.constellation, 'gold')),
+        info && chapterConstellation(info, { claimable: chapterRewardStatus(save, info.chapter, gameData.stages) === 'claimable' }),
         info && chapterReward(info),
       ),
       h('div', { class: 'list' }, rows.map((r) => row(r, nav, 'adventure', fresh))),

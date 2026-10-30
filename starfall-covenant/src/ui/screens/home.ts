@@ -11,6 +11,7 @@ import { cardPortraitUrl, cardThumb, emptySlot } from '../components/card-thumb'
 import { chapterProgress, nextMainStage, stageContext } from '../stage-nav';
 import { homeBadges, type HomeBadges } from '../economy';
 import { maybeShowLoginPopup } from './login-bonus';
+import { maybeOfferResume } from '../battle-session';
 
 /** 捷徑上的紅點：有可領的登入、任務或成就獎勵 */
 const BADGE_OF: Record<string, keyof HomeBadges> = { 'login-bonus': 'login', quests: 'quests', achievements: 'achievements' };
@@ -35,14 +36,15 @@ export const homeScreen: ScreenDef = {
   render({ nav, onLeave }) {
     audio.playBgm('home');
     // 每天第一次回到主城自動跳出登入獎勵（等畫面掛上後再開）
-    const popup = setTimeout(() => maybeShowLoginPopup(() => root.querySelectorAll('[data-badge="login"]').forEach((el) => el.remove())), 350);
+    // 有沒打完的戰鬥時先問要不要繼續，這次就不跳登入獎勵
+    const popup = maybeOfferResume(nav) ? undefined : setTimeout(() => maybeShowLoginPopup(() => root.querySelectorAll('[data-badge="login"]').forEach((el) => el.remove())), 350);
     onLeave(() => clearTimeout(popup));
     const bg = userAsset('backgrounds', 'home');
     const save = getSave();
     const members = save.teams[save.activeTeam].members.map((uid) => save.inventory.cards.find((c) => c.uid === uid));
     const leader = members[0] && growth.card(members[0].cardId);
     const portrait = leader && cardPortraitUrl(leader);
-    const ctx = stageContext(gameData.stages);
+    const ctx = stageContext(gameData.stages, gameData.events);
     const next = nextMainStage(save, ctx, Date.now());
     const chapter = gameData.chapters.find((c) => c.chapter === next?.chapter);
     const progress = chapter && chapterProgress(save, chapter.chapter, ctx, Date.now());

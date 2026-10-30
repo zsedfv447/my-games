@@ -7,6 +7,7 @@ import { chapterRewardStatus } from '../../progression/stages';
 import { chapterProgress, nextMainStage, stageContext } from '../stage-nav';
 import { getSave } from '../state';
 import { userAsset } from '../assets';
+import { eventStatusText } from '../../progression/events';
 import type { ScreenDef } from '../router';
 
 export const adventureScreen: ScreenDef = {
@@ -18,7 +19,7 @@ export const adventureScreen: ScreenDef = {
   render({ nav }) {
     const save = getSave();
     const now = Date.now();
-    const ctx = stageContext(gameData.stages);
+    const ctx = stageContext(gameData.stages, gameData.events);
     const next = nextMainStage(save, ctx, now);
     const trialsOpen = gameData.stages.filter((s) => s.kind === 'trial' && (!s.unlockAfter || save.progress.clearedStages.includes(s.unlockAfter))).length;
 
@@ -58,7 +59,7 @@ export const adventureScreen: ScreenDef = {
         'div',
         { class: 'list' },
         listItem({ leading: icon('history'), title: '每日關卡', sub: '素材、進化素材、金幣關每日輪替', onClick: () => nav.go('stages', ['daily']) }),
-        listItem({ leading: icon('event'), title: '限時活動', sub: '活動 Boss 與兌換商店', onClick: () => nav.go('stages', ['event']) }),
+        listItem({ leading: icon('event'), title: '限時活動', sub: gameData.events.map((e) => `${e.name}・${eventStatusText(e, Date.now())}`).join('／') || '活動 Boss 與兌換商店', onClick: () => nav.go('stages', ['event']) }),
         listItem({ leading: icon('tower'), title: '挑戰之塔', sub: `不耗體力・目前第 ${save.progress.towerFloor} 層`, onClick: () => nav.go('stages', ['tower']) }),
         listItem({ leading: icon('constellation'), title: '流派試煉', sub: `借一支現成隊伍體驗各流派・已開放 ${trialsOpen} 關`, onClick: () => nav.go('archetypes') }),
         listItem({ leading: icon('sword'), title: '練習場', sub: '用示範隊伍練習轉珠，不耗體力', onClick: () => nav.go('battle', ['practice']) }),

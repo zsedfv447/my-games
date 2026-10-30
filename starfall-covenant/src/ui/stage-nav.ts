@@ -1,10 +1,12 @@
 // 關卡導覽：把關卡資料與存檔整理成冒險地圖、關卡列表要顯示的狀態（純函式，方便測試）
 import type { SaveData, StageDef } from '../core/types';
+import { openEventIds, type EventDef } from '../progression/events';
 import { stageLockReason, type StageContext, type StageLockReason } from '../progression/stages';
 
-/** v0.1 內建活動沒有開放期間資料，視為一直開放 */
-export function stageContext(stages: StageDef[]): StageContext {
-  return { stages, openEvents: new Set(stages.flatMap((s) => (s.event ? [s.event] : []))) };
+/** 依 data/events.json 的檔期決定哪些活動開放；沒給活動資料時視為全部開放（測試用） */
+export function stageContext(stages: StageDef[], events?: EventDef[], now = Date.now()): StageContext {
+  if (!events) return { stages, openEvents: new Set(stages.flatMap((s) => (s.event ? [s.event] : []))) };
+  return { stages, openEvents: openEventIds(events, now) };
 }
 
 export type StageStatus = 'cleared' | 'open' | StageLockReason | 'towerAhead';

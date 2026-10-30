@@ -47,6 +47,6 @@ export function unlockNotice(stage: StageDef): { row: HTMLElement | null; text?:
 /** 「下一關」：下一關目前可以進才給按鈕，點了用 go 前往它的出戰確認（hash 路徑） */
 export function nextStageButton(stage: StageDef, save: SaveData, go: (path: string) => void): HTMLButtonElement | null {
   const next = nextStageAfter(stage, gameData.stages);
-  if (!next || !isStageUnlocked(save, next, stageContext(gameData.stages), Date.now())) return null;
+  if (!next || !isStageUnlocked(save, next, stageContext(gameData.stages, gameData.events), Date.now())) return null;
   return button('下一關', { variant: 'primary', onClick: () => go(`prepare/${next.id}`) });
 }

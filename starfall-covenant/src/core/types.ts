@@ -1,5 +1,7 @@
 // 《星骸契約》共用型別。所有模組只透過這裡的型別與 data/*.json 溝通。
 // 修改本檔需經總監審核。
+import type { BattleSnapshot, TeamMemberInput } from '../battle/battle-state';
+import type { DropPlan } from '../progression/drops';
 
 // ---------- 基本列舉 ----------
 export const ATTRIBUTES = ['fire', 'water', 'wood', 'light', 'dark'] as const;
@@ -246,6 +248,20 @@ export interface ChapterDef {
   starReward: Reward;
 }
 
+/** 中斷續戰用：出戰時就決定好隊伍與亂數種子，重新整理不能重骰開場盤面或掉落 */
+export interface ActiveBattle {
+  stageId: string;
+  /** 開場盤面與掉落用的種子 */
+  seed: number;
+  members: TeamMemberInput[];
+  helper: TeamMemberInput | null;
+  startedAt: number;
+  /** 進場時骰好的掉落（提案 13）；重新整理與續戰都沿用，不重骰 */
+  drops: DropPlan;
+  /** 還沒開打（例如還在看開場劇情）時為 null */
+  snapshot: BattleSnapshot | null;
+}
+
 // ---------- 經濟 ----------
 export interface Reward {
   coin?: number;
@@ -346,6 +362,8 @@ export interface SaveData {
     /** 已領取星章獎勵的章節（存檔 v3 起） */
     chapterRewardsClaimed: number[];
   };
+  /** 進行中的關卡戰鬥（存檔 v4 起，讀檔時一定會補上）：出戰時寫入，每次行動後更新快照，結算或放棄時清掉 */
+  activeBattle?: ActiveBattle | null;
   /** 新手教學進度（存檔 v2 起，讀檔時一定會補上）；step 為 done 時 progress.tutorialDone 也是 true */
   tutorial?: { step: TutorialStep; giftGiven: boolean };
   gacha: { pityCounter: Record<string, number>; history: { pool: string; card: string; at: number }[] };
