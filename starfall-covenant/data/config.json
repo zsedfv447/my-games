@@ -1,0 +1,30 @@
+{
+  "board": {
+    "cols": 6,
+    "rows": 5,
+    "moveTimeSeconds": 5
+  },
+  "battle": {
+    "attributeAdvantage": 1.5,
+    "attributeDisadvantage": 0.5,
+    "extraOrbBonus": 0.25,
+    "comboBonus": 0.25,
+    "fullAttackOrbCount": 5,
+    "enhancedOrbBonus": 0.15
+  },
+  "stamina": {
+    "regenMinutes": 5,
+    "baseMax": 30,
+    "maxPerLevel": 1
+  },
+  "inventory": {
+    "baseCapacity": 50,
+    "expandStep": 5,
+    "expandCostGems": 1
+  },
+  "newPlayer": {
+    "coin": 1000,
+    "gems": 50,
+    "starterCards": []
+  }
+}

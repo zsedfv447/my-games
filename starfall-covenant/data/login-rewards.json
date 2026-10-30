@@ -1,0 +1,44 @@
+[
+  {
+    "day": 1,
+    "reward": {
+      "coin": 1000
+    }
+  },
+  {
+    "day": 2,
+    "reward": {
+      "gems": 1
+    }
+  },
+  {
+    "day": 3,
+    "reward": {
+      "coin": 3000
+    }
+  },
+  {
+    "day": 4,
+    "reward": {
+      "gems": 1
+    }
+  },
+  {
+    "day": 5,
+    "reward": {
+      "stamina": 30
+    }
+  },
+  {
+    "day": 6,
+    "reward": {
+      "coin": 5000
+    }
+  },
+  {
+    "day": 7,
+    "reward": {
+      "gems": 3
+    }
+  }
+]

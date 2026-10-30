@@ -1,0 +1,98 @@
+[
+  {
+    "id": "mono",
+    "name": "單屬爆發",
+    "summary": "全隊同屬，把盤面轉成單色後一口氣打爆。",
+    "howToPlay": "盡量消除自己屬性的珠，搭配轉珠主動技湊滿盤。",
+    "weakness": "屬性減傷盾、被剋屬性的 Boss。",
+    "starterPath": "焰屬性主線掉落的 4★ 隊長，第 1 章即可取得。"
+  },
+  {
+    "id": "rainbow",
+    "name": "七彩齊攻",
+    "summary": "同一回合消除越多種屬性，倍率越高。",
+    "howToPlay": "每種顏色都至少消一組，缺色就用主動技補。",
+    "weakness": "珠子鎖定、特定顏色被封印。",
+    "starterPath": "輝屬性 4★ 隊長，主線掉落。"
+  },
+  {
+    "id": "combo",
+    "name": "連擊狂潮",
+    "summary": "Combo 越多倍率越高。",
+    "howToPlay": "把盤面拆成很多小組合一次消掉，搭配延長轉珠時間。",
+    "weakness": "轉珠時間縮短、高防禦敵人。",
+    "starterPath": "潮屬性 4★ 隊長，主線掉落。"
+  },
+  {
+    "id": "chain",
+    "name": "長串貫穿",
+    "summary": "一次消除 6 顆以上同色珠，打全體並無視防禦。",
+    "howToPlay": "集中同色珠排成長串，少 Combo 也能打出高傷害。",
+    "weakness": "Combo 數門檻護盾、多隻小怪輪流攻擊。",
+    "starterPath": "蝕屬性 3★→4★ 隊長，主線掉落。"
+  },
+  {
+    "id": "heart",
+    "name": "心之守護",
+    "summary": "保留心珠，把回復力轉成攻擊力。",
+    "howToPlay": "每回合消除心珠，高回復換高傷害與高續航。",
+    "weakness": "回復封印、限回合 Boss。",
+    "starterPath": "森屬性 4★ 隊長，主線掉落。"
+  },
+  {
+    "id": "race",
+    "name": "種族羈絆",
+    "summary": "全隊同種族，種族成員越多越強。",
+    "howToPlay": "依隊長種族組隊，跨屬性混搭。",
+    "weakness": "依種族特性而定。",
+    "starterPath": "森屬性 3★ 靈仙隊長；其他種族由活動與挑戰之塔取得。"
+  },
+  {
+    "id": "enhance",
+    "name": "強化珠增幅",
+    "summary": "先強化珠子，再一次引爆。",
+    "howToPlay": "前幾回合累積強化珠，關鍵回合一次消除大量強化珠。",
+    "weakness": "需要準備回合，怕限回合的關卡。",
+    "starterPath": "森屬性 3★→4★ 隊長，主線掉落。"
+  },
+  {
+    "id": "control",
+    "name": "時之控場",
+    "summary": "延遲敵人、降低傷害，穩紮穩打。",
+    "howToPlay": "持續延遲敵人行動，用持續傷害慢慢磨。",
+    "weakness": "不吃延遲的 Boss、限回合的星章挑戰。",
+    "starterPath": "潮屬性 3★→4★ 隊長，主線掉落。"
+  },
+  {
+    "id": "berserk",
+    "name": "背水一戰",
+    "summary": "生命越低攻擊越高。",
+    "howToPlay": "刻意保持低血量，配合保命技能打出爆發。",
+    "weakness": "中毒、多段攻擊的敵人。",
+    "starterPath": "焰屬性 3★→4★ 隊長，主線掉落。"
+  },
+  {
+    "id": "dual",
+    "name": "雙屬共鳴",
+    "summary": "同時消除兩種指定屬性時大幅提升攻擊。",
+    "howToPlay": "以兩種顏色為主，互相轉換讓兩色都夠用。",
+    "weakness": "單一屬性被鎖定。",
+    "starterPath": "蝕屬性 4★ 隊長，主線掉落。"
+  },
+  {
+    "id": "skillcycle",
+    "name": "技能循環",
+    "summary": "技能冷卻快，幾乎每回合都能放技能。",
+    "howToPlay": "輪流施放主動技，技能本身附帶追擊傷害。",
+    "weakness": "封印主動技。",
+    "starterPath": "輝屬性 3★→4★ 隊長，主線掉落。"
+  },
+  {
+    "id": "fixed",
+    "name": "固定傷害",
+    "summary": "造成不看攻擊力的固定傷害，無視護盾。",
+    "howToPlay": "消除心珠觸發追打，專門對付高防禦與護盾敵人。",
+    "weakness": "生命值極高的 Boss。",
+    "starterPath": "森屬性 4★ 隊長，主線掉落。"
+  }
+]
