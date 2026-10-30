@@ -35,6 +35,7 @@ import { createTutorialBattle } from '../tutorial/battle-setup';
 import { TutorialBattleGuide, texts as guideTexts, type BattleGuide } from '../tutorial/battle-guide';
 import { advanceTutorial, skipTutorial } from '../tutorial/flow';
 import { BattleHud } from '../components/battle-hud';
+import { canAct, reenableAfterCancel } from '../battle-guard';
 import { grantClearExp, nextStageButton, sortieUids, unlockNotice } from '../stage-clear';
 import type { CardExpGain } from '../../growth';
 
@@ -141,6 +142,11 @@ class BattleView {
   /** 暫停選單開著；這段期間動畫播完要開放轉珠時，等繼續再開 */
   private paused = false;
   private enableWhenResumed = false;
+  /** 轉珠或主動技的結算動畫播放中（state.phase 此時還是 player） */
+  private resolving = false;
+  private get guard() {
+    return { phase: this.state.phase, resolving: this.resolving };
+  }
 
   constructor(private s: Setup, private nav: Navigator) {
     this.state = s.battle.getState();
@@ -294,13 +300,23 @@ class BattleView {
       stars: this.s.practice ? [] : this.s.stage.stars ?? [],
       onResume: () => {
         close();
-        if ((wasEnabled || this.enableWhenResumed) && this.state.phase === 'player') this.boardView.setEnabled(true);
+        // 結算動畫中按繼續不開放盤面，動畫播完會自己開
+        if ((wasEnabled || this.enableWhenResumed) && canAct(this.guard)) this.boardView.setEnabled(true);
         this.enableWhenResumed = false;
       },
       onRetreat: () => {
         close();
+        // 結算動畫播放中不能撤退：當作繼續，動畫播完照常開放盤面
+        if (this.resolving) {
+          toast('結算中，請等動畫播完再撤退');
+          if (this.enableWhenResumed && this.state.phase === 'player') this.boardView.setEnabled(true);
+          this.enableWhenResumed = false;
+          return;
+        }
+        // 暫停時盤面已被關掉，取消撤退後要照暫停前的狀態恢復
+        const restore = wasEnabled || this.enableWhenResumed;
         this.enableWhenResumed = false;
-        void this.askRetreat();
+        void this.askRetreat(restore);
       },
     });
   }
@@ -318,7 +334,7 @@ class BattleView {
 
   /** 點隊員頭像：顯示主動技說明，確認後施放 */
   private useSkill(i: number): void {
-    if (this.state.phase !== 'player') return;
+    if (!canAct(this.guard)) return;
     const m = this.state.team[i];
     const skill = m?.card.activeSkill ? this.s.data.skills.find((x) => x.id === m.card.activeSkill) : undefined;
     if (!m || !skill) return toast(`${m?.card.name ?? ''}沒有主動技`);
@@ -335,9 +351,19 @@ class BattleView {
   }
 
   private async castSkill(i: number): Promise<void> {
+    if (!canAct(this.guard)) return;
     const before = this.state;
     const r = this.s.battle.useSkill(i);
     if (!r.ok) return toast(r.reason);
+    this.resolving = true;
+    try {
+      await this.playSkill(i, before, r);
+    } finally {
+      this.resolving = false;
+    }
+  }
+
+  private async playSkill(i: number, before: BattleState, r: Extract<ReturnType<Battle['useSkill']>, { ok: true }>): Promise<void> {
     audio.play('skill');
     this.boardView.setEnabled(false);
     const skill = this.s.data.skills.find((x) => x.id === r.skill.skillId);
@@ -368,14 +394,15 @@ class BattleView {
     this.s.guide?.afterSkill(after);
   }
 
-  private async askRetreat(): Promise<void> {
-    if (this.state.phase !== 'player') return;
+  /** wasEnabled：取消後要不要重新開放盤面（從暫停選單來時由暫停前的狀態決定） */
+  private async askRetreat(wasEnabled = !this.boardView.element.classList.contains('disabled')): Promise<void> {
+    if (!canAct(this.guard)) return;
     this.boardView.setEnabled(false);
     if (await confirmDialog('撤退', this.s.practice ? '要離開練習場嗎？' : '撤退會視為失敗，已消耗的體力不會退還。')) {
       this.s.battle.forfeit();
       if (!this.s.practice) bus.emit('stageFailed', { stageId: this.s.stage.id });
       this.leaveDefeated();
-    } else {
+    } else if (reenableAfterCancel(wasEnabled, this.guard)) {
       this.boardView.setEnabled(true);
     }
   }
@@ -397,6 +424,15 @@ class BattleView {
       this.enableBoard();
       return;
     }
+    this.resolving = true;
+    try {
+      await this.playTurn(before, res);
+    } finally {
+      this.resolving = false;
+    }
+  }
+
+  private async playTurn(before: BattleState, res: Extract<ReturnType<Battle['submitMove']>, { ok: true }>): Promise<void> {
     const after = this.s.battle.getState();
     const speed = this.speed;
 
