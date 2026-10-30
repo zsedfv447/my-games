@@ -30,6 +30,7 @@ import { enemyChips, teamChips, STATUS_NAMES, type StatusChip } from '../status-
 import { storyBox } from '../components/story';
 import { openClearResult, type ResultNote } from '../components/reward-reveal';
 import { clearItems, levelUpView } from '../reward-plan';
+import { showDefeatGuide } from '../components/defeat-guide';
 import { markStorySeen } from './story';
 import { createTutorialBattle } from '../tutorial/battle-setup';
 import { TutorialBattleGuide, texts as guideTexts, type BattleGuide } from '../tutorial/battle-guide';
@@ -401,7 +402,7 @@ class BattleView {
     if (await confirmDialog('撤退', this.s.practice ? '要離開練習場嗎？' : '撤退會視為失敗，已消耗的體力不會退還。')) {
       this.s.battle.forfeit();
       if (!this.s.practice) bus.emit('stageFailed', { stageId: this.s.stage.id });
-      this.nav.back();
+      this.leaveDefeated();
     } else {
       this.boardView.setEnabled(true);
     }
@@ -636,7 +637,7 @@ class BattleView {
     const giveUp = () => {
       this.dialog?.close();
       if (!this.s.practice) bus.emit('stageFailed', { stageId: this.s.stage.id });
-      this.nav.back();
+      this.leaveDefeated();
     };
     const doContinue = () => {
       if (!this.s.practice) {
@@ -657,5 +658,11 @@ class BattleView {
       button('放棄', { variant: 'ghost', sound: 'back', onClick: giveUp }),
       button('續戰', { variant: 'primary', cost: cost ? { kind: 'gem', amount: cost } : undefined, disabled: gems < cost, onClick: doContinue }),
     ], { dismissible: false });
+  }
+
+  /** 失敗離場：正式關卡先顯示失敗引導（components/defeat-guide.ts），練習與教學直接返回 */
+  private leaveDefeated(): void {
+    if (this.s.practice || this.s.guide) return this.nav.back();
+    showDefeatGuide(this.s.stage, { wave: this.state.wave, waveCount: this.state.waveCount, hasHelper: this.state.team.some((m) => m.isHelper) }, this.nav);
   }
 }

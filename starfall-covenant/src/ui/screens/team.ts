@@ -3,12 +3,14 @@ import { h } from '../dom';
 import { gameData } from '../../data/load';
 import { analyzeTeam, ROLE_LABEL } from '../../growth';
 import { teamCostLimit } from '../../progression/player';
-import { badge, bar, panel, tabs } from '../components/basic';
+import { badge, bar, button, panel, tabs } from '../components/basic';
 import { cardThumb, emptySlot } from '../components/card-thumb';
 import { pickCard } from '../components/card-picker';
-import { toast } from '../components/overlay';
+import { openDialog, toast } from '../components/overlay';
 import { commit, getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
+import { cleanTeamName, leaderHighlights, TEAM_NAME_MAX, teamTotals } from '../team-summary';
+import '../convenience.css';
 
 const archetypeName = (id: string | null) => (id ? gameData.archetypes.find((a) => a.id === id)?.name ?? id : '未定');
 
@@ -18,6 +20,56 @@ export function teamCost(uids: (string | null)[]): number {
     const c = uid ? save.inventory.cards.find((x) => x.uid === uid) : undefined;
     return sum + (c ? growth.card(c.cardId)?.cost ?? 0 : 0);
   }, 0);
+}
+
+function renameTeam(index: number, done: () => void): void {
+  const input = h('input', { class: 'text-input', type: 'text', maxlength: String(TEAM_NAME_MAX), value: getSave().teams[index].name, 'aria-label': '隊伍名稱' }) as HTMLInputElement;
+  const save = () => {
+    const name = cleanTeamName(input.value);
+    dlg.close();
+    if (!name) return;
+    const s = getSave();
+    commit({ ...s, teams: s.teams.map((t, i) => (i === index ? { ...t, name } : t)) });
+    done();
+  };
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
+  const dlg = openDialog('隊伍名稱', h('div', null, input, h('p', { class: 'small-text dim' }, `最多 ${TEAM_NAME_MAX} 個字`)), [
+    button('取消', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
+    button('確定', { variant: 'primary', onClick: save }),
+  ]);
+  setTimeout(() => { input.focus(); input.select(); }, 50);
+}
+
+const fmt = (n: number) => n.toLocaleString();
+
+/** 隊伍總生命／攻擊／回復與隊長技文字 */
+function statsPanel(uids: (string | null)[]): HTMLElement {
+  const save = getSave();
+  const members = uids.flatMap((uid) => {
+    const c = uid ? save.inventory.cards.find((x) => x.uid === uid) : undefined;
+    const card = c && growth.card(c.cardId);
+    return c && card ? [{ card, level: c.level, awakened: c.awakened }] : [];
+  });
+  const leaderOf = (card: { leaderSkill?: string }) => (card.leaderSkill ? growth.leaderSkill(card.leaderSkill) : undefined);
+  const totals = teamTotals(members, leaderOf);
+  const leader = members[0] && leaderOf(members[0].card);
+  const stat = (label: string, value: number, base?: number) => h('div', { class: 'team-stat' },
+    h('small', null, label),
+    h('strong', null, fmt(value)),
+    base !== undefined && value > base ? h('span', { class: 'team-stat-bonus' }, `隊長技 +${fmt(value - base)}`) : null);
+  return panel(
+    { title: '隊伍數值' },
+    h('div', { class: 'team-stats' }, stat('總生命', totals.hp, totals.baseHp), stat('總攻擊', totals.atk), stat('總回復', totals.rcv, totals.baseRcv)),
+    h('div', { class: 'team-leader' },
+      leader
+        ? [
+          h('div', { class: 'small-text' }, h('strong', { class: 'gold-text' }, `隊長技・${leader.name}`)),
+          h('p', { class: 'small-text', style: { margin: '4px 0' } }, leader.description),
+          h('div', { class: 'row wrap', style: { gap: '4px' } }, leaderHighlights(leader).map((t) => badge(t))),
+        ]
+        : h('p', { class: 'small-text dim', style: { margin: '0' } }, '隊長沒有隊長技。'),
+      h('p', { class: 'small-text dim', style: { margin: '6px 0 0' } }, '攻擊依隊長技條件在戰鬥中另外加乘；出戰時助戰的隊長技也會一起生效。')),
+  );
 }
 
 export const teamScreen: ScreenDef = {
@@ -56,7 +108,8 @@ export const teamScreen: ScreenDef = {
           draw();
         }),
         panel(
-          { title: team.name },
+          null,
+          h('button', { type: 'button', class: 'team-name', 'aria-label': '修改隊伍名稱', onClick: () => renameTeam(index, draw) }, h('h3', null, team.name), h('span', { class: 'team-name-hint small-text' }, '改名')),
           h('div', { class: 'team-slots' },
             team.members.map((uid, slot) => {
               const owned = uid ? save.inventory.cards.find((c) => c.uid === uid) : undefined;
@@ -69,6 +122,7 @@ export const teamScreen: ScreenDef = {
             })),
           h('div', { style: { marginTop: '8px' } }, bar({ value: cost, max: limit, variant: cost > limit ? 'hp' : 'gold', label: `隊伍空間 ${cost} / ${limit}` })),
         ),
+        statsPanel(team.members),
         panel(
           { title: '流派分析' },
           h('div', { class: 'row wrap', style: { gap: '6px' } },
