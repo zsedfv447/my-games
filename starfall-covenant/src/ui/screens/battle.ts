@@ -19,6 +19,9 @@ import { buildSortieTeam } from '../sortie';
 import { commit, getSave, getSettings, growth } from '../state';
 import type { Navigator, ScreenDef } from '../router';
 import { starText } from './prepare';
+import { enemyChips, teamChips, STATUS_NAMES, type StatusChip } from '../status-labels';
+import { storyBox } from '../components/story';
+import { markStorySeen } from './story';
 
 /** 續戰花費的星晶（GDD 2.1：用星晶續戰；數值待關卡與經濟確認） */
 export const CONTINUE_GEMS = 5;
@@ -42,6 +45,15 @@ function floatText(host: HTMLElement, text: string, cls: string): void {
 }
 
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+function chipRow(chips: StatusChip[], cls: string): HTMLElement {
+  return h('div', { class: cls }, chips.map((c) => h('button', { type: 'button', class: `chip ${c.tone}`, onClick: (e: Event) => { e.stopPropagation(); toast(c.detail, 2600); } }, c.text)));
+}
+
+/** 轉珠結算中發生、要等消除動畫後才播放的戰鬥事件 */
+type QueuedEvent =
+  | { kind: 'status'; enemy?: number; text: string; resisted: boolean }
+  | { kind: 'poison'; damage: number };
 
 interface Setup {
   stage: StageDef;
@@ -90,6 +102,9 @@ class BattleView {
   private waveLabel = h('div', { class: 'wave-label' });
   private teamRow = h('div', { class: 'team-row' });
   private hpHost = h('div', { class: 'team-hp' });
+  private teamChipsHost = h('div');
+  private queue: QueuedEvent[] = [];
+  private offs: (() => void)[] = [];
   private comboEl = h('div', { class: 'combo-count', 'aria-live': 'polite' });
   private boardView: BoardView;
   private state: BattleState;
@@ -118,7 +133,7 @@ class BattleView {
         iconButton('close', '撤退', () => void this.askRetreat())),
       this.enemyZone,
       this.comboEl,
-      h('div', { class: 'battle-bottom safe-bottom' }, this.teamRow, this.hpHost, this.boardView.element),
+      h('div', { class: 'battle-bottom safe-bottom' }, this.teamRow, this.teamChipsHost, this.hpHost, this.boardView.element),
     );
     this.renderEnemies();
     this.renderTeam();
@@ -126,9 +141,16 @@ class BattleView {
     this.boardView.setBoard(this.state.board);
     this.boardView.setEnabled(true);
     this.updateBgm();
+    const ev = s.battle.events;
+    this.offs.push(
+      ev.on('statusApplied', (e) => this.queue.push({ kind: 'status', enemy: e.side === 'enemy' ? e.enemy : undefined, text: STATUS_NAMES[e.status.id] ?? e.status.id, resisted: e.resisted })),
+      ev.on('poisonTick', (e) => this.queue.push({ kind: 'poison', damage: e.damage })),
+    );
+    if (!s.practice) this.maybeBossStory();
   }
 
   destroy(): void {
+    this.offs.forEach((off) => off());
     this.boardView.destroy();
     this.dialog?.close();
   }
@@ -154,6 +176,7 @@ class BattleView {
         h('div', { class: 'enemy-cd' }, `${e.cooldown}`),
         h('div', { class: 'enemy-art' }, enemyArt(e, boss)),
         h('div', { class: 'enemy-name' }, badge(ATTRIBUTE_NAMES[e.def.attribute], `attr-${e.def.attribute}`), e.def.name),
+        chipRow(enemyChips(e), 'enemy-chips'),
         bar({ value: e.hp, max: e.maxHp, variant: 'hp' }),
       );
       row.appendChild(el);
@@ -170,6 +193,7 @@ class BattleView {
     el.querySelector('.bar')!.replaceWith(bar({ value: e.hp, max: e.maxHp, variant: 'hp', previous: previousHp }));
     el.classList.toggle('dead', e.hp <= 0);
     el.classList.toggle('targeted', i === this.state.target);
+    el.querySelector('.enemy-chips')!.replaceWith(chipRow(enemyChips(e), 'enemy-chips'));
   }
 
   private renderTeam(): void {
@@ -185,6 +209,7 @@ class BattleView {
   }
 
   private renderHp(previous?: number): void {
+    this.teamChipsHost.replaceChildren(chipRow(teamChips(this.state), 'team-chips'));
     clear(this.hpHost);
     this.hpHost.appendChild(bar({ value: this.state.hp, max: this.state.maxHp, variant: 'hp', label: true, previous }));
   }
@@ -262,6 +287,7 @@ class BattleView {
 
   private async resolveTurn(path: Parameters<Battle['submitMove']>[0]): Promise<void> {
     const before = this.state;
+    this.queue = [];
     const res = this.s.battle.submitMove(path);
     if (!res.ok) {
       toast(res.reason);
@@ -291,8 +317,13 @@ class BattleView {
       this.element.classList.remove('shake');
       void this.element.offsetWidth;
       this.element.classList.add('shake');
-      floatText(this.hpHost, `-${atk.damage.toLocaleString()}`, 'hurt');
+      floatText(this.hpHost, `-${atk.damage.toLocaleString()}${atk.hits > 1 ? ` ×${atk.hits}` : ''}`, 'hurt');
+      if (atk.survived) floatText(this.hpHost, '保命！', 'heal');
     }
+
+    // 持續傷害、敵人技能與異常狀態
+    if (res.summary.dotHits.length) await this.animateHits(before, { hits: res.summary.dotHits });
+    await this.playQueue();
 
     const hpBefore = this.shownHp;
     this.state = after;
@@ -307,6 +338,7 @@ class BattleView {
       this.renderEnemies();
       this.updateBgm();
       this.banner(after.waveCount - 1 === after.wave && this.s.stage.waves[after.wave]?.boss ? 'BOSS' : `WAVE ${after.wave + 1}`);
+      if (!this.s.practice && (await this.maybeBossStory())) return;
     } else {
       after.enemies.forEach((e, i) => this.updateEnemy(i, e));
     }
@@ -314,6 +346,35 @@ class BattleView {
     if (after.phase === 'won') return this.onWin();
     if (after.phase === 'lost') return this.onLose();
     this.boardView.setEnabled(true);
+  }
+
+  private async playQueue(): Promise<void> {
+    for (const q of this.queue.splice(0)) {
+      if (q.kind === 'poison') {
+        floatText(this.hpHost, `-${q.damage.toLocaleString()}`, 'hurt');
+      } else {
+        const host = q.enemy !== undefined ? this.enemyEls[q.enemy] : this.hpHost;
+        if (host) floatText(host, q.resisted ? `抵抗 ${q.text}` : q.text, 'status');
+      }
+      await wait(260 / this.speed);
+    }
+  }
+
+  /** 進入 Boss 波時播放 beforeBoss 劇情（看過的不再播）。有播放時回傳 true，播完才開放轉珠 */
+  private async maybeBossStory(): Promise<boolean> {
+    const id = this.s.stage.story?.beforeBoss;
+    const lines = id ? gameData.story[id] : undefined;
+    if (!id || !lines || !this.s.stage.waves[this.state.wave]?.boss || getSave().progress.storySeen.includes(id)) return false;
+    this.boardView.setEnabled(false);
+    await wait(900);
+    await new Promise<void>((resolve) => {
+      const layer = h('div', { class: 'story-layer' });
+      layer.appendChild(storyBox(lines, () => { layer.remove(); resolve(); }));
+      this.element.appendChild(layer);
+    });
+    markStorySeen(id);
+    if (this.state.phase === 'player') this.boardView.setEnabled(true);
+    return true;
   }
 
   private async animateHits(before: BattleState, summary: Pick<TurnSummary, 'hits'>): Promise<void> {
@@ -376,7 +437,10 @@ class BattleView {
     }
     const leave = () => {
       this.dialog?.close();
-      this.nav.back();
+      const after = this.s.stage.story?.after;
+      // 通關後的劇情只在第一次播放
+      if (after && gameData.story[after] && !getSave().progress.storySeen.includes(after)) this.nav.replace('story', [after], { next: 'back' });
+      else this.nav.back();
     };
     this.dialog = openDialog('勝利！', h('div', { class: 'list' }, rows), [
       button('再戰一次', { onClick: () => { this.dialog?.close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', [this.s.stage.id]); } }),

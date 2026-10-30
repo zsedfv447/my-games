@@ -58,7 +58,10 @@ export const prepareScreen: ScreenDef = {
       if (!entered.ok) return toast(ENTER_ERRORS[entered.reason] ?? entered.reason);
       commit(entered.save);
       armBattle(stage.id);
-      nav.go('battle', [stage.id]);
+      // 第一次挑戰時先播關卡開場劇情，播完直接進戰鬥
+      const before = stage.story?.before;
+      if (before && gameData.story[before] && !getSave().progress.storySeen.includes(before)) nav.go('story', [before], { next: `battle/${stage.id}` });
+      else nav.go('battle', [stage.id]);
     };
 
     return h(

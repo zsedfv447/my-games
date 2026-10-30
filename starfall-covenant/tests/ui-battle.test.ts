@@ -89,3 +89,37 @@ describe('出戰隊伍', () => {
     ]);
   });
 });
+
+import { buffChip, enemyChips, statusChip, teamChips } from '../src/ui/status-labels';
+import { storyTitle } from '../src/ui/screens/story';
+
+describe('狀態標籤', () => {
+  it('異常狀態顯示名稱與剩餘回合', () => {
+    expect(statusChip({ id: 'comboShield', turns: 2, value: 6 }, 'enemy').text).toBe('Combo≥6 2');
+    expect(statusChip({ id: 'attributeShield', turns: null, params: { attribute: 'fire' } }, 'enemy').text).toBe('焰減傷');
+    expect(statusChip({ id: 'poison', turns: 3 }, 'debuff').detail).toContain('剩 3 回合');
+  });
+  it('增益與敵人的定身、持續傷害', () => {
+    expect(buffChip({ kind: 'reduceDamage', percent: 50, turns: 2 }).text).toBe('減傷50% 2');
+    expect(teamChips({ buffs: [{ kind: 'surviveOnce', turns: 1 }], teamStatuses: [{ id: 'skillSeal', turns: 2 }] }).map((c) => c.tone)).toEqual(['buff', 'debuff']);
+    const e = { statuses: [], lockedTurns: 2, dots: [{ amount: 500, attribute: 'fire', turns: 3 }] } as never;
+    expect(enemyChips(e).map((c) => c.text)).toEqual(['定身 2', '持續傷害 3']);
+  });
+  it('練習戰的主動技可以施放', () => {
+    const b = startBattle(DEMO_STAGE, DEMO_TEAM, DEMO_HELPER, createRng(3), DEMO_DATA);
+    for (let t = 0; t < 3; t++) b.submitMove([{ row: 4, col: 0 }, { row: 4, col: 1 }]);
+    const r = b.useSkill(0);
+    expect(r.ok).toBe(true);
+    expect(b.getState().enemies[0].dots.length + (b.getState().enemies[0].hp <= 0 ? 1 : 0)).toBeGreaterThan(0);
+  });
+});
+
+describe('劇情標題', () => {
+  it('劇情 id 轉成回顧標題', () => {
+    expect(storyTitle('prologue')).toBe('序章');
+    expect(storyTitle('ch2-boss')).toBe('第 2 章・決戰前');
+    expect(storyTitle('tower-30')).toBe('挑戰之塔・第 30 層');
+    expect(storyTitle('ev-beast-end')).toBe('活動・尾聲');
+    expect(storyTitle('ev-beast-2')).toBe('活動・第 2 話');
+  });
+});
