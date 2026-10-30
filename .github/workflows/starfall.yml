@@ -37,16 +37,17 @@ jobs:
         env:
           PAGES_BASE: /${{ github.event.repository.name }}/starfall-covenant/
       - name: 組合 Pages 內容
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        if: vars.PAGES_ENABLED == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: mkdir -p ../_site/starfall-covenant && cp -r dist/. ../_site/starfall-covenant/
       - uses: actions/upload-pages-artifact@v3
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        if: vars.PAGES_ENABLED == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           path: _site
 
   deploy:
     needs: check
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    # 在 repo 開啟 GitHub Pages 並設定變數 PAGES_ENABLED=true 後才部署
+    if: vars.PAGES_ENABLED == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
