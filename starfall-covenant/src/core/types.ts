@@ -88,7 +88,11 @@ export type SkillEffect =
   | { type: 'noSkyfallCombo'; turns: number }
   | { type: 'reduceAllyCooldown'; turns: number }
   | { type: 'chainOnSkill'; multiplier: number; turns: number }
-  | { type: 'cleanse' };
+  | { type: 'cleanse' }
+  /** 盤面上缺少的屬性（五屬，不含心）各補 count 顆（提案 001，用於七彩齊攻） */
+  | { type: 'fillMissingOrbs'; count: number }
+  /** turns 回合內天降珠為強化珠的機率（0–1）（提案 001，用於強化珠增幅） */
+  | { type: 'setEnhancedSkyfallRate'; rate: number; turns: number };
 
 export interface ActiveSkillDef {
   id: string;
@@ -121,6 +125,8 @@ export type LeaderEffect =
   | { type: 'ignoreDefense' }
   | { type: 'enemyCooldownPlus'; turns: number }
   | { type: 'skillCooldownStart'; charged: boolean }
+  /** 每回合全隊技能冷卻額外減少 turns（提案 001，用於技能循環） */
+  | { type: 'allyCooldownPerTurn'; turns: number }
   | { type: 'boardSize'; cols: number; rows: number };
 
 export interface LeaderSkillDef {
