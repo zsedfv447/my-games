@@ -1,0 +1,95 @@
+import { describe, expect, it } from 'vitest';
+import { gameData } from '../src/data/load';
+import { createGrowthContext } from '../src/growth';
+import { teamCostLimit } from '../src/progression/player';
+import {
+  archetypeFiveStars, buildProgressTeam, estimateProgress, fiveStarCount, mainOrder, progressHelper, PROGRESS_ASSUMPTIONS,
+  type ProgressEstimate,
+} from '../tools/sim/progress';
+
+const ctx = createGrowthContext(gameData);
+const stages = gameData.stages;
+const order = mainOrder(stages);
+const est = (id: string) => estimateProgress(order.find((s) => s.id === id)!, stages, ctx, 'fire');
+const zeroCores = { fire: 0, water: 0, wood: 0, light: 0, dark: 0 };
+const fake = (over: Partial<ProgressEstimate>): ProgressEstimate => ({
+  stageId: 'x', mainCleared: 0, chapter: 1, playerLevel: 1, teamCostLimit: 33, coin: 0, dailyRuns: 0, cardExpPerMember: 0, cores: zeroCores, ...over,
+});
+
+describe('sim --progress：進度估算', () => {
+  it('主線依解鎖順序排列', () => {
+    expect(order[0].id).toBe('st-1-1');
+    expect(order).toHaveLength(stages.filter((s) => s.kind === 'main').length);
+    for (let i = 1; i < order.length; i++) expect(order[i].unlockAfter).toBe(order[i - 1].id);
+  });
+
+  it('第一關是新玩家：Lv1、隊伍空間用 teamCostLimit、沒有每日關卡', () => {
+    const p = est('st-1-1');
+    expect(p).toMatchObject({ mainCleared: 0, playerLevel: 1, teamCostLimit: teamCostLimit(1), dailyRuns: 0, cardExpPerMember: 0 });
+  });
+
+  it('越後面的關，玩家等級、卡片經驗、星核都不會變少', () => {
+    let prev = est(order[0].id);
+    for (const s of order.slice(1)) {
+      const p = est(s.id);
+      expect(p.playerLevel).toBeGreaterThanOrEqual(prev.playerLevel);
+      expect(p.teamCostLimit).toBe(teamCostLimit(p.playerLevel));
+      expect(p.cardExpPerMember).toBeGreaterThanOrEqual(prev.cardExpPerMember);
+      expect(p.cores.fire).toBeGreaterThanOrEqual(prev.cores.fire);
+      prev = p;
+    }
+    // 星核只從每日關卡來，第 1 章結束後才開始累積
+    expect(est('st-1-9').cores.fire).toBe(0);
+    expect(est('st-3-1').cores.fire).toBeGreaterThan(0);
+  });
+
+  it('5★ 張數依章節', () => {
+    expect(fiveStarCount(1)).toBe(1);
+    expect(fiveStarCount(3)).toBe(2);
+    expect(fiveStarCount(5, { ...PROGRESS_ASSUMPTIONS, fiveStarsByChapter: [] })).toBe(0);
+  });
+});
+
+describe('sim --progress：組隊', () => {
+  const starter = ['c106', 'c107', 'c111', 'c109', 'c108'];
+  const pool = archetypeFiveStars('mono', Object.values(gameData.gachaPools[0].cards).flat(), ctx);
+
+  it('流派 5★ 從常駐池取，換掉稀有度最低的隊員，而且放得下才換', () => {
+    expect(pool.map((c) => c.id)).toContain('c104');
+    const t = buildProgressTeam('mono', starter, pool, fake({ teamCostLimit: 33 }), ctx);
+    expect(t.fiveStars).toBe(1);
+    expect(t.members.map((m) => m.cardId)).toEqual(['c106', 'c107', 'c111', 'c104', 'c108']); // 同稀有度同 Cost 時換後面的
+    expect(t.cost).toBeLessThanOrEqual(33);
+    const tight = buildProgressTeam('mono', starter, pool, fake({ teamCostLimit: 26 }), ctx);
+    expect(tight.fiveStars).toBe(0);
+    expect(tight.members.map((m) => m.cardId)).toEqual(starter);
+  });
+
+  it('滿級又有星核、金幣時進化；星核不夠就不進化', () => {
+    const big = fake({ cardExpPerMember: 10_000_000, coin: 1_000_000, cores: { ...zeroCores, fire: 5 }, teamCostLimit: 200 });
+    const t = buildProgressTeam('mono', starter, [], big, ctx);
+    expect(t.members.find((m) => m.baseId === 'c109')).toMatchObject({ cardId: 'c110', evolved: true });
+    expect(t.members.find((m) => m.baseId === 'c106')?.level).toBe(ctx.card('c106')!.maxLevel);
+    const noCore = buildProgressTeam('mono', starter, [], { ...big, cores: zeroCores }, ctx);
+    expect(noCore.members.some((m) => m.evolved)).toBe(false);
+  });
+
+  it('進化後超過隊伍空間就退回進化前', () => {
+    const big = fake({ cardExpPerMember: 10_000_000, coin: 1_000_000, cores: { ...zeroCores, fire: 5 }, teamCostLimit: 26 });
+    const t = buildProgressTeam('mono', starter, [], big, ctx);
+    expect(t.cost).toBeLessThanOrEqual(26);
+    expect(t.members.some((m) => m.evolved)).toBe(false);
+  });
+
+  it('隊長有剩下的星核與金幣時解鎖第 1 個覺醒', () => {
+    const leaderWithAwaken = ['c102', 'c107', 'c111', 'c109', 'c108'];
+    const rich = fake({ cardExpPerMember: 0, coin: 1_000_000, cores: { ...zeroCores, fire: 1 }, teamCostLimit: 200 });
+    expect(buildProgressTeam('berserk', leaderWithAwaken, [], rich, ctx).members[0].awakened).toBe(1);
+    expect(buildProgressTeam('berserk', leaderWithAwaken, [], { ...rich, coin: 0 }, ctx).members[0].awakened).toBe(0);
+  });
+
+  it('助戰和出擊準備一樣取第一位可用的 NPC', () => {
+    const h = progressHelper(order[0], stages, ctx, Date.UTC(2026, 9, 31));
+    expect(h === null || h.level >= 1).toBe(true);
+  });
+});
