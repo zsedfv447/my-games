@@ -96,6 +96,8 @@ export function validateGameData(d: GameData): string[] {
     if (s.cooldown.min > s.cooldown.max) err(`skills/${s.id}`, '最短冷卻大於最長冷卻');
     for (const e of s.effects) {
       if (e.type === 'convertOrbs' && !ORB_TYPES.includes(e.to)) err(`skills/${s.id}`, `未知珠子 ${e.to}`);
+      if (e.type === 'rowToOrb' && !ORB_TYPES.includes(e.to)) err(`skills/${s.id}`, `未知珠子 ${e.to}`);
+      if (e.type === 'twoColorBoard' && (e.colors.length !== 2 || e.colors[0] === e.colors[1] || e.colors.some((c) => !ORB_TYPES.includes(c)))) err(`skills/${s.id}`, `雙色盤要指定兩種不同的珠 ${e.colors}`);
     }
   }
 

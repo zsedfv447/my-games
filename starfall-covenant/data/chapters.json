@@ -55,7 +55,12 @@
     "constellation": "英雄座",
     "race": "human",
     "starReward": {
-      "gems": 5
+      "cards": [
+        {
+          "card": "c606",
+          "count": 1
+        }
+      ]
     },
     "stageCount": 9
   }
