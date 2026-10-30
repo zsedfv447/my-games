@@ -25,6 +25,9 @@ export interface BattleGuide {
   checkSkill(member: number): string | null;
   afterTurn(state: BattleState): void;
   afterSkill(state: BattleState): void;
+  /** 打贏、結算畫面出現前：收起對話框 */
+  hide(): void;
+  /** 結算畫面關閉後 */
   onWin(): void;
   destroy(): void;
 }
@@ -146,6 +149,11 @@ export class TutorialBattleGuide implements BattleGuide {
     this.phase = 'free';
     this.layer?.clearPointers();
     this.say(['盤面上多了好多焰珠！現在可以自由轉珠了，把敵人打倒吧。']);
+  }
+
+  hide(): void {
+    this.phase = 'won';
+    this.layer?.clear();
   }
 
   onWin(): void {

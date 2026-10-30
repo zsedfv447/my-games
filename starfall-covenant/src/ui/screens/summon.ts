@@ -11,7 +11,13 @@ import { openDialog, toast, type DialogHandle } from '../components/overlay';
 import { clear, h } from '../dom';
 import type { ScreenContext, ScreenDef } from '../router';
 import { commit, getSave } from '../state';
+import { tutorialFirstPull } from '../tutorial/flow';
 import '../summon.css';
+
+/** 新手教學的第一抽：限定和隊長合得來的夥伴（見 tutorial/flow.ts） */
+function firstPullOptions(save: SaveData, pool: GachaPoolDef): { firstFrom?: string[] } {
+  return { firstFrom: tutorialFirstPull(save, pool, gameData.cards) };
+}
 
 /** 一輪召喚先入庫並保存，再開始演出；鎖定期間及切頁後拒絕舊回呼。 */
 export function createSummonSession(deps: { read: () => SaveData; write: (save: SaveData) => void; rng: Rng; now: () => number }) {
@@ -20,7 +26,8 @@ export function createSummonSession(deps: { read: () => SaveData; write: (save: 
   return {
     begin(pool: GachaPoolDef, count: 1 | 10): ReturnType<typeof pullGacha> | { ok: false; reason: 'busy' } {
       if (busy || disposed) return { ok: false, reason: 'busy' };
-      const result = pullGacha(deps.read(), pool, count, deps.rng, deps.now());
+      const save = deps.read();
+      const result = pullGacha(save, pool, count, deps.rng, deps.now(), firstPullOptions(save, pool));
       if (result.ok) {
         busy = true;
         deps.write(result.save);
@@ -68,7 +75,7 @@ export function startPull(pool: GachaPoolDef, count: 1 | 10): PendingSummon | nu
   if (pullStarting || pending) { toast(FAIL_TEXT.busy); return null; }
   pullStarting = true;
   try {
-    const result = pullGacha(getSave(), pool, count, createRng(), Date.now());
+    const result = pullGacha(getSave(), pool, count, createRng(), Date.now(), firstPullOptions(getSave(), pool));
     if (!result.ok) { toast(FAIL_TEXT[result.reason]); return null; }
     commit(result.save);
     emitPull(pool, count, result.results);

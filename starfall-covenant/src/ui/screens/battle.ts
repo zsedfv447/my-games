@@ -609,7 +609,7 @@ class BattleView {
     await this.playFinisher();
     audio.play('win');
     audio.playBgm('victory');
-    if (this.s.guide) return this.s.guide.onWin();
+    if (this.s.guide) return this.tutorialResult(this.s.guide);
     const result = this.s.battle.getResult()!;
     let clear: StageClearResult | null = null;
     const firstClear = !this.s.practice && !getSave().progress.clearedStages.includes(this.s.stage.id);
@@ -656,6 +656,20 @@ class BattleView {
         button('返回', { variant: next ? undefined : 'primary', onClick: () => leave() }),
         next,
       ],
+    });
+  }
+
+  /** 教學戰鬥的簡化結算：只有戰績與隊長台詞，不發任何獎勵；按繼續後交回教學引導 */
+  private tutorialResult(guide: BattleGuide): void {
+    guide.hide();
+    this.dialog = openClearResult(this.element, {
+      stageName: this.s.stage.name,
+      items: clearItems(this.s.battle.getResult()!, null),
+      speed: this.speed,
+      instantCount: getSettings().lowFx,
+      notes: [{ text: '正式關卡會在這裡結算金幣、經驗與掉落' }],
+      leaderLine: leaderLineOf(this.state),
+      actions: [button('繼續', { variant: 'primary', onClick: () => { this.dialog?.close(); guide.onWin(); } })],
     });
   }
 

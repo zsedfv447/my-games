@@ -1005,6 +1005,7 @@ input[type='range'] { flex: 1.4; accent-color: var(--gold); }
 .flip-card.charging.r-6 .back { filter: drop-shadow(0 0 16px var(--rarity-6)) brightness(1.5); }
 .flip-card .badge.new { position: absolute; top: -6px; right: -6px; z-index: 2; opacity: 0; transition: opacity 200ms 350ms; font-size: 10px; }
 .flip-card.flipped .badge.new { opacity: 1; }
+.badge.owned { color: var(--text-dim); }
 @keyframes flip-drop { from { opacity: 0; transform: translateY(-30px) scale(0.85); } }
 @keyframes card-charge { 25% { transform: translate(1px, -1px) rotate(1deg); } 75% { transform: translate(-1px, 1px) rotate(-1deg); } }
 

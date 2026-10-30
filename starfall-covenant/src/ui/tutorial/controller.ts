@@ -3,14 +3,23 @@
 import { bus } from '../../core/events';
 import { gameData } from '../../data/load';
 import { pullCost } from '../../progression/gacha';
+import { analyzeTeam } from '../../growth';
 import { confirmDialog, toast } from '../components/overlay';
+import { revealReward } from '../components/reward-reveal';
 import type { Navigator, Route, ScreenDef } from '../router';
-import { commit, getSave, onStateChange } from '../state';
-import { FIRST_STAGE, advanceTutorial, grantSummonGift, guideFor, skipTutorial, tutorialStep, type GuideAction } from './flow';
+import { commit, getSave, growth, onStateChange } from '../state';
+import { FIRST_STAGE, advanceTutorial, grantSummonGift, guideFor, skipTutorial, tutorialStep, type GuideAction, type TeamFitHint } from './flow';
 import { GuideLayer } from './guide-ui';
 
 export interface TutorialController {
   onRoute(screen: ScreenDef, el: HTMLElement, route: Route): void;
+}
+
+/** 目前隊伍的流派分析結果（和編隊畫面的紅框同一份計算） */
+function teamFitHint(): TeamFitHint {
+  const save = getSave();
+  const misfits = analyzeTeam(save, growth, save.teams[save.activeTeam].members).members.filter((m) => !m.fits);
+  return { misfits: misfits.length, reason: misfits[0]?.reasons[0] };
 }
 
 export function installTutorial(stage: HTMLElement, nav: Navigator): TutorialController {
@@ -18,6 +27,8 @@ export function installTutorial(stage: HTMLElement, nav: Navigator): TutorialCon
   let route: Route | null = null;
   let screenEl: HTMLElement | null = null;
   let shownKey = '';
+  /** 領獎演出播放中，先不疊引導 */
+  let revealing = false;
 
   const run = (a: GuideAction) => {
     if (a.advance) commit(advanceTutorial(getSave(), tutorialStep(getSave())));
@@ -31,7 +42,7 @@ export function installTutorial(stage: HTMLElement, nav: Navigator): TutorialCon
   };
 
   const refresh = () => {
-    if (!route) return;
+    if (!route || revealing) return;
     const step = tutorialStep(getSave());
     // 走進第一章第一關的戰鬥，教學就完成了
     if (step === 'stage' && route.name === 'battle' && route.args[0] === FIRST_STAGE) {
@@ -44,8 +55,15 @@ export function installTutorial(stage: HTMLElement, nav: Navigator): TutorialCon
       const pool = gameData.gachaPools[0];
       const gift = grantSummonGift(getSave(), pool ? pullCost(pool, 1) : 0);
       if (gift.granted) {
+        // 和登入、任務獎勵同一套領獎演出；收下後才出現召喚引導
+        revealing = true;
+        layer.clear();
         commit(gift.save);
-        toast(`薇菈送你 ${gift.granted} 星晶`);
+        void revealReward('見面禮', { gems: gift.granted }, '引路人薇菈送你一次單抽的星晶').then(() => {
+          revealing = false;
+          shownKey = '';
+          refresh();
+        });
         return;
       }
     }
@@ -53,7 +71,7 @@ export function installTutorial(stage: HTMLElement, nav: Navigator): TutorialCon
     if (key === shownKey) return;
     shownKey = key;
     layer.clear();
-    const spec = guideFor(step, route);
+    const spec = guideFor(step, route, step === 'team' && route.name === 'team' ? teamFitHint() : undefined);
     if (!spec) return;
     const actions = [spec.secondary, spec.action].filter((a): a is GuideAction => !!a).map((a) => ({
       label: a.label,
