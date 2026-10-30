@@ -168,7 +168,7 @@ export interface EnemyDef {
 }
 
 // ---------- 關卡 ----------
-export type StageKind = 'main' | 'daily' | 'event' | 'tower';
+export type StageKind = 'main' | 'daily' | 'event' | 'tower' | 'trial';
 
 export type StarCondition =
   | { type: 'clearWithinTurns'; turns: number }
@@ -178,6 +178,24 @@ export type StarCondition =
   | { type: 'noContinue' };
 
 export interface DropDef { card: string; rate: number; level?: number }
+
+/** 進場時對玩家隊伍的限制（不填的欄位代表不限） */
+export interface TeamRule {
+  /** 每位隊員都要符合 */
+  filter?: UnitFilter;
+  /** 每位隊員都要帶有這個流派標籤 */
+  archetype?: ArchetypeId;
+  /** 隊伍必須包含的卡號 */
+  requiredCards?: string[];
+  maxMembers?: number;
+  noHelper?: boolean;
+}
+
+/** 關卡借給玩家的固定隊伍（流派試煉用，玩家不需擁有這些卡） */
+export interface FixedTeam {
+  members: { card: string; level: number; skillLevel?: number }[];
+  helper?: { card: string; level: number; skillLevel?: number };
+}
 
 export interface StageDef {
   id: string;
@@ -191,6 +209,10 @@ export interface StageDef {
   /** 活動關卡：所屬活動 id */
   event?: string;
   recommendedArchetypes?: ArchetypeId[];
+  /** 流派試煉：本關考驗的流派 */
+  archetype?: ArchetypeId;
+  teamRule?: TeamRule;
+  fixedTeam?: FixedTeam;
   waves: { enemies: string[]; boss?: boolean }[];
   rewards: { coin: number; playerExp: number; cardExp?: number; firstClear?: Reward };
   stars?: StarCondition[];

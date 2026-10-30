@@ -1,7 +1,8 @@
 // 召喚：常駐／限定卡池、單抽、十連（保底最低稀有度）、N 抽保底、限定角色機率提升、抽卡紀錄
-import type { GachaPoolDef, OwnedCard, Rarity, SaveData } from '../core/types';
+import type { GachaPoolDef, Rarity, SaveData } from '../core/types';
 import type { Rng } from '../core/rng';
 import { fail } from './result';
+import { addCards } from './rewards';
 
 /** 抽卡紀錄最多保留筆數（超過時丟掉最舊的） */
 export const GACHA_HISTORY_LIMIT = 1000;
@@ -104,16 +105,6 @@ export function checkGachaPool(pool: GachaPoolDef): string[] {
   return errors;
 }
 
-/** 產生不重複的卡片 uid（u1、u2…） */
-export function nextUidFactory(save: SaveData): () => string {
-  let max = 0;
-  for (const c of save.inventory.cards) {
-    const m = /^u(\d+)$/.exec(c.uid);
-    if (m) max = Math.max(max, Number(m[1]));
-  }
-  return () => `u${++max}`;
-}
-
 export function pullGacha(
   save: SaveData,
   pool: GachaPoolDef,
@@ -130,10 +121,9 @@ export function pullGacha(
   const rates = effectiveRates(pool);
   const guaranteeRates = effectiveRates(pool, pool.tenPullGuarantee.minRarity);
   const owned = new Set(save.collection.owned);
-  const newUid = nextUidFactory(save);
   let counter = save.gacha.pityCounter[pool.id] ?? 0;
   let gotGuaranteed = false;
-  const results: PullResult[] = [];
+  const results: Omit<PullResult, 'uid'>[] = [];
 
   for (let i = 0; i < count; i++) {
     let rarity: Rarity;
@@ -155,30 +145,24 @@ export function pullGacha(
     const isNew = !owned.has(cardId);
     owned.add(cardId);
     results.push({
-      cardId, rarity, uid: newUid(), isNew,
+      cardId, rarity, isNew,
       ...(pity ? { pity } : {}), ...(guarantee ? { guarantee } : {}),
     });
   }
 
-  const newCards: OwnedCard[] = results.map((r) => ({
-    uid: r.uid, cardId: r.cardId, level: 1, exp: 0, skillLevel: 1, limitBreak: 0, awakened: 0, locked: false, obtainedAt: now,
-  }));
+  const added = addCards(save, results.map((r) => ({ cardId: r.cardId })), now);
   const history = [...save.gacha.history, ...results.map((r) => ({ pool: pool.id, card: r.cardId, at: now }))];
-  const seen = new Set(save.collection.seen);
-  results.forEach((r) => seen.add(r.cardId));
 
   return {
     ok: true,
-    results,
+    results: results.map((r, i) => ({ ...r, uid: added.added[i].uid })),
     save: {
-      ...save,
+      ...added.save,
       player: { ...save.player, gems: save.player.gems - cost },
-      inventory: { ...save.inventory, cards: [...save.inventory.cards, ...newCards] },
       gacha: {
         pityCounter: { ...save.gacha.pityCounter, [pool.id]: counter },
         history: history.slice(-GACHA_HISTORY_LIMIT),
       },
-      collection: { ...save.collection, seen: [...seen], owned: [...owned] },
     },
   };
 }
