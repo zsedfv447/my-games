@@ -16,6 +16,9 @@ import { summonScreen, summonRatesScreen, summonHistoryScreen } from './summon';
 import { summonRitualScreen } from './summon-ritual';
 import { enhanceScreen } from './enhance';
 import { evolveScreen } from './evolve';
+import { shopScreen } from './shop';
+import { loginBonusScreen } from './login-bonus';
+import { achievementsScreen, questsScreen } from './quests';
 
 /** GDD 2.5 全部畫面；正式畫面完成後取代同名的建置中畫面 */
 export const SCREENS: ScreenDef[] = [
@@ -40,4 +43,8 @@ export const SCREENS: ScreenDef[] = [
   summonRitualScreen,
   enhanceScreen,
   evolveScreen,
+  shopScreen,
+  loginBonusScreen,
+  questsScreen,
+  achievementsScreen,
 ];

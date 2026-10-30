@@ -17,10 +17,6 @@ interface Stub {
 
 const STUBS: Stub[] = [
   { name: 'helper', title: '選擇助戰', chrome: 'sub', parent: 'adventure', icon: 'team', waitsFor: 'NPC 助戰名單（progression）' },
-  { name: 'shop', title: '商店', chrome: 'full', tab: 'shop', parent: 'home', icon: 'shop', waitsFor: '商店資料（progression）' },
-  { name: 'login-bonus', title: '每日登入', chrome: 'sub', parent: 'home', icon: 'gift', waitsFor: '登入獎勵（progression）' },
-  { name: 'quests', title: '任務', chrome: 'sub', parent: 'home', icon: 'quest', waitsFor: '任務計數（progression）' },
-  { name: 'achievements', title: '成就', chrome: 'sub', parent: 'home', icon: 'trophy', waitsFor: '成就（progression）' },
   { name: 'collection', title: '圖鑑', chrome: 'sub', parent: 'home', icon: 'book', waitsFor: '圖鑑（growth）' },
 ];
 

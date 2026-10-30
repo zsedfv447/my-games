@@ -415,6 +415,7 @@ class BattleView {
       commit(done.save);
       clear = done.result;
       bus.emit('stageCleared', { stageId: this.s.stage.id, turns: result.turns, stars: clear.stars });
+      for (const d of clear.drops) bus.emit('cardObtained', { cardId: d.cardId, uid: d.uid, source: 'drop' });
     }
     const rows = [
       h('div', { class: 'row between' }, h('span', null, '回合數'), h('strong', null, `${result.turns}`)),

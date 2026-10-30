@@ -125,7 +125,7 @@ describe('任務與成就', () => {
   ];
 
   it('data/quests.json 只用已知的計數器', () => {
-    expect(gameData.quests.filter((q) => !isKnownCounter(q.counter)).map((q) => q.id)).toEqual([]);
+    expect(gameData.quests.filter((q) => !isKnownCounter(q.counter, q.kind)).map((q) => q.id)).toEqual([]);
     expect(quests.every((q) => isKnownCounter(q.counter))).toBe(true);
   });
 

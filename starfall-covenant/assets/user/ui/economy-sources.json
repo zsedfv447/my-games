@@ -1,0 +1,323 @@
+{
+  "schema_version": 1,
+  "project": "星骸契約",
+  "created_date": "2026-10-31",
+  "generator": "Codex CLI（codex exec -m gpt-6-astra）呼叫其內建圖像工具 image_gen.imagegen；圖像工具的底層模型未公開",
+  "art_direction": "原創星空奇幻道具與場景，古銅金、深青綠、石紋、星形幾何契印。",
+  "reference_policy": "閱讀 covenant-skin.css 的配色並查看既有素材；發現既有 home.webp 和 summon-card-gold.webp 為外部作品素材，未將其傳給生成工具、未裁切或重用其像素，提示詞明確排除既有作品造型。所有新圖從文字提示詞生成；登入橫幅另針對自己生成的圖修正星節點數量。",
+  "workspace_write_scope": [
+    "shop-refill.png",
+    "shop-expand.png",
+    "shop-coin-bag.png",
+    "shop-gems.png",
+    "login-chest.png",
+    "shop-banner.webp",
+    "login-banner.webp",
+    "quest-banner.webp",
+    "economy-sources.json"
+  ],
+  "assets": [
+    {
+      "file": "shop-refill.png",
+      "tool": "image_gen.imagegen",
+      "generation_type": "text-to-image",
+      "prompt": "Use case: stylized-concept. Create a new ORIGINAL polished hand-painted dark celestial fantasy RPG inventory illustration, legible at 80px. Color language: aged bronze gold #e4c785, charcoal #171613, deep muted teal, rich luminous accents. Crisp painterly materials, restrained ornate geometric celestial craftsmanship, high-quality game item art. DO NOT copy any images previously shown, do not use any existing franchise designs, characters, logos or recognizable symbols. No text, no letters, no numbers, no watermark. Square 512x512 PNG with genuine transparent alpha background (not a checkerboard drawn into the image), centered entire object with generous 9% padding all sides. No floor, no background scene, no rectangular panel; only object and small local sparkles, clean alpha silhouette. Subject: One plump elegant stamina-restoring flask of bright emerald-teal elixir, almost full, designed as a rounded angular crystal vial held in aged bronze gold ribs with a small abstract six-ray star stopper. A warm heart-shaped mote suspended within liquid signifies renewed vitality. Short flowing luminous swirl hugs the flask. Strong simple silhouette, attractive rewarding healing item.",
+      "source_file": "/Users/ethan/.codex/generated_images/01a18dcd-68df-7c42-964b-5cf5b218b89c/exec-083089ea-4ceb-431a-bad7-1f4081a673b9.png",
+      "requested_dimensions": [
+        512,
+        512
+      ],
+      "description": "體力補滿商品圖，綠色回復藥瓶；價格由介面顯示。",
+      "post_processing": "macOS sips 等比例縮小為 512x512 PNG，保留生成的原生 alpha；未以色鍵去背。",
+      "generated_dimensions": [
+        1254,
+        1254
+      ],
+      "source_sha256": "5beb45f35b3e4b3cff4db6dc511a4491390cc19714b90c088176a2ef28de204c",
+      "validation": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "format": "PNG",
+        "mode": "RGBA",
+        "decode": "passed",
+        "visual_review": "passed: 已逐張查看最終輸出；主體完整、無文字、無既有作品標誌。",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_pixel_fraction": 0.68,
+        "transparent_corners": true
+      },
+      "output_sha256": "1d055f349a6cbe3998b0f1ad5313d78e2de2b5c94d8bcf36bf12d9d8a6cf7365",
+      "bytes": 269287
+    },
+    {
+      "file": "shop-expand.png",
+      "tool": "image_gen.imagegen",
+      "generation_type": "text-to-image",
+      "prompt": "Use case: stylized-concept. Create a new ORIGINAL polished hand-painted dark celestial fantasy RPG inventory illustration, legible at 80px. Color language: aged bronze gold #e4c785, charcoal #171613, deep muted teal, rich luminous accents. Crisp painterly materials, restrained ornate geometric celestial craftsmanship, high-quality game item art. DO NOT copy any images previously shown, do not use any existing franchise designs, characters, logos or recognizable symbols. No text, no letters, no numbers, no watermark. Square 512x512 PNG with genuine transparent alpha background (not a checkerboard drawn into the image), centered entire object with generous 9% padding all sides. No floor, no background scene, no rectangular panel; only object and small local sparkles, clean alpha silhouette. Subject: One compact dark teal leather card-carrying adventurer satchel, aged bronze corner fittings and original geometric falling-star clasp, open at top showing exactly FIVE visibly separate tall blank-faced card dividers fanning slightly outward. These are plain original slate card backs with small abstract stars and bronze edging, NO characters or elaborate card designs. The satchel is a card inventory expansion item; no numeric labels.",
+      "source_file": "/Users/ethan/.codex/generated_images/01a18dcd-68df-7c42-964b-5cf5b218b89c/exec-5c83c7ff-e0dd-4d48-add1-f24ba4dfd752.png",
+      "requested_dimensions": [
+        512,
+        512
+      ],
+      "description": "卡片背包擴充商品圖，背包內五張卡片；數值由介面顯示。",
+      "post_processing": "macOS sips 等比例縮小為 512x512 PNG，保留生成的原生 alpha；未以色鍵去背。",
+      "generated_dimensions": [
+        1254,
+        1254
+      ],
+      "source_sha256": "c17774e220a5b5162bdc13ac71e3153c8d1b8ceab121dd17245ef8c71441ad02",
+      "validation": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "format": "PNG",
+        "mode": "RGBA",
+        "decode": "passed",
+        "visual_review": "passed: 已逐張查看最終輸出；主體完整、無文字、無既有作品標誌。",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_pixel_fraction": 0.4226,
+        "transparent_corners": true
+      },
+      "output_sha256": "89c5b3bd0564aeff0fc4dca427b8a1bcf043d6fa542ab877f0ea59ee724e379e",
+      "bytes": 402914
+    },
+    {
+      "file": "shop-coin-bag.png",
+      "tool": "image_gen.imagegen",
+      "generation_type": "text-to-image",
+      "prompt": "Use case: stylized-concept. Create a new ORIGINAL polished hand-painted dark celestial fantasy RPG inventory illustration, legible at 80px. Color language: aged bronze gold #e4c785, charcoal #171613, deep muted teal, rich luminous accents. Crisp painterly materials, restrained ornate geometric celestial craftsmanship, high-quality game item art. DO NOT copy any images previously shown, do not use any existing franchise designs, characters, logos or recognizable symbols. No text, no letters, no numbers, no watermark. Square 512x512 PNG with genuine transparent alpha background (not a checkerboard drawn into the image), centered entire object with generous 9% padding all sides. No floor, no background scene, no rectangular panel; only object and small local sparkles, clean alpha silhouette. Subject: One abundant open dark teal leather coin pouch with bronze drawstring fastener, full of thick warm gold coins spilling in a compact group in front. Each coin bears a simple unique inset six-ray star with a small circular center, no writing or real-world symbols. A few stacked coins create depth, strong warm golden highlights. Keep the pile compact and fully visible.",
+      "source_file": "/Users/ethan/.codex/generated_images/01a18dcd-68df-7c42-964b-5cf5b218b89c/exec-ba0d42c1-7e9c-4fae-b051-94df35921363.png",
+      "requested_dimensions": [
+        512,
+        512
+      ],
+      "description": "金幣袋商品圖；10000 金幣數額由介面顯示。",
+      "post_processing": "macOS sips 等比例縮小為 512x512 PNG，保留生成的原生 alpha；未以色鍵去背。",
+      "generated_dimensions": [
+        1254,
+        1254
+      ],
+      "source_sha256": "95ae11138a7585f770bcc4d8b4998b6508474207a29b6a191159f51b42641bdb",
+      "validation": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "format": "PNG",
+        "mode": "RGBA",
+        "decode": "passed",
+        "visual_review": "passed: 已逐張查看最終輸出；主體完整、無文字、無既有作品標誌。",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_pixel_fraction": 0.4617,
+        "transparent_corners": true
+      },
+      "output_sha256": "46119b0569c9f52498e64a59f17ea3212ffea2b15201aba203a860d053dcff58",
+      "bytes": 419607
+    },
+    {
+      "file": "shop-gems.png",
+      "tool": "image_gen.imagegen",
+      "generation_type": "text-to-image",
+      "prompt": "Use case: stylized-concept. Create a new ORIGINAL polished hand-painted dark celestial fantasy RPG inventory illustration, legible at 80px. Color language: aged bronze gold #e4c785, charcoal #171613, deep muted teal, rich luminous accents. Crisp painterly materials, restrained ornate geometric celestial craftsmanship, high-quality game item art. DO NOT copy any images previously shown, do not use any existing franchise designs, characters, logos or recognizable symbols. No text, no letters, no numbers, no watermark. Square 512x512 PNG with genuine transparent alpha background (not a checkerboard drawn into the image), centered entire object with generous 9% padding all sides. No floor, no background scene, no rectangular panel; only object and small local sparkles, clean alpha silhouette. Subject: EXACTLY THREE separate celestial currency crystals, one large central and two smaller flanking, forming a compact triangular group. Each is a chunky elongated hexagonal double-terminated translucent aqua crystal, distinct deep indigo-violet facets, warm pale golden starlight core, with a tiny floating six-ray star reflected inside. A restrained arc of gold star dust links the three. No coins, no pouch, no pedestal. High contrast readable crystal silhouettes. Same material design for all three.",
+      "source_file": "/Users/ethan/.codex/generated_images/01a18dcd-68df-7c42-964b-5cf5b218b89c/exec-5ad62930-1170-41bf-9604-eab70708413c.png",
+      "requested_dimensions": [
+        512,
+        512
+      ],
+      "description": "活動兌換商品星晶三枚；獸王的召集令代幣成本由介面顯示。",
+      "post_processing": "macOS sips 等比例縮小為 512x512 PNG，保留生成的原生 alpha；未以色鍵去背。",
+      "generated_dimensions": [
+        1254,
+        1254
+      ],
+      "source_sha256": "1ce6ddaefe46c25bdec96a0f65a622eee3457c077050f0c755c3eda774e638df",
+      "validation": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "format": "PNG",
+        "mode": "RGBA",
+        "decode": "passed",
+        "visual_review": "passed: 已逐張查看最終輸出；主體完整、無文字、無既有作品標誌。",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_pixel_fraction": 0.6146,
+        "transparent_corners": true
+      },
+      "output_sha256": "641d81897c3dfee5b1870e96a91d88b02409a3735a7c83a26bf941aa2cfb4d1d",
+      "bytes": 319221
+    },
+    {
+      "file": "login-chest.png",
+      "tool": "image_gen.imagegen",
+      "generation_type": "text-to-image",
+      "prompt": "Use case: stylized-concept. Create a new ORIGINAL polished hand-painted dark celestial fantasy RPG inventory illustration, legible at 80px. Color language: aged bronze gold #e4c785, charcoal #171613, deep muted teal, rich luminous accents. Crisp painterly materials, restrained ornate geometric celestial craftsmanship, high-quality game item art. DO NOT copy any images previously shown, do not use any existing franchise designs, characters, logos or recognizable symbols. No text, no letters, no numbers, no watermark. Square 512x512 PNG with genuine transparent alpha background (not a checkerboard drawn into the image), centered entire object with generous 9% padding all sides. No floor, no background scene, no rectangular panel; only object and small local sparkles, clean alpha silhouette. Subject: A grand seventh-day reward chest, three-quarter front view, squat richly crafted midnight-teal reliquary with aged golden bronze structural bands, distinctive ORIGINAL geometric six-ray falling-star latch and stepped angular lid, open. EXACTLY THREE celestial currency crystals hovering just above the opening, each chunky elongated hexagonal double-terminated translucent aqua with deep indigo-violet facets and warm pale golden starlight core. Lid sits behind the gems; gems are clearly distinct. Warm magical light from inside. Precious and celebratory but not cluttered, chest and gems fully within frame. No coins, no numerals.",
+      "source_file": "/Users/ethan/.codex/generated_images/01a18dcd-68df-7c42-964b-5cf5b218b89c/exec-2ab2c79d-d49f-4c72-b19e-588fc2b28dfa.png",
+      "requested_dimensions": [
+        512,
+        512
+      ],
+      "description": "七日登入大獎寶箱與三枚星晶。",
+      "post_processing": "macOS sips 等比例縮小為 512x512 PNG，保留生成的原生 alpha；未以色鍵去背。",
+      "generated_dimensions": [
+        1254,
+        1254
+      ],
+      "source_sha256": "d70f3d2593076c3cec4d90c373635fb9f562e994bb322c8a359b58499100aa7f",
+      "validation": {
+        "dimensions": [
+          512,
+          512
+        ],
+        "format": "PNG",
+        "mode": "RGBA",
+        "decode": "passed",
+        "visual_review": "passed: 已逐張查看最終輸出；主體完整、無文字、無既有作品標誌。",
+        "alpha_extrema": [
+          0,
+          255
+        ],
+        "transparent_pixel_fraction": 0.4255,
+        "transparent_corners": true
+      },
+      "output_sha256": "e5cbf07d14659051d01dd26698dda05f0c71d86e18612a8f4051a4b4eeb2f8cb",
+      "bytes": 407726
+    },
+    {
+      "file": "shop-banner.webp",
+      "tool": "image_gen.imagegen",
+      "generation_type": "text-to-image",
+      "prompt": "Use case: stylized-concept. Create a brand new ORIGINAL premium hand-painted dark celestial fantasy RPG UI panoramic banner. Exact target aspect ratio 1074:330 (3.2545:1), extremely wide and short, edge-to-edge full-bleed opaque background, no border. Intended display only 358x110 pixels on a vertical mobile screen, thus clear few large visual masses and readable main subject. Aged bronze gold #e4c785, charcoal #171613, deep muted teal; rich painterly stone/metal, soft distant atmosphere, controlled luminous accents. Absolutely NO TEXT, letters, numbers, typography, labels, logos, watermark or imitation writing. No characters or recognizable franchise imagery. Ignore all previously displayed legacy reference imagery: invent wholly new architecture, objects and motifs. Keep complete focal props within safe center vertical 80% with margin above and below. In-world geometric star motifs only. Scene: an inviting celestial merchant's alcove inside the original city Gate of Covenants. Wide low stone counter in lower foreground, rich bronze sculpted arch fragments and a distant star-lit passage. On the right half, a compact tasteful arrangement of an open midnight-teal coin pouch with gold star coins, an emerald elixir bottle with bronze ribs and little star stopper, and three small aqua/indigo double-pointed hexagonal star crystals. A hanging amber lantern glows from upper right. Left half is atmospheric dim teal stone and soft stardust with lower contrast, usable for future UI overlay but do not draw any text. Warm commerce and abundance, nuanced cinematic light; absolutely no modern shop goods.",
+      "source_file": "/Users/ethan/.codex/generated_images/01a18dcd-68df-7c42-964b-5cf5b218b89c/exec-57fbafae-6cf7-4ef4-8ba9-bf0a4f20410d.png",
+      "requested_dimensions": [
+        1074,
+        330
+      ],
+      "description": "無文字的星空商店、貨品陳列與古城。",
+      "post_processing": "Pillow ImageOps.fit 依使用者指定輸出尺寸做等比例中央裁切及 LANCZOS 縮放，WebP quality=92、method=6；未重繪內容。圖像內容生成與七星修正皆由 image_gen 完成。",
+      "generated_dimensions": [
+        1986,
+        792
+      ],
+      "crop_box_xyxy": [
+        0,
+        90.888,
+        1986,
+        701.112
+      ],
+      "source_sha256": "74373da15313231a325f465c7c06cff6bd55d2100bfe43cdbee8bc8748bbc08c",
+      "validation": {
+        "dimensions": [
+          1074,
+          330
+        ],
+        "format": "WEBP",
+        "mode": "RGB",
+        "decode": "passed",
+        "visual_review": "passed: 已逐張查看最終輸出；主體完整、無文字、無既有作品標誌。"
+      },
+      "output_sha256": "a44026807041b797d7376bda08e2047c09e77d2babb5b0a8c150d5cdd63b3d93",
+      "bytes": 141208
+    },
+    {
+      "file": "login-banner.webp",
+      "tool": "image_gen.imagegen",
+      "generation_type": "text-to-image",
+      "prompt": "Use case: stylized-concept. Create a brand new ORIGINAL premium hand-painted dark celestial fantasy RPG UI panoramic banner. Exact target aspect ratio 1074:330 (3.2545:1), extremely wide and short, edge-to-edge full-bleed opaque background, no border. Intended display only 358x110 pixels on a vertical mobile screen, thus clear few large visual masses and readable main subject. Aged bronze gold #e4c785, charcoal #171613, deep muted teal; rich painterly stone/metal, soft distant atmosphere, controlled luminous accents. Absolutely NO TEXT, letters, numbers, typography, labels, logos, watermark or imitation writing. No characters or recognizable franchise imagery. Ignore all previously displayed legacy reference imagery: invent wholly new architecture, objects and motifs. Keep complete focal props within safe center vertical 80% with margin above and below. In-world geometric star motifs only. Scene: a mysterious peaceful observatory terrace for a seven-day celestial covenant. Across the center background a SINGLE delicate antique-bronze elliptical celestial orbit connects EXACTLY SEVEN luminous star nodes, clearly countable with the seventh at the right brightest, conveying a repeating seven-day cycle without numbers. On the lower right, an open midnight-teal and bronze star-latched reward chest containing three aqua/indigo double-ended hexagonal crystals, warm golden light. Distant original floating fractured stone gate shapes silhouetted against midnight teal and muted violet sky. Left side quieter darker atmosphere for future UI overlay. Celebratory, magical, serene, refined; avoid dense tiny stars that obscure the seven main nodes.",
+      "source_file": "/Users/ethan/.codex/generated_images/01a18dcd-68df-7c42-964b-5cf5b218b89c/exec-b7b2b55c-9015-4379-b233-b61e3913f9e4.png",
+      "requested_dimensions": [
+        1074,
+        330
+      ],
+      "description": "無文字的七星循環軌道與三枚星晶寶箱。",
+      "revision": {
+        "tool": "image_gen.imagegen",
+        "source_file": "/Users/ethan/.codex/generated_images/01a18dcd-68df-7c42-964b-5cf5b218b89c/exec-7578ded9-5ec2-4426-b604-24cf44f4b7ba.png",
+        "prompt": "Edit ONLY the large celestial orbital diagram in this original fantasy banner: it currently has EIGHT major star nodes inside circular bronze rings, but must have EXACTLY SEVEN. Remove the third major node from the left along the UPPER arc (the medium star at approximately x=1138,y=110 in a 2048x768 frame), including its circular ring, leaving only a thin uninterrupted orbital line and the background starfield there. Keep the other four upper-arc nodes and three lower-arc nodes intact, total seven. Preserve entire rest of image, palette, chest with three crystals, architecture, objects, framing and all lighting exactly. Do not introduce any text, letters, numerals, watermarks, new nodes or other changes.",
+        "reason": "將最初八個主要星節點修正為七個，人工目視確認。"
+      },
+      "post_processing": "Pillow ImageOps.fit 依使用者指定輸出尺寸做等比例中央裁切及 LANCZOS 縮放，WebP quality=92、method=6；未重繪內容。圖像內容生成與七星修正皆由 image_gen 完成。",
+      "generated_dimensions": [
+        2048,
+        768
+      ],
+      "crop_box_xyxy": [
+        0,
+        69.363,
+        2048,
+        698.637
+      ],
+      "source_sha256": "9fad981dcefd74886220610e292da35464981b2f9f86ed096f49a319aad43535",
+      "validation": {
+        "dimensions": [
+          1074,
+          330
+        ],
+        "format": "WEBP",
+        "mode": "RGB",
+        "decode": "passed",
+        "visual_review": "passed: 已逐張查看最終輸出；主體完整、無文字、無既有作品標誌。"
+      },
+      "output_sha256": "f15798229e895ea9d873e514baebebe81fb7d01aaa8ae504aa8f37fce39363f6",
+      "bytes": 136348
+    },
+    {
+      "file": "quest-banner.webp",
+      "tool": "image_gen.imagegen",
+      "generation_type": "text-to-image",
+      "prompt": "Use case: stylized-concept. Create a brand new ORIGINAL premium hand-painted dark celestial fantasy RPG UI panoramic banner. Exact target aspect ratio 1074:330 (3.2545:1), extremely wide and short, edge-to-edge full-bleed opaque background, no border. Intended display only 358x110 pixels on a vertical mobile screen, thus clear few large visual masses and readable main subject. Aged bronze gold #e4c785, charcoal #171613, deep muted teal; rich painterly stone/metal, soft distant atmosphere, controlled luminous accents. Absolutely NO TEXT, letters, numbers, typography, labels, logos, watermark or imitation writing. No characters or recognizable franchise imagery. Ignore all previously displayed legacy reference imagery: invent wholly new architecture, objects and motifs. Keep complete focal props within safe center vertical 80% with margin above and below. In-world geometric star motifs only. Scene: the covenant keeper's quest desk in an original ancient astronomical guild hall. On right half a large unfurled parchment with NO writing, only a simple elegant branching constellation route with a few gold nodes, a bronze compass and a proud bronze-gold six-ray achievement medallion resting against a dark teal ledger, modest laurel ornaments representing achievements. Two small distinct unlettered sun and moon seal tokens imply daily and weekly quests. Rear left recedes into dark atmospheric stone arches and soft teal starry mist, quieter area for later UI overlay. Adventurous purpose, discovery and earned accomplishment. High-quality cinematic painterly materials, objects legible at thumbnail size, do not draw a UI or any words.",
+      "source_file": "/Users/ethan/.codex/generated_images/01a18dcd-68df-7c42-964b-5cf5b218b89c/exec-9922c3f5-3db8-4c9b-a9df-166fe33b5fff.png",
+      "requested_dimensions": [
+        1074,
+        330
+      ],
+      "description": "無文字的任務星圖卷軸、日月印記與成就徽章。",
+      "post_processing": "Pillow ImageOps.fit 依使用者指定輸出尺寸做等比例中央裁切及 LANCZOS 縮放，WebP quality=92、method=6；未重繪內容。圖像內容生成與七星修正皆由 image_gen 完成。",
+      "generated_dimensions": [
+        2048,
+        768
+      ],
+      "crop_box_xyxy": [
+        0,
+        69.363,
+        2048,
+        698.637
+      ],
+      "source_sha256": "329fc885635bc720eaf9709d66f76e5d1915358348355ae2b09a2970a67afb53",
+      "validation": {
+        "dimensions": [
+          1074,
+          330
+        ],
+        "format": "WEBP",
+        "mode": "RGB",
+        "decode": "passed",
+        "visual_review": "passed: 已逐張查看最終輸出；主體完整、無文字、無既有作品標誌。"
+      },
+      "output_sha256": "67ea22a576b8638bbc8120971485b9e915ff0f1878fd023a9b28aa870ce93ff3",
+      "bytes": 146298
+    }
+  ],
+  "verification": {
+    "image_count": 8,
+    "png_count": 5,
+    "webp_count": 3,
+    "visual_review": "八張最終檔案均已目視檢查；背包五張卡片、兌換三枚星晶、寶箱三枚星晶、登入橫幅七個主要星節點。",
+    "scope": "本次僅寫入指定八張素材及本 JSON；未編輯程式碼。",
+    "integration": "本次為素材交付，未修改引用或進行遊戲畫面整合測試。"
+  }
+}
