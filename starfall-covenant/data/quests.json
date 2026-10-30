@@ -693,7 +693,7 @@
     "id": "st-summon",
     "kind": "starter",
     "name": "新手契約五：完成一次封印召喚",
-    "counter": "gachaPull",
+    "counter": "summoned",
     "target": 1,
     "reward": {
       "gems": 3
@@ -719,7 +719,7 @@
     "id": "st-evolve",
     "kind": "starter",
     "name": "新手契約七：讓一張卡片進化",
-    "counter": "cardEvolve",
+    "counter": "evolvedOwned",
     "target": 1,
     "reward": {
       "gems": 4

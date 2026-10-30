@@ -20,7 +20,8 @@ import { puzzleOf } from './puzzle';
  *   （這三個不是 bus 事件，由介面在領取／購買成功後呼叫 addQuestCounters）
  * - 成就專用、由存檔推算的數值（見 derivedCounters）：playerLevel、cardsOwned、towerFloor、mainCleared、trialCleared
  * - 新手契約另外可用的推算數值：teamEdited（隊伍跟開新存檔時不同）、helperClears（帶流浪契印師通關次數）、
- *   puzzleSolved（解過的每日謎題天數）、chapterRewards（領過的章節星章獎勵數）
+ *   puzzleSolved（解過的每日謎題天數）、chapterRewards（領過的章節星章獎勵數）、
+ *   summoned（召喚紀錄筆數）、evolvedOwned（圖鑑裡擁有過的進化後型態張數）
  * 新手契約（kind starter）跟成就一樣用終身計數、不重置；推算數值讓老玩家讀檔時就能直接算達成
  */
 export const COMBO_THRESHOLDS = [5, 8, 10] as const;
@@ -37,11 +38,16 @@ const KNOWN_COUNTERS = new Set([
 /** 由存檔直接推算、不靠事件累加的數值；舊存檔也能立即反映，只給成就使用 */
 export const DERIVED_COUNTERS = [
   'playerLevel', 'cardsOwned', 'towerFloor', 'mainCleared', 'trialCleared',
-  'teamEdited', 'helperClears', 'puzzleSolved', 'chapterRewards',
+  'teamEdited', 'helperClears', 'puzzleSolved', 'chapterRewards', 'summoned', 'evolvedOwned',
 ] as const;
 export type DerivedCounters = Partial<Record<(typeof DERIVED_COUNTERS)[number], number>>;
 
-export function derivedCounters(save: SaveData, stageKindOf: (stageId: string) => string | undefined): DerivedCounters {
+/** evolvedForms：所有「進化後型態」的卡號（由呼叫端依卡片資料提供；沒給時 evolvedOwned 為 0） */
+export function derivedCounters(
+  save: SaveData,
+  stageKindOf: (stageId: string) => string | undefined,
+  evolvedForms: ReadonlySet<string> = new Set(),
+): DerivedCounters {
   const cleared = (kind: string) => save.progress.clearedStages.filter((id) => stageKindOf(id) === kind).length;
   return {
     playerLevel: save.player.level,
@@ -53,6 +59,8 @@ export function derivedCounters(save: SaveData, stageKindOf: (stageId: string) =
     helperClears: Object.values(save.helperBond ?? {}).reduce((a, b) => a + b, 0),
     puzzleSolved: puzzleOf(save).solvedDays.length,
     chapterRewards: save.progress.chapterRewardsClaimed.length,
+    summoned: save.gacha.history.length,
+    evolvedOwned: save.collection.owned.filter((id) => evolvedForms.has(id)).length,
   };
 }
 
