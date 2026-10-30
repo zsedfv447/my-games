@@ -38,7 +38,8 @@ import { leaderLineOf } from '../victory-line';
 import { markStorySeen } from './story';
 import { createTutorialBattle } from '../tutorial/battle-setup';
 import { TutorialBattleGuide, texts as guideTexts, type BattleGuide } from '../tutorial/battle-guide';
-import { advanceTutorial, skipTutorial } from '../tutorial/flow';
+import { advanceTutorial } from '../tutorial/flow';
+import { skipTutorialNow } from '../tutorial/skip';
 import { BattleHud, liveSummary } from '../components/battle-hud';
 import { canAct, reenableAfterCancel } from '../battle-guard';
 import { grantClearExp, nextStageButton, unlockNotice } from '../stage-clear';
@@ -95,7 +96,7 @@ function setup(stageId: string, nav: Navigator): Setup | string {
     const t = createTutorialBattle(gameData);
     const guide = new TutorialBattleGuide(guideTexts(t.battle.getState(), t.data), {
       onFinish: () => { commit(advanceTutorial(getSave(), 'battle')); nav.replace('team'); },
-      onSkip: () => { commit(skipTutorial(getSave())); nav.replace('home'); },
+      onSkip: () => { nav.replace('home'); void skipTutorialNow(); },
     });
     return { stage: t.stage, data: t.data, practice: true, battle: t.battle, guide };
   }
