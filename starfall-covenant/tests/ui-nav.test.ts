@@ -24,11 +24,11 @@ describe('關卡導覽', () => {
     expect(nextMainStage(save, ctx, now)?.unlockAfter).toBe('st-1-1');
   });
 
-  it('挑戰之塔要一層一層爬，活動視為開放', () => {
+  it('挑戰之塔第 2 層要先爬過第 1 層，活動視為開放', () => {
     const save = createNewSave(gameData.config, now);
     const tower = gameData.stages.filter((s) => s.kind === 'tower');
     expect(stageRow(save, tower[0], ctx, now).status).toBe('open');
-    expect(stageRow(save, tower[1], ctx, now).status).toBe('towerAhead');
+    expect(isPlayable(stageRow(save, tower[1], ctx, now).status)).toBe(false);
     const ev = gameData.stages.find((s) => s.kind === 'event' && !s.unlockAfter);
     if (ev) expect(isPlayable(stageRow(save, ev, ctx, now).status)).toBe(true);
   });
