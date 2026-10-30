@@ -1,1 +1,1255 @@
-[]
+[
+  {
+    "id": "l101",
+    "name": "熔冠王令",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "fire"
+            },
+            "value": 3.5
+          },
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "attribute": "fire"
+            },
+            "value": 1.3
+          }
+        ]
+      }
+    ],
+    "description": "焰屬性攻擊 3.5 倍、生命 1.3 倍。"
+  },
+  {
+    "id": "l102",
+    "name": "瀕火之誓",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "hpBelow",
+            "percent": 30
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 4
+          }
+        ]
+      }
+    ],
+    "description": "生命 < 30% 時全隊攻擊 4 倍。"
+  },
+  {
+    "id": "l103",
+    "name": "焚心之誓",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "hpBelow",
+            "percent": 30
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 5
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "orbsInOneMatch",
+            "orb": "fire",
+            "count": 6
+          }
+        ],
+        "effects": [
+          {
+            "type": "ignoreDefense"
+          }
+        ]
+      }
+    ],
+    "description": "生命 < 30% 時全隊攻擊 5 倍；一串消除 6 顆以上焰珠時再無視防禦。"
+  },
+  {
+    "id": "l106",
+    "name": "點爐",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "fire"
+            },
+            "value": 2.5
+          }
+        ]
+      }
+    ],
+    "description": "焰屬性攻擊 2.5 倍。"
+  },
+  {
+    "id": "l109",
+    "name": "亡命",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "hpBelow",
+            "percent": 50
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2
+          }
+        ]
+      }
+    ],
+    "description": "生命 < 50% 時全隊攻擊 2 倍。"
+  },
+  {
+    "id": "l110",
+    "name": "燼牙亡命",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "hpBelow",
+            "percent": 30
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3.5
+          }
+        ]
+      }
+    ],
+    "description": "生命 < 30% 時全隊攻擊 3.5 倍。"
+  },
+  {
+    "id": "l201",
+    "name": "停潮",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "enemyCooldownPlus",
+            "turns": 1
+          },
+          {
+            "type": "damageReduction",
+            "percent": 35
+          },
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "water"
+            },
+            "value": 2.5
+          }
+        ]
+      }
+    ],
+    "description": "敵人攻擊倒數永遠 +1；全隊受到傷害減少 35%；潮屬性攻擊 2.5 倍。"
+  },
+  {
+    "id": "l202",
+    "name": "一拍接一拍",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "comboAtLeast",
+            "combo": 6
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2.5,
+            "perStep": 0.5,
+            "maxValue": 4
+          }
+        ]
+      }
+    ],
+    "description": "Combo ≥ 6 時全隊攻擊 2.5 倍，每多 1 Combo +0.5 倍，最高 4 倍。"
+  },
+  {
+    "id": "l203",
+    "name": "潮宴無終",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "extendMoveTime",
+            "seconds": 1
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "comboAtLeast",
+            "combo": 6
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3,
+            "perStep": 0.5,
+            "maxValue": 5
+          }
+        ]
+      }
+    ],
+    "description": "轉珠時間 +1 秒；Combo ≥ 6 時全隊攻擊 3 倍，每多 1 Combo +0.5 倍，最高 5 倍。"
+  },
+  {
+    "id": "l204",
+    "name": "雙月",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "attributesMatched",
+            "count": 2,
+            "attributes": [
+              "water",
+              "light"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3.5
+          }
+        ]
+      }
+    ],
+    "description": "同時消除潮珠與輝珠時全隊攻擊 3.5 倍。"
+  },
+  {
+    "id": "l205",
+    "name": "雙曜",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "attributesMatched",
+            "count": 2,
+            "attributes": [
+              "water",
+              "light"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 4
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "attribute": [
+                "water",
+                "light"
+              ]
+            },
+            "value": 1.3
+          }
+        ]
+      }
+    ],
+    "description": "同上改為 4 倍；潮、輝屬性生命 1.3 倍。"
+  },
+  {
+    "id": "l206",
+    "name": "打拍子",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "comboAtLeast",
+            "combo": 5
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2,
+            "perStep": 0.25,
+            "maxValue": 3
+          }
+        ]
+      }
+    ],
+    "description": "Combo ≥ 5 時全隊攻擊 2 倍，每多 1 Combo +0.25 倍，最高 3 倍。"
+  },
+  {
+    "id": "l209",
+    "name": "慢潮",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "enemyCooldownPlus",
+            "turns": 1
+          }
+        ]
+      }
+    ],
+    "description": "敵人攻擊倒數永遠 +1。"
+  },
+  {
+    "id": "l210",
+    "name": "大潮",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "enemyCooldownPlus",
+            "turns": 1
+          },
+          {
+            "type": "damageReduction",
+            "percent": 20
+          },
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "water"
+            },
+            "value": 1.5
+          }
+        ]
+      }
+    ],
+    "description": "敵人攻擊倒數永遠 +1；全隊受到傷害減少 20%；潮屬性攻擊 1.5 倍。"
+  },
+  {
+    "id": "l301",
+    "name": "根之庇護",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "rcvMultiplier",
+            "value": 2
+          },
+          {
+            "type": "damageReduction",
+            "percent": 40
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "heartsMatched",
+            "count": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3.5
+          }
+        ]
+      }
+    ],
+    "description": "全隊回復 2 倍、受到傷害減少 40%；消除 3 顆以上心珠時全隊攻擊 3.5 倍。"
+  },
+  {
+    "id": "l302",
+    "name": "晶花滿開",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "enhancedOrbsMatched",
+            "count": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2.5,
+            "perStep": 0.25,
+            "maxValue": 4
+          }
+        ]
+      }
+    ],
+    "description": "消除 3 顆以上強化珠時全隊攻擊 2.5 倍，每多 1 顆 +0.25 倍，最高 4 倍。"
+  },
+  {
+    "id": "l303",
+    "name": "晶園盛宴",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "enhancedOrbsMatched",
+            "count": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2.5,
+            "perStep": 0.25,
+            "maxValue": 5
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "value": 1.2
+          }
+        ]
+      }
+    ],
+    "description": "同上最高改為 5 倍；全隊生命 1.2 倍。"
+  },
+  {
+    "id": "l306",
+    "name": "苔背",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "rcvMultiplier",
+            "value": 1.5
+          },
+          {
+            "type": "damageReduction",
+            "percent": 20
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "heartsMatched",
+            "count": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2.5
+          }
+        ]
+      }
+    ],
+    "description": "全隊回復 1.5 倍、受到傷害減少 20%；消除 3 顆以上心珠時全隊攻擊 2.5 倍。"
+  },
+  {
+    "id": "l307",
+    "name": "藤毒",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "heartsMatched",
+            "count": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "followUpDamage",
+            "mode": "fixed",
+            "value": 3000
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "value": 1.3
+          }
+        ]
+      }
+    ],
+    "description": "消除 3 顆以上心珠時追加 3000 固定傷害；全隊生命 1.3 倍。"
+  },
+  {
+    "id": "l309",
+    "name": "發芽",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "enhancedOrbsMatched",
+            "count": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2
+          }
+        ]
+      }
+    ],
+    "description": "消除 3 顆以上強化珠時全隊攻擊 2 倍。"
+  },
+  {
+    "id": "l310",
+    "name": "森歌",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "enhancedOrbsMatched",
+            "count": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2,
+            "perStep": 0.25,
+            "maxValue": 3
+          }
+        ]
+      }
+    ],
+    "description": "消除 3 顆以上強化珠時全隊攻擊 2 倍，每多 1 顆 +0.25 倍，最高 3 倍。"
+  },
+  {
+    "id": "l311",
+    "name": "羽之歌",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "race": "sylph"
+            },
+            "value": 2
+          },
+          {
+            "type": "rcvMultiplier",
+            "target": {
+              "race": "sylph"
+            },
+            "value": 1.2
+          }
+        ]
+      }
+    ],
+    "description": "靈仙攻擊 2 倍、回復 1.2 倍。"
+  },
+  {
+    "id": "l312",
+    "name": "羽座合唱",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "race": "sylph"
+            },
+            "value": 2.5
+          },
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "race": "sylph"
+            },
+            "value": 1.3
+          },
+          {
+            "type": "rcvMultiplier",
+            "target": {
+              "race": "sylph"
+            },
+            "value": 1.3
+          }
+        ]
+      }
+    ],
+    "description": "靈仙攻擊 2.5 倍、生命 1.3 倍、回復 1.3 倍。"
+  },
+  {
+    "id": "l401",
+    "name": "七曜詠歌",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "attributesMatched",
+            "count": 4
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 4,
+            "perStep": 2,
+            "maxValue": 6
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "value": 1.2
+          }
+        ]
+      }
+    ],
+    "description": "同時消除 4 種屬性時全隊攻擊 4 倍，消除 5 種時 6 倍；全隊生命 1.2 倍。"
+  },
+  {
+    "id": "l402",
+    "name": "星盤就位",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "skillCooldownStart",
+            "charged": true
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "skillUsedThisTurn"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3
+          }
+        ]
+      }
+    ],
+    "description": "開場全員技能冷卻已滿；本回合施放過主動技時全隊攻擊 3 倍。"
+  },
+  {
+    "id": "l403",
+    "name": "天機",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "skillCooldownStart",
+            "charged": true
+          },
+          {
+            "type": "allyCooldownPerTurn",
+            "turns": 1
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "skillUsedThisTurn"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3.5
+          }
+        ]
+      }
+    ],
+    "description": "同上倍率改為 3.5 倍，並且每回合全員技能冷卻額外 −1。"
+  },
+  {
+    "id": "l404",
+    "name": "龍之血契",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "race": "dragon"
+            },
+            "value": 3
+          },
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "race": "dragon"
+            },
+            "value": 1.3
+          }
+        ]
+      }
+    ],
+    "description": "龍嗣攻擊 3 倍、生命 1.3 倍。"
+  },
+  {
+    "id": "l405",
+    "name": "曜冠血契",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "race": "dragon"
+            },
+            "value": 3.5
+          },
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "race": "dragon"
+            },
+            "value": 1.5
+          },
+          {
+            "type": "rcvMultiplier",
+            "target": {
+              "race": "dragon"
+            },
+            "value": 1.2
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "teamAll",
+            "filter": {
+              "race": "dragon"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "type": "damageReduction",
+            "percent": 20
+          }
+        ]
+      }
+    ],
+    "description": "龍嗣攻擊 3.5 倍、生命 1.5 倍、回復 1.2 倍；隊伍全是龍嗣時受到傷害減少 20%。"
+  },
+  {
+    "id": "l406",
+    "name": "分光",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "attributesMatched",
+            "count": 4
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3,
+            "perStep": 1,
+            "maxValue": 4
+          }
+        ]
+      }
+    ],
+    "description": "同時消除 4 種屬性時全隊攻擊 3 倍，消除 5 種時 4 倍。"
+  },
+  {
+    "id": "l407",
+    "name": "編號點名",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "race": "machina"
+            },
+            "value": 2.5
+          },
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "race": "machina"
+            },
+            "value": 1.3
+          }
+        ]
+      }
+    ],
+    "description": "機構攻擊 2.5 倍、生命 1.3 倍。"
+  },
+  {
+    "id": "l409",
+    "name": "預先準備",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "skillCooldownStart",
+            "charged": true
+          }
+        ]
+      }
+    ],
+    "description": "開場全員技能冷卻已滿。"
+  },
+  {
+    "id": "l410",
+    "name": "機要",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "skillCooldownStart",
+            "charged": true
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "skillUsedThisTurn"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2.5
+          }
+        ]
+      }
+    ],
+    "description": "開場全員技能冷卻已滿；本回合施放過主動技時全隊攻擊 2.5 倍。"
+  },
+  {
+    "id": "l501",
+    "name": "吞星",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "orbsInOneMatch",
+            "count": 6
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3.5,
+            "perStep": 0.5,
+            "maxValue": 5
+          },
+          {
+            "type": "ignoreDefense"
+          }
+        ]
+      }
+    ],
+    "description": "一串消除 6 顆以上珠時全隊攻擊 3.5 倍，每多 1 顆 +0.5 倍，最高 5 倍，並無視防禦。"
+  },
+  {
+    "id": "l502",
+    "name": "一盞燈",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "heartsMatched",
+            "count": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "followUpDamage",
+            "mode": "fixed",
+            "value": 8000
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ],
+    "description": "消除 3 顆以上心珠時追加 8000 固定傷害；全隊生命 1.5 倍。"
+  },
+  {
+    "id": "l503",
+    "name": "百燈",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "heartsMatched",
+            "count": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "followUpDamage",
+            "mode": "fixed",
+            "value": 15000
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "value": 1.8
+          }
+        ]
+      }
+    ],
+    "description": "同上改為 15000，生命 1.8 倍。"
+  },
+  {
+    "id": "l506",
+    "name": "兩界之船",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "attributesMatched",
+            "count": 2,
+            "attributes": [
+              "dark",
+              "water"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3
+          }
+        ]
+      }
+    ],
+    "description": "同時消除蝕珠與潮珠時全隊攻擊 3 倍。"
+  },
+  {
+    "id": "l509",
+    "name": "一直線",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "orbsInOneMatch",
+            "count": 6
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2.5
+          }
+        ]
+      }
+    ],
+    "description": "一串消除 6 顆以上珠時全隊攻擊 2.5 倍。"
+  },
+  {
+    "id": "l510",
+    "name": "晶脊貫穿",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "orbsInOneMatch",
+            "count": 6
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3
+          },
+          {
+            "type": "ignoreDefense"
+          }
+        ]
+      }
+    ],
+    "description": "一串消除 6 顆以上珠時全隊攻擊 3 倍並無視防禦。"
+  },
+  {
+    "id": "l601",
+    "name": "群聚",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "race": "beast"
+            },
+            "value": 2.5
+          },
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "race": "beast"
+            },
+            "value": 1.5
+          }
+        ]
+      }
+    ],
+    "description": "獸裔攻擊 2.5 倍、生命 1.5 倍。"
+  },
+  {
+    "id": "l602",
+    "name": "亡者名錄",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "race": "nether"
+            },
+            "value": 2.5
+          },
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "race": "nether"
+            },
+            "value": 1.3
+          }
+        ]
+      }
+    ],
+    "description": "冥裔攻擊 2.5 倍、生命 1.3 倍。"
+  },
+  {
+    "id": "l603",
+    "name": "眾人之盾",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "race": "human"
+            },
+            "value": 2.5
+          },
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "race": "human"
+            },
+            "value": 1.3
+          },
+          {
+            "type": "rcvMultiplier",
+            "target": {
+              "race": "human"
+            },
+            "value": 1.3
+          }
+        ]
+      }
+    ],
+    "description": "人傑攻擊 2.5 倍、生命 1.3 倍、回復 1.3 倍。"
+  },
+  {
+    "id": "l604",
+    "name": "燈籠裡的名字",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "race": "dragon"
+            },
+            "value": 2.5
+          },
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "race": "dragon"
+            },
+            "value": 1.2
+          }
+        ]
+      }
+    ],
+    "description": "龍嗣攻擊 2.5 倍、生命 1.2 倍。"
+  }
+]

@@ -79,8 +79,9 @@ export function archetypeCodex(save: SaveData, ctx: GrowthContext): CodexEntry[]
   return ctx.data.archetypes.map((a) => {
     const cards: CodexCard[] = [];
     for (const def of ctx.data.cards) {
-      for (const tag of def.archetypes) {
-        if (tag.id !== a.id) continue;
+      // 同一流派掛了多個角色（例如隊長兼核心）時只列一次，取第一個標籤
+      const tag = def.archetypes.find((t) => t.id === a.id);
+      if (tag) {
         cards.push({
           cardId: def.id,
           role: tag.role,

@@ -748,3 +748,33 @@ input[type='range'] { flex: 1.4; accent-color: var(--gold); }
 .move-timer .fill { transition: none; background: linear-gradient(90deg, #ffe39a, var(--gold)); }
 .move-timer.critical .fill { background: var(--danger); }
 .gold-text { color: var(--gold-soft); margin: 0; }
+
+/* ---------- 狀態標籤、劇情疊層 ---------- */
+.enemy-chips, .team-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; min-height: 0; }
+.team-chips { justify-content: flex-start; }
+.chip {
+  height: 18px;
+  padding: 0 6px;
+  border-radius: 9px;
+  border: 1px solid var(--line-strong);
+  background: rgba(6, 10, 31, 0.8);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.chip.buff { border-color: #35b877; color: #7ff0b2; }
+.chip.debuff { border-color: #9b5de5; color: #dcc0ff; }
+.chip.enemy { border-color: #c9952e; color: var(--gold-soft); }
+.float-num.status { color: #dcc0ff; font-size: 15px; top: 10%; }
+.story-layer { position: absolute; inset: 0; z-index: 20; background: rgba(3, 5, 16, 0.55); animation: fade-in 200ms ease-out both; }
+.story-chapter {
+  position: absolute;
+  left: 14px;
+  top: calc(16px + var(--safe-top, 0px));
+  font-family: var(--font-title);
+  color: var(--gold-soft);
+  letter-spacing: 0.1em;
+  text-shadow: 0 2px 6px #000;
+}

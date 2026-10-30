@@ -5,7 +5,7 @@ import { adventureScreen } from './adventure';
 import { archetypesScreen } from './archetypes';
 import { settingsScreen } from './settings';
 import { galleryScreen } from './gallery';
-import { storyScreen } from './story';
+import { storiesScreen, storyScreen } from './story';
 import { placeholderScreens } from './placeholders';
 import { prepareScreen } from './prepare';
 import { battleScreen } from './battle';
@@ -20,6 +20,7 @@ export const SCREENS: ScreenDef[] = [
   settingsScreen,
   galleryScreen,
   storyScreen,
+  storiesScreen,
   prepareScreen,
   battleScreen,
 ];
