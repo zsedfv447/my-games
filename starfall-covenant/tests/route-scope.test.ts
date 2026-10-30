@@ -43,3 +43,25 @@ describe('綁定畫面的彈窗', () => {
     });
   });
 });
+
+describe('獎勵演出綁定畫面（#86）', () => {
+  it('玩家按收下：只結束一次，之後換畫面不會再結束', async () => {
+    const { endOnRouteChange } = await import('../src/ui/route-scope');
+    let count = 0;
+    const end = endOnRouteChange(() => count++);
+    end();
+    end();
+    closeRouteScoped();
+    expect(count).toBe(1);
+    expect(routeScopedCount()).toBe(0);
+  });
+
+  it('還沒收下就換畫面：自動結束一次，之後再按也不會重複', async () => {
+    const { endOnRouteChange } = await import('../src/ui/route-scope');
+    let count = 0;
+    const end = endOnRouteChange(() => count++);
+    closeRouteScoped();
+    end();
+    expect(count).toBe(1);
+  });
+});
