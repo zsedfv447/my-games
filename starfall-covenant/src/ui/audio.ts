@@ -20,6 +20,8 @@ export class AudioManager {
   private listening = false;
   private focused = true;
   private activeSfx = new Set<HTMLAudioElement>();
+  /** 已解碼的短音效；null 代表解碼中或失敗 */
+  private buffers = new Map<string, AudioBuffer | null>();
   bgmVolume = 0.8;
   sfxVolume = 0.8;
 
@@ -97,6 +99,8 @@ export class AudioManager {
     const variant = name === 'match' && comboStep > 1 ? `match-${comboStep}` : name;
     const variantUrl = userAsset('sfx', variant);
     const url = variantUrl ?? userAsset('sfx', name);
+    // 轉珠音一秒會響很多次，用 Web Audio 播已解碼的音效，不必每次建立 <audio>
+    if (url && name === 'tap' && this.playBuffer(url)) return;
     if (url) {
       let base = this.sfxCache.get(url);
       if (!base) {
@@ -121,6 +125,29 @@ export class AudioManager {
     // 來源專屬抽卡音效缺檔時保持安靜，避免以合成音冒充原素材。
     if (name === 'summon-pull' || name === 'summon-release') return;
     this.synth(name, comboStep);
+  }
+
+  /** 用已解碼的音效播放；還沒解碼好就開始解碼並回傳 false，這次改用 <audio> 播 */
+  private playBuffer(url: string): boolean {
+    const ctx = this.ctx;
+    if (!ctx || ctx.state !== 'running' || typeof fetch === 'undefined') return false;
+    const buffer = this.buffers.get(url);
+    if (buffer === undefined) {
+      this.buffers.set(url, null);
+      void fetch(url)
+        .then((r) => r.arrayBuffer())
+        .then((data) => ctx.decodeAudioData(data))
+        .then((decoded) => this.buffers.set(url, decoded))
+        .catch(() => {});
+    }
+    if (!buffer) return false;
+    const src = ctx.createBufferSource();
+    const gain = ctx.createGain();
+    src.buffer = buffer;
+    gain.gain.value = this.sfxVolume;
+    src.connect(gain).connect(ctx.destination);
+    src.start();
+    return true;
   }
 
   private synth(name: SfxName, combo: number): void {

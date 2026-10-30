@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cellAt, remainingMs, stepsBetween } from '../src/battle/view/drag';
+import { cellAt, nextStep, remainingMs, samplePoints } from '../src/battle/view/drag';
 import { startBattle } from '../src/battle/battle-state';
 import { createRng } from '../src/core/rng';
 import type { CardDef, SaveData, StageDef } from '../src/core/types';
@@ -16,11 +16,40 @@ describe('拖曳轉珠座標', () => {
     expect(cellAt(-5, 30, 63, size)).toBeNull();
     expect(cellAt(400, 30, 63, size)).toBeNull();
   });
-  it('一次跳好幾格時拆成連續的八方向步伐', () => {
-    expect(stepsBetween({ row: 0, col: 0 }, { row: 2, col: 3 })).toEqual([
-      { row: 1, col: 1 }, { row: 2, col: 2 }, { row: 2, col: 3 },
+  /** 沿著取樣點走一遍，回傳經過的格子 */
+  const walk = (start: { row: number; col: number }, from: { x: number; y: number }, to: { x: number; y: number }, s = 100) => {
+    const path = [start];
+    for (const q of samplePoints(from, to, s * 0.05)) {
+      for (let step = nextStep(path.at(-1)!, q.x, q.y, s, size); step; step = nextStep(path.at(-1)!, q.x, q.y, s, size)) path.push(step);
+    }
+    return path;
+  };
+  it('越過格線一段距離才換格，換過去後不會在格線上來回抖', () => {
+    expect(nextStep({ row: 0, col: 0 }, 110, 50, 100, size)).toBeNull();
+    expect(nextStep({ row: 0, col: 0 }, 116, 50, 100, size)).toEqual({ row: 0, col: 1 });
+    expect(nextStep({ row: 0, col: 1 }, 90, 50, 100, size)).toBeNull();
+    expect(nextStep({ row: 0, col: 5 }, 650, 50, 100, size)).toBeNull();
+  });
+  it('一次滑很遠時逐格走直線，不會亂插斜向', () => {
+    const path = walk({ row: 0, col: 0 }, { x: 50, y: 50 }, { x: 550, y: 50 });
+    expect(path.map((p) => p.col)).toEqual([0, 1, 2, 3, 4, 5]);
+    expect(path.every((p) => p.row === 0)).toBe(true);
+    const lShape = walk({ row: 0, col: 0 }, { x: 50, y: 50 }, { x: 50, y: 350 });
+    expect(lShape.at(-1)).toEqual({ row: 3, col: 0 });
+    expect(lShape).toHaveLength(4);
+  });
+  it('沿格線滑動停在原本那一列', () => {
+    const path = walk({ row: 0, col: 0 }, { x: 50, y: 50 }, { x: 50, y: 104 });
+    expect(path).toEqual([{ row: 0, col: 0 }]);
+    const along = walk({ row: 0, col: 0 }, { x: 50, y: 104 }, { x: 450, y: 104 });
+    expect(along.every((p) => p.row === 0)).toBe(true);
+  });
+  it('穿過格子角落才算斜轉', () => {
+    expect(walk({ row: 0, col: 0 }, { x: 50, y: 50 }, { x: 350, y: 350 })).toEqual([
+      { row: 0, col: 0 }, { row: 1, col: 1 }, { row: 2, col: 2 }, { row: 3, col: 3 },
     ]);
-    expect(stepsBetween({ row: 1, col: 1 }, { row: 1, col: 1 })).toEqual([]);
+    const offCorner = walk({ row: 0, col: 0 }, { x: 50, y: 50 }, { x: 150, y: 110 });
+    expect(offCorner).toEqual([{ row: 0, col: 0 }, { row: 0, col: 1 }]);
   });
   it('第一次移動前不倒數', () => {
     expect(remainingMs(null, 9999, 5000)).toBe(5000);

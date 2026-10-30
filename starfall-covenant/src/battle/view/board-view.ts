@@ -2,7 +2,7 @@
 // 規則都在 board.ts：拖曳時用 swapOrbs 即時顯示，放手後把路徑交給 Battle.submitMove。
 import { swapOrbs, toIndex, type Board, type MatchGroup, type Orb, type Pos, type ResolveStep } from '../board';
 import { orbDataUrl, type OrbKind } from '../../ui/art/orbs';
-import { cellAt, remainingMs, stepsBetween } from './drag';
+import { cellAt, nextStep, remainingMs, samplePoints } from './drag';
 import { userAsset } from '../../ui/assets';
 
 export interface BoardViewOptions {
@@ -34,8 +34,16 @@ export class BoardView {
   private pointerId: number | null = null;
   private path: Pos[] = [];
   private held: { x: number; y: number } | null = null;
+  /** 上一個已判定的指標位置（線段取樣的起點） */
+  private lastPoint: { x: number; y: number } | null = null;
+  private touch = false;
   private startedAt: number | null = null;
   private limitMs = 5000;
+  private lastStepSound = 0;
+  /** 拖曳期間舞台不會動，拿起時量一次換算比例，避免每個事件都量版面 */
+  private origin = { left: 0, top: 0, sx: 1, sy: 1 };
+  /** 被擠開的珠：格子索引 → 從哪裡滑過來（格座標）與開始時間 */
+  private slides = new Map<number, { col: number; row: number; t0: number }>();
 
   // 動畫狀態
   private fading = new Map<number, number>();
@@ -178,16 +186,20 @@ export class BoardView {
 
   // ---------- 輸入 ----------
 
-  private local(e: PointerEvent): { x: number; y: number } {
+  private measure(): void {
     // 舞台有 CSS 縮放，用實際顯示大小換算回設計座標
     const rect = this.canvas.getBoundingClientRect();
-    const sx = this.canvas.offsetWidth / rect.width;
-    const sy = this.canvas.offsetHeight / rect.height;
-    return { x: (e.clientX - rect.left) * sx, y: (e.clientY - rect.top) * sy };
+    this.origin = { left: rect.left, top: rect.top, sx: this.canvas.offsetWidth / rect.width, sy: this.canvas.offsetHeight / rect.height };
+  }
+
+  private local(e: { clientX: number; clientY: number }): { x: number; y: number } {
+    const o = this.origin;
+    return { x: (e.clientX - o.left) * o.sx, y: (e.clientY - o.top) * o.sy };
   }
 
   private onDown = (e: PointerEvent): void => {
     if (!this.enabled || !this.board || this.pointerId !== null) return;
+    this.measure();
     const p = this.local(e);
     const pos = cellAt(p.x, p.y, this.opts.cellSize, this.board, 0);
     if (!pos || this.board.cells[toIndex(this.board, pos)].locked) return;
@@ -196,6 +208,9 @@ export class BoardView {
     this.pointerId = e.pointerId;
     this.path = [pos];
     this.held = p;
+    this.lastPoint = p;
+    this.touch = e.pointerType === 'touch';
+    this.slides.clear();
     this.startedAt = null;
     this.limitMs = this.opts.moveSeconds() * 1000;
     this.loop();
@@ -203,21 +218,60 @@ export class BoardView {
 
   private onMovePointer = (e: PointerEvent): void => {
     if (e.pointerId !== this.pointerId || !this.board) return;
-    const p = this.local(e);
-    this.held = p;
-    const target = cellAt(p.x, p.y, this.opts.cellSize, this.board);
-    const current = this.path[this.path.length - 1];
-    if (target && (target.row !== current.row || target.col !== current.col)) {
-      for (const step of stepsBetween(current, target)) {
-        if (this.board.cells[toIndex(this.board, step)].locked) break;
+    // 快速滑動時瀏覽器會把一幀內的多個點合併成一個事件，要把每個原始點都拿出來判定
+    const events = e.getCoalescedEvents?.() ?? [];
+    for (const ev of events.length ? events : [e]) this.track(this.local(ev));
+  };
+
+  /** 從上一個點到 p 逐段取樣，每個取樣點都檢查要不要換格 */
+  private track(p: { x: number; y: number }): void {
+    const s = this.opts.cellSize;
+    const board = this.board!;
+    // 手指拖出盤面時珠子停在邊上
+    const clamped = { x: clamp(p.x, 0, board.cols * s - 0.01), y: clamp(p.y, 0, board.rows * s - 0.01) };
+    this.held = clamped;
+    for (const q of samplePoints(this.lastPoint ?? clamped, clamped, s * 0.05)) {
+      for (let guard = 0; guard < 2; guard++) {
         const from = this.path[this.path.length - 1];
-        this.board = swapOrbs(this.board, from, step);
-        this.path.push(step);
-        if (this.startedAt === null) this.startedAt = performance.now();
-        this.opts.onStep?.();
+        const step = nextStep(from, q.x, q.y, s, this.board!);
+        if (!step || this.board!.cells[toIndex(this.board!, step)].locked) break;
+        this.swap(from, step);
       }
     }
-  };
+    this.lastPoint = clamped;
+  }
+
+  private swap(from: Pos, to: Pos): void {
+    const board = this.board!;
+    const now = performance.now();
+    // 被擠開的珠從 to 滑到 from；若它本來還在滑，從目前畫面上的位置接著滑
+    const prev = this.slidePos(toIndex(board, to), now);
+    this.slides.delete(toIndex(board, to));
+    this.slides.set(toIndex(board, from), { col: prev?.col ?? to.col, row: prev?.row ?? to.row, t0: now });
+    this.board = swapOrbs(board, from, to);
+    this.path.push(to);
+    if (this.startedAt === null) this.startedAt = now;
+    // 一幀換好幾格時音效只播一次，避免手機上同時開太多音效卡頓
+    if (now - this.lastStepSound > 40) {
+      this.lastStepSound = now;
+      this.opts.onStep?.();
+    }
+  }
+
+  /** 正在滑動的珠目前畫在哪（格座標）；沒有在滑則回傳 null */
+  private slidePos(index: number, now: number): { col: number; row: number } | null {
+    const slide = this.slides.get(index);
+    if (!this.board || !slide) return null;
+    const t = Math.min(1, (now - slide.t0) / SLIDE_MS);
+    if (t >= 1) {
+      this.slides.delete(index);
+      return null;
+    }
+    const k = easeOutCubic(t);
+    const col = index % this.board.cols;
+    const row = Math.floor(index / this.board.cols);
+    return { col: slide.col + (col - slide.col) * k, row: slide.row + (row - slide.row) * k };
+  }
 
   private onUp = (e: PointerEvent): void => {
     if (e.pointerId !== this.pointerId) return;
@@ -239,6 +293,8 @@ export class BoardView {
     }
     this.pointerId = null;
     this.held = null;
+    this.lastPoint = null;
+    this.slides.clear();
     this.path = [];
     this.startedAt = null;
     this.updateTimer(1);
@@ -341,9 +397,10 @@ export class BoardView {
     board.cells.forEach((orb, i) => {
       const img = this.image(orb);
       if (!img) return;
-      const col = i % board.cols;
+      const slid = this.slidePos(i, now);
+      const col = slid ? slid.col : i % board.cols;
       const fromRow = this.drops.get(i);
-      const row = fromRow === undefined ? Math.floor(i / board.cols) : fromRow + (Math.floor(i / board.cols) - fromRow) * easeOutBounce(this.dropT);
+      const row = slid ? slid.row : fromRow === undefined ? Math.floor(i / board.cols) : fromRow + (Math.floor(i / board.cols) - fromRow) * easeOutBounce(this.dropT);
       if (row < -0.95) return;
       let alpha = i === heldIndex ? 0.25 : 1;
       let grow = 0;
@@ -366,19 +423,24 @@ export class BoardView {
     });
     ctx.globalAlpha = 1;
 
-    // 手上的珠跟著手指，放大一點並往上偏移，避免被手指擋住
+    // 手上的珠跟著指標，放大一點；觸控時往上偏移，避免被手指擋住
     if (this.held && heldIndex >= 0) {
       const img = this.image(board.cells[heldIndex]);
       if (img) {
         const size = s * 1.1;
+        const lift = this.touch ? s * 0.25 : 0;
         ctx.globalAlpha = 0.95;
-        ctx.drawImage(img, this.held.x - size / 2, this.held.y - size / 2 - s * 0.25, size, size);
+        ctx.drawImage(img, this.held.x - size / 2, this.held.y - size / 2 - lift, size, size);
         ctx.globalAlpha = 1;
       }
     }
   }
 }
 
+/** 被擠開的珠滑到新位置的時間 */
+const SLIDE_MS = 80;
+
+const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 /** 落地時輕輕彈一下 */
