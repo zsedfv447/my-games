@@ -97,6 +97,7 @@ export function validateGameData(d: GameData): string[] {
     for (const e of s.effects) {
       if (e.type === 'convertOrbs' && !ORB_TYPES.includes(e.to)) err(`skills/${s.id}`, `未知珠子 ${e.to}`);
       if (e.type === 'rowToOrb' && !ORB_TYPES.includes(e.to)) err(`skills/${s.id}`, `未知珠子 ${e.to}`);
+      if (e.type === 'damage' && e.mode === 'percentMaxHp' && !(e.cap && e.cap > 0)) err(`skills/${s.id}`, '最大生命百分比傷害一定要有上限 cap');
       if (e.type === 'twoColorBoard' && (e.colors.length !== 2 || e.colors[0] === e.colors[1] || e.colors.some((c) => !ORB_TYPES.includes(c)))) err(`skills/${s.id}`, `雙色盤要指定兩種不同的珠 ${e.colors}`);
     }
   }

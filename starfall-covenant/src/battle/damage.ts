@@ -71,6 +71,18 @@ export interface Hit {
   ignoreShield?: boolean;
   /** 固定傷害：不吃剋制與攻擊相關加成 */
   fixed?: boolean;
+  /**
+   * 百分比傷害：依每個目標的最大生命 × percentMaxHp % 計算 amount（取整），最多 cap 點。
+   * 一律搭配 fixed: true，結算規則和固定傷害相同（GDD 2.1「百分比傷害」）。
+   */
+  percentMaxHp?: number;
+  cap?: number;
+}
+
+/** 百分比傷害對某個目標的基礎數值（尚未套用護盾）；沒填 cap 時不設上限 */
+export function percentHitAmount(hit: Pick<Hit, 'percentMaxHp' | 'cap'>, target: { hp: number; maxHp?: number }): number {
+  const base = Math.floor(((target.maxHp ?? target.hp) * (hit.percentMaxHp ?? 0)) / 100);
+  return Math.max(0, Math.min(hit.cap ?? Infinity, base));
 }
 
 export interface AttackInput {
@@ -213,10 +225,12 @@ export function applyHits(
   for (const hit of hits) {
     const targets = hit.target === 'all' ? enemies.map((_, i) => i).filter(alive) : [pickTarget()].filter((i) => i >= 0);
     for (const i of targets) {
-      const raw = damageAgainst(hit, enemies[i], ctx);
+      // 百分比傷害：每個目標依自己的最大生命換算
+      const h = hit.percentMaxHp !== undefined ? { ...hit, fixed: true, amount: percentHitAmount(hit, enemies[i]) } : hit;
+      const raw = damageAgainst(h, enemies[i], ctx);
       const absorb = enemies[i].damageAbsorb;
       let net = raw;
-      if (absorb !== undefined && !hit.fixed && !hit.ignoreShield) {
+      if (absorb !== undefined && !h.fixed && !h.ignoreShield) {
         // 門檻以內照常扣血，超過的部分改為回復
         const allowed = Math.max(0, absorb - taken[i]);
         if (raw > allowed) net = allowed - (raw - allowed);

@@ -77,25 +77,48 @@ export const DEMO_HELPER: TeamMemberInput = { cardId: 'demo-c6', level: 40 };
 
 // ---------- 練習場：敵人機制（隱藏珠、星紋封印） ----------
 
-export type PracticeMode = 'normal' | 'darkOrbs' | 'attributeSeal';
+export type PracticeMode = 'normal' | 'darkOrbs' | 'attributeSeal' | 'percentFollowUp';
 
 /** 練習用的機制敵人：正式資料裡的示範敵人（e0046 幕紗星蛾、e0047 封紋司祭，不在任何關卡），生命與攻擊調低方便看效果 */
-const MECHANIC_ENEMIES: Record<Exclude<PracticeMode, 'normal'>, string> = { darkOrbs: 'e0046', attributeSeal: 'e0047' };
+const MECHANIC_ENEMIES: Record<Exclude<PracticeMode, 'normal' | 'percentFollowUp'>, string> = { darkOrbs: 'e0046', attributeSeal: 'e0047' };
 
 export const PRACTICE_MODES: { id: PracticeMode; label: string }[] = [
   { id: 'normal', label: '一般' },
   { id: 'darkOrbs', label: '隱藏珠' },
   { id: 'attributeSeal', label: '星紋封印' },
+  { id: 'percentFollowUp', label: '百分比追打' },
 ];
 
 export const isPracticeMode = (v: string | undefined): v is PracticeMode => PRACTICE_MODES.some((m) => m.id === v);
 
 /** 練習場的關卡與資料；機制模式換成一隻會放該機制的示範敵人 */
 export function practiceSetup(mode: PracticeMode = 'normal'): { stage: StageDef; data: BattleData } {
+  if (mode === 'percentFollowUp') return percentFollowUpPractice();
   const def = mode === 'normal' ? undefined : gameData.enemies.find((e) => e.id === MECHANIC_ENEMIES[mode]);
   if (!def) return { stage: DEMO_STAGE, data: DEMO_DATA };
   return {
     stage: { ...DEMO_STAGE, name: `練習場・${PRACTICE_MODES.find((m) => m.id === mode)!.label}`, waves: [{ enemies: [def.id], boss: true }] },
     data: { ...DEMO_DATA, enemies: [...DEMO_DATA.enemies, { ...def, hp: 60000, atk: 300 }] },
+  };
+}
+
+/**
+ * 百分比追打示範：隊長技換成「每次轉珠追打目標最大生命 3%（每次最多 60,000）」，
+ * 對上 400 萬生命的示範 Boss，看得到固定追打打不動、百分比追打靠上限穩定削血。正式卡片資料不變。
+ */
+function percentFollowUpPractice(): { stage: StageDef; data: BattleData } {
+  const percentLeader: LeaderSkillDef = {
+    id: 'demo-l-pct', name: '示範・星骸裂斬', description: '每次轉珠追打目標最大生命 3% 的傷害（每次最多 60,000，無視防禦）',
+    rules: [{ conditions: [{ type: 'always' }], effects: [{ type: 'followUpDamage', mode: 'percentMaxHp', value: 3, cap: 60000 }] }],
+  };
+  const titan: EnemyDef = { ...enemy('demo-titan', '示範・百萬星骸巨像', 'light', 4_000_000, 300, 4), def: 1500 };
+  return {
+    stage: { ...DEMO_STAGE, name: '練習場・百分比追打', waves: [{ enemies: [titan.id], boss: true }] },
+    data: {
+      ...DEMO_DATA,
+      cards: DEMO_DATA.cards.map((c) => (c.id === 'demo-c1' ? { ...c, leaderSkill: percentLeader.id } : c)),
+      leaderSkills: [...DEMO_DATA.leaderSkills, percentLeader],
+      enemies: [...DEMO_DATA.enemies, titan],
+    },
   };
 }
