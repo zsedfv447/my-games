@@ -101,7 +101,7 @@ describe('圖鑑', () => {
   it('統計見過、擁有與各稀有度進度', () => {
     const save = markSeen(makeSave([owned('u1', 'c102'), owned('u2', 'c905')]), ['c206']);
     const s = collectionSummary(save, ctx);
-    expect(s).toMatchObject({ total: 10, owned: 2, seen: 3, materials: { owned: 1, total: 3 } });
+    expect(s).toMatchObject({ total: 11, owned: 2, seen: 3, materials: { owned: 1, total: 4 } });
     expect(s.byRarity[5]).toEqual({ owned: 1, total: 1 });
   });
 });

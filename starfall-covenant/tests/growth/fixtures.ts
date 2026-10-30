@@ -49,6 +49,7 @@ export const cards: CardDef[] = [
   card({ id: 'c905', attribute: 'fire', rarity: 3, race: 'material', maxLevel: 1, expValue: 1000, sellValue: 50 }),
   card({ id: 'c906', attribute: 'water', rarity: 3, race: 'material', maxLevel: 1, expValue: 1000, sellValue: 50 }),
   card({ id: 'c915', attribute: 'fire', rarity: 4, race: 'material', maxLevel: 1, expValue: 300, sellValue: 100 }),
+  card({ id: 'c916', name: '焰星核', attribute: 'fire', rarity: 4, race: 'material', maxLevel: 1, expValue: 300, sellValue: 100 }),
 ];
 
 export const data: GrowthData = {

@@ -1,4 +1,4 @@
-import type { Rarity } from '../core/types';
+import type { Attribute, Rarity } from '../core/types';
 
 /**
  * 養成數值規則。GDD 只定了方向（同屬經驗 ×1.5、突破 +5 階、覺醒 3 個），
@@ -24,8 +24,10 @@ export interface GrowthRules {
   awakenLimitBreakGate: number[];
   /** 第 i 個星紋覺醒的金幣花費 */
   awakenCoin: number[];
-  /** 第 i 個星紋覺醒需要的同屬素材卡張數 */
+  /** 第 i 個星紋覺醒需要的星核張數 */
   awakenMaterialCount: number[];
+  /** 各屬性卡覺醒時使用的星核卡號 */
+  awakenMaterialByAttribute: Record<Attribute, string>;
   maxInventoryCapacity: number;
   /** 販賣價 = sellValue × (1 + 此值 × (Lv − 1)) */
   sellLevelBonus: number;
@@ -43,11 +45,12 @@ export const GROWTH_RULES: GrowthRules = {
   skillMaterialIds: [],
   maxLimitBreak: 5,
   limitBreakStatBonus: 0.04,
-  // GDD 寫「+5 時解鎖星紋覺醒」。為了讓抽到 1 張就能先體驗流派覺醒，
-  // 這裡改成 +1／+3／+5 分段解鎖；若總監要照原文，改成 [5, 5, 5] 即可。
-  awakenLimitBreakGate: [1, 3, 5],
+  // 分段解鎖：第 1 個覺醒不需突破，只有一張也能先體驗流派特色
+  awakenLimitBreakGate: [0, 3, 5],
   awakenCoin: [20000, 50000, 100000],
   awakenMaterialCount: [1, 2, 3],
+  // 星核卡號依創意顧問提案 001
+  awakenMaterialByAttribute: { fire: 'c916', water: 'c917', wood: 'c918', light: 'c919', dark: 'c920' },
   maxInventoryCapacity: 300,
   sellLevelBonus: 0.05,
   collectionGems: { 1: 0, 2: 0, 3: 1, 4: 1, 5: 3, 6: 5 },

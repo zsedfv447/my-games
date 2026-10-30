@@ -55,11 +55,13 @@ describe('突破', () => {
 });
 
 describe('星紋覺醒', () => {
-  it('依序解鎖，需要突破階數、金幣與同屬素材', () => {
+  it('依序解鎖：第 1 個不需突破，之後需要突破階數、金幣與同屬性星核', () => {
     const c102 = ctx.card('c102')!;
-    expect(nextAwakening(c102, { awakened: 0 }, ctx)).toMatchObject({ slot: 0, limitBreak: 1, coin: 20000, materials: 1 });
+    expect(nextAwakening(c102, { awakened: 0 }, ctx)).toMatchObject({ slot: 0, limitBreak: 0, coin: 20000, material: 'c916', materials: 1 });
 
-    let save = makeSave([owned('u1', 'c102', { limitBreak: 1 }), owned('u2', 'c905'), owned('u3', 'c906'), owned('u4', 'c915'), owned('u5', 'c905')]);
+    let save = makeSave([
+      owned('u1', 'c102'), owned('u2', 'c916'), owned('u3', 'c905'), owned('u4', 'c916'), owned('u5', 'c916'),
+    ]);
     const first = awaken(save, ctx, 'u1', ['u2']);
     expect(first.ok && first.unlocked).toEqual({ type: 'orbDamageUp', orb: 'fire', percent: 5 });
     if (!first.ok) return;
@@ -70,13 +72,14 @@ describe('星紋覺醒', () => {
     // 第 2 個需要突破 +3
     expect(code(awaken(save, ctx, 'u1', ['u4', 'u5']))).toBe('limitBreakRequired');
     const lb3 = { ...save, inventory: { ...save.inventory, cards: save.inventory.cards.map((c) => (c.uid === 'u1' ? { ...c, limitBreak: 3 } : c)) } };
-    expect(code(awaken(lb3, ctx, 'u1', ['u4']))).toBe('noMaterials');
+    expect(awaken(lb3, ctx, 'u1', ['u4'])).toMatchObject({ ok: false, error: { code: 'noMaterials', message: '需要 2 張焰星核' } });
+    // 同屬性的其他素材卡不行，一定要星核
     expect(code(awaken(lb3, ctx, 'u1', ['u3', 'u4']))).toBe('wrongMaterial');
     expect(awaken(lb3, ctx, 'u1', ['u4', 'u5']).ok).toBe(true);
   });
 
   it('沒有覺醒或已全部解鎖', () => {
-    const save = makeSave([owned('u1', 'c106'), owned('u2', 'c103', { awakened: 2, limitBreak: 5 }), owned('u3', 'c905')]);
+    const save = makeSave([owned('u1', 'c106'), owned('u2', 'c103', { awakened: 2, limitBreak: 5 }), owned('u3', 'c916')]);
     expect(awaken(save, ctx, 'u1', ['u3'])).toMatchObject({ ok: false, error: { code: 'noAwakening' } });
     expect(awaken(save, ctx, 'u2', ['u3'])).toMatchObject({ ok: false, error: { code: 'maxAwakening' } });
   });
