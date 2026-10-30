@@ -151,3 +151,17 @@ describe('startBattle', () => {
     expect(() => startBattle(stage([['nobody']]), [{ cardId: 'c-fire', level: 1 }], null, createRng(1), data)).toThrow('找不到敵人');
   });
 });
+
+describe('TurnSummary.steps', () => {
+  it('轉珠結算附上放手後的盤面與逐段消除', () => {
+    const battle = startBattle(stage([['boss']]), [{ cardId: 'c-fire', level: 1 }], null, createRng(5), data);
+    const before = battle.getState().board;
+    const path = findMove(before);
+    const r = battle.submitMove(path);
+    if (!r.ok) throw new Error(r.reason);
+    expect(r.summary.steps.length).toBeGreaterThan(0);
+    expect(r.summary.steps[0].before).toBe(r.summary.movedBoard);
+    expect(r.summary.steps.flatMap((s) => s.groups)).toEqual(r.summary.groups);
+    expect(r.summary.steps[r.summary.steps.length - 1].after).toEqual(battle.getState().board);
+  });
+});
