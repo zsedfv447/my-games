@@ -4,11 +4,12 @@ import { createRng } from '../src/core/rng';
 import { createNewSave, importSaveCode, exportSaveCode } from '../src/save/save';
 import { resumeBattle, startBattle } from '../src/battle/battle-state';
 import {
-  activeBattleFor, beginActiveBattle, clearActiveBattle, dropSeed, recordBattleSnapshot, sanitizeActiveBattle,
+  abandonActiveBattle, activeBattleFor, beginActiveBattle, clearActiveBattle, collectedDrops, dropSeed, recordBattleSnapshot, sanitizeActiveBattle,
 } from '../src/progression/active-battle';
 import { parseSave, serializeSave } from '../src/save/save';
 import { completeStage } from '../src/progression/stages';
 import { stageContext } from '../src/ui/stage-nav';
+import { recordsOf } from '../src/progression/records';
 
 const config = gameData.config;
 const NOW = Date.UTC(2026, 9, 31, 6, 0, 0);
@@ -76,5 +77,25 @@ describe('進行中的戰鬥（入場券）', () => {
       expect(r.save.activeBattle).toBeNull();
       expect(r.save.player.coin).toBe(777);
     }
+  });
+
+  it('還原時已收過的寶箱：之前波次全部、這一波已倒下的敵人', () => {
+    const p = { stageId: 's', drops: [
+      { cardId: 'a', wave: 0, enemy: 1 }, { cardId: 'b', wave: 1, enemy: 0 }, { cardId: 'c', wave: 1, enemy: 1 }, { cardId: 'd', wave: 2, enemy: 0 },
+    ] };
+    const got = collectedDrops(p, { wave: 1, enemies: [{ hp: 0 }, { hp: 50 }] });
+    expect(got.map((d) => d.cardId)).toEqual(['a', 'b']);
+    expect(collectedDrops(p, { wave: 0, enemies: [{ hp: 10 }, { hp: 10 }] })).toEqual([]);
+  });
+
+  it('在戰鬥畫面外放棄：清掉入場券，手札記一場失敗', () => {
+    const battle = startBattle(stage, members, null, createRng(2024), gameData);
+    battle.submitMove([]);
+    const save = recordBattleSnapshot(begin(), battle.snapshot());
+    const r = abandonActiveBattle(save)!;
+    expect(r.stageId).toBe(stage.id);
+    expect(r.save.activeBattle).toBeNull();
+    expect(recordsOf(r.save)).toMatchObject({ battles: 1, wins: 0 });
+    expect(abandonActiveBattle(r.save)).toBeNull();
   });
 });

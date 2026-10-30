@@ -41,6 +41,7 @@ import { BattleHud } from '../components/battle-hud';
 import { canAct, reenableAfterCancel } from '../battle-guard';
 import { grantClearExp, nextStageButton, unlockNotice } from '../stage-clear';
 import { endBattle, openStageBattle, saveBattle } from '../battle-session';
+import { collectedDrops } from '../../progression/active-battle';
 import type { CardExpGain } from '../../growth';
 
 const CELL = 63;
@@ -211,6 +212,8 @@ class BattleView {
   /** 從中斷處還原：已分出勝負的直接進結算或失敗選單 */
   private afterResume(): void {
     toast('已回到中斷的戰鬥');
+    // 中斷前已倒下的敵人，寶箱直接算進計數器（不播飛行動畫）
+    if (this.s.drops) for (const d of collectedDrops(this.s.drops, this.state)) void this.dropCounter.collect(this.element, d.wave, d.enemy, undefined, this.speed);
     if (this.state.phase === 'won') void this.onWin();
     else if (this.state.phase === 'lost') this.onLose();
   }

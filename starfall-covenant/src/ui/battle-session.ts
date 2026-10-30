@@ -5,7 +5,7 @@ import { createRng } from '../core/rng';
 import type { StageDef } from '../core/types';
 import { gameData } from '../data/load';
 import {
-  activeBattleFor, beginActiveBattle, clearActiveBattle, dropSeed, recordBattleSnapshot,
+  abandonActiveBattle, activeBattleFor, beginActiveBattle, clearActiveBattle, dropSeed, recordBattleSnapshot,
 } from '../progression/active-battle';
 import { planDrops, planMatches, type DropPlan } from '../progression/drops';
 import { confirmDialog } from './components/overlay';
@@ -62,6 +62,29 @@ export function endBattle(): void {
   commit(clearActiveBattle(getSave()));
 }
 
+/** 在戰鬥畫面以外放棄進行中的戰鬥：視為失敗（手札記一場、任務計數），體力不退 */
+export function abandonBattle(): void {
+  const r = abandonActiveBattle(getSave());
+  if (!r) return;
+  commit(r.save);
+  bus.emit('stageFailed', { stageId: r.stageId });
+}
+
+/** 出戰前檢查：已有進行中的戰鬥時詢問。回傳 'resume' 直接回到那場戰鬥、'start' 可以出發、'cancel' 不出發 */
+export async function confirmNewBattle(stageId: string): Promise<'resume' | 'start' | 'cancel'> {
+  const active = getSave().activeBattle;
+  if (!active) return 'start';
+  const name = gameData.stages.find((s) => s.id === active.stageId)?.name ?? active.stageId;
+  if (active.stageId === stageId) {
+    const go = await confirmDialog('有未完成的戰鬥', `「${name}」還有沒打完的戰鬥，要直接繼續嗎？重新出發會視為放棄，並再次消耗體力。`, '繼續', '重新出發');
+    if (go) return 'resume';
+  } else if (!(await confirmDialog('放棄進行中的戰鬥？', `「${name}」還沒打完。放棄會視為失敗，已消耗的體力不會退還。`, '放棄並出發', '取消'))) {
+    return 'cancel';
+  }
+  abandonBattle();
+  return 'start';
+}
+
 /** 進主城時發現有沒打完的戰鬥：詢問要繼續還是放棄。有詢問時回傳 true */
 export function maybeOfferResume(nav: Navigator): boolean {
   const active = getSave().activeBattle;
@@ -69,8 +92,7 @@ export function maybeOfferResume(nav: Navigator): boolean {
   if (!active || !stage) return false;
   void confirmDialog('有未完成的戰鬥', `要繼續「${stage.name}」嗎？放棄會視為失敗，已消耗的體力不會退還。`, '繼續', '放棄').then((go) => {
     if (go) return nav.go('battle', [stage.id]);
-    endBattle();
-    bus.emit('stageFailed', { stageId: stage.id });
+    abandonBattle();
   });
   return true;
 }
