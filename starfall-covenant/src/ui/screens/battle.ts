@@ -206,13 +206,46 @@ class BattleView {
     }
   }
 
+  /** 點隊員頭像：顯示主動技說明，確認後施放 */
   private useSkill(i: number): void {
+    if (this.state.phase !== 'player') return;
+    const m = this.state.team[i];
+    const skill = m?.card.activeSkill ? this.s.data.skills.find((x) => x.id === m.card.activeSkill) : undefined;
+    if (!m || !skill) return toast(`${m?.card.name ?? ''}沒有主動技`);
+    const ready = m.skillCooldown === 0;
+    const dlg = openDialog(skill.name, h('div', null,
+      h('p', null, skill.description),
+      h('p', { class: 'small-text dim' }, ready ? '可以施放' : `冷卻中，還要 ${m.skillCooldown} 回合`),
+    ), [
+      button('取消', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
+      button('施放', { variant: 'primary', disabled: !ready, onClick: () => { dlg.close(); void this.castSkill(i); } }),
+    ]);
+  }
+
+  private async castSkill(i: number): Promise<void> {
+    const before = this.state;
     const r = this.s.battle.useSkill(i);
     if (!r.ok) return toast(r.reason);
     audio.play('skill');
-    this.state = this.s.battle.getState();
-    this.boardView.setBoard(this.state.board);
+    this.boardView.setEnabled(false);
+    await this.animateHits(before, { hits: r.skill.hits });
+    const after = this.s.battle.getState();
+    const hpBefore = this.shownHp;
+    this.state = after;
+    this.shownHp = after.hp;
+    if (r.skill.heal > 0) floatText(this.hpHost, `+${r.skill.heal.toLocaleString()}`, 'heal');
+    if (r.skill.selfDamage > 0) floatText(this.hpHost, `-${r.skill.selfDamage.toLocaleString()}`, 'hurt');
+    this.renderHp(hpBefore);
     this.renderTeam();
+    if (r.skill.boardChanged) await this.boardView.playRefill(after.board, this.speed);
+    if (after.wave !== before.wave) {
+      this.renderEnemies();
+      this.updateBgm();
+    } else {
+      after.enemies.forEach((e, j) => this.updateEnemy(j, e));
+    }
+    if (after.phase === 'won') return this.onWin();
+    this.boardView.setEnabled(true);
   }
 
   private async askRetreat(): Promise<void> {
@@ -283,7 +316,7 @@ class BattleView {
     this.boardView.setEnabled(true);
   }
 
-  private async animateHits(before: BattleState, summary: TurnSummary): Promise<void> {
+  private async animateHits(before: BattleState, summary: Pick<TurnSummary, 'hits'>): Promise<void> {
     const dealt = new Map<number, number>();
     for (const hit of summary.hits) dealt.set(hit.enemy, (dealt.get(hit.enemy) ?? 0) + hit.damage);
     before.enemies.forEach((e, i) => {
