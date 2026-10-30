@@ -72,3 +72,6 @@
 .event-countdown { flex: none; font-size: 12px; color: #9fe0a8; font-variant-numeric: tabular-nums; }
 .event-banner[data-state='upcoming'] .event-countdown { color: #e3c27a; }
 .event-banner[data-state='ended'] .event-countdown { color: var(--text-faint); }
+/* 常駐活動：不倒數，顯示「常駐」標籤 */
+.event-banner[data-state='always'] .event-countdown { padding: 1px 8px; border: 1px solid var(--gold-deep); border-radius: 3px; background: #f2c45a22; color: var(--gold-soft); letter-spacing: 2px; }
+.shop-list > .event-banner { margin: 6px 0 0; }

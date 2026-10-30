@@ -57,6 +57,7 @@ export function clearItems(
   if (clear.playerExp) out.push({ kind: 'count', icon: 'exp', label: '玩家經驗', amount: clear.playerExp });
   // 隊員經驗只在真的有發給隊員時顯示（借用隊伍、全員滿級時不顯示）
   if (clear.cardExp && extras.team?.length) out.push({ kind: 'team', amount: clear.cardExp, members: extras.team });
+  if (clear.tokens) out.push(...rewardItems({ tokens: clear.tokens }));
   if (clear.firstClear) out.push(...rewardItems(clear.firstClear, '首通'));
   if (extras.chapterReward) out.push(...rewardItems(extras.chapterReward, '章節'));
   // 同一張卡掉兩次也分開翻，每張都是一次驚喜

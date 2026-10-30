@@ -233,7 +233,8 @@ export interface StageDef {
   teamRule?: TeamRule;
   fixedTeam?: FixedTeam;
   waves: { enemies: string[]; boss?: boolean }[];
-  rewards: { coin: number; playerExp: number; cardExp?: number; firstClear?: Reward };
+  /** tokens：每次通關都給的活動代幣（循環活動每一期都能賺） */
+  rewards: { coin: number; playerExp: number; cardExp?: number; tokens?: Record<string, number>; firstClear?: Reward };
   stars?: StarCondition[];
   drops: DropDef[];
   story?: { before?: string; beforeBoss?: string; after?: string };

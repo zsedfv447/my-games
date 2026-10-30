@@ -573,5 +573,252 @@
       "count": 5,
       "per": "event"
     }
+  },
+  {
+    "id": "ev-gear-c104",
+    "name": "熔軌工匠・卡朵",
+    "price": {
+      "tokens": {
+        "token-gear": 250
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c104",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "event"
+    }
+  },
+  {
+    "id": "ev-gear-c108",
+    "name": "煙囪鐘匠・諾斯",
+    "price": {
+      "tokens": {
+        "token-gear": 40
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c108",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "event"
+    }
+  },
+  {
+    "id": "ev-gear-c209",
+    "name": "潮汐鐘機・咕嚕",
+    "price": {
+      "tokens": {
+        "token-gear": 40
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c209",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "event"
+    }
+  },
+  {
+    "id": "ev-gear-c407",
+    "name": "黃銅守衛・M-7「麥塔」",
+    "price": {
+      "tokens": {
+        "token-gear": 40
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c407",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "event"
+    }
+  },
+  {
+    "id": "ev-gear-c409",
+    "name": "齒輪書記・帕奇",
+    "price": {
+      "tokens": {
+        "token-gear": 40
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c409",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "event"
+    }
+  },
+  {
+    "id": "ev-gear-c511",
+    "name": "發條蝙蝠・奇克",
+    "price": {
+      "tokens": {
+        "token-gear": 40
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c511",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "event"
+    }
+  },
+  {
+    "id": "ev-gear-fire-core",
+    "name": "焰星核",
+    "price": {
+      "tokens": {
+        "token-gear": 30
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c916",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "ev-gear-water-core",
+    "name": "潮星核",
+    "price": {
+      "tokens": {
+        "token-gear": 30
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c917",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "ev-gear-wood-core",
+    "name": "森星核",
+    "price": {
+      "tokens": {
+        "token-gear": 30
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c918",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "ev-gear-light-core",
+    "name": "輝星核",
+    "price": {
+      "tokens": {
+        "token-gear": 30
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c919",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "ev-gear-dark-core",
+    "name": "蝕星核",
+    "price": {
+      "tokens": {
+        "token-gear": 30
+      }
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c920",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "week"
+    }
+  },
+  {
+    "id": "ev-gear-gems",
+    "name": "星晶 ×3",
+    "price": {
+      "tokens": {
+        "token-gear": 30
+      }
+    },
+    "reward": {
+      "gems": 3
+    },
+    "limit": {
+      "count": 5,
+      "per": "event"
+    }
   }
 ]
