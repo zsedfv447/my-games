@@ -124,7 +124,8 @@ export const prepareScreen: ScreenDef = {
         h('div', { class: 'list' }, stage.stars!.map((c, i) => h('div', { class: 'row small-text' }, h('span', { class: 'stars', style: { opacity: gotStars[i] ? '1' : '0.3' } }, '★'), starText(c)))),
       ),
       problem && h('p', { class: 'small-text', style: { color: 'var(--danger)', textAlign: 'center', margin: '0' } }, VIOLATION_TEXT[problem]),
-      button('出發', { variant: 'primary', block: true, icon: 'sword', disabled: !!problem, cost: { kind: 'stamina', amount: stage.stamina }, onClick: start }),
+      // data-tut：新手教學用來指向出發鈕
+      h('div', { 'data-tut': 'sortie' }, button('出發', { variant: 'primary', block: true, icon: 'sword', disabled: !!problem, cost: { kind: 'stamina', amount: stage.stamina }, onClick: start })),
     );
   },
 };

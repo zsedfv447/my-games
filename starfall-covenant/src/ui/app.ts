@@ -12,12 +12,19 @@ import { commit, getLoadProblem, getSave, loadErrorText, resetAll } from './stat
 import { bus } from '../core/events';
 import { gameData } from '../data/load';
 import { subscribeQuestCounters } from '../progression/quests';
+import { installTutorial, type TutorialController } from './tutorial/controller';
 
 export function startApp(stage: HTMLElement): Router {
   installStageScaling(stage);
   const shell = new Shell(stage);
-  const router = new Router(shell.mount).register(...SCREENS);
+  let tutorial: TutorialController | undefined;
+  const router = new Router((screen, el, route) => {
+    shell.mount(screen, el, route);
+    tutorial?.onRoute(screen, el, route);
+  }).register(...SCREENS);
   shell.attach(router);
+  // 新手教學：第一次開新存檔時引導戰鬥 → 編隊 → 召喚 → 第一關
+  tutorial = installTutorial(stage, router);
   // 任何第一次點擊都解鎖音效（瀏覽器規定）
   window.addEventListener('pointerdown', () => audio.unlock(), { once: true });
   // 任務與成就計數：戰鬥、抽卡、強化等事件累加到存檔

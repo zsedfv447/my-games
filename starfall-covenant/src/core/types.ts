@@ -324,6 +324,10 @@ export interface OwnedCard {
   obtainedAt: number;
 }
 
+/** 新手教學的關卡：教學戰鬥 → 編隊 → 召喚 → 第一章第一關 → 完成 */
+export const TUTORIAL_STEPS = ['battle', 'team', 'summon', 'stage', 'done'] as const;
+export type TutorialStep = (typeof TUTORIAL_STEPS)[number];
+
 export interface SaveData {
   version: number;
   player: { name: string; level: number; exp: number; coin: number; gems: number; tokens: Record<string, number> };
@@ -338,6 +342,8 @@ export interface SaveData {
     tutorialDone: boolean;
     storySeen: string[];
   };
+  /** 新手教學進度（存檔 v2 起，讀檔時一定會補上）；step 為 done 時 progress.tutorialDone 也是 true */
+  tutorial?: { step: TutorialStep; giftGiven: boolean };
   gacha: { pityCounter: Record<string, number>; history: { pool: string; card: string; at: number }[] };
   collection: { seen: string[]; owned: string[]; claimed: string[] };
   quests: { counters: Record<string, number>; claimed: string[]; dailyResetAt: string; weeklyResetAt: string };

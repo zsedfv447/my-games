@@ -24,6 +24,9 @@ import { starText } from './prepare';
 import { enemyChips, teamChips, STATUS_NAMES, type StatusChip } from '../status-labels';
 import { storyBox } from '../components/story';
 import { markStorySeen } from './story';
+import { createTutorialBattle } from '../tutorial/battle-setup';
+import { TutorialBattleGuide, texts as guideTexts, type BattleGuide } from '../tutorial/battle-guide';
+import { advanceTutorial, skipTutorial } from '../tutorial/flow';
 
 const CELL = 63;
 
@@ -60,9 +63,19 @@ interface Setup {
   data: BattleData;
   practice: boolean;
   battle: Battle;
+  /** 新手教學戰鬥的引導層 */
+  guide?: BattleGuide;
 }
 
-function setup(stageId: string): Setup | string {
+function setup(stageId: string, nav: Navigator): Setup | string {
+  if (stageId === 'tutorial') {
+    const t = createTutorialBattle(gameData);
+    const guide = new TutorialBattleGuide(guideTexts(t.battle.getState(), t.data), {
+      onFinish: () => { commit(advanceTutorial(getSave(), 'battle')); nav.replace('team'); },
+      onSkip: () => { commit(skipTutorial(getSave())); nav.replace('home'); },
+    });
+    return { stage: t.stage, data: t.data, practice: true, battle: t.battle, guide };
+  }
   if (stageId === 'practice') {
     return { stage: DEMO_STAGE, data: DEMO_DATA, practice: true, battle: startBattle(DEMO_STAGE, DEMO_TEAM, DEMO_HELPER, createRng(), DEMO_DATA) };
   }
@@ -84,7 +97,7 @@ export const battleScreen: ScreenDef = {
   chrome: 'bare',
   parent: 'adventure',
   render({ route, nav, onLeave }) {
-    const s = setup(route.args[0] ?? '');
+    const s = setup(route.args[0] ?? '', nav);
     if (typeof s === 'string') {
       return h('div', { style: { justifyContent: 'center', padding: '24px' } },
         emptyState('sword', s),
@@ -147,12 +160,21 @@ class BattleView {
       ev.on('poisonTick', (e) => this.queue.push({ kind: 'poison', damage: e.damage })),
     );
     if (!s.practice) this.maybeBossStory();
+    s.guide?.attach({
+      root: this.element,
+      board: this.boardView.element,
+      teamRow: this.teamRow,
+      enemyZone: this.enemyZone,
+      setBoardEnabled: (on) => this.boardView.setEnabled(on),
+      getState: () => this.state,
+    });
   }
 
   destroy(): void {
     this.offs.forEach((off) => off());
     this.boardView.destroy();
     this.dialog?.close();
+    this.s.guide?.destroy();
   }
 
   private updateBgm(): void {
@@ -237,6 +259,8 @@ class BattleView {
     const m = this.state.team[i];
     const skill = m?.card.activeSkill ? this.s.data.skills.find((x) => x.id === m.card.activeSkill) : undefined;
     if (!m || !skill) return toast(`${m?.card.name ?? ''}沒有主動技`);
+    const blocked = this.s.guide?.checkSkill(i);
+    if (blocked) return toast(blocked);
     const ready = m.skillCooldown === 0;
     const dlg = openDialog(skill.name, h('div', null,
       h('p', null, skill.description),
@@ -271,6 +295,7 @@ class BattleView {
     }
     if (after.phase === 'won') return this.onWin();
     this.boardView.setEnabled(true);
+    this.s.guide?.afterSkill(after);
   }
 
   private async askRetreat(): Promise<void> {
@@ -287,6 +312,13 @@ class BattleView {
 
   private async resolveTurn(path: Parameters<Battle['submitMove']>[0]): Promise<void> {
     const before = this.state;
+    const veto = this.s.guide?.checkMove(path, before.board);
+    if (veto) {
+      toast(veto);
+      this.boardView.setBoard(before.board);
+      this.boardView.setEnabled(true);
+      return;
+    }
     this.queue = [];
     const res = this.s.battle.submitMove(path);
     if (!res.ok) {
@@ -348,6 +380,7 @@ class BattleView {
     if (after.phase === 'won') return this.onWin();
     if (after.phase === 'lost') return this.onLose();
     this.boardView.setEnabled(true);
+    this.s.guide?.afterTurn(after);
   }
 
   private async playQueue(): Promise<void> {
@@ -407,6 +440,7 @@ class BattleView {
   private onWin(): void {
     audio.play('win');
     audio.playBgm('victory');
+    if (this.s.guide) return this.s.guide.onWin();
     const result = this.s.battle.getResult()!;
     let clear: StageClearResult | null = null;
     if (!this.s.practice) {

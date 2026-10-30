@@ -4,7 +4,7 @@ import type { GameConfig, SaveData } from '../core/types';
 import { bus } from '../core/events';
 
 export const SAVE_KEY = 'starfall.save';
-export const CURRENT_SAVE_VERSION = 1;
+export const CURRENT_SAVE_VERSION = 2;
 
 /** 寫入 localStorage 的外層：存檔本體＋校驗碼（校驗碼只防手動改壞，不防作弊） */
 interface SaveEnvelope {
@@ -39,6 +39,7 @@ export function createNewSave(config: GameConfig, now: number): SaveData {
     })),
     activeTeam: 0,
     progress: { clearedStages: [], stars: {}, towerFloor: 0, tutorialDone: false, storySeen: [] },
+    tutorial: { step: 'battle', giftGiven: false },
     gacha: { pityCounter: {}, history: [] },
     collection: { seen: starterIds, owned: starterIds, claimed: [] },
     quests: { counters: {}, claimed: [], dailyResetAt: '', weeklyResetAt: '' },
@@ -50,7 +51,20 @@ export function createNewSave(config: GameConfig, now: number): SaveData {
 // ---------- 版本遷移 ----------
 /** MIGRATIONS[n] 把 version n 的存檔升到 n+1。新增欄位時加一條，並把 CURRENT_SAVE_VERSION +1。 */
 type Migration = (old: Record<string, unknown>) => Record<string, unknown>;
-const MIGRATIONS: Record<number, Migration> = {};
+const MIGRATIONS: Record<number, Migration> = {
+  // v1 → v2：加入新手教學進度。已經打過關的舊存檔視為老玩家，不再強制教學（之後可在設定重看）
+  1: (old) => {
+    const progress = (old.progress ?? {}) as Record<string, unknown>;
+    const cleared = Array.isArray(progress.clearedStages) && progress.clearedStages.length > 0;
+    const done = cleared || progress.tutorialDone === true;
+    return {
+      ...old,
+      progress: { ...progress, tutorialDone: done },
+      // 已完成教學的老玩家之後重看教學，不再送召喚贈禮
+      tutorial: { step: done ? 'done' : 'battle', giftGiven: done },
+    };
+  },
+};
 
 export function migrate(
   raw: Record<string, unknown>,
