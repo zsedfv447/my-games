@@ -1,4 +1,6 @@
 // 畫面路由：以網址 hash 表示目前畫面（#/stage-list/1?from=map），方便返回鍵與重新整理後回到原畫面
+import { closeRouteScoped } from './route-scope';
+
 export interface Route {
   name: string;
   args: string[];
@@ -135,6 +137,8 @@ export class Router implements Navigator {
     const route = parseHash(location.hash);
     const screen = this.screens.get(route.name) ?? this.screens.get(this.fallback)!;
     this.leaveFns.splice(0).forEach((fn) => fn());
+    // 上一個畫面自動跳出的彈窗（登入獎勵、未完成戰鬥的詢問）不跟到新畫面
+    closeRouteScoped();
     this.current = screen;
     const el = screen.render({ route, nav: this, onLeave: (fn) => this.leaveFns.push(fn) });
     this.mount(screen, el, route);
