@@ -7,7 +7,7 @@ import { audio } from '../audio';
 import { button } from '../components/basic';
 import { openDialog } from '../components/overlay';
 import { h } from '../dom';
-import { STATUS_NAMES } from '../status-labels';
+import { statusName } from '../status-labels';
 import { floatLabel } from './effects';
 
 // ---------- 屬性剋制 ----------
@@ -33,7 +33,7 @@ export function markMatchups(teamRow: HTMLElement, state: BattleState, config: B
 // ---------- 敵人預告 ----------
 
 function abilityText(a: IntentAbility): string {
-  const name = STATUS_NAMES[a.status] ?? a.status;
+  const name = statusName(a.status, a.params);
   return a.turns ? `${name} ${a.turns} 回合` : name;
 }
 

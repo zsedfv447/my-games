@@ -28,6 +28,7 @@ export const STATUS_NAMES: Record<StatusId, string> = {
   enrage: '狂怒',
   delayImmune: '不受延遲',
   multiHit: '連擊',
+  attributeSeal: '星紋封印',
 };
 
 const STATUS_DETAILS: Record<StatusId, string> = {
@@ -46,7 +47,18 @@ const STATUS_DETAILS: Record<StatusId, string> = {
   enrage: '攻擊力提升',
   delayImmune: '不受延遲與鎖定影響',
   multiHit: '一次攻擊多下',
+  attributeSeal: '指定屬性的隊員轉珠攻擊無效（主動技與回復不受影響）',
 };
+
+/** 狀態名稱；星紋封印帶上被封印的屬性（「星紋封印・焰」「星紋封印・隊長屬性」） */
+export function statusName(id: StatusId, params?: Record<string, number | string>): string {
+  const base = STATUS_NAMES[id] ?? id;
+  if (id !== 'attributeSeal') return base;
+  const raw = params?.attribute;
+  if (raw === 'leader') return `${base}・隊長屬性`;
+  const names = typeof raw === 'string' ? raw.split(',').map((a) => ATTRIBUTE_NAMES[a.trim() as keyof typeof ATTRIBUTE_NAMES]).filter(Boolean) : [];
+  return names.length ? `${base}・${names.join('')}` : base;
+}
 
 const turnsText = (t: number | null | undefined) => (t === null || t === undefined ? '' : ` ${t}`);
 
@@ -55,6 +67,7 @@ export function statusChip(s: StatusInstance, tone: ChipTone): StatusChip {
   const attr = s.params?.attribute;
   if (s.id === 'comboShield' && s.value) name = `Combo≥${s.value}`;
   if (s.id === 'attributeShield' && typeof attr === 'string' && attr in ATTRIBUTE_NAMES) name = `${ATTRIBUTE_NAMES[attr as keyof typeof ATTRIBUTE_NAMES]}減傷`;
+  if (s.id === 'attributeSeal') name = statusName(s.id, s.params);
   const turns = s.turns === null ? '（持續）' : `（剩 ${s.turns} 回合）`;
   return { text: `${name}${turnsText(s.turns)}`, tone, detail: `${STATUS_NAMES[s.id] ?? s.id}：${STATUS_DETAILS[s.id] ?? ''}${turns}` };
 }

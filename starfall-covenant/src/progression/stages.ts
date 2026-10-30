@@ -129,6 +129,8 @@ export interface StageClearResult {
   playerExp: number;
   /** 給出戰隊員的卡片經驗，由養成模組發放 */
   cardExp: number;
+  /** 每次通關都給的活動代幣 */
+  tokens?: Record<string, number>;
   firstClear?: Reward;
   drops: { cardId: string; uid: string }[];
   stars: boolean[];
@@ -171,6 +173,8 @@ export function completeStage(
     },
   };
 
+  const tokens = stage.rewards.tokens && Object.keys(stage.rewards.tokens).length ? stage.rewards.tokens : undefined;
+  if (tokens) s = grantReward(s, { tokens }, config, now).save;
   const firstClear = firstTime ? stage.rewards.firstClear : undefined;
   if (firstClear) s = grantReward(s, firstClear, config, now).save;
 
@@ -186,6 +190,7 @@ export function completeStage(
       coin: stage.rewards.coin,
       playerExp: stage.rewards.playerExp,
       cardExp: stage.rewards.cardExp ?? 0,
+      ...(tokens ? { tokens } : {}),
       ...(firstClear ? { firstClear } : {}),
       drops: dropped.added.map((c) => ({ cardId: c.cardId, uid: c.uid })),
       stars,
@@ -195,30 +200,37 @@ export function completeStage(
   };
 }
 
-/** 章節星章進度（集滿領獎用） */
-export function chapterStars(save: SaveData, chapter: number, stages: StageDef[]): { got: number; total: number } {
+/** 每關的星章數（預定但還沒上線的關卡也用這個數字計算） */
+export const STARS_PER_STAGE = 3;
+
+/** 章節星章進度（集滿領獎用）；給 chapters 時，分批上線的章節以預定關數計算總數 */
+export function chapterStars(save: SaveData, chapter: number, stages: StageDef[], chapters?: ChapterDef[]): { got: number; total: number } {
   let got = 0;
   let total = 0;
+  let count = 0;
   for (const st of stages) {
     if (st.kind !== 'main' || st.chapter !== chapter) continue;
+    count++;
     total += st.stars?.length ?? 0;
     got += (save.progress.stars[st.id] ?? []).filter(Boolean).length;
   }
+  const planned = chapters?.find((c) => c.chapter === chapter)?.stageCount ?? 0;
+  if (planned > count) total += (planned - count) * STARS_PER_STAGE;
   return { got, total };
 }
 
 export type ChapterRewardStatus = 'claimable' | 'claimed' | 'incomplete';
 
 /** 章節星章獎勵狀態：全部星章到手才能領，一章只能領一次；沒有星章的章節永遠不能領 */
-export function chapterRewardStatus(save: SaveData, chapter: number, stages: StageDef[]): ChapterRewardStatus {
+export function chapterRewardStatus(save: SaveData, chapter: number, stages: StageDef[], chapters?: ChapterDef[]): ChapterRewardStatus {
   if ((save.progress.chapterRewardsClaimed ?? []).includes(chapter)) return 'claimed';
-  const { got, total } = chapterStars(save, chapter, stages);
+  const { got, total } = chapterStars(save, chapter, stages, chapters);
   return total > 0 && got >= total ? 'claimable' : 'incomplete';
 }
 
 /** 目前可以領取星章獎勵的章節 */
 export function claimableChapterRewards(save: SaveData, chapters: ChapterDef[], stages: StageDef[]): number[] {
-  return chapters.filter((c) => chapterRewardStatus(save, c.chapter, stages) === 'claimable').map((c) => c.chapter);
+  return chapters.filter((c) => chapterRewardStatus(save, c.chapter, stages, chapters) === 'claimable').map((c) => c.chapter);
 }
 
 /** 領取章節星章獎勵 */
@@ -227,7 +239,7 @@ export function claimChapterStarReward(
 ): SaveResult<'unknownChapter' | 'alreadyClaimed' | 'notComplete'> & { reward?: Reward } {
   const def = chapters.find((c) => c.chapter === chapter);
   if (!def) return fail('unknownChapter');
-  const status = chapterRewardStatus(save, chapter, stages);
+  const status = chapterRewardStatus(save, chapter, stages, chapters);
   if (status === 'claimed') return fail('alreadyClaimed');
   if (status === 'incomplete') return fail('notComplete');
   const granted = grantReward(save, def.starReward, config, now).save;

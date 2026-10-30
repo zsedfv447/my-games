@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import type { SaveData, ShopItemDef } from '../src/core/types';
 import { gameData } from '../src/data/load';
 import { validateGameData } from '../src/data/validate';
-import { eventPeriod, type EventDef } from '../src/progression/events';
+import { eventPeriod, eventStatusText, type EventDef } from '../src/progression/events';
+import { completeStage } from '../src/progression/stages';
+import { createRng } from '../src/core/rng';
 import { buyItem, purchasedCount, remainingPurchases, shopItemEvent } from '../src/progression/shop';
 import { createNewSave } from '../src/save/save';
 import { tokenName } from '../src/ui/economy';
@@ -89,5 +91,58 @@ describe('活動限購依檔期重置', () => {
     const s = rich();
     const legacy = { ...s, daily: { ...s.daily, shopPurchases: { 'ev-c601': 1 } } };
     expect(remainingPurchases(legacy, item, at('2027-06-01T00:00:00'), gameData.events)).toBe(0);
+  });
+});
+
+describe('常駐活動與新活動「工匠座的失竊齒輪」', () => {
+  const beastLion = gameData.shop.find((i) => i.id === 'ev-c601')!;
+  const base = createNewSave(config, P1);
+  const withPurchases = (p: Record<string, number>): SaveData => ({ ...base, daily: { ...base.daily, shopPurchases: p } });
+
+  it('獸王改成常駐：不倒數，顯示「常駐」', () => {
+    const beast = gameData.events.find((e) => e.id === 'ev-beast-call')!;
+    expect(beast.period).toBeNull();
+    expect(eventStatusText(beast, at('2030-01-01T00:00:00'))).toBe('常駐');
+  });
+
+  it('改成常駐不會重置已買的限購（舊的商品 id 鍵、有檔期日期的鍵都算）', () => {
+    for (const p of [{ 'ev-c601': 1 }, { 'ev-c601@eev-beast-call:2026-10-26': 1 }] as Record<string, number>[]) {
+      expect(remainingPurchases(withPurchases(p), beastLion, at('2030-01-01T00:00:00'), gameData.events)).toBe(0);
+    }
+    const fresh = withPurchases({});
+    expect(remainingPurchases(fresh, beastLion, P1, gameData.events)).toBe(1);
+  });
+
+  it('齒輪活動：代幣有名稱，兌換品都是活動限購或每週限購，下一期重置', () => {
+    expect(tokenName('token-gear')).toBe('黃銅齒輪');
+    const items = gameData.shop.filter((i) => i.price.tokens?.['token-gear']);
+    expect(items.length).toBeGreaterThan(5);
+    for (const i of items) expect(['event', 'week']).toContain(i.limit?.per);
+    const kado = items.find((i) => i.id === 'ev-gear-c104')!;
+    const rich = { ...base, player: { ...base.player, tokens: { 'token-gear': 1000 } } };
+    const r = buyItem(rich, kado, config, at('2026-11-01T12:00:00'), gameData.events);
+    if (!r.ok) throw new Error(r.reason);
+    expect(remainingPurchases(r.save, kado, at('2026-11-12T12:00:00'), gameData.events)).toBe(0);
+    expect(remainingPurchases(r.save, kado, at('2026-11-17T12:00:00'), gameData.events)).toBe(1);
+  });
+
+  it('活動關卡每次通關都給代幣，首通另外加碼', () => {
+    const stage = gameData.stages.find((s) => s.id === 'ev-gear-1')!;
+    const ctx = { stages: gameData.stages };
+    const summary = { turns: 3, usedActiveSkill: false, maxCombo: 5, continues: 0, team: [] };
+    const first = completeStage(base, stage, summary, ctx, config, createRng(1), P1);
+    expect(first.result.tokens).toEqual({ 'token-gear': 4 });
+    expect(first.save.player.tokens['token-gear']).toBe(4 + 20);
+    const again = completeStage(first.save, stage, summary, ctx, config, createRng(1), P1);
+    expect(again.save.player.tokens['token-gear']).toBe(4 + 20 + 4);
+  });
+
+  it('新關卡只用現有的敵人與卡片，劇情都存在', () => {
+    const enemyIds = new Set(gameData.enemies.map((e) => e.id));
+    for (const s of gameData.stages.filter((x) => x.event === 'ev-gear-theft')) {
+      for (const w of s.waves) for (const e of w.enemies) expect(enemyIds.has(e), e).toBe(true);
+      for (const id of Object.values(s.story ?? {})) expect(gameData.story[id!]?.length, id).toBeGreaterThan(0);
+    }
+    expect(gameData.story['ev-gear-end'].length).toBeGreaterThan(0);
   });
 });

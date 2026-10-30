@@ -31,15 +31,18 @@ import { enemyChips, teamChips, STATUS_NAMES, type StatusChip } from '../status-
 import { storyBox } from '../components/story';
 import { stageStoryToPlay } from '../../progression/stage-story';
 import { openClearResult, type ResultNote } from '../components/reward-reveal';
+import { grantLorePage, loreNotes } from '../../progression/lore';
 import { clearItems, levelUpView } from '../reward-plan';
 import { resultConstellation, shareClear } from '../clear-extras';
 import { showDefeatGuide } from '../components/defeat-guide';
 import { trackBattleRecords, type BattleRecordTracker } from '../battle-records';
 import { leaderLineOf } from '../victory-line';
+import { helperBondOnClear } from '../helper-bond-clear';
 import { markStorySeen } from './story';
 import { createTutorialBattle } from '../tutorial/battle-setup';
 import { TutorialBattleGuide, texts as guideTexts, type BattleGuide } from '../tutorial/battle-guide';
-import { advanceTutorial, skipTutorial } from '../tutorial/flow';
+import { advanceTutorial } from '../tutorial/flow';
+import { skipTutorialNow } from '../tutorial/skip';
 import { BattleHud, liveSummary } from '../components/battle-hud';
 import { canAct, reenableAfterCancel } from '../battle-guard';
 import { grantClearExp, nextStageButton, unlockNotice } from '../stage-clear';
@@ -96,7 +99,7 @@ function setup(stageId: string, nav: Navigator): Setup | string {
     const t = createTutorialBattle(gameData);
     const guide = new TutorialBattleGuide(guideTexts(t.battle.getState(), t.data), {
       onFinish: () => { commit(advanceTutorial(getSave(), 'battle')); nav.replace('team'); },
-      onSkip: () => { commit(skipTutorial(getSave())); nav.replace('home'); },
+      onSkip: () => { nav.replace('home'); void skipTutorialNow(); },
     });
     return { stage: t.stage, data: t.data, practice: true, battle: t.battle, guide };
   }
@@ -623,13 +626,17 @@ class BattleView {
     let clear: StageClearResult | null = null;
     const firstClear = !this.s.practice && !getSave().progress.clearedStages.includes(this.s.stage.id);
     let expGains: CardExpGain[] = [];
+    let loreGained: ResultNote[] = [];
     if (!this.s.practice) {
       const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
       const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages, gameData.events), gameData.config, createRng(this.s.dropSeed), Date.now(), this.s.drops && plannedCards(this.s.drops));
       const exp = grantClearExp(done.save, this.s.memberUids ?? [], done.result.cardExp);
       expGains = exp.gains;
+      // 星骸殘頁：首次通關有殘頁的關卡（progression/lore.ts）
+      const lore = grantLorePage(exp.save, this.s.stage.id, firstClear, gameData.lore!);
+      loreGained = loreNotes(lore);
       // 發獎與清掉進行中的戰鬥同一次寫入，重新整理不會重複領或重骰掉落
-      commit({ ...exp.save, activeBattle: null });
+      commit({ ...lore.save, activeBattle: null });
       clear = done.result;
       bus.emit('stageCleared', { stageId: this.s.stage.id, turns: result.turns, stars: clear.stars });
       for (const d of clear.drops) bus.emit('cardObtained', { cardId: d.cardId, uid: d.uid, source: 'drop' });
@@ -639,6 +646,10 @@ class BattleView {
       const notice = unlockNotice(this.s.stage);
       if (notice.text) notes.push({ text: notice.text, big: notice.chapter !== undefined });
     }
+    notes.push(...loreGained);
+    // 借用流浪契印師通關：同行情誼 +1，跨過門檻時加提示，感謝台詞取代隊長台詞
+    const bond = this.s.practice ? null : helperBondOnClear(this.s.stage, this.state.team.find((m) => m.isHelper)?.card);
+    if (bond) notes.push(...bond.notes);
     // then：離開後要去的 hash 路徑（下一關）；沒給就回到這關所屬的關卡列表（練習回上一頁）
     const leave = (then?: string) => {
       this.dialog?.close();
@@ -663,7 +674,7 @@ class BattleView {
       notes,
       constellation: resultConstellation(this.s.stage, clear),
       share: () => shareClear(this.s.stage, this.state.team, this.s.memberUids ?? [], result, clear, firstClear, (this.s.stage.stars ?? []).map(starText)),
-      leaderLine: leaderLineOf(this.state),
+      leaderLine: bond?.thanks ?? leaderLineOf(this.state),
       actions: [
         button(next ? '再戰' : '再戰一次', { variant: next ? 'ghost' : undefined, onClick: () => { this.dialog?.close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', [this.s.stage.id]); } }),
         button('返回', { variant: next ? undefined : 'primary', onClick: () => leave() }),

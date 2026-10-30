@@ -194,6 +194,19 @@ describe('章節星章獎勵', () => {
     expect(claimableChapterRewards(r.save, chapters, stages)).toEqual([]);
     expect(claimChapterStarReward(r.save, 1, chapters, stages, config, MON)).toEqual({ ok: false, reason: 'alreadyClaimed' });
   });
+
+  it('分批上線的章節：預定關數還沒上完時，已上線的星章全拿也不能領', () => {
+    const partial = [{ ...chapters[0], stageCount: 4 }, chapters[1]];
+    const save = withStars({ 'st-1-1': [true, true, true], 'st-1-2': [true, true] });
+    // 已上線 2 關共 5 顆，預定 4 關：還差 2 關 × 3 顆
+    expect(chapterStars(save, 1, stages, partial)).toEqual({ got: 5, total: 11 });
+    expect(chapterStars(save, 1, stages)).toEqual({ got: 5, total: 5 });
+    expect(chapterRewardStatus(save, 1, stages, partial)).toBe('incomplete');
+    expect(claimableChapterRewards(save, partial, stages)).toEqual([]);
+    expect(claimChapterStarReward(save, 1, partial, stages, config, MON)).toEqual({ ok: false, reason: 'notComplete' });
+    // 預定關數不大於已上線關數時不影響
+    expect(chapterStars(save, 1, stages, [{ ...chapters[0], stageCount: 2 }])).toEqual({ got: 5, total: 5 });
+  });
 });
 
 describe('戰鬥中的星章狀態', () => {

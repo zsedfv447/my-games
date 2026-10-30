@@ -43,7 +43,16 @@ function legacyEventCount(save: SaveData, item: ShopItemDef, now: number, events
 }
 
 export function purchasedCount(save: SaveData, item: ShopItemDef, now: number, events: EventDef[] = []): number {
-  return (save.daily.shopPurchases[purchaseKey(item, now, events)] ?? 0) + legacyEventCount(save, item, now, events);
+  const legacy = legacyEventCount(save, item, now, events);
+  const event = item.limit?.per === 'event' ? shopItemEvent(item, events) : undefined;
+  if (event && !event.period) {
+    // 常駐活動只有一期：改成常駐前在各檔期買的都算數，限購不會因此重置
+    const prefix = `${item.id}@e${event.id}`;
+    let n = legacy;
+    for (const [k, v] of Object.entries(save.daily.shopPurchases)) if (k === prefix || k.startsWith(`${prefix}:`)) n += v;
+    return n;
+  }
+  return (save.daily.shopPurchases[purchaseKey(item, now, events)] ?? 0) + legacy;
 }
 
 export function remainingPurchases(save: SaveData, item: ShopItemDef, now: number, events: EventDef[] = []): number {

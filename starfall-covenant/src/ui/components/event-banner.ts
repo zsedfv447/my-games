@@ -21,6 +21,8 @@ export function eventBanner(event: EventDef, opts: { nav?: Navigator; onLeave: (
     el.dataset.state = eventWindow(event, now).state;
   };
   tick();
+  // 常駐活動不倒數，只顯示「常駐」標籤
+  if (!event.period) return el;
   const timer = setInterval(tick, 1000);
   opts.onLeave(() => clearInterval(timer));
   return el;

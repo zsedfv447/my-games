@@ -152,7 +152,7 @@ export type PassiveEffect =
 export const STATUS_IDS = [
   'poison', 'skillSeal', 'orbLock', 'moveTimeDown', 'shield', 'attributeShield',
   'comboShield', 'heartSeal', 'darkOrbs', 'poisonOrbs', 'lockedOrbs',
-  'damageAbsorb', 'enrage', 'delayImmune', 'multiHit',
+  'damageAbsorb', 'enrage', 'delayImmune', 'multiHit', 'attributeSeal',
 ] as const;
 export type StatusId = (typeof STATUS_IDS)[number];
 
@@ -178,7 +178,7 @@ export interface EnemyDef {
 }
 
 // ---------- 關卡 ----------
-export type StageKind = 'main' | 'daily' | 'event' | 'tower' | 'trial';
+export type StageKind = 'main' | 'daily' | 'event' | 'tower' | 'trial' | 'side';
 
 export type StarCondition =
   | { type: 'clearWithinTurns'; turns: number }
@@ -233,7 +233,8 @@ export interface StageDef {
   teamRule?: TeamRule;
   fixedTeam?: FixedTeam;
   waves: { enemies: string[]; boss?: boolean }[];
-  rewards: { coin: number; playerExp: number; cardExp?: number; firstClear?: Reward };
+  /** tokens：每次通關都給的活動代幣（循環活動每一期都能賺） */
+  rewards: { coin: number; playerExp: number; cardExp?: number; tokens?: Record<string, number>; firstClear?: Reward };
   stars?: StarCondition[];
   drops: DropDef[];
   story?: { before?: string; beforeBoss?: string; after?: string };
@@ -246,6 +247,8 @@ export interface ChapterDef {
   constellation: string;
   race: Race;
   starReward: Reward;
+  /** 預定的關數；章節分批上線時，星章總數以它計算（還沒上線的關卡算未取得），避免提早領到章節獎勵 */
+  stageCount?: number;
 }
 
 /** 中斷續戰用：出戰時就決定好隊伍與亂數種子，重新整理不能重骰開場盤面或掉落 */
@@ -375,4 +378,8 @@ export interface SaveData {
   records?: import('../progression/records').PlayerRecords;
   /** 星紋謎題每日一題的紀錄（可選；讀取一律經過 progression/puzzle.ts 的 puzzleOf 補預設值） */
   puzzle?: import('../progression/puzzle').PuzzleRecord;
+  /** 已收集的星骸殘頁 id（可選；讀取一律經過 progression/lore.ts 的 collectedLorePages 補預設值） */
+  lorePages?: string[];
+  /** 流浪契印師的同行情誼：NPC id → 點數（可選；讀取一律經過 progression/helper-bond.ts 的 bondPoints 補預設值） */
+  helperBond?: Record<string, number>;
 }

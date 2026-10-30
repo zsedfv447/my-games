@@ -1,5 +1,6 @@
 // 程式產生的星座圖：每章一個星座，每顆星章是一顆星；以章節為種子，每次畫出來都一樣
 import type { StageDef } from '../../core/types';
+import { STARS_PER_STAGE } from '../../progression/stages';
 import { escapeXml, rngFor } from './seed';
 
 export interface ConstellationStar {
@@ -69,6 +70,11 @@ export function chapterStarSlots(stages: StageDef[], chapter: number): { stageId
   return stages
     .filter((s) => s.kind === 'main' && s.chapter === chapter)
     .flatMap((s) => (s.stars ?? []).map((_, index) => ({ stageId: s.id, index })));
+}
+
+/** 星座要畫幾顆星：章節有預定關數時以它為準（每關 3 顆星章），不會少於目前已上線的星數 */
+export function plannedStarCount(stageCount: number | undefined, slotCount: number): number {
+  return Math.max(slotCount, (stageCount ?? 0) * STARS_PER_STAGE);
 }
 
 /** 每顆星是否已點亮 */

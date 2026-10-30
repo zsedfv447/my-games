@@ -7,7 +7,7 @@ import { openShareCard } from './components/share-card';
 import { getSave } from './state';
 import type { ShareMember } from './share-plan';
 
-const KIND_PLACE: Record<StageDef['kind'], string> = { main: '主線', daily: '每日關卡', event: '限時活動', tower: '挑戰之塔', trial: '流派試煉' };
+const KIND_PLACE: Record<StageDef['kind'], string> = { main: '主線', daily: '每日關卡', event: '限時活動', tower: '挑戰之塔', trial: '流派試煉', side: '外傳' };
 
 /** 主線關卡結算時顯示的章節星座（只點亮這次新拿到的星章） */
 export function resultConstellation(stage: StageDef, clear: StageClearResult | null): HTMLElement | null {

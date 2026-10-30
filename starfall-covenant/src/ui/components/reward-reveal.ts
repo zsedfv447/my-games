@@ -215,7 +215,7 @@ export function openClearResult(host: HTMLElement, opts: ClearResultOptions): { 
     h('div', { class: 'result-stage' }, opts.stageName),
     opts.leaderLine && h('div', { class: 'result-leader-line' },
       cardThumb(opts.leaderLine.card, { size: 44 }),
-      h('div', null, h('div', { class: 'result-leader-name' }, opts.leaderLine.card.name), h('p', null, `「${opts.leaderLine.text}」`))),
+      h('div', null, h('div', { class: 'result-leader-name' }, opts.leaderLine.speaker ?? opts.leaderLine.card.name), h('p', null, `「${opts.leaderLine.text}」`))),
     notes, reveal, actions, hint);
   const close = () => {
     layer.classList.add('closing');
@@ -288,7 +288,7 @@ export function showLevelUp(view: LevelUpView, host?: HTMLElement): Promise<void
 export function firstClearChip(reward: Reward | undefined, cleared: boolean): HTMLElement | null {
   const p = firstClearPreview(reward, cleared);
   if (!p) return null;
-  return h('span', { class: ['first-clear-chip', p.claimed && 'claimed'], title: p.claimed ? '首通獎勵已領取' : '第一次通關可得' },
+  return h('span', { class: ['first-clear-chip', p.claimed && 'claimed'], title: p.claimed ? `${p.full}（已領取）` : `第一次通關可得　${p.full}` },
     p.icon !== 'card' && resourceIcon(p.icon), p.text);
 }
 

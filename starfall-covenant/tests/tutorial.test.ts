@@ -6,7 +6,7 @@ import { CURRENT_SAVE_VERSION, createNewSave, exportSaveCode, importSaveCode, mi
 import type { SaveData } from '../src/core/types';
 import {
   FIRST_STAGE, TUTORIAL_BOARD, TUTORIAL_COMBO, TUTORIAL_PATH, advanceTutorial, comboOfPath, grantSummonGift, guideFor,
-  isTutorialActive, restartTutorial, setTutorialStep, skipTutorial, tutorialBoard, tutorialStep,
+  isTutorialActive, restartTutorial, setTutorialStep, skipTutorial, skipTutorialWithGift, tutorialBoard, tutorialStep,
 } from '../src/ui/tutorial/flow';
 import { TUTORIAL_ENEMY_HP, createTutorialBattle } from '../src/ui/tutorial/battle-setup';
 import { TutorialBattleGuide, texts } from '../src/ui/tutorial/battle-guide';
@@ -222,5 +222,26 @@ describe('教學戰鬥的操作限制', () => {
     g.phase = 'free';
     expect(g.checkMove([{ row: 0, col: 0 }, { row: 0, col: 1 }], board)).toBeNull();
     expect(g.checkSkill(3)).toBeNull();
+  });
+});
+
+describe('略過教學補發贈禮（#66）', () => {
+  it('還沒領過贈禮就略過：教學完成並補發星晶，只發一次', () => {
+    const s = fresh();
+    const r = skipTutorialWithGift(s, 5);
+    expect(r.granted).toBe(5);
+    expect(r.save.player.gems).toBe(s.player.gems + 5);
+    expect(tutorialStep(r.save)).toBe('done');
+    expect(r.save.tutorial).toEqual({ step: 'done', giftGiven: true });
+    const again = skipTutorialWithGift(restartTutorial(r.save), 5);
+    expect(again.granted).toBe(0);
+    expect(again.save.player.gems).toBe(r.save.player.gems);
+  });
+
+  it('教學中已經在召喚頁領過，或是老玩家，略過時不再發', () => {
+    const got = grantSummonGift(setTutorialStep(fresh(), 'summon'), 5).save;
+    expect(skipTutorialWithGift(got, 5).granted).toBe(0);
+    const veteran = { ...fresh(), tutorial: { step: 'done' as const, giftGiven: true }, progress: { ...fresh().progress, tutorialDone: true } };
+    expect(skipTutorialWithGift(restartTutorial(veteran), 5)).toMatchObject({ granted: 0 });
   });
 });

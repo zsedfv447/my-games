@@ -73,7 +73,7 @@ export function formatCountdown(ms: number): string {
 export function eventStatusText(event: EventDef, now: number): string {
   const w = eventWindow(event, now);
   switch (w.state) {
-    case 'always': return '常駐開放';
+    case 'always': return '常駐';
     case 'open': return `剩餘 ${formatCountdown(w.end - now)}`;
     case 'upcoming': return `${formatCountdown(w.start - now)} 後開放`;
     case 'ended': return '活動已結束';

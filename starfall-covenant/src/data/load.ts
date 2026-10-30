@@ -12,8 +12,9 @@ import shop from '../../data/shop.json';
 import quests from '../../data/quests.json';
 import story from '../../data/story.json';
 import events from '../../data/events.json';
+import lore from '../../data/lore.json';
 import type { GameData } from './validate';
 
 export const gameData = {
-  config, archetypes, cards, skills, leaderSkills, enemies, stages, chapters, gachaPools, shop, quests, story, events,
+  config, archetypes, cards, skills, leaderSkills, enemies, stages, chapters, gachaPools, shop, quests, story, events, lore,
 } as unknown as GameData;

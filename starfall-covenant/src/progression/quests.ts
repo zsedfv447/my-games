@@ -7,7 +7,7 @@ import { dateKey, weekKey } from './time';
 
 /**
  * 計數器名稱（QuestDef.counter 只能用這些）：
- * - stageClear：通關次數；stageClear:main / :daily / :event / :tower / :trial 依關卡種類
+ * - stageClear：通關次數；stageClear:main / :daily / :event / :tower / :trial / :side 依關卡種類
  * - stageClear3Stars：拿滿該關全部星章的通關次數
  * - stageFail：失敗次數
  * - comboTotal：累計 Combo；comboBest：單回合最高 Combo（取最大值）
@@ -26,7 +26,7 @@ const KNOWN_COUNTERS = new Set([
   'stageClear', 'stageClear3Stars', 'stageFail', 'comboTotal', 'comboBest', 'orbsCleared',
   'gachaPull', 'cardObtained', 'cardEnhance', 'cardEvolve',
   ...COMBO_THRESHOLDS.map((t) => `combo${t}`),
-  ...['main', 'daily', 'event', 'tower', 'trial'].map((k) => `stageClear:${k}`),
+  ...['main', 'daily', 'event', 'tower', 'trial', 'side'].map((k) => `stageClear:${k}`),
   'login', 'shopPurchase', 'questClaim:daily',
 ]);
 

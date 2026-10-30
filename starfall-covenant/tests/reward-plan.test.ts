@@ -88,8 +88,10 @@ describe('升級卡與首通預告', () => {
     expect(v.cost[1]).toBeGreaterThan(v.cost[0]);
   });
   it('首通預告：未通關顯示數量，通關後顯示已領，沒有首通獎勵不顯示', () => {
-    expect(firstClearPreview({ gems: 1 }, false)).toEqual({ text: '首通 +1', claimed: false, icon: 'gem' });
-    expect(firstClearPreview({ gems: 3, coin: 500 }, false)?.text).toBe('首通 +3 等');
+    expect(firstClearPreview({ gems: 1 }, false)).toEqual({ text: '首通 +1', full: '首通：星晶 +1', claimed: false, icon: 'gem' });
+    expect(firstClearPreview({ gems: 3, coin: 500 }, false)).toMatchObject({ text: '首通 +3 …', full: '首通：星晶 +3、金幣 +500' });
+    // 活動關卡：chip 精簡，完整內容（星晶＋活動代幣）放 title（#68）
+    expect(firstClearPreview({ gems: 1, tokens: { 'token-beast': 20 } }, false)).toMatchObject({ text: '首通 +1 …', full: '首通：星晶 +1、獸王代幣 +20', icon: 'gem' });
     expect(firstClearPreview({ gems: 1 }, true)).toMatchObject({ text: '首通 已領', claimed: true });
     expect(firstClearPreview(undefined, false)).toBeNull();
     expect(firstClearPreview({}, false)).toBeNull();

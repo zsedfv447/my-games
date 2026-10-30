@@ -4,7 +4,8 @@ import { audio } from '../audio';
 import { button, panel, slider, toggle } from '../components/basic';
 import { confirmDialog, openDialog, toast } from '../components/overlay';
 import { commit, exportCode, getSave, getSettings, importCode, resetAll, updateSettings } from '../state';
-import { isTutorialActive, restartTutorial, skipTutorial } from '../tutorial/flow';
+import { isTutorialActive, restartTutorial } from '../tutorial/flow';
+import { skipTutorialNow } from '../tutorial/skip';
 import type { ScreenDef } from '../router';
 
 function showExport(): void {
@@ -76,7 +77,7 @@ export const settingsScreen: ScreenDef = {
           'div',
           { class: 'row' },
           button('重看教學', { small: true, onClick: () => { commit(restartTutorial(getSave())); toast('從轉珠戰鬥開始重看教學'); nav.go('home'); } }),
-          isTutorialActive(getSave()) && button('略過教學', { small: true, variant: 'ghost', onClick: () => { commit(skipTutorial(getSave())); toast('已略過新手教學'); nav.replace('settings'); } }),
+          isTutorialActive(getSave()) && button('略過教學', { small: true, variant: 'ghost', onClick: () => { toast('已略過新手教學'); void skipTutorialNow().then(() => nav.replace('settings')); } }),
         ),
       ),
       panel(

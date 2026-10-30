@@ -48,5 +48,15 @@
     "starReward": {
       "gems": 5
     }
+  },
+  {
+    "chapter": 6,
+    "name": "穹頂外環",
+    "constellation": "英雄座",
+    "race": "human",
+    "starReward": {
+      "gems": 5
+    },
+    "stageCount": 9
   }
 ]

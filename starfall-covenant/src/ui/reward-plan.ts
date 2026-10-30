@@ -2,7 +2,7 @@
 import type { GameConfig, Reward } from '../core/types';
 import type { ResourceIcon } from './art/icons';
 import type { SfxName } from './audio';
-import { tokenName } from './economy';
+import { rewardParts, tokenName } from './economy';
 import { maxStamina, teamCostLimit, type LevelUpInfo } from '../progression/player';
 import type { StageClearResult } from '../progression/stages';
 
@@ -57,6 +57,7 @@ export function clearItems(
   if (clear.playerExp) out.push({ kind: 'count', icon: 'exp', label: '玩家經驗', amount: clear.playerExp });
   // 隊員經驗只在真的有發給隊員時顯示（借用隊伍、全員滿級時不顯示）
   if (clear.cardExp && extras.team?.length) out.push({ kind: 'team', amount: clear.cardExp, members: extras.team });
+  if (clear.tokens) out.push(...rewardItems({ tokens: clear.tokens }));
   if (clear.firstClear) out.push(...rewardItems(clear.firstClear, '首通'));
   if (extras.chapterReward) out.push(...rewardItems(extras.chapterReward, '章節'));
   // 同一張卡掉兩次也分開翻，每張都是一次驚喜
@@ -137,16 +138,22 @@ export function levelUpView(info: LevelUpInfo, config: GameConfig): LevelUpView 
   };
 }
 
-/** 關卡列表的首通預告文字；沒有首通獎勵回傳 null */
-export function firstClearPreview(reward: Reward | undefined, cleared: boolean): { text: string; claimed: boolean; icon: ResourceIcon | 'card' } | null {
+/**
+ * 關卡列表的首通預告：text 是 chip 上的精簡版（圖示＋「首通 +1」，還有其他獎勵就加「…」），
+ * full 是完整內容（「首通：星晶 +1、獸王代幣 +20」），放在 title。沒有首通獎勵回傳 null。
+ */
+export function firstClearPreview(reward: Reward | undefined, cleared: boolean): { text: string; full: string; claimed: boolean; icon: ResourceIcon | 'card' } | null {
   if (!reward) return null;
   const items = rewardItems(reward);
   if (!items.length) return null;
   const top = items.at(-1)!;
   const amount = top.kind === 'count' ? ` +${top.amount.toLocaleString()}` : '';
-  const more = items.length > 1 ? ' 等' : '';
+  const more = items.length > 1 ? ' …' : '';
+  // 完整清單：每一項實際的獎勵，數量寫成「+N」
+  const list = rewardParts(reward).map((p) => p.label.replace(' ×', ' +')).join('、');
   return {
     text: cleared ? '首通 已領' : `首通${amount}${more}`,
+    full: `首通：${list}`,
     claimed: cleared,
     icon: top.kind === 'count' ? (top.icon === 'exp' ? 'gem' : top.icon) : 'card',
   };
