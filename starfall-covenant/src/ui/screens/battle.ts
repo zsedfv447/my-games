@@ -31,6 +31,7 @@ import { openClearResult, type ResultNote } from '../components/reward-reveal';
 import { clearItems, levelUpView } from '../reward-plan';
 import { showDefeatGuide } from '../components/defeat-guide';
 import { trackBattleRecords, type BattleRecordTracker } from '../battle-records';
+import { leaderLineOf } from '../victory-line';
 import { markStorySeen } from './story';
 import { createTutorialBattle } from '../tutorial/battle-setup';
 import { TutorialBattleGuide, texts as guideTexts, type BattleGuide } from '../tutorial/battle-guide';
@@ -630,6 +631,7 @@ class BattleView {
       instantCount: getSettings().lowFx,
       levelUp: clear?.levelUp && levelUpView(clear.levelUp, gameData.config),
       notes,
+      leaderLine: leaderLineOf(this.state),
       actions: [
         button(next ? '再戰' : '再戰一次', { variant: next ? 'ghost' : undefined, onClick: () => { this.dialog?.close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', [this.s.stage.id]); } }),
         button('返回', { variant: next ? undefined : 'primary', onClick: () => leave() }),
