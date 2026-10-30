@@ -16,7 +16,7 @@ import type { Rng } from '../core/rng';
 import type { CardDef, GameConfig, LeaderSkillDef, OwnedCard, StageDef } from '../core/types';
 import { gameData } from '../data/load';
 import type { GameData } from '../data/validate';
-import { applyPath, createBoard, resolveBoard, type Board, type MatchGroup, type Pos } from './board';
+import { applyPath, createBoard, resolveBoard, type Board, type MatchGroup, type Pos, type ResolveStep } from './board';
 import {
   applyHits,
   computeAttacks,
@@ -78,6 +78,10 @@ export interface TurnSummary {
   poisonDamage: number;
   /** 持續傷害（主動技 damageOverTime） */
   dotHits: HitResult[];
+  /** 轉珠放手後的盤面（第一段消除前） */
+  movedBoard: Board;
+  /** 逐段的「消除 → 落下補珠」，介面依序播放；沒有消除時為空陣列 */
+  steps: ResolveStep[];
 }
 
 export interface EnemyAttack {
@@ -475,7 +479,10 @@ export function startBattle(
       });
       if (state.enemies[state.target]?.hp <= 0 && firstAlive() >= 0) state.target = firstAlive();
 
-      const summary: TurnSummary = { turn: state.turns, groups, combo, hits: results, heal, poisonDamage: poison, dotHits };
+      const summary: TurnSummary = {
+        turn: state.turns, groups, combo, hits: results, heal, poisonDamage: poison, dotHits,
+        movedBoard: moved.board, steps: resolved.steps,
+      };
       events.emit('turnResolved', summary);
       // 任務與成就計數用全遊戲事件
       bus.emit('comboResolved', { combo, orbsCleared: groups.reduce((sum, g) => sum + g.cells.length, 0) });

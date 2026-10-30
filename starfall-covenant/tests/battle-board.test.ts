@@ -199,3 +199,54 @@ describe('天降與盤面操作', () => {
     expect(board.cells.filter((o) => o.poison)).toHaveLength(4);
   });
 });
+
+describe('逐段結算（給介面播放）', () => {
+  const board = boardFromStrings([
+    'wgldhf',
+    'gwhlfd',
+    'wlllgh',
+    'gwhdfw',
+    'hhgfff',
+  ]);
+
+  it('每一段的 after 是下一段的 before，最後一段的 after 是最終盤面', () => {
+    for (let seed = 1; seed <= 10; seed++) {
+      const r = resolveBoard(board, createRng(seed));
+      expect(r.steps.length).toBeGreaterThanOrEqual(1);
+      expect(r.steps[0].before).toBe(board);
+      r.steps.forEach((s, i) => {
+        expect(s.cascade).toBe(i);
+        if (i > 0) expect(s.before).toBe(r.steps[i - 1].after);
+      });
+      expect(r.steps[r.steps.length - 1].after).toBe(r.board);
+      expect(r.steps.flatMap((s) => s.groups)).toEqual(r.groups);
+    }
+  });
+
+  it('drops 描述每顆珠從哪裡落到哪裡', () => {
+    const r = resolveBoard(board, createRng(1));
+    for (const step of r.steps) {
+      const { cols } = step.before;
+      const cleared = new Set(step.groups.flatMap((g) => g.cells));
+      const moved = new Set(step.drops.map((d) => d.to * cols + d.col));
+      for (const d of step.drops) {
+        if (d.isNew) {
+          expect(d.from).toBeLessThan(0);
+          continue;
+        }
+        expect(cleared.has(d.from * cols + d.col)).toBe(false);
+        expect(step.after.cells[d.to * cols + d.col]).toEqual(step.before.cells[d.from * cols + d.col]);
+      }
+      // 沒列在 drops 的格子原地不動
+      step.after.cells.forEach((o, i) => {
+        if (!moved.has(i)) expect(o).toEqual(step.before.cells[i]);
+      });
+      // 新珠數量 = 消除數量
+      expect(step.drops.filter((d) => d.isNew)).toHaveLength(cleared.size);
+    }
+  });
+
+  it('沒有消除時沒有任何一段', () => {
+    expect(resolveBoard(boardFromStrings(['fwg', 'wgf', 'gfw']), createRng(1)).steps).toEqual([]);
+  });
+});
