@@ -69,10 +69,11 @@ export function grantLorePage(save: SaveData, stageId: string, firstClear: boole
 }
 
 /** 結算畫面的提示文字（reward-reveal 的 notes） */
-export function loreNotes(gain: LoreGain): { text: string; big?: boolean }[] {
+/** 結算提示：chip 是收起時的小標籤，go 是「前往」劇情回顧的殘頁分頁 */
+export function loreNotes(gain: LoreGain): { text: string; big?: boolean; chip?: string; go?: string }[] {
   if (!gain.page) return [];
-  const notes: { text: string; big?: boolean }[] = [{ text: `獲得星骸殘頁「${gain.page.title}」` }];
-  if (gain.unlocked) notes.push({ text: `集滿${gain.unlocked.name}！隱藏對話「${gain.unlocked.secret.title}」已在劇情回顧解鎖`, big: true });
+  const notes: { text: string; big?: boolean; chip?: string; go?: string }[] = [{ text: `獲得星骸殘頁「${gain.page.title}」`, chip: '📜 殘頁', go: 'stories/lore' }];
+  if (gain.unlocked) notes.push({ text: `集滿${gain.unlocked.name}！隱藏對話「${gain.unlocked.secret.title}」已在劇情回顧解鎖`, big: true, chip: '📜 隱藏對話', go: 'stories/lore' });
   return notes;
 }
 

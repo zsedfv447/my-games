@@ -24,8 +24,10 @@ export function helperBondOnClear(stage: StageDef, helperCard: CardDef | undefin
   const notes: ResultNote[] = gain.unlocked.map((t) => ({
     text: `與${npc.name}的情誼達到 ${BOND_TIERS[t]}：解鎖回憶〈${def.stories[t].title}〉`,
     big: t === BOND_FRAME_TIER,
+    chip: `♥ 情誼 ${BOND_TIERS[t]}`,
+    play: def.stories[t].lines,
   }));
-  if (gain.unlocked.includes(BOND_FRAME_TIER)) notes.push({ text: `獲得${npc.name}的星契頭像框`, big: true });
+  if (gain.unlocked.includes(BOND_FRAME_TIER)) notes.push({ text: `獲得${npc.name}的星契頭像框`, big: true, chip: '🖼 頭像框', go: `helper/${stage.id}` });
   const last = gain.unlocked[gain.unlocked.length - 1];
   return { notes, thanks: { card: helperCard, text: def.thanks[last], speaker: npc.name } };
 }

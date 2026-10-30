@@ -62,6 +62,10 @@
 .rv-card.r5.shown::after { box-shadow: 0 0 16px 3px var(--rarity-5); }
 .rv-card.r6.shown::after { box-shadow: 0 0 18px 4px var(--rarity-6); }
 @keyframes rv-rare { 50% { opacity: 0.45; } }
+.rv-card { margin-bottom: 16px; }
+.rv-card-name { position: absolute; left: -10px; right: -10px; top: 100%; margin-top: 2px; font-size: 10px; text-align: center; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* NEW 放左下角，上方留給「首通」來源標籤 */
+.rv-card-new { position: absolute; left: -4px; bottom: 2px; z-index: 1; font-size: 9px; font-weight: 800; color: #1a1205; background: var(--gold); border-radius: 3px; padding: 0 3px; box-shadow: 0 0 6px var(--gold); }
 .rv-card-tag {
   position: absolute; left: 50%; top: -7px; transform: translateX(-50%); white-space: nowrap; z-index: 1;
   font-size: 10px; font-weight: 800; color: #1b1203; background: var(--gold); border-radius: 999px; padding: 0 6px;
@@ -97,7 +101,7 @@
 /* ---------- 契約結算（戰鬥勝利） ---------- */
 .result-layer {
   position: absolute; inset: 0; z-index: 40; overflow-x: hidden; overflow-y: auto;
-  display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 10px; padding: 24px 18px 32px;
+  display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 7px; padding: 14px 18px 14px;
   background: radial-gradient(80% 50% at 50% 30%, rgba(42, 58, 133, 0.92), rgba(6, 10, 31, 0.96));
   animation: fade-in 240ms ease-out both;
 }
@@ -113,19 +117,27 @@
 @keyframes result-drop { from { opacity: 0; transform: translateY(-80px) scale(1.6); } }
 .result-reveal { position: relative; }
 .result-actions { position: relative; display: flex; flex-direction: column; gap: 8px; min-height: 44px; }
+/* 按鈕列固定在底部：內容超過一頁時也不用往下捲才看得到 */
+.result-actions:not(:empty) {
+  position: sticky; bottom: 0; z-index: 2; margin: 0 -18px; padding: 12px 18px calc(10px + var(--safe-bottom, 0px));
+  background: linear-gradient(rgba(6, 10, 31, 0), rgba(6, 10, 31, 0.92) 28%);
+}
 .result-actions > .row { display: flex; gap: 8px; }
 .result-actions > .row .btn { flex: 1; }
 .result-actions .btn { animation: fade-in 220ms ease-out both; }
-/* 開放提示（第一次通關：新關卡／新章節） */
-.result-notes { display: flex; flex-direction: column; gap: 6px; }
-.result-notes:empty { display: none; }
-.result-note { text-align: center; font-size: 12px; color: var(--text-dim); animation: fade-in 260ms ease-out both; }
-.result-note.big {
-  font-family: var(--font-title); font-size: 18px; letter-spacing: 0.08em; color: var(--gold-soft);
-  padding: 6px 10px; border: 1px solid var(--gold-deep); border-radius: var(--radius-s);
-  background: linear-gradient(90deg, transparent, rgba(242, 196, 90, 0.2), transparent);
-  animation: result-note-in 520ms cubic-bezier(0.2, 1.5, 0.4, 1) both;
+/* 結算提示：一排小標籤，點了展開內容（新紀錄、章節開放、殘頁、情誼…） */
+.result-notes-host:empty { display: none; }
+.result-notes { display: flex; flex-direction: column; gap: 6px; animation: fade-in 260ms ease-out both; }
+.result-note-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.result-note-chip {
+  font: inherit; font-size: 12px; font-weight: 700; color: var(--text); cursor: pointer;
+  padding: 3px 10px; border-radius: 999px; border: 1px solid rgba(182, 236, 255, 0.45); background: rgba(6, 10, 31, 0.55);
 }
+.result-note-chip.big { color: var(--gold-soft); border-color: var(--gold-deep); background: linear-gradient(90deg, rgba(242, 196, 90, 0.12), rgba(242, 196, 90, 0.28), rgba(242, 196, 90, 0.12)); animation: result-note-in 520ms cubic-bezier(0.2, 1.5, 0.4, 1) both; }
+.result-note-chip[aria-expanded='true'] { border-color: var(--gold); box-shadow: 0 0 8px rgba(242, 196, 90, 0.5); }
+.result-note-detail { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: var(--radius-s); background: rgba(6, 10, 31, 0.6); font-size: 12px; color: var(--text-dim); }
+.result-note-detail[hidden] { display: none; }
+.result-note-detail p { flex: 1; margin: 0; }
 @keyframes result-note-in { from { opacity: 0; transform: scaleX(0.2); } }
 .result-layer .rv-hint { position: absolute; left: 0; right: 0; bottom: 14px; }
 
@@ -180,6 +192,10 @@
   padding: 1px 6px 1px 3px; border-radius: 999px; border: 1px solid #3fa8e0; background: rgba(63, 168, 224, 0.16);
 }
 .first-clear-chip svg { width: 14px; height: 14px; }
+.first-clear-chip .fc-label { margin-right: 2px; padding-left: 3px; }
+.first-clear-chip .fc-part { display: inline-flex; align-items: center; gap: 1px; }
+.first-clear-chip .fc-part + .fc-part { margin-left: 4px; }
+.first-clear-chip .fc-card { font-size: 10px; }
 .first-clear-chip.claimed { color: var(--text-faint); border-color: var(--line); background: none; filter: grayscale(1); opacity: 0.7; }
 
 /* ---------- 出戰確認的關卡獎勵 ---------- */
