@@ -10,6 +10,7 @@ import { isKnownCounter } from '../progression/quests';
 import type { EventDef } from '../progression/events';
 import type { LoreData } from '../progression/lore';
 import { BOND_TIERS, type HelperBondDef } from '../progression/helper-bond';
+import { CARD_BOND_TIERS, type CardBondDef } from '../progression/card-bond';
 
 export interface GameData {
   config: GameConfig;
@@ -248,5 +249,29 @@ export function validateHelperBonds(bonds: HelperBondDef[], npcs: { id: string }
     }
   }
   for (const id of ids) if (!seen.has(id)) err('helper-bonds', `${id} 沒有情誼資料`);
+  return errors;
+}
+
+/** 角色羈絆小劇場（data/card-bonds.json）：family 必須是進化鏈最初型態的角色卡，各門檻一段 3～5 句的小劇場 */
+export function validateCardBonds(bonds: CardBondDef[], cards: CardDef[]): string[] {
+  const errors: string[] = [];
+  const err = (where: string, msg: string) => errors.push(`${where}: ${msg}`);
+  const evolvedInto = new Set(cards.flatMap((c) => (c.evolution ? [c.evolution.to] : [])));
+  const seen = new Set<string>();
+  for (const b of bonds) {
+    const w = `card-bonds/${b.family}`;
+    const card = cards.find((c) => c.id === b.family);
+    if (!card) err(w, '找不到這張卡');
+    else if (card.race === 'material') err(w, '素材卡不能有羈絆劇場');
+    if (evolvedInto.has(b.family)) err(w, '要用進化鏈最初型態的卡號');
+    if (seen.has(b.family)) err(w, '重複的角色');
+    seen.add(b.family);
+    if (b.scenes.length !== CARD_BOND_TIERS.length) err(w, `小劇場要有 ${CARD_BOND_TIERS.length} 段`);
+    for (const [i, s] of b.scenes.entries()) {
+      if (!s.title) err(w, `第 ${i + 1} 段小劇場沒有標題`);
+      if (s.lines.length < 3 || s.lines.length > 5) err(w, `第 ${i + 1} 段小劇場要 3～5 句`);
+      if (s.lines.some((l) => !l.text)) err(w, `第 ${i + 1} 段小劇場有空白的句子`);
+    }
+  }
   return errors;
 }

@@ -8,8 +8,7 @@ import { ATTRIBUTE_NAMES } from '../art/palette';
 import { userAsset } from '../assets';
 import { audio } from '../audio';
 import { badge, button, emptyState, listItem, panel } from '../components/basic';
-import { storyBox } from '../components/story';
-import { overlayRoot } from '../components/overlay';
+import { closeBondStories, playBondStory } from '../bond-story';
 import { cardThumb } from '../components/card-thumb';
 import { chooseHelper, chosenHelper, offerToHelper, VIOLATION_TEXT } from '../sortie';
 import { markSeen } from '../../growth';
@@ -50,20 +49,15 @@ function bondMemories(onLeave: (fn: () => void) => void): HTMLElement | null {
     return def ? def.stories.slice(0, n).map((story, i) => ({ npc, story, i })) : [];
   });
   if (!items.length) return null;
-  const play = (lines: Parameters<typeof storyBox>[0]) => {
-    const layer = h('div', { class: 'story-layer bond-story-layer' });
-    layer.appendChild(storyBox(lines, () => layer.remove()));
-    overlayRoot().appendChild(layer);
-  };
   // 回憶層掛在舞台上，離開畫面時一起收掉
-  onLeave(() => overlayRoot().querySelectorAll('.bond-story-layer').forEach((el) => el.remove()));
+  onLeave(closeBondStories);
   return h('div', null,
     h('h2', { class: 'section-title' }, '同行回憶'),
     h('div', { class: 'list' }, items.map(({ npc, story, i }) => listItem({
       leading: npcAvatar(npc, 36),
       title: story.title,
       sub: `${npc.name}・第 ${i + 1} 段`,
-      onClick: () => { audio.play('confirm'); play(story.lines); },
+      onClick: () => { audio.play('confirm'); playBondStory(story.lines); },
     }))));
 }
 
