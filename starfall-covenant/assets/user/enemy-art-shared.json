@@ -1,0 +1,43 @@
+{
+  "note": "圖片被共用（同圖或換色）的敵人。borrowers 在遊戲裡改用程式產生的圖，等美術補專屬圖。由 tools/art/shared_enemy_art.py 產生。",
+  "threshold": 0.95,
+  "groups": [
+    {
+      "owner": "e0001",
+      "borrowers": [
+        "e0002",
+        "e0004",
+        "e0005"
+      ],
+      "minSimilarity": 1.0
+    },
+    {
+      "owner": "e0013",
+      "borrowers": [
+        "demo-e3"
+      ],
+      "minSimilarity": 1.0
+    },
+    {
+      "owner": "e0019",
+      "borrowers": [
+        "demo-e2"
+      ],
+      "minSimilarity": 0.974
+    },
+    {
+      "owner": "e0026",
+      "borrowers": [
+        "e0012"
+      ],
+      "minSimilarity": 0.992
+    },
+    {
+      "owner": "e0038",
+      "borrowers": [
+        "demo-e5"
+      ],
+      "minSimilarity": 1.0
+    }
+  ]
+}

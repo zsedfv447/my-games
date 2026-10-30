@@ -97,6 +97,15 @@
 /* ---------- 暫停選單 ---------- */
 .pause-menu { gap: 6px; }
 .pause-stars { display: flex; flex-direction: column; gap: 3px; padding-top: 6px; border-top: 1px solid var(--line); }
+/* 星章狀態：顏色與頂部 HUD（flow.css 的 .hud-star）一致 */
+.pause-star { align-items: center; gap: 6px; }
+.pause-star-text { flex: 1; }
+.pause-star-icon { color: #f0cf6e; opacity: 0.55; }
+.pause-star-status { font-size: 11px; color: var(--text-dim); }
+.pause-star.done .pause-star-icon { opacity: 1; text-shadow: 0 0 6px #f6d77a; }
+.pause-star.done .pause-star-status { color: #f0cf6e; }
+.pause-star.failed .pause-star-icon { color: #777; opacity: 0.45; text-decoration: line-through; }
+.pause-star.failed .pause-star-text { color: var(--text-dim); text-decoration: line-through; }
 
 /* ---------- 低特效 ---------- */
 .battle.low-fx .intent-bubble.danger,

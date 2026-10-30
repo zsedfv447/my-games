@@ -1,13 +1,17 @@
 // 戰鬥暫停選單（提案 10）：繼續、戰鬥設定、星章條件、撤退
 import type { StarCondition } from '../../core/types';
+import type { LiveStarStatus } from '../../progression/stages';
 import { button, slider, toggle } from '../components/basic';
 import { openDialog } from '../components/overlay';
 import { h } from '../dom';
 import { starText } from '../screens/prepare';
 import { getSettings, updateSettings } from '../state';
 
+const STATUS_TEXT: Record<LiveStarStatus, string> = { done: '已達成', failed: '已失敗', pending: '進行中' };
+
 export interface PauseOptions {
-  stars: StarCondition[];
+  /** 星章條件與目前狀態（和頂部 HUD 同一套 liveStarStatus） */
+  stars: { cond: StarCondition; status: LiveStarStatus }[];
   onResume: () => void;
   /** 撤退：關掉暫停選單後走原本的撤退流程 */
   onRetreat: () => void;
@@ -23,7 +27,10 @@ export function openPauseMenu(opts: PauseOptions): void {
     slider({ label: '音效', value: s.sfx, onInput: (v) => updateSettings({ sfx: v }) }),
     opts.stars.length > 0 && h('div', { class: 'pause-stars' },
       h('strong', { class: 'small-text' }, '星章條件'),
-      opts.stars.map((c) => h('div', { class: 'row small-text' }, h('span', { class: 'stars' }, '★'), starText(c)))),
+      opts.stars.map(({ cond, status }) => h('div', { class: `row small-text pause-star ${status}` },
+        h('span', { class: 'pause-star-icon', 'aria-hidden': 'true' }, '★'),
+        h('span', { class: 'pause-star-text' }, starText(cond)),
+        h('span', { class: 'pause-star-status' }, STATUS_TEXT[status])))),
   ), [
     button('撤退', { variant: 'ghost', sound: 'back', onClick: () => { dlg.close(); opts.onRetreat(); } }),
     button('繼續', { variant: 'primary', onClick: () => { dlg.close(); opts.onResume(); } }),

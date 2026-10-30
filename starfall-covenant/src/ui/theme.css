@@ -83,7 +83,10 @@ button, input, select { font: inherit; color: inherit; }
   transform-origin: top center;
   transform: translateX(-50%) scale(var(--stage-scale, 1));
   background: radial-gradient(120% 60% at 50% 0%, #1a2766 0%, var(--bg) 55%, var(--bg-deep) 100%);
+  /* clip 不建立捲動容器：focus 或捲到可見處時舞台不會被捲走（舊瀏覽器退回 hidden，由 shell 把捲動歸零） */
   overflow: hidden;
+  overflow: clip;
+  contain: paint;
   display: flex;
   flex-direction: column;
 }
@@ -91,6 +94,8 @@ button, input, select { font: inherit; color: inherit; }
 .starfield {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   opacity: 0.8;
 }
