@@ -11,7 +11,8 @@ export type RevealItem =
   | { kind: 'stat'; label: string; value: string }
   /** 金幣、經驗、星晶等數量，從 0 滾到 amount */
   | { kind: 'count'; icon: ResourceIcon | 'exp'; label: string; amount: number; tag?: string; special?: boolean }
-  | { kind: 'card'; cardId: string; count: number }
+  /** tag：例如「首通」，掉落卡沒有 */
+  | { kind: 'card'; cardId: string; count: number; tag?: string }
   | { kind: 'star'; text: string; got: boolean; isNew: boolean }
   /** 隊員經驗：每位隊員各得 amount，列出升級的隊員 */
   | { kind: 'team'; amount: number; members: TeamExpMember[] };
@@ -36,7 +37,7 @@ export function rewardItems(reward: Reward, tag?: string): RevealItem[] {
   if (reward.coin) out.push({ kind: 'count', icon: 'coin', label: '金幣', amount: reward.coin, tag });
   if (reward.stamina) out.push({ kind: 'count', icon: 'stamina', label: '體力', amount: reward.stamina, tag });
   for (const [t, n] of Object.entries(reward.tokens ?? {})) out.push({ kind: 'count', icon: 'token', label: tokenName(t), amount: n, tag });
-  for (const c of reward.cards ?? []) out.push({ kind: 'card', cardId: c.card, count: c.count });
+  for (const c of reward.cards ?? []) out.push({ kind: 'card', cardId: c.card, count: c.count, ...(tag ? { tag } : {}) });
   if (reward.gems) out.push({ kind: 'count', icon: 'gem', label: '星晶', amount: reward.gems, tag, special: true });
   return out;
 }
