@@ -2,6 +2,7 @@
 import './theme.css';
 import './covenant-skin.css';
 import './flow.css';
+import './battle-fx/battle-fx.css';
 import { installStageScaling } from './scale';
 import { Shell } from './components/shell';
 import { Router } from './router';

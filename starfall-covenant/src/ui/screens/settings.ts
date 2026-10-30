@@ -64,6 +64,10 @@ export const settingsScreen: ScreenDef = {
         { title: '戰鬥' },
         toggle('顯示轉珠倒數', s.showMoveTimer, (v) => updateSettings({ showMoveTimer: v })),
         toggle('戰鬥加速 ×2', s.battleSpeed === 2, (v) => updateSettings({ battleSpeed: v ? 2 : 1 })),
+        toggle('技能與攻擊演出', s.battleFx, (v) => updateSettings({ battleFx: v })),
+        toggle('震動回饋', s.vibration, (v) => updateSettings({ vibration: v })),
+        toggle('低特效模式', s.lowFx, (v) => updateSettings({ lowFx: v })),
+        h('p', { class: 'small-text dim' }, '低特效模式會關掉閃光與畫面震動，適合較舊的手機；震動回饋需要裝置支援。'),
       ),
       panel(
         { title: '新手教學' },

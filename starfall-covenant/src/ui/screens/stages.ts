@@ -5,15 +5,13 @@ import type { StageDef } from '../../core/types';
 import { chapterRewardStatus, chapterStars, claimChapterStarReward } from '../../progression/stages';
 import { badge, bar, button, emptyState, icon, listItem, panel } from '../components/basic';
 import { rewardChips } from '../components/rewards';
-import { audio } from '../audio';
 import { toast } from '../components/overlay';
 import { isPlayable, LOCK_TEXT, stageContext, takeJustUnlocked, stageRow, weekdayText, type StageRow } from '../stage-nav';
 import { commit, getSave } from '../state';
-import { rewardParts } from '../economy';
 import type { ChapterDef } from '../../core/types';
 import type { Navigator, ScreenDef } from '../router';
 import type { IconName } from '../art/icons';
-import { firstClearChip } from '../components/reward-reveal';
+import { firstClearChip, revealReward } from '../components/reward-reveal';
 
 function row(r: StageRow, nav: Navigator, leading: IconName, fresh = new Set<string>()): HTMLElement {
   const s = r.stage;
@@ -57,8 +55,7 @@ function chapterReward(info: ChapterDef): HTMLElement {
     const r = claimChapterStarReward(getSave(), info.chapter, gameData.chapters, gameData.stages, gameData.config, Date.now());
     if (!r.ok) return toast(r.reason === 'alreadyClaimed' ? '已經領過了' : '星章還沒集滿');
     commit(r.save);
-    audio.play('confirm');
-    toast(`獲得章節獎勵：${rewardParts(r.reward!).map((p) => p.label).join('、')}`, 2600);
+    void revealReward('星章獎勵', r.reward!, `第 ${info.chapter} 章・${info.name}`);
     el.replaceWith(chapterReward(info));
   };
   return el;

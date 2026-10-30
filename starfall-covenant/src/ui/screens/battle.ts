@@ -11,6 +11,10 @@ import { grantBattleExp, type CardExpGain } from '../../growth';
 import { CONTINUE_COST_GEMS, payContinue } from '../../progression/continue';
 import { enemySvg } from '../art/enemy';
 import { ATTRIBUTE_NAMES } from '../art/palette';
+import { buzz, flashClass, skillCutin } from '../battle-fx/effects';
+import { openPauseMenu } from '../battle-fx/pause';
+import { clearCombo, finishCombo, flashReadySkills, markMatchups, renderCombo, renderIntent, weakHint } from '../battle-fx/readability';
+import { playStrikes } from '../battle-fx/strikes';
 import { resolveArtPath, userAsset } from '../assets';
 import { audio } from '../audio';
 import { badge, bar, button, emptyState, iconButton } from '../components/basic';
@@ -133,6 +137,9 @@ class BattleView {
   private shownHp: number;
   private dialog?: DialogHandle;
   private speed: number;
+  /** 暫停選單開著；這段期間動畫播完要開放轉珠時，等繼續再開 */
+  private paused = false;
+  private enableWhenResumed = false;
 
   constructor(private s: Setup, private nav: Navigator) {
     this.state = s.battle.getState();
@@ -143,7 +150,7 @@ class BattleView {
       moveSeconds: () => this.state.moveTimeSeconds,
       showTimer: () => getSettings().showMoveTimer,
       onMove: (path) => void this.resolveTurn(path),
-      onStep: () => audio.play('tap'),
+      onStep: () => { audio.play('tap'); buzz(6); },
     });
     this.element = h(
       'div',
@@ -151,16 +158,18 @@ class BattleView {
       h('div', { class: 'battle-top safe-top' },
         h('div', null, this.waveLabel, this.hud),
         h('div', { class: 'stage-name' }, s.stage.name),
-        iconButton('close', '撤退', () => void this.askRetreat())),
+        iconButton('pause', '暫停', () => this.openPause())),
       this.enemyZone,
       this.comboEl,
       h('div', { class: 'battle-bottom safe-bottom' }, this.teamRow, this.teamChipsHost, this.hpHost, this.boardView.element),
     );
+    this.element.classList.toggle('low-fx', getSettings().lowFx);
     this.renderEnemies();
     this.renderTeam();
     this.renderHp(this.state.hp);
     this.renderHud();
     this.boardView.setBoard(this.state.board);
+    document.addEventListener('visibilitychange', this.onVisibility);
     this.boardView.setEnabled(true);
     this.updateBgm();
     const ev = s.battle.events;
@@ -180,6 +189,7 @@ class BattleView {
   }
 
   destroy(): void {
+    document.removeEventListener('visibilitychange', this.onVisibility);
     this.offs.forEach((off) => off());
     this.boardView.destroy();
     this.dialog?.close();
@@ -205,8 +215,10 @@ class BattleView {
         'button',
         { type: 'button', class: ['enemy', i === this.state.target && 'targeted', e.hp <= 0 && 'dead'], 'aria-label': `${e.def.name}，設為目標`, onClick: () => this.setTarget(i) },
         h('div', { class: 'enemy-cd' }, `${e.cooldown}`),
+        h('div', { class: 'enemy-intent' }),
         h('div', { class: 'enemy-art' }, enemyArt(e, boss)),
         h('div', { class: 'enemy-name' }, badge(ATTRIBUTE_NAMES[e.def.attribute], `attr-${e.def.attribute}`), e.def.name),
+        weakHint(e, this.s.data.config.battle),
         chipRow(enemyChips(e), 'enemy-chips'),
         bar({ value: e.hp, max: e.maxHp, variant: 'hp' }),
       );
@@ -214,6 +226,11 @@ class BattleView {
       return el;
     });
     this.enemyZone.appendChild(row);
+    this.renderIntents();
+  }
+
+  private renderIntents(): void {
+    this.enemyEls.forEach((el, i) => renderIntent(el.querySelector('.enemy-intent')!, this.state, i, this.s.data.config.battle));
   }
 
   private updateEnemy(i: number, e: EnemyState, previousHp?: number): void {
@@ -237,6 +254,7 @@ class BattleView {
       if (m.isHelper) thumb.appendChild(h('span', { class: 'helper-tag' }, '助'));
       this.teamRow.appendChild(thumb);
     }
+    markMatchups(this.teamRow, this.state, this.s.data.config.battle);
   }
 
   private renderHp(previous?: number): void {
@@ -274,10 +292,43 @@ class BattleView {
   }
 
   private showCombo(combo: number): void {
-    this.comboEl.textContent = `${combo} Combo`;
-    this.comboEl.classList.remove('pop');
-    void this.comboEl.offsetWidth;
-    this.comboEl.classList.add('pop');
+    renderCombo(this.comboEl, combo);
+  }
+
+  /** 動畫播完開放轉珠；暫停中就等繼續時再開 */
+  private enableBoard(): void {
+    if (this.paused) this.enableWhenResumed = true;
+    else this.boardView.setEnabled(true);
+  }
+
+  /** 分頁切到背景時，等待轉珠中就自動暫停 */
+  private onVisibility = (): void => {
+    if (document.hidden && !this.dialog && !this.boardView.element.classList.contains('disabled')) this.openPause();
+  };
+
+  private openPause(): void {
+    if (this.paused || this.state.phase !== 'player') return;
+    const wasEnabled = !this.boardView.element.classList.contains('disabled');
+    this.paused = true;
+    this.boardView.setEnabled(false);
+    const close = () => {
+      this.paused = false;
+      this.speed = getSettings().battleSpeed;
+      this.element.classList.toggle('low-fx', getSettings().lowFx);
+    };
+    openPauseMenu({
+      stars: this.s.practice ? [] : this.s.stage.stars ?? [],
+      onResume: () => {
+        close();
+        if ((wasEnabled || this.enableWhenResumed) && this.state.phase === 'player') this.boardView.setEnabled(true);
+        this.enableWhenResumed = false;
+      },
+      onRetreat: () => {
+        close();
+        this.enableWhenResumed = false;
+        void this.askRetreat();
+      },
+    });
   }
 
   // ---------- 操作 ----------
@@ -287,6 +338,7 @@ class BattleView {
       audio.play('tap');
       this.state = this.s.battle.getState();
       this.enemyEls.forEach((el, j) => el.classList.toggle('targeted', j === i));
+      markMatchups(this.teamRow, this.state, this.s.data.config.battle);
     }
   }
 
@@ -314,6 +366,8 @@ class BattleView {
     if (!r.ok) return toast(r.reason);
     audio.play('skill');
     this.boardView.setEnabled(false);
+    const skill = this.s.data.skills.find((x) => x.id === r.skill.skillId);
+    if (getSettings().battleFx) await skillCutin(this.element, before.team[i].card, skill?.name ?? '', this.speed);
     await this.animateHits(before, { hits: r.skill.hits });
     const after = this.s.battle.getState();
     const hpBefore = this.shownHp;
@@ -324,15 +378,20 @@ class BattleView {
     this.renderHp(hpBefore);
     this.renderTeam();
     this.renderHud();
-    if (r.skill.boardChanged) await this.boardView.playRefill(after.board, this.speed);
+    flashReadySkills(this.teamRow, before, after);
+    if (r.skill.boardChanged) {
+      if (getSettings().battleFx) await this.boardView.playTransform(after.board, this.speed);
+      else await this.boardView.playRefill(after.board, this.speed);
+    }
     if (after.wave !== before.wave) {
       this.renderEnemies();
       this.updateBgm();
     } else {
       after.enemies.forEach((e, j) => this.updateEnemy(j, e));
+      this.renderIntents();
     }
     if (after.phase === 'won') return this.onWin();
-    this.boardView.setEnabled(true);
+    this.enableBoard();
     this.s.guide?.afterSkill(after);
   }
 
@@ -354,7 +413,7 @@ class BattleView {
     if (veto) {
       toast(veto);
       this.boardView.setBoard(before.board);
-      this.boardView.setEnabled(true);
+      this.enableBoard();
       return;
     }
     this.queue = [];
@@ -362,7 +421,7 @@ class BattleView {
     if (!res.ok) {
       toast(res.reason);
       this.boardView.setBoard(before.board);
-      this.boardView.setEnabled(true);
+      this.enableBoard();
       return;
     }
     const after = this.s.battle.getState();
@@ -373,6 +432,12 @@ class BattleView {
       this.showCombo(combo);
       audio.play('match', combo);
     }, speed);
+    const title = finishCombo(this.comboEl, res.summary.combo, this.s.data.config.battle);
+    if (title) {
+      this.banner(title, 'combo-title');
+      if (!getSettings().lowFx) flashClass(this.element, 'combo-glow', 700);
+      await wait(450 / speed);
+    }
     await this.animateHits(before, res.summary);
     // 主動技或敵人技能在結算後改變了盤面時，最後再對齊一次
     this.boardView.setBoard(after.board);
@@ -386,9 +451,12 @@ class BattleView {
       this.enemyEls[atk.enemy]?.classList.add('attacking');
       await wait(220 / speed);
       this.enemyEls[atk.enemy]?.classList.remove('attacking');
-      this.element.classList.remove('shake');
-      void this.element.offsetWidth;
-      this.element.classList.add('shake');
+      if (!getSettings().lowFx) {
+        this.element.classList.remove('shake');
+        void this.element.offsetWidth;
+        this.element.classList.add('shake');
+      }
+      buzz(40);
       floatText(this.hpHost, `-${atk.damage.toLocaleString()}${atk.hits > 1 ? ` ×${atk.hits}` : ''}`, 'hurt');
       if (atk.survived) floatText(this.hpHost, '保命！', 'heal');
     }
@@ -403,8 +471,8 @@ class BattleView {
     this.renderHp(hpBefore);
     this.renderTeam();
     this.renderHud();
-    this.comboEl.classList.remove('pop');
-    this.comboEl.textContent = '';
+    flashReadySkills(this.teamRow, before, after);
+    clearCombo(this.comboEl);
 
     if (after.wave !== before.wave) {
       await wait(350 / speed);
@@ -414,11 +482,12 @@ class BattleView {
       if (!this.s.practice && (await this.maybeBossStory())) return;
     } else {
       after.enemies.forEach((e, i) => this.updateEnemy(i, e));
+      this.renderIntents();
     }
 
     if (after.phase === 'won') return this.onWin();
     if (after.phase === 'lost') return this.onLose();
-    this.boardView.setEnabled(true);
+    this.enableBoard();
     this.s.guide?.afterTurn(after);
   }
 
@@ -451,25 +520,20 @@ class BattleView {
     return true;
   }
 
-  private async animateHits(before: BattleState, summary: Pick<TurnSummary, 'hits'>): Promise<void> {
-    const dealt = new Map<number, number>();
-    for (const hit of summary.hits) dealt.set(hit.enemy, (dealt.get(hit.enemy) ?? 0) + hit.damage);
-    before.enemies.forEach((e, i) => {
-      const dmg = dealt.get(i);
-      if (!dmg) return;
-      const hp = Math.max(0, e.hp - dmg);
-      this.updateEnemy(i, { ...e, hp }, e.hp);
-      const el = this.enemyEls[i];
-      el.classList.remove('hit');
-      void el.offsetWidth;
-      el.classList.add('hit');
-      floatText(el, dmg.toLocaleString(), 'dmg');
-    });
-    if (dealt.size) await wait(380 / this.speed);
+  private animateHits(before: BattleState, summary: Pick<TurnSummary, 'hits'>): Promise<void> {
+    return playStrikes({
+      root: this.element,
+      teamRow: this.teamRow,
+      enemyZone: this.enemyZone,
+      enemyEls: this.enemyEls,
+      config: this.s.data.config.battle,
+      speed: this.speed,
+      updateEnemy: (i, e, previousHp) => this.updateEnemy(i, e, previousHp),
+    }, before, summary.hits);
   }
 
-  private banner(text: string): void {
-    const el = h('div', { class: 'wave-banner' }, text);
+  private banner(text: string, extra = ''): void {
+    const el = h('div', { class: ['wave-banner', extra] }, text);
     this.element.appendChild(el);
     setTimeout(() => el.remove(), 1400);
   }
@@ -480,8 +544,16 @@ class BattleView {
   private async playFinisher(): Promise<void> {
     const boss = !!this.s.stage.waves[this.state.wave]?.boss;
     const pace = Math.min(this.speed, 1.5);
+    const { lowFx, battleFx } = getSettings();
     audio.play('finisher');
-    this.element.classList.add('finisher');
+    // 低特效：不放閃光與星屑，只留字樣
+    if (lowFx) {
+      this.element.appendChild(h('div', { class: 'finisher-text' }, '淨化完成'));
+      await wait(500 / pace);
+      return;
+    }
+    // 關閉戰鬥演出時不放慢動作（畫面放大、壓暗）
+    if (battleFx) this.element.classList.add('finisher');
     this.element.appendChild(h('div', { class: 'finisher-flash' }));
     this.enemyEls.forEach((el) => {
       el.classList.add('shatter');
@@ -494,7 +566,7 @@ class BattleView {
     });
     await wait(420 / pace);
     this.element.appendChild(h('div', { class: 'finisher-text' }, '淨化完成'));
-    await wait((boss ? 1000 : 700) / pace);
+    await wait((battleFx ? (boss ? 1000 : 700) : 450) / pace);
   }
 
   private async onWin(): Promise<void> {
