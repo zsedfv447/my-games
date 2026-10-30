@@ -1,6 +1,6 @@
 // 獎勵逐一跳出演出（關卡結算、登入、任務、星章等領獎共用）與玩家升級卡
 // 項目順序與時間表在 ../reward-plan.ts（純邏輯），這裡只負責畫面、動畫與音效
-import type { Reward, StageDef } from '../../core/types';
+import type { Reward, StageDef, StoryLine } from '../../core/types';
 import { gameData } from '../../data/load';
 import { h } from '../dom';
 import { audio } from '../audio';
@@ -10,6 +10,7 @@ import {
 import { badge, button, iconButton, panel, resourceIcon } from './basic';
 import { cardThumb } from './card-thumb';
 import { overlayRoot } from './overlay';
+import { playBondStory } from '../bond-story';
 import type { LeaderLine } from '../victory-line';
 import '../reward-reveal.css';
 
@@ -51,7 +52,9 @@ function build(item: RevealItem): Built {
           h('div', { class: 'rv-card-inner' },
             h('div', { class: 'rv-card-back' }),
             h('div', { class: 'rv-card-face' }, def ? cardThumb(def, { size: 56 }) : item.cardId)),
-          item.count > 1 && h('span', { class: 'rv-card-count' }, `×${item.count}`)),
+          item.count > 1 && h('span', { class: 'rv-card-count' }, `×${item.count}`),
+          item.isNew && h('span', { class: 'rv-card-new' }, 'NEW'),
+          h('span', { class: 'rv-card-name' }, def?.name ?? item.cardId)),
       };
     }
     case 'star':
@@ -176,10 +179,41 @@ export function openRewardReveal(title: string, items: RevealItem[], opts: { sub
   });
 }
 
-/** 結算頂部的提示（例如「第 2 章開放！」）；big 為大橫幅 */
+/** 結算的提示（新紀錄、章節開放、殘頁、情誼…）：收成一排小標籤，點了展開內容 */
 export interface ResultNote {
   text: string;
+  /** 重要提示（章節開放、頭像框）：標籤用金色 */
   big?: boolean;
+  /** 收起時的小標籤（圖示＋短字，例如「📜 殘頁」）；沒給就用 text */
+  chip?: string;
+  /** 展開後「前往」的畫面（hash 路徑，例如 stories/lore、stages/2） */
+  go?: string;
+  /** 展開後「播放回憶」的對白 */
+  play?: StoryLine[];
+}
+
+/** 結算提示的標籤列：點標籤展開內容與動作，再點一次收起 */
+function noteChips(notes: ResultNote[], onGo?: (path: string) => void): HTMLElement {
+  const detail = h('div', { class: 'result-note-detail', hidden: true });
+  let open = -1;
+  const chips = notes.map((n, i) => h('button', {
+    type: 'button',
+    class: ['result-note-chip', n.big && 'big'],
+    'aria-expanded': 'false',
+    onClick: (e: Event) => {
+      e.stopPropagation();
+      audio.play('tap');
+      open = open === i ? -1 : i;
+      chips.forEach((c, j) => c.setAttribute('aria-expanded', String(j === open)));
+      detail.hidden = open < 0;
+      if (open < 0) return;
+      const action = n.play
+        ? button('播放回憶', { small: true, variant: 'primary', onClick: (ev) => { ev.stopPropagation(); playBondStory(n.play!); } })
+        : n.go && onGo ? button('前往', { small: true, variant: 'primary', onClick: (ev) => { ev.stopPropagation(); onGo(n.go!); } }) : null;
+      detail.replaceChildren(h('p', null, n.text), ...(action ? [action] : []));
+    },
+  }, n.chip ?? n.text));
+  return h('div', { class: 'result-notes' }, h('div', { class: 'result-note-chips' }, chips), detail);
 }
 
 export interface ClearResultOptions {
@@ -191,8 +225,10 @@ export interface ClearResultOptions {
   instantCount?: boolean;
   /** 有升級時，項目播完後跳升級卡 */
   levelUp?: LevelUpView;
-  /** 演出最後出現的開放提示 */
+  /** 演出最後出現的提示（收成小標籤） */
   notes?: ResultNote[];
+  /** 提示的「前往」：離開結算到該畫面（呼叫端負責先播通關劇情等） */
+  onGo?: (path: string) => void;
   /** 項目播完後接著出現的圖（章節星座） */
   constellation?: HTMLElement | null;
   /** 有給時在按鈕上方放「契約回憶」分享鈕 */
@@ -206,7 +242,7 @@ export interface ClearResultOptions {
 /** 契約結算全螢幕層：標題落下 → 項目逐一跳出 → 升級卡 → 開放提示 → 按鈕。點畫面可快轉 */
 export function openClearResult(host: HTMLElement, opts: ClearResultOptions): { close(): void } {
   const reveal = h('div', { class: 'result-reveal' });
-  const notes = h('div', { class: 'result-notes' });
+  const notes = h('div', { class: 'result-notes-host' });
   const actions = h('div', { class: 'result-actions' });
   const hint = h('p', { class: 'rv-hint' }, '點擊畫面快轉');
   const layer = h('div', { class: 'result-layer', role: 'dialog', 'aria-label': '契約結算' },
@@ -235,12 +271,14 @@ export function openClearResult(host: HTMLElement, opts: ClearResultOptions): { 
     }
     if (opts.levelUp) await showLevelUp(opts.levelUp);
     if (!layer.isConnected) return;
-    for (const n of opts.notes ?? []) notes.appendChild(h('div', { class: ['result-note', n.big && 'big'] }, n.text));
-    if (opts.notes?.length) audio.play(opts.notes.some((n) => n.big) ? 'levelup' : 'star');
+    if (opts.notes?.length) {
+      notes.appendChild(noteChips(opts.notes, opts.onGo));
+      audio.play(opts.notes.some((n) => n.big) ? 'levelup' : 'star');
+    }
     const share = opts.share && iconButton('constellation', '契約回憶', opts.share);
     if (share) share.classList.add('share-btn');
+    // 按鈕列固定在底部（CSS sticky），不自動捲動，標題與提示留在畫面上
     actions.appendChild(h('div', { class: 'row' }, share, opts.actions.filter((b): b is HTMLElement => !!b)));
-    actions.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   })();
   return { close };
 }
@@ -288,8 +326,13 @@ export function showLevelUp(view: LevelUpView, host?: HTMLElement): Promise<void
 export function firstClearChip(reward: Reward | undefined, cleared: boolean): HTMLElement | null {
   const p = firstClearPreview(reward, cleared);
   if (!p) return null;
-  return h('span', { class: ['first-clear-chip', p.claimed && 'claimed'], title: p.claimed ? `${p.full}（已領取）` : `第一次通關可得　${p.full}` },
-    p.icon !== 'card' && resourceIcon(p.icon), p.text);
+  const title = p.claimed ? `${p.full}（已領取）` : `第一次通關可得　${p.full}`;
+  if (p.claimed) return h('span', { class: 'first-clear-chip claimed', title }, p.text);
+  // 星晶、代幣都用圖示＋數字（◆+1 ⚙+20），超過兩種才用「…」
+  return h('span', { class: 'first-clear-chip', title, 'aria-label': p.full },
+    h('span', { class: 'fc-label' }, '首通'),
+    p.parts.map((part) => h('span', { class: 'fc-part' }, part.icon === 'card' ? h('span', { class: 'fc-card' }, '卡') : resourceIcon(part.icon), `+${part.amount.toLocaleString()}`)),
+    p.more && h('span', { class: 'fc-more' }, '…'));
 }
 
 /** 出戰確認頁的「關卡獎勵」區塊：首通獎勵（已領變灰）＋可能掉落的卡 */

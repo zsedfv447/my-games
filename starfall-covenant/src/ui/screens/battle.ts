@@ -628,6 +628,8 @@ class BattleView {
     const firstClear = !this.s.practice && !getSave().progress.clearedStages.includes(this.s.stage.id);
     let expGains: CardExpGain[] = [];
     let loreGained: ResultNote[] = [];
+    // 結算前的圖鑑：掉落卡是不是第一次獲得（NEW）
+    const ownedBefore = [...getSave().collection.owned];
     if (!this.s.practice) {
       const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
       const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages, gameData.events), gameData.config, createRng(this.s.dropSeed), Date.now(), this.s.drops && plannedCards(this.s.drops));
@@ -642,11 +644,14 @@ class BattleView {
       bus.emit('stageCleared', { stageId: this.s.stage.id, turns: result.turns, stars: clear.stars });
       for (const d of clear.drops) bus.emit('cardObtained', { cardId: d.cardId, uid: d.uid, source: 'drop' });
     }
-    const notes: ResultNote[] = (this.records?.newRecordTexts() ?? []).map((text) => ({ text }));
+    // 結算提示收成小標籤（點了展開）：新紀錄合成一個、章節開放放最前面
+    const notes: ResultNote[] = [];
     if (firstClear) {
       const notice = unlockNotice(this.s.stage);
-      if (notice.text) notes.push({ text: notice.text, big: notice.chapter !== undefined });
+      if (notice.note) notes.push(notice.note);
     }
+    const records = this.records?.newRecordTexts() ?? [];
+    if (records.length) notes.push({ text: records.join('、'), chip: records.length > 1 ? `🏆 新紀錄 ×${records.length}` : '🏆 新紀錄' });
     notes.push(...loreGained);
     // 借用流浪契印師通關：同行情誼 +1，跨過門檻時加提示，感謝台詞取代隊長台詞
     const bond = this.s.practice ? null : helperBondOnClear(this.s.stage, this.state.team.find((m) => m.isHelper)?.card);
@@ -666,6 +671,7 @@ class BattleView {
     const next = this.s.practice ? null : nextStageButton(this.s.stage, getSave(), leave);
     const items = clearItems(result, clear, clear ? (this.s.stage.stars ?? []).map(starText) : [], {
       team: expGains.map((g) => ({ cardId: g.cardId, from: g.levelBefore, to: g.levelAfter })),
+      ownedBefore,
     });
     // 契約結算：戰績 → 金幣／經驗滾動 → 首通星晶 → 掉落卡翻面 → 星章點亮 → 升級卡 → 開放提示 → 按鈕
     this.dialog = openClearResult(this.element, {
@@ -675,6 +681,7 @@ class BattleView {
       instantCount: getSettings().lowFx,
       levelUp: clear?.levelUp && levelUpView(clear.levelUp, gameData.config),
       notes,
+      onGo: (path) => leave(path),
       constellation: resultConstellation(this.s.stage, clear),
       share: () => shareClear(this.s.stage, this.state.team, this.s.memberUids ?? [], result, clear, firstClear, (this.s.stage.stars ?? []).map(starText)),
       leaderLine: bond?.thanks ?? leaderLineOf(this.state),

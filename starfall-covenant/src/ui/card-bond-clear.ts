@@ -14,6 +14,10 @@ export function cardBondOnClear(stage: StageDef, uids: string[]): ResultNote[] {
     const def = cardBondDef(g.family);
     if (!def) return [];
     const name = growth.card(g.family)?.name ?? g.family;
-    return g.unlocked.map((t) => ({ text: `與${name}的羈絆達到 ${CARD_BOND_TIERS[t]} 場：解鎖小劇場〈${def.scenes[t].title}〉` }));
+    return g.unlocked.map((t) => ({
+      text: `與${name}的羈絆達到 ${CARD_BOND_TIERS[t]} 場：解鎖小劇場〈${def.scenes[t].title}〉`,
+      chip: `♥ 羈絆 ${CARD_BOND_TIERS[t]}`,
+      play: def.scenes[t].lines,
+    }));
   });
 }

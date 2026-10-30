@@ -11,7 +11,7 @@ export type RevealItem =
   | { kind: 'stat'; label: string; value: string }
   /** 金幣、經驗、星晶等數量，從 0 滾到 amount */
   | { kind: 'count'; icon: ResourceIcon | 'exp'; label: string; amount: number; tag?: string; special?: boolean }
-  | { kind: 'card'; cardId: string; count: number }
+  | { kind: 'card'; cardId: string; count: number; /** 第一次獲得（圖鑑裡原本沒有） */ isNew?: boolean }
   | { kind: 'star'; text: string; got: boolean; isNew: boolean }
   /** 隊員經驗：每位隊員各得 amount，列出升級的隊員 */
   | { kind: 'team'; amount: number; members: TeamExpMember[] };
@@ -28,6 +28,8 @@ export interface ClearExtras {
   team?: TeamExpMember[];
   /** 同時領到的章節星章獎勵 */
   chapterReward?: Reward;
+  /** 結算前圖鑑已擁有的卡號；有給時第一次獲得的卡標 NEW（同一張新卡掉兩張只標第一張） */
+  ownedBefore?: Iterable<string>;
 }
 
 /** 一份 Reward 拆成演出項目（登入、任務、星章等領獎共用）。星晶放最後壓軸 */
@@ -63,6 +65,14 @@ export function clearItems(
   // 同一張卡掉兩次也分開翻，每張都是一次驚喜
   for (const d of clear.drops) out.push({ kind: 'card', cardId: d.cardId, count: 1 });
   starTexts.forEach((text, i) => out.push({ kind: 'star', text, got: !!clear.stars[i], isNew: !!clear.newStars[i] }));
+  if (extras.ownedBefore) {
+    const owned = new Set(extras.ownedBefore);
+    for (const item of out) {
+      if (item.kind !== 'card') continue;
+      item.isNew = !owned.has(item.cardId);
+      owned.add(item.cardId);
+    }
+  }
   return out;
 }
 
@@ -138,11 +148,27 @@ export function levelUpView(info: LevelUpInfo, config: GameConfig): LevelUpView 
   };
 }
 
+/** 首通 chip 最多列幾種獎勵（星晶放最前面，其他照原順序） */
+const MAX_CHIP_PARTS = 2;
+
+function chipParts(items: RevealItem[]): { parts: { icon: ResourceIcon | 'card'; amount: number }[]; more: boolean } {
+  const all = items.map((it) => (it.kind === 'count'
+    ? { icon: (it.icon === 'exp' ? 'gem' : it.icon) as ResourceIcon, amount: it.amount }
+    : { icon: 'card' as const, amount: it.kind === 'card' ? it.count : 1 }));
+  // 星晶在 rewardItems 裡排最後（演出壓軸），chip 上放最前面
+  const ordered = [...all.filter((p) => p.icon === 'gem'), ...all.filter((p) => p.icon !== 'gem')];
+  return { parts: ordered.slice(0, MAX_CHIP_PARTS), more: ordered.length > MAX_CHIP_PARTS };
+}
+
 /**
  * 關卡列表的首通預告：text 是 chip 上的精簡版（圖示＋「首通 +1」，還有其他獎勵就加「…」），
  * full 是完整內容（「首通：星晶 +1、獸王代幣 +20」），放在 title。沒有首通獎勵回傳 null。
  */
-export function firstClearPreview(reward: Reward | undefined, cleared: boolean): { text: string; full: string; claimed: boolean; icon: ResourceIcon | 'card' } | null {
+export function firstClearPreview(reward: Reward | undefined, cleared: boolean): {
+  text: string; full: string; claimed: boolean; icon: ResourceIcon | 'card';
+  /** chip 上的圖示＋數字（星晶、代幣等），最多 maxParts 種；more 表示還有其他獎勵沒列出 */
+  parts: { icon: ResourceIcon | 'card'; amount: number }[]; more: boolean;
+} | null {
   if (!reward) return null;
   const items = rewardItems(reward);
   if (!items.length) return null;
@@ -154,6 +180,7 @@ export function firstClearPreview(reward: Reward | undefined, cleared: boolean):
   return {
     text: cleared ? '首通 已領' : `首通${amount}${more}`,
     full: `首通：${list}`,
+    ...chipParts(items),
     claimed: cleared,
     icon: top.kind === 'count' ? (top.icon === 'exp' ? 'gem' : top.icon) : 'card',
   };

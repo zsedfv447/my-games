@@ -88,12 +88,30 @@ describe('升級卡與首通預告', () => {
     expect(v.cost[1]).toBeGreaterThan(v.cost[0]);
   });
   it('首通預告：未通關顯示數量，通關後顯示已領，沒有首通獎勵不顯示', () => {
-    expect(firstClearPreview({ gems: 1 }, false)).toEqual({ text: '首通 +1', full: '首通：星晶 +1', claimed: false, icon: 'gem' });
+    expect(firstClearPreview({ gems: 1 }, false)).toEqual({ text: '首通 +1', full: '首通：星晶 +1', claimed: false, icon: 'gem', parts: [{ icon: 'gem', amount: 1 }], more: false });
     expect(firstClearPreview({ gems: 3, coin: 500 }, false)).toMatchObject({ text: '首通 +3 …', full: '首通：星晶 +3、金幣 +500' });
     // 活動關卡：chip 精簡，完整內容（星晶＋活動代幣）放 title（#68）
     expect(firstClearPreview({ gems: 1, tokens: { 'token-beast': 20 } }, false)).toMatchObject({ text: '首通 +1 …', full: '首通：星晶 +1、獸王代幣 +20', icon: 'gem' });
     expect(firstClearPreview({ gems: 1 }, true)).toMatchObject({ text: '首通 已領', claimed: true });
+    // chip 用圖示＋數字：星晶放最前面、最多兩種，第三種以後才用「…」（#77）
+    expect(firstClearPreview({ gems: 1, tokens: { 'token-beast': 20 } }, false)).toMatchObject({ parts: [{ icon: 'gem', amount: 1 }, { icon: 'token', amount: 20 }], more: false });
+    expect(firstClearPreview({ coin: 500, gems: 2, tokens: { 'token-beast': 20 } }, false)).toMatchObject({ parts: [{ icon: 'gem', amount: 2 }, { icon: 'coin', amount: 500 }], more: true });
+    expect(firstClearPreview({ cards: [{ card: 'c901', count: 1 }] }, false)).toMatchObject({ parts: [{ icon: 'card', amount: 1 }], more: false });
     expect(firstClearPreview(undefined, false)).toBeNull();
     expect(firstClearPreview({}, false)).toBeNull();
+  });
+});
+
+describe('結算掉落卡的 NEW（#80）', () => {
+  const twoDrops: StageClearResult = { ...clear, firstClear: { cards: [{ card: 'c905', count: 1 }] }, drops: [{ cardId: 'c901', uid: 'u9' }, { cardId: 'c901', uid: 'u10' }, { cardId: 'c902', uid: 'u11' }] };
+  const cards = (owned?: string[]) => clearItems({ turns: 3, maxCombo: 4 }, twoDrops, [], owned ? { ownedBefore: owned } : {})
+    .flatMap((i) => (i.kind === 'card' ? [`${i.cardId}${i.isNew ? ' NEW' : ''}`] : []));
+
+  it('結算前圖鑑沒有的卡標 NEW；同一張新卡掉兩張只標第一張；首通給的卡也算', () => {
+    expect(cards(['c902'])).toEqual(['c905 NEW', 'c901 NEW', 'c901', 'c902']);
+  });
+
+  it('沒給圖鑑時不標（相容舊呼叫）', () => {
+    expect(cards()).toEqual(['c905', 'c901', 'c901', 'c902']);
   });
 });
