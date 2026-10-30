@@ -1,8 +1,10 @@
 // 出戰確認：關卡情報、推薦流派、隊伍限制或借用隊伍、星章條件，確認後扣體力進入戰鬥
 import { h, svg } from '../dom';
 import { gameData } from '../../data/load';
+import '../flow-polish.css';
+import { stageStoryToPlay } from '../../progression/stage-story';
 import type { Attribute, EnemyDef, StageDef, StarCondition } from '../../core/types';
-import { enterStage } from '../../progression/stages';
+import { enterStage, periodFirstClearClaimed } from '../../progression/stages';
 import { badge, button, emptyState, panel } from '../components/basic';
 import { cardThumb, emptySlot } from '../components/card-thumb';
 import { toast } from '../components/overlay';
@@ -61,7 +63,8 @@ function intelPanel(stage: StageDef): HTMLElement {
   const intel = stageIntel(stage, gameData.enemies, gameData.config.battle);
   return panel(
     { title: '敵人情報' },
-    intel.suggested.length > 0 && h('div', { class: 'row wrap intel-suggest' }, h('span', { class: 'small-text' }, '建議屬性'), intel.suggested.map(attrChip)),
+    intel.suggested.length > 0 && h('div', { class: 'row wrap intel-suggest' }, h('span', { class: 'small-text' }, '建議屬性'), intel.suggested.map(attrChip),
+      intel.notes.length > 0 && h('span', { class: 'small-text dim' }, `（${intel.notes.join('、')}）`)),
     h('div', { class: 'intel-waves' }, intel.waves.map((w, i) => h('div', { class: `intel-wave${w.boss ? ' boss' : ''}` },
       h('div', { class: 'intel-wave-title small-text' }, `第 ${i + 1} 波`, w.boss && badge('BOSS', 'gold')),
       w.enemies.map((e) => h('div', { class: 'intel-enemy' },
@@ -106,9 +109,10 @@ export const prepareScreen: ScreenDef = {
       if (!entered.ok) return toast(ENTER_ERRORS[entered.reason] ?? entered.reason);
       commit(entered.save);
       armBattle(stage.id);
-      // 第一次挑戰時先播關卡開場劇情，播完直接進戰鬥
-      const before = stage.story?.before;
-      if (before && gameData.story[before] && !getSave().progress.storySeen.includes(before)) nav.go('story', [before], { next: `battle/${stage.id}` });
+      // 第一次挑戰時先播關卡開場劇情（progression/stage-story.ts），播完直接進戰鬥
+      const saved = getSave();
+      const before = stageStoryToPlay(stage, 'before', gameData.story, saved.progress.storySeen, !saved.progress.clearedStages.includes(stage.id));
+      if (before) nav.go('story', [before], { next: `battle/${stage.id}` });
       else nav.go('battle', [stage.id]);
     };
 
@@ -164,10 +168,14 @@ export const prepareScreen: ScreenDef = {
         { title: '星章挑戰' },
         h('div', { class: 'list' }, stage.stars!.map((c, i) => h('div', { class: 'row small-text' }, h('span', { class: 'stars', style: { opacity: gotStars[i] ? '1' : '0.3' } }, '★'), starText(c)))),
       ),
-      stageRewardPanel(stage, save.progress.clearedStages.includes(stage.id)),
-      problem && h('p', { class: 'small-text', style: { color: 'var(--danger)', textAlign: 'center', margin: '0' } }, VIOLATION_TEXT[problem]),
-      // data-tut：新手教學用來指向出發鈕
-      h('div', { 'data-tut': 'sortie' }, button('出發', { variant: 'primary', block: true, icon: 'sword', disabled: !!problem, cost: { kind: 'stamina', amount: stage.stamina }, onClick: start })),
+      stageRewardPanel(stage, stage.rewards.periodFirstClear
+        ? periodFirstClearClaimed(save, stage, gameData.events, Date.now())
+        : save.progress.clearedStages.includes(stage.id)),
+      // 出發列固定在畫面底部（375×812 不用捲到最下面才能出發），上面的內容照常捲動
+      h('div', { class: 'sortie-bar' },
+        problem && h('p', { class: 'small-text sortie-problem' }, VIOLATION_TEXT[problem]),
+        // data-tut：新手教學用來指向出發鈕
+        h('div', { 'data-tut': 'sortie' }, button('出發', { variant: 'primary', block: true, icon: 'sword', disabled: !!problem, cost: { kind: 'stamina', amount: stage.stamina }, onClick: start }))),
     );
   },
 };

@@ -6,7 +6,12 @@
 npm run sim                                # 12 流派 × 全部基準關卡，每格 20 場
 npm run sim -- --runs 50 --stage sim-armor # 只跑一關
 npm run sim -- --archetype combo --json out.json
+npm run sim -- --set main --progress                          # 依主線進度估算玩家養成程度再模擬
+npm run sim -- --set main --progress --chapter-stages 1,5,9   # 只跑每章第 1、5、9 關
 ```
+
+### `--progress`：模擬玩家當時的實際養成
+原本的模式讓全員滿等。`--progress` 依關卡在主線中的位置估算玩家當時的等級、隊伍空間（`teamCostLimit`）、卡片等級、進化、隊長覺醒和持有的 5★，再組出放得下隊伍空間的流派隊、配上當時的助戰後模擬。估算規則在 `progress.ts`（純函式，測試在 `tests/sim-progress.test.ts`），所有假設集中在 `PROGRESS_ASSUMPTIONS`，報表開頭會列出來。
 
 ## 怎麼運作
 - `strategies.ts`：12 個流派各一種策略，寫明「這個流派想把盤面轉成什麼樣子」（例：連擊＝多組 3 顆、長串＝一大串、背水＝高血量時不補血）。

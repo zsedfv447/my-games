@@ -78,7 +78,11 @@ describe('各畫面的引導', () => {
 
   it('到了對應畫面，指向要按的元素', () => {
     expect(guideFor('team', at('team'))).toMatchObject({ target: '.team-slot', action: { advance: true } });
-    expect(guideFor('summon', at('summon'))).toMatchObject({ target: '.seal-pull-actions .btn', placement: 'top', secondary: { advance: true } });
+    expect(guideFor('summon', at('summon'))).toMatchObject({
+      target: '.seal-pull-actions .btn', placement: 'top',
+      // 主按鈕是「召喚一次」（直接按下指向的單抽鈕），「先不召喚」是次要按鈕
+      action: { label: '召喚一次', press: true }, secondary: { label: '先不召喚', advance: true },
+    });
     expect(guideFor('stage', at('prepare', FIRST_STAGE))).toMatchObject({ target: '[data-tut="sortie"] .btn', placement: 'top' });
     expect(guideFor('stage', at('prepare', 'st-1-2'))?.action?.go).toEqual(['prepare', [FIRST_STAGE]]);
   });

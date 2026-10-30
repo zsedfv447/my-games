@@ -17,7 +17,8 @@ const TOKEN_NAMES = new Map(gameData.events.flatMap((e) => (e.token && e.tokenNa
 export const tokenName = (id: string) => TOKEN_NAMES.get(id) ?? id;
 
 const stageKind = new Map(gameData.stages.map((s) => [s.id, s.kind]));
-export const questDerived = (save: SaveData): DerivedCounters => derivedCounters(save, (id) => stageKind.get(id));
+const evolvedForms = new Set(gameData.cards.flatMap((c) => (c.evolution ? [c.evolution.to] : [])));
+export const questDerived = (save: SaveData): DerivedCounters => derivedCounters(save, (id) => stageKind.get(id), evolvedForms);
 
 // ---------- 獎勵 ----------
 export interface RewardPart {

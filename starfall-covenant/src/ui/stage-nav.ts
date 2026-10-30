@@ -1,12 +1,12 @@
 // 關卡導覽：把關卡資料與存檔整理成冒險地圖、關卡列表要顯示的狀態（純函式，方便測試）
 import type { SaveData, StageDef } from '../core/types';
 import { openEventIds, type EventDef } from '../progression/events';
-import { stageLockReason, type StageContext, type StageLockReason } from '../progression/stages';
+import { STARS_PER_STAGE, stageLockReason, type StageContext, type StageLockReason } from '../progression/stages';
 
 /** 依 data/events.json 的檔期決定哪些活動開放；沒給活動資料時視為全部開放（測試用） */
 export function stageContext(stages: StageDef[], events?: EventDef[], now = Date.now()): StageContext {
   if (!events) return { stages, openEvents: new Set(stages.flatMap((s) => (s.event ? [s.event] : []))) };
-  return { stages, openEvents: openEventIds(events, now) };
+  return { stages, events, openEvents: openEventIds(events, now) };
 }
 
 export type StageStatus = 'cleared' | 'open' | StageLockReason | 'towerAhead';
@@ -70,15 +70,20 @@ export interface ChapterProgress {
   unlocked: boolean;
 }
 
-export function chapterProgress(save: SaveData, chapter: number, ctx: StageContext, now: number): ChapterProgress {
+/**
+ * 章節卡的進度。stageCount 傳 ChapterDef.stageCount：章節分批上線時，總關數與星章總數以預定關數計算
+ * （例如第 6 章先上 3 關，要顯示「3 / 9」而不是「3 / 3」），和 chapterStars 的算法一致。
+ */
+export function chapterProgress(save: SaveData, chapter: number, ctx: StageContext, now: number, stageCount?: number): ChapterProgress {
   const list = ctx.stages.filter((s) => s.kind === 'main' && s.chapter === chapter);
   const rows = list.map((s) => stageRow(save, s, ctx, now));
+  const notYet = Math.max(0, (stageCount ?? 0) - rows.length);
   return {
     chapter,
     cleared: rows.filter((r) => r.status === 'cleared').length,
-    total: rows.length,
+    total: rows.length + notYet,
     stars: rows.reduce((n, r) => n + r.stars.filter(Boolean).length, 0),
-    maxStars: rows.reduce((n, r) => n + r.stars.length, 0),
+    maxStars: rows.reduce((n, r) => n + r.stars.length, 0) + notYet * STARS_PER_STAGE,
     unlocked: rows.some((r) => isPlayable(r.status)),
   };
 }
@@ -101,8 +106,20 @@ export function takeJustUnlocked(ids: string[]): Set<string> {
 }
 
 /** 關卡所屬的關卡列表（hash 路徑）：主線回到那一章、活動／每日／塔回到各自列表、流派試煉回到流派頁 */
-export function stageListPath(stage: StageDef): string {
+export function stageListPath(stage: StageDef, events: EventDef[] = []): string {
   if (stage.kind === 'main') return `stages/${stage.chapter ?? 1}`;
+  // 系列活動（流派克星週）有自己的列表：#/stages/nemesis
+  const series = stage.event ? events.find((e) => e.id === stage.event)?.series : undefined;
+  if (series) return `stages/${series}`;
   if (stage.kind === 'trial') return 'archetypes';
   return `stages/${stage.kind}`;
+}
+
+/**
+ * 分批上線的章節還沒做好的關卡範圍（ChapterDef.stageCount 大於已上線關數時），例如第 6 章 { from: 4, to: 9 }。
+ * 關卡都上線後回傳 null，列表上的「製作中」提示就會自動消失。
+ */
+export function upcomingStageRange(stageCount: number | undefined, liveCount: number): { from: number; to: number } | null {
+  if (!stageCount || stageCount <= liveCount) return null;
+  return { from: liveCount + 1, to: stageCount };
 }

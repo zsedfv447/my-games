@@ -16,7 +16,7 @@ import { enemyAtkMultiplier, enemyHitCount, poisonPercent } from '../../src/batt
 type Need = 'always' | 'defense' | 'heal' | 'cleanse' | 'cooldown' | 'never';
 
 const OFFENSIVE = new Set<SkillEffect['type']>([
-  'convertOrbs', 'refreshBoard', 'balanceBoard', 'enhanceOrbs', 'fillMissingOrbs', 'setSkyfallRate',
+  'convertOrbs', 'refreshBoard', 'balanceBoard', 'enhanceOrbs', 'fillMissingOrbs', 'twoColorBoard', 'rowToOrb', 'setSkyfallRate',
   'setEnhancedSkyfallRate', 'damage', 'damageOverTime', 'buffAttack', 'rcvToAtk', 'extendMoveTime',
   'noSkyfallCombo', 'chainOnSkill',
 ]);
@@ -87,7 +87,7 @@ function selfDamageSafe(skill: ActiveSkillDef, s: BattleState, archetype: Archet
 /** 施放順序：冷卻縮減 → 盤面變化 → 其他 */
 function priority(skill: ActiveSkillDef): number {
   if (skill.effects.some((e) => e.type === 'reduceAllyCooldown')) return 0;
-  if (skill.effects.some((e) => ['convertOrbs', 'refreshBoard', 'balanceBoard', 'fillMissingOrbs'].includes(e.type))) return 1;
+  if (skill.effects.some((e) => ['convertOrbs', 'refreshBoard', 'balanceBoard', 'fillMissingOrbs', 'twoColorBoard', 'rowToOrb'].includes(e.type))) return 1;
   return 2;
 }
 

@@ -96,7 +96,11 @@ export type SkillEffect =
   /** 盤面上缺少的屬性（五屬，不含心）各補 count 顆（提案 001，用於七彩齊攻） */
   | { type: 'fillMissingOrbs'; count: number }
   /** turns 回合內天降珠為強化珠的機率（0–1）（提案 001，用於強化珠增幅） */
-  | { type: 'setEnhancedSkyfallRate'; rate: number; turns: number };
+  | { type: 'setEnhancedSkyfallRate'; rate: number; turns: number }
+  /** 雙色盤：心珠與 keep（預設只有心）以外的珠全部轉成 colors 兩色，兩色數量平均（提案 65，用於雙屬共鳴） */
+  | { type: 'twoColorBoard'; colors: [OrbType, OrbType]; keep?: OrbType[] }
+  /** 整排轉色：row 從 0（最上排）起算，負數從最下排倒數（提案 65，用於長串貫穿） */
+  | { type: 'rowToOrb'; row: number; to: OrbType };
 
 export interface ActiveSkillDef {
   id: string;
@@ -234,7 +238,8 @@ export interface StageDef {
   fixedTeam?: FixedTeam;
   waves: { enemies: string[]; boss?: boolean }[];
   /** tokens：每次通關都給的活動代幣（循環活動每一期都能賺） */
-  rewards: { coin: number; playerExp: number; cardExp?: number; tokens?: Record<string, number>; firstClear?: Reward };
+  /** periodFirstClear：循環活動（流派克星週等）每一期第一次通關的獎勵，下一期可以再領 */
+  rewards: { coin: number; playerExp: number; cardExp?: number; tokens?: Record<string, number>; firstClear?: Reward; periodFirstClear?: Reward };
   stars?: StarCondition[];
   drops: DropDef[];
   story?: { before?: string; beforeBoss?: string; after?: string };
@@ -298,7 +303,8 @@ export interface ShopItemDef {
 
 export interface QuestDef {
   id: string;
-  kind: 'daily' | 'weekly' | 'achievement';
+  /** starter：新手契約，一次性、不重置（存檔結構與成就相同） */
+  kind: 'daily' | 'weekly' | 'achievement' | 'starter';
   name: string;
   /** 由 progression 模組定義的計數器名稱，例如 'combo10'、'stageClear' */
   counter: string;
@@ -382,4 +388,6 @@ export interface SaveData {
   lorePages?: string[];
   /** 流浪契印師的同行情誼：NPC id → 點數（可選；讀取一律經過 progression/helper-bond.ts 的 bondPoints 補預設值） */
   helperBond?: Record<string, number>;
+  /** 角色羈絆：進化鏈的家族 id（最初型態的卡號）→ 出戰通關場數（可選；讀取一律經過 progression/card-bond.ts 補預設值） */
+  cardBond?: Record<string, number>;
 }

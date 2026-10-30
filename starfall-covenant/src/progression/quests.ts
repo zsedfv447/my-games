@@ -4,6 +4,7 @@ import type { EventBus, GameEvents } from '../core/events';
 import { fail, ok, type SaveResult } from './result';
 import { grantReward } from './rewards';
 import { dateKey, weekKey } from './time';
+import { puzzleOf } from './puzzle';
 
 /**
  * 計數器名稱（QuestDef.counter 只能用這些）：
@@ -18,6 +19,10 @@ import { dateKey, weekKey } from './time';
  * - login：領取每日登入獎勵的天數；shopPurchase：商店購買次數；questClaim:daily：領取每日任務的個數
  *   （這三個不是 bus 事件，由介面在領取／購買成功後呼叫 addQuestCounters）
  * - 成就專用、由存檔推算的數值（見 derivedCounters）：playerLevel、cardsOwned、towerFloor、mainCleared、trialCleared
+ * - 新手契約另外可用的推算數值：teamEdited（隊伍跟開新存檔時不同）、helperClears（帶流浪契印師通關次數）、
+ *   puzzleSolved（解過的每日謎題天數）、chapterRewards（領過的章節星章獎勵數）、
+ *   summoned（召喚紀錄筆數）、evolvedOwned（圖鑑裡擁有過的進化後型態張數）
+ * 新手契約（kind starter）跟成就一樣用終身計數、不重置；推算數值讓老玩家讀檔時就能直接算達成
  */
 export const COMBO_THRESHOLDS = [5, 8, 10] as const;
 const MAX_COUNTERS = new Set(['comboBest']);
@@ -31,10 +36,18 @@ const KNOWN_COUNTERS = new Set([
 ]);
 
 /** 由存檔直接推算、不靠事件累加的數值；舊存檔也能立即反映，只給成就使用 */
-export const DERIVED_COUNTERS = ['playerLevel', 'cardsOwned', 'towerFloor', 'mainCleared', 'trialCleared'] as const;
+export const DERIVED_COUNTERS = [
+  'playerLevel', 'cardsOwned', 'towerFloor', 'mainCleared', 'trialCleared',
+  'teamEdited', 'helperClears', 'puzzleSolved', 'chapterRewards', 'summoned', 'evolvedOwned',
+] as const;
 export type DerivedCounters = Partial<Record<(typeof DERIVED_COUNTERS)[number], number>>;
 
-export function derivedCounters(save: SaveData, stageKindOf: (stageId: string) => string | undefined): DerivedCounters {
+/** evolvedForms：所有「進化後型態」的卡號（由呼叫端依卡片資料提供；沒給時 evolvedOwned 為 0） */
+export function derivedCounters(
+  save: SaveData,
+  stageKindOf: (stageId: string) => string | undefined,
+  evolvedForms: ReadonlySet<string> = new Set(),
+): DerivedCounters {
   const cleared = (kind: string) => save.progress.clearedStages.filter((id) => stageKindOf(id) === kind).length;
   return {
     playerLevel: save.player.level,
@@ -42,12 +55,26 @@ export function derivedCounters(save: SaveData, stageKindOf: (stageId: string) =
     towerFloor: save.progress.towerFloor,
     mainCleared: cleared('main'),
     trialCleared: cleared('trial'),
+    teamEdited: teamEdited(save) ? 1 : 0,
+    helperClears: Object.values(save.helperBond ?? {}).reduce((a, b) => a + b, 0),
+    puzzleSolved: puzzleOf(save).solvedDays.length,
+    chapterRewards: save.progress.chapterRewardsClaimed.length,
+    summoned: save.gacha.history.length,
+    evolvedOwned: save.collection.owned.filter((id) => evolvedForms.has(id)).length,
   };
 }
 
+/** 編過隊：有卡片不在開新存檔時的位置（第一隊第 j 格是 u{j+1}，其他隊伍全空） */
+function teamEdited(save: SaveData): boolean {
+  return save.teams.some((t, i) => t.members.some((uid, j) => uid !== null && uid !== (i === 0 ? `u${j + 1}` : null)));
+}
+
+/** 不重置、用終身計數的任務種類 */
+const LIFETIME_KINDS: QuestDef['kind'][] = ['achievement', 'starter'];
+
 /** quests.json 的 counter 只能用上面列出的名稱 */
 export const isKnownCounter = (name: string, kind: QuestDef['kind'] = 'achievement') =>
-  KNOWN_COUNTERS.has(name) || (kind === 'achievement' && (DERIVED_COUNTERS as readonly string[]).includes(name));
+  KNOWN_COUNTERS.has(name) || (LIFETIME_KINDS.includes(kind) && (DERIVED_COUNTERS as readonly string[]).includes(name));
 
 export type QuestCounterDelta = Record<string, number>;
 
@@ -82,7 +109,7 @@ export function countersForEvent<K extends keyof GameEvents>(
   }
 }
 
-/** 存檔裡的計數鍵：成就用原名（終身累計），每日加 d: 前綴，每週加 w: 前綴 */
+/** 存檔裡的計數鍵：成就與新手契約用原名（終身累計），每日加 d: 前綴，每週加 w: 前綴 */
 const keyFor = (kind: QuestDef['kind'], counter: string) =>
   kind === 'daily' ? `d:${counter}` : kind === 'weekly' ? `w:${counter}` : counter;
 
@@ -122,7 +149,7 @@ export function questProgress(
   quest: QuestDef,
   derived: DerivedCounters = {},
 ): { value: number; done: boolean; claimed: boolean } {
-  const fromSave = quest.kind === 'achievement' ? derived[quest.counter as keyof DerivedCounters] : undefined;
+  const fromSave = LIFETIME_KINDS.includes(quest.kind) ? derived[quest.counter as keyof DerivedCounters] : undefined;
   const value = Math.min(quest.target, fromSave ?? save.quests.counters[keyFor(quest.kind, quest.counter)] ?? 0);
   return { value, done: value >= quest.target, claimed: save.quests.claimed.includes(quest.id) };
 }

@@ -47,11 +47,13 @@ function build(item: RevealItem): Built {
     case 'card': {
       const def = cardById.get(item.cardId);
       return {
-        el: h('div', { class: ['rv-item rv-card', def && def.rarity >= 3 && 'rare', def && `r${def.rarity}`] },
+        el: h('div', { class: ['rv-item rv-card', def && def.rarity >= 3 && 'rare', def && `r${def.rarity}`, item.tag && 'tagged'] },
           h('div', { class: 'rv-card-inner' },
             h('div', { class: 'rv-card-back' }),
             h('div', { class: 'rv-card-face' }, def ? cardThumb(def, { size: 56 }) : item.cardId)),
-          item.count > 1 && h('span', { class: 'rv-card-count' }, `×${item.count}`)),
+          item.count > 1 && h('span', { class: 'rv-card-count' }, `×${item.count}`),
+          // 首通給的卡標上來源，避免跟隨機掉落混在一起看不出來
+          item.tag && h('span', { class: 'rv-card-tag' }, item.tag)),
       };
     }
     case 'star':
@@ -285,21 +287,23 @@ export function showLevelUp(view: LevelUpView, host?: HTMLElement): Promise<void
 }
 
 /** 關卡列表上的首通獎勵預告（未通關亮、已領取變灰） */
-export function firstClearChip(reward: Reward | undefined, cleared: boolean): HTMLElement | null {
-  const p = firstClearPreview(reward, cleared);
+export function firstClearChip(reward: Reward | undefined, cleared: boolean, label = '首通'): HTMLElement | null {
+  const p = firstClearPreview(reward, cleared, label);
   if (!p) return null;
-  return h('span', { class: ['first-clear-chip', p.claimed && 'claimed'], title: p.claimed ? `${p.full}（已領取）` : `第一次通關可得　${p.full}` },
+  return h('span', { class: ['first-clear-chip', p.claimed && 'claimed'], title: p.claimed ? `${p.full}（已領取）` : `${label === '首通' ? '第一次通關' : label}可得　${p.full}` },
     p.icon !== 'card' && resourceIcon(p.icon), p.text);
 }
 
-/** 出戰確認頁的「關卡獎勵」區塊：首通獎勵（已領變灰）＋可能掉落的卡 */
+/** 出戰確認頁的「關卡獎勵」區塊：首通獎勵（已領變灰）＋可能掉落的卡；循環活動顯示本週首通 */
 export function stageRewardPanel(stage: StageDef, cleared: boolean): HTMLElement | null {
-  const first = stage.rewards.firstClear;
+  const periodic = !stage.rewards.firstClear && !!stage.rewards.periodFirstClear;
+  const label = periodic ? '本週首通獎勵' : '首通獎勵';
+  const first = stage.rewards.firstClear ?? stage.rewards.periodFirstClear;
   const firstParts = first ? rewardItems(first) : [];
   if (!firstParts.length && !stage.drops.length) return null;
   return panel({ title: '關卡獎勵' },
     firstParts.length > 0 && h('div', { class: ['stage-first-clear', cleared && 'claimed'] },
-      h('span', { class: 'small-text' }, cleared ? '首通獎勵（已領取）' : '首通獎勵'),
+      h('span', { class: 'small-text' }, cleared ? `${label}（已領取）` : label),
       h('div', { class: 'row wrap' }, firstParts.map((p) => p.kind === 'count'
         ? h('span', { class: 'reward-chip' }, p.icon !== 'exp' && resourceIcon(p.icon), `${p.label} ×${p.amount.toLocaleString()}`)
         : p.kind === 'card' && cardById.get(p.cardId) ? cardThumb(cardById.get(p.cardId)!, { size: 36 }) : null))),

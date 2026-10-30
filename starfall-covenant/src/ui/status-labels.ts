@@ -47,7 +47,7 @@ const STATUS_DETAILS: Record<StatusId, string> = {
   enrage: '攻擊力提升',
   delayImmune: '不受延遲與鎖定影響',
   multiHit: '一次攻擊多下',
-  attributeSeal: '指定屬性的隊員轉珠攻擊無效（主動技與回復不受影響）',
+  attributeSeal: '指定屬性的隊員轉珠攻擊無效、不能施放主動技（回復與隊長技不受影響）',
 };
 
 /** 狀態名稱；星紋封印帶上被封印的屬性（「星紋封印・焰」「星紋封印・隊長屬性」） */

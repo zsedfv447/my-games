@@ -22,7 +22,7 @@
 // 觸發時機 trigger：onStart（出場時）、onAttack（每次攻擊之後）、
 // hpBelow（生命低於 params.percent %，預設 50，只觸發一次）、everyNTurns（每 params.n 回合，預設 3）。
 // attributeShield 的 rotate：從焰開始，每經過一回合換下一個屬性（焰→潮→森→輝→蝕）。
-// attributeSeal（星紋封印）：指定屬性的隊員轉珠攻擊無效（不影響主動技與回復）；leader = 封印我方隊長的屬性。
+// attributeSeal（星紋封印）：指定屬性的隊員轉珠攻擊無效（轉珠傷害為 0）、不能施放主動技；回復與隊長技不受影響；leader = 封印我方隊長的屬性。
 
 import {
   ATTRIBUTES,
@@ -214,6 +214,12 @@ export function sealedAttributes(state: BattleState): Attribute[] {
   const raw = findStatus(state.teamStatuses, 'attributeSeal')?.params?.attribute;
   if (raw === 'leader') return state.team[0] ? [state.team[0].attribute] : [];
   return parseAttributes(raw);
+}
+
+/** 這名隊員是否被星紋封印（轉珠攻擊無效、不能施放主動技） */
+export function isMemberSealed(state: Pick<BattleState, 'teamStatuses' | 'team'>, member: number): boolean {
+  const m = state.team[member];
+  return !!m && sealedAttributes(state as BattleState).includes(m.attribute);
 }
 
 /** 每位隊員的攻擊倍率：被星紋封印的屬性為 0，其餘為 1 */
