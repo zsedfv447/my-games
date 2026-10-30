@@ -10,6 +10,7 @@ import {
 import { badge, button, panel, resourceIcon } from './basic';
 import { cardThumb } from './card-thumb';
 import { overlayRoot } from './overlay';
+import type { LeaderLine } from '../victory-line';
 import '../reward-reveal.css';
 
 const cardById = new Map(gameData.cards.map((c) => [c.id, c]));
@@ -192,6 +193,8 @@ export interface ClearResultOptions {
   levelUp?: LevelUpView;
   /** 演出最後出現的開放提示 */
   notes?: ResultNote[];
+  /** 隊長勝利台詞，顯示在標題下方（victory-line.ts 的 leaderLineOf） */
+  leaderLine?: LeaderLine;
   /** 底部按鈕，由呼叫端決定（再戰、返回、下一關…）；false／null 會略過 */
   actions: (HTMLElement | false | null | undefined)[];
 }
@@ -206,6 +209,9 @@ export function openClearResult(host: HTMLElement, opts: ClearResultOptions): { 
     h('div', { class: 'rv-rays' }),
     h('div', { class: 'result-title' }, '契約結算'),
     h('div', { class: 'result-stage' }, opts.stageName),
+    opts.leaderLine && h('div', { class: 'result-leader-line' },
+      cardThumb(opts.leaderLine.card, { size: 44 }),
+      h('div', null, h('div', { class: 'result-leader-name' }, opts.leaderLine.card.name), h('p', null, `「${opts.leaderLine.text}」`))),
     notes, reveal, actions, hint);
   const close = () => {
     layer.classList.add('closing');

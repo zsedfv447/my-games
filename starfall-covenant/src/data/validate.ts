@@ -23,6 +23,9 @@ export interface GameData {
   story: StoryData;
 }
 
+/** 卡片勝利台詞（lines.victory）的字數上限 */
+export const VICTORY_LINE_MAX = 30;
+
 export function validateGameData(d: GameData): string[] {
   const errors: string[] = [];
   const err = (where: string, msg: string) => errors.push(`${where}: ${msg}`);
@@ -65,6 +68,8 @@ export function validateGameData(d: GameData): string[] {
     }
     for (const a of c.archetypes) if (!archetypeIds.has(a.id)) err(w, `未知流派 ${a.id}`);
     if (c.race !== 'material' && c.archetypes.length === 0) err(w, '戰鬥卡至少要屬於一個流派');
+    const victory = c.lines?.victory;
+    if (victory !== undefined && (!victory.trim() || [...victory].length > VICTORY_LINE_MAX)) err(w, `勝利台詞要 1–${VICTORY_LINE_MAX} 字（目前 ${[...victory].length} 字）`);
   }
 
   // 隊長技：寫了不會生效的組合、超出星數分級、進化後不是同主題加強版

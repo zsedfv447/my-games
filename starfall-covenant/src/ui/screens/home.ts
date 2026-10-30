@@ -25,6 +25,7 @@ const SHORTCUTS: { label: string; icon: IconName; to: string; args?: string[] }[
   { label: '活動', icon: 'event', to: 'stages', args: ['event'] },
   { label: '挑戰之塔', icon: 'tower', to: 'stages', args: ['tower'] },
   { label: '劇情回顧', icon: 'scroll', to: 'stories' },
+  { label: '手札', icon: 'history', to: 'notebook' },
 ];
 
 export const homeScreen: ScreenDef = {

@@ -8,6 +8,7 @@ export * from './evolve';
 export * from './skill';
 export * from './limit-break';
 export * from './awaken';
+export * from './materials';
 export * from './inventory';
 export * from './collection';
 export * from './archetype';

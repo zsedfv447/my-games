@@ -56,6 +56,8 @@ export interface CardDef {
   archetypes: { id: ArchetypeId; role: ArchetypeRole }[];
   art: { portrait?: string; icon?: string };
   flavor: string;
+  /** 角色台詞（選填）；victory 是結算時的隊長勝利台詞，沒有就用屬性預設句 */
+  lines?: { victory?: string };
 }
 
 // ---------- 主動技效果積木 ----------
@@ -369,4 +371,6 @@ export interface SaveData {
   quests: { counters: Record<string, number>; claimed: string[]; dailyResetAt: string; weeklyResetAt: string };
   daily: { loginDay: number; lastLogin: string; shopPurchases: Record<string, number> };
   settings: { bgm: number; sfx: number; battleSpeed: 1 | 2 };
+  /** 契印師手札的個人戰績（可選；讀取一律經過 progression/records.ts 的 recordsOf 補預設值） */
+  records?: import('../progression/records').PlayerRecords;
 }

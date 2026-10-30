@@ -18,6 +18,7 @@ import { enemySvg } from '../art/enemy';
 import { ATTRIBUTE_NAMES, ORB_COLORS } from '../art/palette';
 import { resolveArtPath, userAsset } from '../assets';
 import { stageIntel } from '../stage-intel';
+import { recordsOf } from '../../progression/records';
 import '../convenience.css';
 
 const KIND_LABEL: Record<StageDef['kind'], string> = { main: '主線', daily: '每日', event: '活動', tower: '挑戰之塔', trial: '流派試煉' };
@@ -91,6 +92,7 @@ export const prepareScreen: ScreenDef = {
     const problem = sortieProblem(stage, team);
     const rules = describeTeamRule(stage.teamRule, archetypeName, cardName);
     const gotStars = save.progress.stars[stage.id] ?? [];
+    const fastest = recordsOf(save).fastestTurns[stage.id];
 
     const start = () => {
       const now = Date.now();
@@ -111,7 +113,7 @@ export const prepareScreen: ScreenDef = {
       panel(
         { gold: true },
         h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, stage.name), badge(KIND_LABEL[stage.kind], 'gold')),
-        h('p', { class: 'small-text dim', style: { marginTop: '6px' } }, `${stage.waves.length} 波敵人・消耗體力 ${stage.stamina}`),
+        h('p', { class: 'small-text dim', style: { marginTop: '6px' } }, `${stage.waves.length} 波敵人・消耗體力 ${stage.stamina}`, fastest ? `・最快 ${fastest} 回合通關` : ''),
         stage.recommendedArchetypes?.length
           ? h('div', { class: 'row wrap', style: { gap: '4px' } }, h('span', { class: 'small-text' }, '推薦流派'), stage.recommendedArchetypes.map((a) => badge(archetypeName(a))))
           : null,

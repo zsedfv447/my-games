@@ -31,6 +31,8 @@ import { storyBox } from '../components/story';
 import { openClearResult, type ResultNote } from '../components/reward-reveal';
 import { clearItems, levelUpView } from '../reward-plan';
 import { showDefeatGuide } from '../components/defeat-guide';
+import { trackBattleRecords, type BattleRecordTracker } from '../battle-records';
+import { leaderLineOf } from '../victory-line';
 import { markStorySeen } from './story';
 import { createTutorialBattle } from '../tutorial/battle-setup';
 import { TutorialBattleGuide, texts as guideTexts, type BattleGuide } from '../tutorial/battle-guide';
@@ -140,6 +142,8 @@ class BattleView {
   private fallen: number[] = [];
   private shownHp: number;
   private dialog?: DialogHandle;
+  /** 契印師手札的戰績紀錄（練習與教學不記） */
+  private records?: BattleRecordTracker;
   private speed: number;
   /** 暫停選單開著；這段期間動畫播完要開放轉珠時，等繼續再開 */
   private paused = false;
@@ -188,6 +192,10 @@ class BattleView {
       ev.on('poisonTick', (e) => this.queue.push({ kind: 'poison', damage: e.damage })),
       ev.on('enemyDefeated', (e) => this.fallen.push(e.enemy)),
     );
+    if (!s.practice && !s.guide) {
+      this.records = trackBattleRecords(s.battle, s.stage.id, s.memberUids ?? []);
+      this.offs.push(this.records.dispose);
+    }
     if (!s.practice) this.maybeBossStory();
     if (s.resumed) queueMicrotask(() => this.afterResume());
     s.guide?.attach({
@@ -624,7 +632,7 @@ class BattleView {
       bus.emit('stageCleared', { stageId: this.s.stage.id, turns: result.turns, stars: clear.stars });
       for (const d of clear.drops) bus.emit('cardObtained', { cardId: d.cardId, uid: d.uid, source: 'drop' });
     }
-    const notes: ResultNote[] = [];
+    const notes: ResultNote[] = (this.records?.newRecordTexts() ?? []).map((text) => ({ text }));
     if (firstClear) {
       const notice = unlockNotice(this.s.stage);
       if (notice.text) notes.push({ text: notice.text, big: notice.chapter !== undefined });
@@ -650,6 +658,7 @@ class BattleView {
       instantCount: getSettings().lowFx,
       levelUp: clear?.levelUp && levelUpView(clear.levelUp, gameData.config),
       notes,
+      leaderLine: leaderLineOf(this.state),
       actions: [
         button(next ? '再戰' : '再戰一次', { variant: next ? 'ghost' : undefined, onClick: () => { this.dialog?.close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', [this.s.stage.id]); } }),
         button('返回', { variant: next ? undefined : 'primary', onClick: () => leave() }),
