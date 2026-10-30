@@ -1,0 +1,56 @@
+name: 星骸契約 CI / 部署
+
+on:
+  push:
+    branches: [main]
+    paths: ['starfall-covenant/**', '.github/workflows/starfall.yml']
+  pull_request:
+    paths: ['starfall-covenant/**', '.github/workflows/starfall.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: starfall-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: starfall-covenant
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: starfall-covenant/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+        env:
+          PAGES_BASE: /${{ github.event.repository.name }}/starfall-covenant/
+      - name: 組合 Pages 內容
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: mkdir -p ../_site/starfall-covenant && cp -r dist/. ../_site/starfall-covenant/
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        with:
+          path: _site
+
+  deploy:
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}starfall-covenant/
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
