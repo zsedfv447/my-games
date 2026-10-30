@@ -171,15 +171,12 @@
           },
           {
             "type": "atkMultiplier",
-            "target": {
-              "attribute": "water"
-            },
-            "value": 2.5
+            "value": 3
           }
         ]
       }
     ],
-    "description": "敵人攻擊倒數永遠 +1；全隊受到傷害減少 35%；潮屬性攻擊 2.5 倍。"
+    "description": "敵人攻擊倒數永遠 +1；全隊受到傷害減少 35%；全隊攻擊 3 倍。"
   },
   {
     "id": "l202",
@@ -346,11 +343,15 @@
           {
             "type": "enemyCooldownPlus",
             "turns": 1
+          },
+          {
+            "type": "atkMultiplier",
+            "value": 2
           }
         ]
       }
     ],
-    "description": "敵人攻擊倒數永遠 +1。"
+    "description": "敵人攻擊倒數永遠 +1；全隊攻擊 2 倍。"
   },
   {
     "id": "l210",
@@ -373,15 +374,12 @@
           },
           {
             "type": "atkMultiplier",
-            "target": {
-              "attribute": "water"
-            },
-            "value": 1.5
+            "value": 2.5
           }
         ]
       }
     ],
-    "description": "敵人攻擊倒數永遠 +1；全隊受到傷害減少 20%；潮屬性攻擊 1.5 倍。"
+    "description": "敵人攻擊倒數永遠 +1；全隊受到傷害減少 20%；全隊攻擊 2.5 倍。"
   },
   {
     "id": "l301",
@@ -567,12 +565,12 @@
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 2
+            "value": 2.5
           }
         ]
       }
     ],
-    "description": "消除 3 顆以上強化珠時全隊攻擊 2 倍。"
+    "description": "消除 3 顆以上強化珠時全隊攻擊 2.5 倍。"
   },
   {
     "id": "l310",
@@ -588,14 +586,14 @@
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 2,
+            "value": 2.5,
             "perStep": 0.25,
-            "maxValue": 3
+            "maxValue": 3.5
           }
         ]
       }
     ],
-    "description": "消除 3 顆以上強化珠時全隊攻擊 2 倍，每多 1 顆 +0.25 倍，最高 3 倍。"
+    "description": "消除 3 顆以上強化珠時全隊攻擊 2.5 倍，每多 1 顆 +0.25 倍，最高 3.5 倍。"
   },
   {
     "id": "l311",
@@ -714,6 +712,10 @@
           {
             "type": "skillCooldownStart",
             "charged": true
+          },
+          {
+            "type": "atkMultiplier",
+            "value": 3
           }
         ]
       },
@@ -726,12 +728,12 @@
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 3
+            "value": 1.5
           }
         ]
       }
     ],
-    "description": "開場全員技能冷卻已滿；本回合施放過主動技時全隊攻擊 3 倍。"
+    "description": "開場全員技能冷卻已滿；全隊攻擊 3 倍，本回合施放過主動技時再 1.5 倍。"
   },
   {
     "id": "l403",
@@ -751,6 +753,10 @@
           {
             "type": "allyCooldownPerTurn",
             "turns": 1
+          },
+          {
+            "type": "atkMultiplier",
+            "value": 3
           }
         ]
       },
@@ -763,12 +769,12 @@
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 3.5
+            "value": 2
           }
         ]
       }
     ],
-    "description": "同上倍率改為 3.5 倍，並且每回合全員技能冷卻額外 −1。"
+    "description": "開場全員技能冷卻已滿，每回合全員技能冷卻額外 −1；全隊攻擊 3 倍，本回合施放過主動技時再 2 倍。"
   },
   {
     "id": "l404",
@@ -920,11 +926,28 @@
           {
             "type": "skillCooldownStart",
             "charged": true
+          },
+          {
+            "type": "atkMultiplier",
+            "value": 2
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "skillUsedThisTurn"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 1.5
           }
         ]
       }
     ],
-    "description": "開場全員技能冷卻已滿。"
+    "description": "開場全員技能冷卻已滿；全隊攻擊 2 倍，本回合施放過主動技時再 1.5 倍。"
   },
   {
     "id": "l410",
@@ -940,6 +963,10 @@
           {
             "type": "skillCooldownStart",
             "charged": true
+          },
+          {
+            "type": "atkMultiplier",
+            "value": 2.5
           }
         ]
       },
@@ -952,12 +979,12 @@
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 2.5
+            "value": 1.5
           }
         ]
       }
     ],
-    "description": "開場全員技能冷卻已滿；本回合施放過主動技時全隊攻擊 2.5 倍。"
+    "description": "開場全員技能冷卻已滿；全隊攻擊 2.5 倍，本回合施放過主動技時再 1.5 倍。"
   },
   {
     "id": "l501",
