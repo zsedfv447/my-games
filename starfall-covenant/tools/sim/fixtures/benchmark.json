@@ -1,0 +1,50 @@
+{
+  "note": "模擬器用的基準關卡與敵人（暫定）。正式關卡資料進 data/ 後，模擬器會直接跑 data/stages.json。",
+  "enemies": [
+    { "id": "sim-slime-fire",  "name": "基準・焰小怪", "attribute": "fire",  "hp": 18000, "atk": 900,  "def": 50,  "cd": 2, "abilities": [], "art": {} },
+    { "id": "sim-slime-water", "name": "基準・潮小怪", "attribute": "water", "hp": 18000, "atk": 900,  "def": 50,  "cd": 2, "abilities": [], "art": {} },
+    { "id": "sim-slime-wood",  "name": "基準・森小怪", "attribute": "wood",  "hp": 18000, "atk": 900,  "def": 50,  "cd": 2, "abilities": [], "art": {} },
+    { "id": "sim-slime-light", "name": "基準・輝小怪", "attribute": "light", "hp": 18000, "atk": 900,  "def": 50,  "cd": 2, "abilities": [], "art": {} },
+    { "id": "sim-slime-dark",  "name": "基準・蝕小怪", "attribute": "dark",  "hp": 18000, "atk": 900,  "def": 50,  "cd": 2, "abilities": [], "art": {} },
+    { "id": "sim-imp",         "name": "基準・快攻小鬼", "attribute": "dark", "hp": 9000, "atk": 1300, "def": 0,   "cd": 1, "abilities": [], "art": {} },
+    { "id": "sim-boss",        "name": "基準・首領",   "attribute": "light", "hp": 160000, "atk": 3200, "def": 300, "cd": 3, "abilities": [], "art": {} },
+    { "id": "sim-turtle",      "name": "基準・鐵甲龜", "attribute": "water", "hp": 70000, "atk": 2400, "def": 4000, "cd": 3, "abilities": [], "art": {} },
+    { "id": "sim-titan",       "name": "基準・巨像",   "attribute": "wood",  "hp": 450000, "atk": 4200, "def": 200, "cd": 4, "abilities": [], "art": {} },
+    { "id": "sim-berserker",   "name": "基準・狂戰士", "attribute": "fire",  "hp": 90000, "atk": 7000, "def": 100, "cd": 2, "abilities": [], "art": {} }
+  ],
+  "stages": [
+    {
+      "id": "sim-normal", "kind": "main", "name": "標準三波", "stamina": 0, "unlockAfter": null,
+      "waves": [
+        { "enemies": ["sim-slime-fire", "sim-slime-water"] },
+        { "enemies": ["sim-slime-wood", "sim-slime-light", "sim-slime-dark"] },
+        { "enemies": ["sim-boss"], "boss": true }
+      ],
+      "rewards": { "coin": 0, "playerExp": 0 }, "drops": []
+    },
+    {
+      "id": "sim-swarm", "kind": "main", "name": "小怪海（考驗全體攻擊）", "stamina": 0, "unlockAfter": null,
+      "waves": [
+        { "enemies": ["sim-imp", "sim-imp", "sim-imp"] },
+        { "enemies": ["sim-imp", "sim-imp", "sim-imp", "sim-imp"] },
+        { "enemies": ["sim-imp", "sim-imp", "sim-imp", "sim-imp", "sim-imp"] }
+      ],
+      "rewards": { "coin": 0, "playerExp": 0 }, "drops": []
+    },
+    {
+      "id": "sim-armor", "kind": "main", "name": "高防禦（考驗低攻擊隊）", "stamina": 0, "unlockAfter": null,
+      "waves": [{ "enemies": ["sim-turtle", "sim-turtle"], "boss": true }],
+      "rewards": { "coin": 0, "playerExp": 0 }, "drops": []
+    },
+    {
+      "id": "sim-titan", "kind": "main", "name": "高血量首領（考驗續航）", "stamina": 0, "unlockAfter": null,
+      "waves": [{ "enemies": ["sim-titan"], "boss": true }],
+      "rewards": { "coin": 0, "playerExp": 0 }, "drops": []
+    },
+    {
+      "id": "sim-burst", "kind": "main", "name": "高攻擊（考驗生存）", "stamina": 0, "unlockAfter": null,
+      "waves": [{ "enemies": ["sim-berserker", "sim-berserker"], "boss": true }],
+      "rewards": { "coin": 0, "playerExp": 0 }, "drops": []
+    }
+  ]
+}
