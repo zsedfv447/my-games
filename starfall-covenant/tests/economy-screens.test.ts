@@ -150,9 +150,18 @@ describe('任務與成就', () => {
 
   it('主城紅點：可領登入、任務、成就時亮起', () => {
     const s = fresh();
-    expect(homeBadges(s, MON)).toEqual({ login: true, quests: false, achievements: false });
+    expect(homeBadges(s, MON)).toEqual({ login: true, quests: false, achievements: false, chapters: false });
     const busy = addQuestCounters(s, { stageClear: 3, gachaPull: 1 }, gameData.quests, MON);
     expect(homeBadges(busy, MON)).toMatchObject({ quests: true, achievements: true });
+  });
+
+  it('主城紅點：第 1 章星章集滿且還沒領時亮起，領完熄滅', () => {
+    const s = fresh();
+    const stars = Object.fromEntries(gameData.stages.filter((st) => st.kind === 'main' && st.chapter === 1).map((st) => [st.id, (st.stars ?? []).map(() => true)]));
+    const full = { ...s, progress: { ...s.progress, stars } };
+    expect(homeBadges(full, MON).chapters).toBe(true);
+    const claimed = { ...full, progress: { ...full.progress, chapterRewardsClaimed: [1] } };
+    expect(homeBadges(claimed, MON).chapters).toBe(false);
   });
 
   it('列表排序：可領 → 進行中 → 已領', () => {

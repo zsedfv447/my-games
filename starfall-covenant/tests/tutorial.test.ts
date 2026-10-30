@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { gameData } from '../src/data/load';
 import { createRng } from '../src/core/rng';
 import { boardToStrings, findMatches } from '../src/battle/board';
-import { createNewSave, exportSaveCode, importSaveCode, migrate, parseSave, serializeSave } from '../src/save/save';
+import { CURRENT_SAVE_VERSION, createNewSave, exportSaveCode, importSaveCode, migrate, parseSave, serializeSave } from '../src/save/save';
 import type { SaveData } from '../src/core/types';
 import {
   FIRST_STAGE, TUTORIAL_BOARD, TUTORIAL_COMBO, TUTORIAL_PATH, advanceTutorial, comboOfPath, grantSummonGift, guideFor,
@@ -96,7 +96,7 @@ describe('存檔 v1 → v2 遷移', () => {
 
   it('還沒打過關的舊存檔要走教學', () => {
     const out = migrate(v1([]) as unknown as Record<string, unknown>);
-    expect(out.version).toBe(2);
+    expect(out.version).toBe(CURRENT_SAVE_VERSION);
     expect(out.tutorial).toEqual({ step: 'battle', giftGiven: false });
   });
 
@@ -138,7 +138,7 @@ describe('存檔 v1 → v2 遷移', () => {
       expect(r.ok).toBe(true);
       if (!r.ok) return;
       expect(r.migratedFrom).toBe(1);
-      expect(r.save.version).toBe(2);
+      expect(r.save.version).toBe(CURRENT_SAVE_VERSION);
       expect(tutorialStep(r.save)).toBe(step);
     }
   });

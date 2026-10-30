@@ -4,7 +4,7 @@ import type { GameConfig, SaveData } from '../core/types';
 import { bus } from '../core/events';
 
 export const SAVE_KEY = 'starfall.save';
-export const CURRENT_SAVE_VERSION = 2;
+export const CURRENT_SAVE_VERSION = 3;
 
 /** 寫入 localStorage 的外層：存檔本體＋校驗碼（校驗碼只防手動改壞，不防作弊） */
 interface SaveEnvelope {
@@ -38,7 +38,7 @@ export function createNewSave(config: GameConfig, now: number): SaveData {
       members: i === 0 ? [0, 1, 2, 3, 4].map((j) => cards[j]?.uid ?? null) : [null, null, null, null, null],
     })),
     activeTeam: 0,
-    progress: { clearedStages: [], stars: {}, towerFloor: 0, tutorialDone: false, storySeen: [] },
+    progress: { clearedStages: [], stars: {}, towerFloor: 0, tutorialDone: false, storySeen: [], chapterRewardsClaimed: [] },
     tutorial: { step: 'battle', giftGiven: false },
     gacha: { pityCounter: {}, history: [] },
     collection: { seen: starterIds, owned: starterIds, claimed: [] },
@@ -63,6 +63,12 @@ const MIGRATIONS: Record<number, Migration> = {
       // 已完成教學的老玩家之後重看教學，不再送召喚贈禮
       tutorial: { step: done ? 'done' : 'battle', giftGiven: done },
     };
+  },
+  // v2 → v3：加入已領取的章節星章獎勵。舊存檔一律從「都沒領過」開始，集滿的章節可以補領
+  2: (old) => {
+    const progress = (old.progress ?? {}) as Record<string, unknown>;
+    const claimed = Array.isArray(progress.chapterRewardsClaimed) ? progress.chapterRewardsClaimed : [];
+    return { ...old, progress: { ...progress, chapterRewardsClaimed: claimed } };
   },
 };
 

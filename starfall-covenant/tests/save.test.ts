@@ -99,3 +99,33 @@ describe('存檔', () => {
     expect(reloaded.ok && reloaded.save.player.level).toBe(1);
   });
 });
+
+describe('存檔 v2 → v3 遷移（章節星章獎勵）', () => {
+  const v2 = (): Record<string, unknown> => {
+    const save = createNewSave(config, NOW);
+    const { chapterRewardsClaimed: _drop, ...progress } = save.progress;
+    return { ...save, version: 2, progress: { ...progress, clearedStages: ['st-1-1'], stars: { 'st-1-1': [true, true, true] } } };
+  };
+
+  it('補上空的已領取清單，其他進度不變', () => {
+    const out = migrate(v2());
+    expect(out.version).toBe(3);
+    expect(out.progress).toMatchObject({ clearedStages: ['st-1-1'], stars: { 'st-1-1': [true, true, true] }, chapterRewardsClaimed: [] });
+  });
+
+  it('已經有清單的（手改或重複遷移）保留原值', () => {
+    const old = v2();
+    const out = migrate({ ...old, progress: { ...(old.progress as object), chapterRewardsClaimed: [1] } });
+    expect((out.progress as { chapterRewardsClaimed: number[] }).chapterRewardsClaimed).toEqual([1]);
+  });
+
+  it('v2 存檔碼匯入後遷移成 v3；再存讀一次不會再遷移', () => {
+    const r = importSaveCode(exportSaveCode(v2() as never), config, NOW);
+    expect(r.ok && r.migratedFrom).toBe(2);
+    if (!r.ok) return;
+    expect(r.save.version).toBe(3);
+    expect(r.save.progress.chapterRewardsClaimed).toEqual([]);
+    const again = importSaveCode(exportSaveCode(r.save), config, NOW);
+    expect(again).toEqual({ ok: true, save: r.save });
+  });
+});
