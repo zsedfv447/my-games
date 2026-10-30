@@ -59,6 +59,7 @@ export function clearItems(
   if (clear.cardExp && extras.team?.length) out.push({ kind: 'team', amount: clear.cardExp, members: extras.team });
   if (clear.tokens) out.push(...rewardItems({ tokens: clear.tokens }));
   if (clear.firstClear) out.push(...rewardItems(clear.firstClear, '首通'));
+  if (clear.periodFirstClear) out.push(...rewardItems(clear.periodFirstClear, '本週首通'));
   if (extras.chapterReward) out.push(...rewardItems(extras.chapterReward, '章節'));
   // 同一張卡掉兩次也分開翻，每張都是一次驚喜
   for (const d of clear.drops) out.push({ kind: 'card', cardId: d.cardId, count: 1 });
@@ -142,7 +143,7 @@ export function levelUpView(info: LevelUpInfo, config: GameConfig): LevelUpView 
  * 關卡列表的首通預告：text 是 chip 上的精簡版（圖示＋「首通 +1」，還有其他獎勵就加「…」），
  * full 是完整內容（「首通：星晶 +1、獸王代幣 +20」），放在 title。沒有首通獎勵回傳 null。
  */
-export function firstClearPreview(reward: Reward | undefined, cleared: boolean): { text: string; full: string; claimed: boolean; icon: ResourceIcon | 'card' } | null {
+export function firstClearPreview(reward: Reward | undefined, cleared: boolean, label = '首通'): { text: string; full: string; claimed: boolean; icon: ResourceIcon | 'card' } | null {
   if (!reward) return null;
   const items = rewardItems(reward);
   if (!items.length) return null;
@@ -152,8 +153,8 @@ export function firstClearPreview(reward: Reward | undefined, cleared: boolean):
   // 完整清單：每一項實際的獎勵，數量寫成「+N」
   const list = rewardParts(reward).map((p) => p.label.replace(' ×', ' +')).join('、');
   return {
-    text: cleared ? '首通 已領' : `首通${amount}${more}`,
-    full: `首通：${list}`,
+    text: cleared ? `${label} 已領` : `${label}${amount}${more}`,
+    full: `${label}：${list}`,
     claimed: cleared,
     icon: top.kind === 'count' ? (top.icon === 'exp' ? 'gem' : top.icon) : 'card',
   };

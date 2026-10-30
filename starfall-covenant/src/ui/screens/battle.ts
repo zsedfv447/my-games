@@ -651,7 +651,7 @@ class BattleView {
     // then：離開後要去的 hash 路徑（下一關）；沒給就回到這關所屬的關卡列表（練習回上一頁）
     const leave = (then?: string) => {
       this.dialog?.close();
-      const target = then ?? (this.s.practice ? 'back' : stageListPath(this.s.stage));
+      const target = then ?? (this.s.practice ? 'back' : stageListPath(this.s.stage, gameData.events));
       const after = this.s.stage.story?.after;
       // 通關後的劇情只在第一次播放
       if (after && gameData.story[after] && !getSave().progress.storySeen.includes(after)) this.nav.replace('story', [after], { next: target });

@@ -13,6 +13,100 @@
     "summary": "鏽齒工坊的大齒輪不見了，整座工坊停了下來。追查偷走齒輪的機構星靈，收集黃銅齒輪兌換熔軌工匠卡朵與機構夥伴。",
     "token": "token-gear",
     "tokenName": "黃銅齒輪",
-    "period": { "start": "2026-10-26T00:00:00", "end": "2026-11-09T00:00:00", "repeatDays": 21 }
+    "period": {
+      "start": "2026-10-26T00:00:00",
+      "end": "2026-11-09T00:00:00",
+      "repeatDays": 21
+    }
+  },
+  {
+    "id": "nm-ironwall",
+    "name": "流派克星週・鐵壁週",
+    "summary": "高防禦與傷害吸收的敵人擋在路上。單次打太高會被吸收，固定傷害與背水一戰的穩定輸出最有效。",
+    "series": "nemesis",
+    "recommendedArchetypes": [
+      "fixed",
+      "berserk"
+    ],
+    "period": {
+      "start": "2026-10-26T00:00:00",
+      "end": "2026-11-02T00:00:00",
+      "repeatDays": 42
+    }
+  },
+  {
+    "id": "nm-silence",
+    "name": "流派克星週・封技週",
+    "summary": "封印鐘聲響個不停，主動技很難派上用場。靠單屬爆發與種族羈絆的轉珠火力打穿，別依賴技能循環。",
+    "series": "nemesis",
+    "recommendedArchetypes": [
+      "mono",
+      "race"
+    ],
+    "period": {
+      "start": "2026-11-02T00:00:00",
+      "end": "2026-11-09T00:00:00",
+      "repeatDays": 42
+    }
+  },
+  {
+    "id": "nm-comboguard",
+    "name": "流派克星週・連擊盾週",
+    "summary": "敵人身上掛著 Combo 數門檻的護盾，長串一口氣打不進去。多消幾組、多湊顏色才能破盾。",
+    "series": "nemesis",
+    "recommendedArchetypes": [
+      "combo",
+      "rainbow"
+    ],
+    "period": {
+      "start": "2026-11-09T00:00:00",
+      "end": "2026-11-16T00:00:00",
+      "repeatDays": 42
+    }
+  },
+  {
+    "id": "nm-mist",
+    "name": "流派克星週・迷霧週",
+    "summary": "黑霧遮住珠子的顏色，轉珠時間也被壓縮。延遲敵人爭取時間，再用一兩條長串穩穩拿下。",
+    "series": "nemesis",
+    "recommendedArchetypes": [
+      "chain",
+      "control"
+    ],
+    "period": {
+      "start": "2026-11-16T00:00:00",
+      "end": "2026-11-23T00:00:00",
+      "repeatDays": 42
+    }
+  },
+  {
+    "id": "nm-heartless",
+    "name": "流派克星週・斷心週",
+    "summary": "回復被封印、毒液滲進珠子。心珠靠不住，要用技能與減傷撐過去，再一口氣收尾。",
+    "series": "nemesis",
+    "recommendedArchetypes": [
+      "enhance",
+      "skillcycle"
+    ],
+    "period": {
+      "start": "2026-11-23T00:00:00",
+      "end": "2026-11-30T00:00:00",
+      "repeatDays": 42
+    }
+  },
+  {
+    "id": "nm-prism",
+    "name": "流派克星週・稜光盾週",
+    "summary": "屬性減傷盾不停變換，敵人還會越打越兇。帶兩種以上的屬性輪流出手，用心珠撐住長期戰。",
+    "series": "nemesis",
+    "recommendedArchetypes": [
+      "dual",
+      "heart"
+    ],
+    "period": {
+      "start": "2026-11-30T00:00:00",
+      "end": "2026-12-07T00:00:00",
+      "repeatDays": 42
+    }
   }
 ]

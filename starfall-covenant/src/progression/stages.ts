@@ -3,6 +3,7 @@ import type {
   Attribute, CardDef, ChapterDef, DropDef, GameConfig, Race, Reward, SaveData, StageDef, StarCondition, TeamRule, UnitFilter,
 } from '../core/types';
 import type { Rng } from '../core/rng';
+import { eventPeriodKey, type EventDef } from './events';
 import { addPlayerExp, type LevelUpInfo } from './player';
 import { fail, ok, type SaveResult } from './result';
 import { addCards, grantReward } from './rewards';
@@ -21,6 +22,8 @@ export interface BattleSummary {
 
 export interface StageContext {
   stages: StageDef[];
+  /** 活動資料：循環活動的每期首通要靠它算期數 */
+  events?: EventDef[];
   /** 目前開放中的活動 id */
   openEvents?: ReadonlySet<string>;
 }
@@ -132,11 +135,41 @@ export interface StageClearResult {
   /** 每次通關都給的活動代幣 */
   tokens?: Record<string, number>;
   firstClear?: Reward;
+  /** 本期第一次通關的獎勵（循環活動） */
+  periodFirstClear?: Reward;
   drops: { cardId: string; uid: string }[];
   stars: boolean[];
   /** 這次新拿到的星章（之前沒拿過） */
   newStars: boolean[];
   levelUp?: LevelUpInfo;
+}
+
+// ---------- 循環活動的每期首通 ----------
+// 記在 save.quests.counters：鍵為「periodClear:關卡 id@e活動 id:檔期開始日」（與商店活動限購同一套檔期鍵），
+// 寫入時順手刪掉同一關舊檔期的鍵，存檔不會越長越大。不需要新的存檔欄位。
+
+const PERIOD_CLEAR = 'periodClear:';
+
+function periodClearKey(stage: StageDef, events: EventDef[], now: number): string | null {
+  const event = events.find((e) => e.id === stage.event);
+  return event ? `${PERIOD_CLEAR}${stage.id}${eventPeriodKey(event, now)}` : null;
+}
+
+/** 本期首通是否已領；找不到活動時退回「曾經通關過」 */
+export function periodFirstClearClaimed(save: SaveData, stage: StageDef, events: EventDef[], now: number): boolean {
+  const key = periodClearKey(stage, events, now);
+  if (!key) return save.progress.clearedStages.includes(stage.id);
+  return (save.quests.counters[key] ?? 0) > 0;
+}
+
+function markPeriodFirstClear(save: SaveData, stage: StageDef, events: EventDef[], now: number): SaveData {
+  const key = periodClearKey(stage, events, now);
+  if (!key) return save;
+  const prefix = `${PERIOD_CLEAR}${stage.id}@`;
+  const counters: Record<string, number> = {};
+  for (const [k, v] of Object.entries(save.quests.counters)) if (!k.startsWith(prefix)) counters[k] = v;
+  counters[key] = 1;
+  return { ...save, quests: { ...save.quests, counters } };
 }
 
 export function completeStage(
@@ -177,6 +210,9 @@ export function completeStage(
   if (tokens) s = grantReward(s, { tokens }, config, now).save;
   const firstClear = firstTime ? stage.rewards.firstClear : undefined;
   if (firstClear) s = grantReward(s, firstClear, config, now).save;
+  const periodFirstClear = stage.rewards.periodFirstClear && !periodFirstClearClaimed(s, stage, ctx.events ?? [], now)
+    ? stage.rewards.periodFirstClear : undefined;
+  if (periodFirstClear) s = markPeriodFirstClear(grantReward(s, periodFirstClear, config, now).save, stage, ctx.events ?? [], now);
 
   const dropped = addCards(s, plannedDrops ?? rollDrops(stage, rng).map((d) => ({ cardId: d.card, level: d.level })), now);
   s = dropped.save;
@@ -192,6 +228,7 @@ export function completeStage(
       cardExp: stage.rewards.cardExp ?? 0,
       ...(tokens ? { tokens } : {}),
       ...(firstClear ? { firstClear } : {}),
+      ...(periodFirstClear ? { periodFirstClear } : {}),
       drops: dropped.added.map((c) => ({ cardId: c.cardId, uid: c.uid })),
       stars,
       newStars,
