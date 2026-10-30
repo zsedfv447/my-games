@@ -1,0 +1,382 @@
+// 戰鬥畫面：上方敵人區、中間隊伍與生命條、下方 6×5 盤面（GDD 2.5 第 4 項）
+import { h, svg, clear } from '../dom';
+import { gameData } from '../../data/load';
+import { bus } from '../../core/events';
+import { createRng } from '../../core/rng';
+import type { StageDef } from '../../core/types';
+import { startBattle, type Battle, type BattleData, type BattleState, type EnemyState, type TurnSummary } from '../../battle/battle-state';
+import { BoardView } from '../../battle/view/board-view';
+import { completeStage, type StageClearResult } from '../../progression/stages';
+import { enemySvg } from '../art/enemy';
+import { ATTRIBUTE_NAMES } from '../art/palette';
+import { resolveArtPath, userAsset } from '../assets';
+import { audio } from '../audio';
+import { badge, bar, button, emptyState, iconButton, resourceIcon } from '../components/basic';
+import { cardThumb } from '../components/card-thumb';
+import { confirmDialog, openDialog, toast, type DialogHandle } from '../components/overlay';
+import { DEMO_DATA, DEMO_HELPER, DEMO_STAGE, DEMO_TEAM } from '../demo';
+import { buildSortieTeam } from '../sortie';
+import { commit, getSave, getSettings, growth } from '../state';
+import type { Navigator, ScreenDef } from '../router';
+import { starText } from './prepare';
+
+/** 續戰花費的星晶（GDD 2.1：用星晶續戰；數值待關卡與經濟確認） */
+export const CONTINUE_GEMS = 5;
+const CELL = 63;
+
+// 出戰確認扣過體力才發「入場券」；重新整理戰鬥頁不會白白再扣一次，也不能免費重打
+let ticket: string | null = null;
+export function armBattle(stageId: string): void {
+  ticket = stageId;
+}
+
+function enemyArt(e: EnemyState, boss: boolean): Element {
+  const url = userAsset('enemies', e.def.id) ?? resolveArtPath(e.def.art.sprite);
+  return url ? h('img', { src: url, alt: e.def.name, draggable: 'false' }) : svg(enemySvg({ ...e.def, boss }));
+}
+
+function floatText(host: HTMLElement, text: string, cls: string): void {
+  const el = h('div', { class: `float-num ${cls}` }, text);
+  host.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+interface Setup {
+  stage: StageDef;
+  data: BattleData;
+  practice: boolean;
+  battle: Battle;
+}
+
+function setup(stageId: string): Setup | string {
+  if (stageId === 'practice') {
+    return { stage: DEMO_STAGE, data: DEMO_DATA, practice: true, battle: startBattle(DEMO_STAGE, DEMO_TEAM, DEMO_HELPER, createRng(), DEMO_DATA) };
+  }
+  const stage = gameData.stages.find((s) => s.id === stageId);
+  if (!stage) return '找不到這一關';
+  if (ticket !== stageId) return '戰鬥已中斷，請重新出發';
+  ticket = null;
+  const team = buildSortieTeam(stage, getSave(), growth.card);
+  try {
+    return { stage, data: gameData, practice: false, battle: startBattle(stage, team.members, team.helper, createRng(), gameData) };
+  } catch (err) {
+    return err instanceof Error ? err.message : String(err);
+  }
+}
+
+export const battleScreen: ScreenDef = {
+  name: 'battle',
+  title: '戰鬥',
+  chrome: 'bare',
+  parent: 'adventure',
+  render({ route, nav, onLeave }) {
+    const s = setup(route.args[0] ?? '');
+    if (typeof s === 'string') {
+      return h('div', { style: { justifyContent: 'center', padding: '24px' } },
+        emptyState('sword', s),
+        button('返回', { block: true, sound: 'back', onClick: () => nav.back() }));
+    }
+    const view = new BattleView(s, nav);
+    onLeave(() => view.destroy());
+    return view.element;
+  },
+};
+
+class BattleView {
+  readonly element: HTMLElement;
+  private enemyZone = h('div', { class: 'enemy-zone' });
+  private waveLabel = h('div', { class: 'wave-label' });
+  private teamRow = h('div', { class: 'team-row' });
+  private hpHost = h('div', { class: 'team-hp' });
+  private comboEl = h('div', { class: 'combo-count', 'aria-live': 'polite' });
+  private boardView: BoardView;
+  private state: BattleState;
+  private enemyEls: HTMLElement[] = [];
+  private shownHp: number;
+  private dialog?: DialogHandle;
+  private speed: number;
+
+  constructor(private s: Setup, private nav: Navigator) {
+    this.state = s.battle.getState();
+    this.shownHp = this.state.hp;
+    this.speed = getSettings().battleSpeed;
+    this.boardView = new BoardView({
+      cellSize: CELL,
+      moveSeconds: () => this.state.moveTimeSeconds,
+      showTimer: () => getSettings().showMoveTimer,
+      onMove: (path) => void this.resolveTurn(path),
+      onStep: () => audio.play('tap'),
+    });
+    this.element = h(
+      'div',
+      { class: 'battle' },
+      h('div', { class: 'battle-top safe-top' },
+        this.waveLabel,
+        h('div', { class: 'stage-name' }, s.stage.name),
+        iconButton('close', '撤退', () => void this.askRetreat())),
+      this.enemyZone,
+      this.comboEl,
+      h('div', { class: 'battle-bottom safe-bottom' }, this.teamRow, this.hpHost, this.boardView.element),
+    );
+    this.renderEnemies();
+    this.renderTeam();
+    this.renderHp(this.state.hp);
+    this.boardView.setBoard(this.state.board);
+    this.boardView.setEnabled(true);
+    this.updateBgm();
+  }
+
+  destroy(): void {
+    this.boardView.destroy();
+    this.dialog?.close();
+  }
+
+  private updateBgm(): void {
+    const boss = this.s.stage.waves[this.state.wave]?.boss;
+    audio.playBgm(boss ? 'boss' : 'battle');
+  }
+
+  // ---------- 畫面 ----------
+
+  private renderEnemies(): void {
+    clear(this.enemyZone);
+    const boss = !!this.s.stage.waves[this.state.wave]?.boss;
+    this.waveLabel.textContent = `WAVE ${this.state.wave + 1}/${this.state.waveCount}`;
+    const bg = userAsset('backgrounds', boss ? 'battle-boss' : 'battle');
+    if (bg) this.enemyZone.appendChild(h('img', { class: 'battle-bg', src: bg, alt: '' }));
+    const row = h('div', { class: ['enemy-line', boss && 'boss'] });
+    this.enemyEls = this.state.enemies.map((e, i) => {
+      const el = h(
+        'button',
+        { type: 'button', class: ['enemy', i === this.state.target && 'targeted', e.hp <= 0 && 'dead'], 'aria-label': `${e.def.name}，設為目標`, onClick: () => this.setTarget(i) },
+        h('div', { class: 'enemy-cd' }, `${e.cooldown}`),
+        h('div', { class: 'enemy-art' }, enemyArt(e, boss)),
+        h('div', { class: 'enemy-name' }, badge(ATTRIBUTE_NAMES[e.def.attribute], `attr-${e.def.attribute}`), e.def.name),
+        bar({ value: e.hp, max: e.maxHp, variant: 'hp' }),
+      );
+      row.appendChild(el);
+      return el;
+    });
+    this.enemyZone.appendChild(row);
+  }
+
+  private updateEnemy(i: number, e: EnemyState, previousHp?: number): void {
+    const el = this.enemyEls[i];
+    if (!el) return;
+    el.querySelector('.enemy-cd')!.textContent = `${e.cooldown}`;
+    el.querySelector('.enemy-cd')!.classList.toggle('urgent', e.cooldown <= 1);
+    el.querySelector('.bar')!.replaceWith(bar({ value: e.hp, max: e.maxHp, variant: 'hp', previous: previousHp }));
+    el.classList.toggle('dead', e.hp <= 0);
+    el.classList.toggle('targeted', i === this.state.target);
+  }
+
+  private renderTeam(): void {
+    clear(this.teamRow);
+    for (const m of this.state.team) {
+      const ready = m.skillCooldown === 0;
+      const thumb = cardThumb(m.card, { size: 56, onClick: () => this.useSkill(m.index) });
+      thumb.classList.toggle('skill-ready', ready);
+      if (m.skillCooldown !== null && !ready) thumb.appendChild(h('span', { class: 'skill-cd' }, `${m.skillCooldown}`));
+      if (m.isHelper) thumb.appendChild(h('span', { class: 'helper-tag' }, '助'));
+      this.teamRow.appendChild(thumb);
+    }
+  }
+
+  private renderHp(previous?: number): void {
+    clear(this.hpHost);
+    this.hpHost.appendChild(bar({ value: this.state.hp, max: this.state.maxHp, variant: 'hp', label: true, previous }));
+  }
+
+  private showCombo(combo: number): void {
+    this.comboEl.textContent = `${combo} Combo`;
+    this.comboEl.classList.remove('pop');
+    void this.comboEl.offsetWidth;
+    this.comboEl.classList.add('pop');
+  }
+
+  // ---------- 操作 ----------
+
+  private setTarget(i: number): void {
+    if (this.s.battle.setTarget(i).ok) {
+      audio.play('tap');
+      this.state = this.s.battle.getState();
+      this.enemyEls.forEach((el, j) => el.classList.toggle('targeted', j === i));
+    }
+  }
+
+  private useSkill(i: number): void {
+    const r = this.s.battle.useSkill(i);
+    if (!r.ok) return toast(r.reason);
+    audio.play('skill');
+    this.state = this.s.battle.getState();
+    this.boardView.setBoard(this.state.board);
+    this.renderTeam();
+  }
+
+  private async askRetreat(): Promise<void> {
+    if (this.state.phase !== 'player') return;
+    this.boardView.setEnabled(false);
+    if (await confirmDialog('撤退', this.s.practice ? '要離開練習場嗎？' : '撤退會視為失敗，已消耗的體力不會退還。')) {
+      this.s.battle.forfeit();
+      if (!this.s.practice) bus.emit('stageFailed', { stageId: this.s.stage.id });
+      this.nav.back();
+    } else {
+      this.boardView.setEnabled(true);
+    }
+  }
+
+  private async resolveTurn(path: Parameters<Battle['submitMove']>[0]): Promise<void> {
+    const before = this.state;
+    const res = this.s.battle.submitMove(path);
+    if (!res.ok) {
+      toast(res.reason);
+      this.boardView.setBoard(before.board);
+      this.boardView.setEnabled(true);
+      return;
+    }
+    const after = this.s.battle.getState();
+    const speed = this.speed;
+
+    await this.boardView.playClear(res.summary.groups, (combo) => {
+      this.showCombo(combo);
+      audio.play('match', combo);
+    }, speed);
+    await this.animateHits(before, res.summary);
+    await this.boardView.playRefill(after.board, speed);
+
+    // 回復與毒
+    if (res.summary.heal > 0) floatText(this.hpHost, `+${res.summary.heal.toLocaleString()}`, 'heal');
+    if (res.summary.poisonDamage > 0) floatText(this.hpHost, `-${res.summary.poisonDamage.toLocaleString()}`, 'hurt');
+
+    // 敵人攻擊
+    for (const atk of res.enemyAttacks) {
+      this.enemyEls[atk.enemy]?.classList.add('attacking');
+      await wait(220 / speed);
+      this.enemyEls[atk.enemy]?.classList.remove('attacking');
+      this.element.classList.remove('shake');
+      void this.element.offsetWidth;
+      this.element.classList.add('shake');
+      floatText(this.hpHost, `-${atk.damage.toLocaleString()}`, 'hurt');
+    }
+
+    const hpBefore = this.shownHp;
+    this.state = after;
+    this.shownHp = after.hp;
+    this.renderHp(hpBefore);
+    this.renderTeam();
+    this.comboEl.classList.remove('pop');
+    this.comboEl.textContent = '';
+
+    if (after.wave !== before.wave) {
+      await wait(350 / speed);
+      this.renderEnemies();
+      this.updateBgm();
+      this.banner(after.waveCount - 1 === after.wave && this.s.stage.waves[after.wave]?.boss ? 'BOSS' : `WAVE ${after.wave + 1}`);
+    } else {
+      after.enemies.forEach((e, i) => this.updateEnemy(i, e));
+    }
+
+    if (after.phase === 'won') return this.onWin();
+    if (after.phase === 'lost') return this.onLose();
+    this.boardView.setEnabled(true);
+  }
+
+  private async animateHits(before: BattleState, summary: TurnSummary): Promise<void> {
+    const dealt = new Map<number, number>();
+    for (const hit of summary.hits) dealt.set(hit.enemy, (dealt.get(hit.enemy) ?? 0) + hit.damage);
+    before.enemies.forEach((e, i) => {
+      const dmg = dealt.get(i);
+      if (!dmg) return;
+      const hp = Math.max(0, e.hp - dmg);
+      this.updateEnemy(i, { ...e, hp }, e.hp);
+      const el = this.enemyEls[i];
+      el.classList.remove('hit');
+      void el.offsetWidth;
+      el.classList.add('hit');
+      floatText(el, dmg.toLocaleString(), 'dmg');
+    });
+    if (dealt.size) await wait(380 / this.speed);
+  }
+
+  private banner(text: string): void {
+    const el = h('div', { class: 'wave-banner' }, text);
+    this.element.appendChild(el);
+    setTimeout(() => el.remove(), 1400);
+  }
+
+  // ---------- 結算 ----------
+
+  private onWin(): void {
+    audio.play('win');
+    audio.stopBgm();
+    const result = this.s.battle.getResult()!;
+    let clear: StageClearResult | null = null;
+    if (!this.s.practice) {
+      const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
+      const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, { stages: gameData.stages }, gameData.config, createRng(), Date.now());
+      commit(done.save);
+      clear = done.result;
+      bus.emit('stageCleared', { stageId: this.s.stage.id, turns: result.turns, stars: clear.stars });
+    }
+    const rows = [
+      h('div', { class: 'row between' }, h('span', null, '回合數'), h('strong', null, `${result.turns}`)),
+      h('div', { class: 'row between' }, h('span', null, '最高 Combo'), h('strong', null, `${result.maxCombo}`)),
+    ];
+    if (clear) {
+      rows.push(
+        h('div', { class: 'row between' }, h('span', null, '金幣'), h('strong', { class: 'row' }, resourceIcon('coin'), `+${clear.coin.toLocaleString()}`)),
+        h('div', { class: 'row between' }, h('span', null, '玩家經驗'), h('strong', null, `+${clear.playerExp}`)),
+      );
+      if (clear.firstClear?.gems) rows.push(h('div', { class: 'row between' }, h('span', null, '首通獎勵'), h('strong', { class: 'row' }, resourceIcon('gem'), `+${clear.firstClear.gems}`)));
+      if (clear.levelUp) rows.push(h('p', { class: 'gold-text' }, `玩家等級提升到 Lv.${clear.levelUp.to}！體力已補滿`));
+      (this.s.stage.stars ?? []).forEach((c, i) => rows.push(
+        h('div', { class: 'row small-text' }, h('span', { class: 'stars', style: { opacity: clear!.stars[i] ? '1' : '0.3' } }, '★'), starText(c), clear!.newStars[i] && badge('NEW', 'gold')),
+      ));
+      if (clear.drops.length) {
+        rows.push(h('div', { class: 'row wrap' }, clear.drops.map((d) => {
+          const def = growth.card(d.cardId);
+          return def ? cardThumb(def, { size: 52 }) : null;
+        })));
+      }
+    }
+    const leave = () => {
+      this.dialog?.close();
+      this.nav.back();
+    };
+    this.dialog = openDialog('勝利！', h('div', { class: 'list' }, rows), [
+      button('再戰一次', { onClick: () => { this.dialog?.close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', [this.s.stage.id]); } }),
+      button('返回', { variant: 'primary', onClick: leave }),
+    ], { dismissible: false });
+  }
+
+  private onLose(): void {
+    audio.play('lose');
+    const gems = getSave().player.gems;
+    const cost = this.s.practice ? 0 : CONTINUE_GEMS;
+    const giveUp = () => {
+      this.dialog?.close();
+      if (!this.s.practice) bus.emit('stageFailed', { stageId: this.s.stage.id });
+      this.nav.back();
+    };
+    const doContinue = () => {
+      if (cost > 0) {
+        const save = getSave();
+        if (save.player.gems < cost) return toast('星晶不足');
+        commit({ ...save, player: { ...save.player, gems: save.player.gems - cost } });
+      }
+      const r = this.s.battle.continueBattle();
+      if (!r.ok) return toast(r.reason);
+      this.dialog?.close();
+      this.state = this.s.battle.getState();
+      this.shownHp = this.state.hp;
+      this.renderHp();
+      this.boardView.setEnabled(true);
+    };
+    this.dialog = openDialog('隊伍倒下了', h('p', null, cost ? `花費 ${cost} 星晶續戰，生命回滿並繼續這一波。（持有 ${gems}）` : '要再試一次嗎？'), [
+      button('放棄', { variant: 'ghost', sound: 'back', onClick: giveUp }),
+      button('續戰', { variant: 'primary', cost: cost ? { kind: 'gem', amount: cost } : undefined, disabled: gems < cost, onClick: doContinue }),
+    ], { dismissible: false });
+  }
+}

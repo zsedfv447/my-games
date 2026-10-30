@@ -31,7 +31,7 @@ describe('畫面路由', () => {
 
   it('GDD 2.5 的畫面都有註冊，名稱不重複的正式畫面會取代建置中畫面', () => {
     const names = new Set(SCREENS.map((s) => s.name));
-    for (const n of ['title', 'home', 'adventure', 'stages', 'helper', 'prepare', 'battle', 'result', 'team', 'cards', 'card',
+    for (const n of ['title', 'home', 'adventure', 'stages', 'helper', 'prepare', 'battle', 'team', 'cards', 'card',
       'enhance', 'evolve', 'summon', 'summon-rates', 'summon-history', 'shop', 'login-bonus', 'settings', 'quests',
       'achievements', 'collection', 'archetypes', 'event', 'tower', 'daily', 'story']) {
       expect(names.has(n), n).toBe(true);
