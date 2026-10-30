@@ -6,7 +6,7 @@ import { STARS_PER_STAGE, stageLockReason, type StageContext, type StageLockReas
 /** 依 data/events.json 的檔期決定哪些活動開放；沒給活動資料時視為全部開放（測試用） */
 export function stageContext(stages: StageDef[], events?: EventDef[], now = Date.now()): StageContext {
   if (!events) return { stages, openEvents: new Set(stages.flatMap((s) => (s.event ? [s.event] : []))) };
-  return { stages, openEvents: openEventIds(events, now) };
+  return { stages, events, openEvents: openEventIds(events, now) };
 }
 
 export type StageStatus = 'cleared' | 'open' | StageLockReason | 'towerAhead';
@@ -106,8 +106,11 @@ export function takeJustUnlocked(ids: string[]): Set<string> {
 }
 
 /** 關卡所屬的關卡列表（hash 路徑）：主線回到那一章、活動／每日／塔回到各自列表、流派試煉回到流派頁 */
-export function stageListPath(stage: StageDef): string {
+export function stageListPath(stage: StageDef, events: EventDef[] = []): string {
   if (stage.kind === 'main') return `stages/${stage.chapter ?? 1}`;
+  // 系列活動（流派克星週）有自己的列表：#/stages/nemesis
+  const series = stage.event ? events.find((e) => e.id === stage.event)?.series : undefined;
+  if (series) return `stages/${series}`;
   if (stage.kind === 'trial') return 'archetypes';
   return `stages/${stage.kind}`;
 }

@@ -55,9 +55,11 @@ describe('外傳章：灰燈港夜話', () => {
     expect(new Set(cores)).toEqual(new Set(['c916', 'c917', 'c918', 'c919', 'c920']));
   });
 
-  it('外傳放在資料檔最後面（不重排既有關卡）', () => {
+  it('外傳 5 關連續排在一起、順序不變（不重排既有關卡；之後的新內容可以接在後面）', () => {
     const ids = gameData.stages.map((s) => s.id);
-    expect(ids.slice(-side.length)).toEqual(side.map((s) => s.id));
+    const at = ids.indexOf(side[0].id);
+    expect(ids.slice(at, at + side.length)).toEqual(side.map((s) => s.id));
+    expect(side.map((s) => s.id)).toEqual(['side-harbor-1', 'side-harbor-2', 'side-harbor-3', 'side-harbor-4', 'side-harbor-5']);
   });
 
   it('關卡列表路徑、鎖定說明、冒險頁進度', () => {
