@@ -8,7 +8,8 @@ export type GrowthErrorCode =
   | 'maxLevel' | 'notMaxLevel' | 'cannotEvolve'
   | 'noActiveSkill' | 'maxSkillLevel' | 'maxLimitBreak'
   | 'noAwakening' | 'maxAwakening' | 'limitBreakRequired'
-  | 'inventoryFull' | 'capacityMax' | 'notOwned' | 'alreadyClaimed';
+  | 'inventoryFull' | 'capacityMax' | 'notOwned' | 'alreadyClaimed'
+  | 'confirmRequired';
 
 export interface GrowthError {
   code: GrowthErrorCode;

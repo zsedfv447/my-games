@@ -2,6 +2,7 @@
 // 全部是純函式；實際的 localStorage 由呼叫端以 SaveStorage 注入，方便測試。
 import type { GameConfig, SaveData } from '../core/types';
 import { bus } from '../core/events';
+import { sanitizeActiveBattle } from '../progression/active-battle';
 
 export const SAVE_KEY = 'starfall.save';
 export const CURRENT_SAVE_VERSION = 4;
@@ -141,6 +142,8 @@ export function parseSave(text: string | null, config: GameConfig, now: number):
     return { ok: false, reason: 'corrupt' };
   }
   const save = fillDefaults(migrated, createNewSave(config, now));
+  // 進行中的戰鬥壞掉時直接丟掉，不能讓整個存檔讀不進來
+  save.activeBattle = sanitizeActiveBattle(save.activeBattle);
   return from < CURRENT_SAVE_VERSION ? { ok: true, save, migratedFrom: from } : { ok: true, save };
 }
 

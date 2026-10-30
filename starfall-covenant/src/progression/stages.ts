@@ -145,6 +145,8 @@ export function completeStage(
   config: GameConfig,
   rng: Rng,
   now: number,
+  /** 進場時已骰好的掉落（progression/drops.ts）；不傳就在這裡照機率骰 */
+  plannedDrops?: { cardId: string; level?: number }[],
 ): { save: SaveData; result: StageClearResult } {
   const firstTime = !save.progress.clearedStages.includes(stage.id);
   const stars = (stage.stars ?? []).map((c) => checkStar(c, summary));
@@ -172,7 +174,7 @@ export function completeStage(
   const firstClear = firstTime ? stage.rewards.firstClear : undefined;
   if (firstClear) s = grantReward(s, firstClear, config, now).save;
 
-  const dropped = addCards(s, rollDrops(stage, rng).map((d) => ({ cardId: d.card, level: d.level })), now);
+  const dropped = addCards(s, plannedDrops ?? rollDrops(stage, rng).map((d) => ({ cardId: d.card, level: d.level })), now);
   s = dropped.save;
 
   const leveled = addPlayerExp(s, stage.rewards.playerExp, config, now);

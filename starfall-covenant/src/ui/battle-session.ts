@@ -7,26 +7,30 @@ import { gameData } from '../data/load';
 import {
   activeBattleFor, beginActiveBattle, clearActiveBattle, dropSeed, recordBattleSnapshot,
 } from '../progression/active-battle';
+import { planDrops, planMatches, type DropPlan } from '../progression/drops';
 import { confirmDialog } from './components/overlay';
 import type { Navigator } from './router';
 import { buildSortieTeam } from './sortie';
 import { commit, getSave, growth } from './state';
 
-/** 出戰確認扣過體力後呼叫：把隊伍與亂數種子寫進存檔，當作這一關的入場券 */
-export function armBattle(stageId: string): void {
+/** 出戰確認扣過體力後呼叫：把隊伍、亂數種子與骰好的掉落寫進存檔，當作這一關的入場券 */
+export function armBattle(stageId: string, drops?: DropPlan): void {
   const stage = gameData.stages.find((s) => s.id === stageId);
   if (!stage) return;
   const team = buildSortieTeam(stage, getSave(), growth.card);
   const seed = Math.floor(Math.random() * 2 ** 32);
-  commit(beginActiveBattle(getSave(), { stageId, seed, members: team.members, helper: team.helper }, Date.now()));
+  const plan = drops && planMatches(drops, stage) ? drops : planDrops(stage, createRng(dropSeed({ seed })));
+  commit(beginActiveBattle(getSave(), { stageId, seed, members: team.members, helper: team.helper, drops: plan }, Date.now()));
 }
 
 export interface StageBattle {
   battle: Battle;
   /** 出戰的玩家卡 uid（不含助戰、借用隊伍為空） */
   memberUids: string[];
-  /** 結算掉落用的亂數種子 */
+  /** 結算用的亂數種子 */
   dropSeed: number;
+  /** 進場時骰好的掉落 */
+  drops: DropPlan;
   /** 從中斷的戰鬥還原 */
   resumed: boolean;
 }
@@ -40,7 +44,8 @@ export function openStageBattle(stage: StageDef): StageBattle | string {
       ? resumeBattle(stage, active.snapshot, gameData)
       : startBattle(stage, active.members, active.helper, createRng(active.seed), gameData);
     if (!active.snapshot) saveBattle(battle);
-    return { battle, memberUids: active.members.flatMap((m) => (m.uid ? [m.uid] : [])), dropSeed: dropSeed(active), resumed: !!active.snapshot };
+    const drops = planMatches(active.drops, stage) ? active.drops : { stageId: stage.id, drops: [] };
+    return { battle, memberUids: active.members.flatMap((m) => (m.uid ? [m.uid] : [])), dropSeed: dropSeed(active), drops, resumed: !!active.snapshot };
   } catch {
     commit(clearActiveBattle(getSave()));
     return '遊戲資料已更新，無法繼續這場戰鬥';

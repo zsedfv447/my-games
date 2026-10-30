@@ -176,10 +176,23 @@ describe('存檔 v3 → v4 遷移（中斷續戰）', () => {
   it('冪等：已有進行中戰鬥的 v4 存檔，再存讀一次完全不變', () => {
     const save = {
       ...createNewSave(config, NOW),
-      activeBattle: { stageId: 'st-1-1', seed: 123, members: [{ cardId: 'c106', level: 5, uid: 'u1' }], helper: null, startedAt: NOW, snapshot: null },
+      activeBattle: {
+        stageId: 'st-1-1', seed: 123, members: [{ cardId: 'c106', level: 5, uid: 'u1' }], helper: null,
+        drops: { stageId: 'st-1-1', drops: [{ cardId: 'c106', wave: 0, enemy: 1 }] }, startedAt: NOW, snapshot: null,
+      },
     };
     expect(migrate(save as unknown as Record<string, unknown>)).toEqual(save);
     const r = importSaveCode(exportSaveCode(save), config, NOW);
     expect(r).toEqual({ ok: true, save });
+  });
+
+  it('v3 存檔帶著契印師手札 records（outside-battle 的選填欄位），遷移到 v4 後原樣保留', () => {
+    const records = { battles: 12, wins: 9, maxCombo: 11, maxTurnDamage: 54321, fastestTurns: { 'st-1-1': 2 }, leaderClears: { c106: 4 }, archetypeClears: { mono: 3 } };
+    const { activeBattle: _drop, ...rest } = createNewSave(config, NOW);
+    const v3 = { ...rest, version: 3, records };
+    expect(migrate(v3).records).toEqual(records);
+    const r = importSaveCode(exportSaveCode(v3 as never), config, NOW);
+    expect(r.ok && r.migratedFrom).toBe(3);
+    expect(r.ok && (r.save as unknown as { records: unknown }).records).toEqual(records);
   });
 });

@@ -1,6 +1,7 @@
 // 《星骸契約》共用型別。所有模組只透過這裡的型別與 data/*.json 溝通。
 // 修改本檔需經總監審核。
 import type { BattleSnapshot, TeamMemberInput } from '../battle/battle-state';
+import type { DropPlan } from '../progression/drops';
 
 // ---------- 基本列舉 ----------
 export const ATTRIBUTES = ['fire', 'water', 'wood', 'light', 'dark'] as const;
@@ -253,6 +254,8 @@ export interface ActiveBattle {
   members: TeamMemberInput[];
   helper: TeamMemberInput | null;
   startedAt: number;
+  /** 進場時骰好的掉落（提案 13）；重新整理與續戰都沿用，不重骰 */
+  drops: DropPlan;
   /** 還沒開打（例如還在看開場劇情）時為 null */
   snapshot: BattleSnapshot | null;
 }

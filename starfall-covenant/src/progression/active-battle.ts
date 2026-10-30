@@ -1,10 +1,11 @@
 // 中斷續戰：出戰時把隊伍與亂數種子寫進存檔，每次行動後存戰鬥快照，結算或放棄時清掉
 import type { BattleSnapshot, TeamMemberInput } from '../battle/battle-state';
 import type { ActiveBattle, SaveData } from '../core/types';
+import type { DropPlan } from './drops';
 
 export function beginActiveBattle(
   save: SaveData,
-  battle: { stageId: string; seed: number; members: TeamMemberInput[]; helper: TeamMemberInput | null },
+  battle: { stageId: string; seed: number; members: TeamMemberInput[]; helper: TeamMemberInput | null; drops: DropPlan },
   now: number,
 ): SaveData {
   const active: ActiveBattle = { ...battle, seed: battle.seed >>> 0, startedAt: now, snapshot: null };
@@ -29,3 +30,21 @@ export function clearActiveBattle(save: SaveData): SaveData {
 
 /** 掉落用的種子：由出戰時的種子決定，重新整理後結算也不會骰出不同的掉落 */
 export const dropSeed = (active: Pick<ActiveBattle, 'seed'>): number => (active.seed ^ 0x9e3779b9) >>> 0;
+
+const isObj = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null && !Array.isArray(x);
+const isInput = (x: unknown) => isObj(x) && typeof x.cardId === 'string' && typeof x.level === 'number';
+
+/**
+ * 讀檔時檢查進行中的戰鬥：欄位壞掉或格式不對就丟掉（當作沒有），不能讓遊戲打不開。
+ * 快照內容是否還對得上關卡資料，等到開打還原時再檢查（resumeBattle 會丟錯，介面再清掉）。
+ */
+export function sanitizeActiveBattle(x: unknown): ActiveBattle | null {
+  if (!isObj(x)) return null;
+  const { stageId, seed, members, helper, startedAt, drops, snapshot } = x;
+  if (typeof stageId !== 'string' || typeof seed !== 'number' || typeof startedAt !== 'number') return null;
+  if (!Array.isArray(members) || members.length === 0 || !members.every(isInput)) return null;
+  if (helper !== null && !isInput(helper)) return null;
+  if (!isObj(drops) || drops.stageId !== stageId || !Array.isArray(drops.drops)) return null;
+  if (snapshot !== null && !(isObj(snapshot) && snapshot.stageId === stageId && isObj(snapshot.state))) return null;
+  return x as unknown as ActiveBattle;
+}

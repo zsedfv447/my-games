@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   addCards, claimAllCollectionRewards, claimCollectionReward, claimableCollection, collectionSummary,
-  computeStats, expandInventory, filterCards, inventoryUsage, markSeen, sellCards, sellPrice, setLocked, sortCards,
+  computeStats, expandInventory, filterCards, inventoryUsage, inventoryWarning, markSeen, previewSell, sellCards, sellPrice, setLocked, sortCards,
 } from '../../src/growth';
 import { ctx, makeSave, owned } from './fixtures';
 
@@ -50,6 +50,37 @@ describe('背包：上鎖、擴充、販賣', () => {
     expect(r.ok && [r.coin, r.save.inventory.cards.length]).toEqual([450, 2]);
     expect(sellCards(save, ctx, ['u1', 'u3'])).toMatchObject({ ok: false, error: { code: 'cardLocked', subject: 'u3' } });
     expect(sellCards(save, ctx, ['u4'])).toMatchObject({ ok: false, error: { code: 'cardInTeam' } });
+  });
+
+  it('高星卡販賣要二次確認', () => {
+    const save = makeSave([owned('u1', 'c102'), owned('u2', 'c905')]);
+    expect(sellCards(save, ctx, ['u1', 'u2'])).toMatchObject({ ok: false, error: { code: 'confirmRequired', subject: 'u1' } });
+    const r = sellCards(save, ctx, ['u1', 'u2'], { confirmHighRarity: true });
+    expect(r.ok && r.save.inventory.cards).toEqual([]);
+    expect(sellCards(save, ctx, ['u2']).ok).toBe(true);
+  });
+
+  it('販賣預覽：排除上鎖與隊伍中的卡，標出高星卡，不改存檔', () => {
+    const save = makeSave([
+      owned('u1', 'c106', { level: 21 }), owned('u2', 'c102'), owned('u3', 'c107', { locked: true }), owned('u4', 'c108'),
+    ]);
+    save.teams[0].members[0] = 'u4';
+    const p = previewSell(save, ctx, ['u1', 'u2', 'u3', 'u4', 'u1', 'nope']);
+    expect(p.sellable).toEqual(['u1', 'u2']);
+    expect(p.blocked).toEqual([{ uid: 'u3', reason: 'locked' }, { uid: 'u4', reason: 'inTeam' }]);
+    expect(p.coin).toBe(400 + 200);
+    expect(p.highRarity).toEqual(['u2']);
+    expect(p.needsConfirm).toBe(true);
+    expect(previewSell(save, ctx, ['u1']).needsConfirm).toBe(false);
+    expect(save.inventory.cards).toHaveLength(4);
+  });
+
+  it('背包快滿與已滿的提醒', () => {
+    const cards = Array.from({ length: 45 }, (_, i) => owned(`u${i}`, 'c905'));
+    const save = makeSave(cards);
+    expect(inventoryWarning(save, ctx)).toBe('almostFull');
+    expect(inventoryWarning(makeSave(cards.slice(0, 44)), ctx)).toBe(null);
+    expect(inventoryWarning({ ...save, inventory: { ...save.inventory, capacity: 45 } }, ctx)).toBe('full');
   });
 });
 
