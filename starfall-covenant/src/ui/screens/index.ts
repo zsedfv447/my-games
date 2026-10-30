@@ -21,6 +21,7 @@ import { loginBonusScreen } from './login-bonus';
 import { achievementsScreen, questsScreen } from './quests';
 import { collectionCardScreen, collectionScreen } from './collection';
 import { helperScreen } from './helper';
+import { notebookScreen } from './notebook';
 
 /** GDD 2.5 全部畫面；正式畫面完成後取代同名的建置中畫面 */
 export const SCREENS: ScreenDef[] = [
@@ -52,4 +53,5 @@ export const SCREENS: ScreenDef[] = [
   collectionScreen,
   collectionCardScreen,
   helperScreen,
+  notebookScreen,
 ];
