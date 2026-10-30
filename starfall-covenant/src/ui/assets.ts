@@ -4,7 +4,7 @@
 //   cards/<卡號>.webp            卡片立繪，例如 cards/c0102.webp
 //   cards/<卡號>_i.webp          卡片頭像（沒有時用立繪裁切）
 //   enemies/<敵人id>.webp        敵人
-//   backgrounds/<場景>.webp      title、home、battle、battle-boss、chapter-1…
+//   backgrounds/<場景>.webp      title、home、chapter-1～5、event、tower（Boss 版加 -boss），見 backdrop.ts
 //   ui/<名稱>.webp               logo 等介面圖
 //   bgm/<曲名>.ogg|mp3           title、home、battle、boss、victory
 //   sfx/<音效>.ogg|mp3|wav       tap、match、combo、skill、win、lose、summon

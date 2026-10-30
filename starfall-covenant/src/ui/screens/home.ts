@@ -1,6 +1,5 @@
-import { h, svg } from '../dom';
-import { harborSvg } from '../art/scenery';
-import { userAsset } from '../assets';
+import { h } from '../dom';
+import { sceneBackdrop } from '../backdrop';
 import { audio } from '../audio';
 import type { IconName } from '../art/icons';
 import { button, icon } from '../components/basic';
@@ -24,14 +23,13 @@ export const homeScreen: ScreenDef = {
   tab: 'home',
   render({ nav }) {
     audio.playBgm('home');
-    const bg = userAsset('backgrounds', 'home');
     return h(
       'div',
-      null,
+      { class: 'home' },
+      sceneBackdrop('home'),
       h(
         'div',
         { class: 'home-hero' },
-        bg ? h('img', { src: bg, alt: '' }) : svg(harborSvg()),
         h('div', { class: 'caption' }, h('div', { class: 'place' }, '灰燈港'), h('div', { class: 'small-text dim' }, '見習契印師的起點')),
       ),
       button('出發冒險', { variant: 'primary', block: true, icon: 'sword', onClick: () => nav.go('adventure') }),
