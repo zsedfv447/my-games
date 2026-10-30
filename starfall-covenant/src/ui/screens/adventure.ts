@@ -39,7 +39,7 @@ export const adventureScreen: ScreenDef = {
         'div',
         { class: 'list' },
         gameData.chapters.map((c) => {
-          const p = chapterProgress(save, c.chapter, ctx, now);
+          const p = chapterProgress(save, c.chapter, ctx, now, c.stageCount);
           return h(
             'button',
             { type: 'button', class: ['chapter-card', !p.unlocked && 'locked'], disabled: !p.unlocked, onClick: () => nav.go('stages', [c.chapter]) },

@@ -13,3 +13,9 @@ export function stageStoryToPlay(stage: Pick<StageDef, 'story'>, slot: StageStor
   if (!firstTime || !id || !story[id]?.length || seen.includes(id)) return undefined;
   return id;
 }
+
+/** 領取章節星章獎勵後要播的劇情（例如 ch4-stars：艾嵐加入）；沒寫或看過就不播 */
+export function chapterStarStoryToPlay(chapter: number, story: StoryData, seen: string[]): string | undefined {
+  const id = `ch${chapter}-stars`;
+  return story[id]?.length && !seen.includes(id) ? id : undefined;
+}

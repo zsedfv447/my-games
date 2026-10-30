@@ -47,7 +47,7 @@ export const homeScreen: ScreenDef = {
     const ctx = stageContext(gameData.stages, gameData.events);
     const next = nextMainStage(save, ctx, Date.now());
     const chapter = gameData.chapters.find((c) => c.chapter === next?.chapter);
-    const progress = chapter && chapterProgress(save, chapter.chapter, ctx, Date.now());
+    const progress = chapter && chapterProgress(save, chapter.chapter, ctx, Date.now(), chapter.stageCount);
     const badges = homeBadges(save, Date.now());
     const dot = (to: string) => BADGE_OF[to] && badges[BADGE_OF[to]] && h('span', { class: 'badge dot', dataset: { badge: BADGE_OF[to] }, 'aria-label': '有可領取的獎勵' });
     const root = h(
