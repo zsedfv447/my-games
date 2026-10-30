@@ -1,11 +1,14 @@
 // 轉珠規劃器：以束搜尋（beam search）找出得分最高的拖曳路徑。
 // 分數 = 實際傷害（佔場上敵人剩餘生命的比例，0–100）＋ 回復價值 ＋ 流派偏好 ＋ 每 Combo 0.5 基本分。
 // 只看玩家轉出的第一層消除（不預測天降），和真人玩家看得到的資訊一致。
+// 會把主動技 buff、回復轉攻擊、敵人護盾、心珠封印、不能消除的珠種算進去，和戰鬥模組的結算一致。
 import type { LeaderSkillDef } from '../../src/core/types';
 import { findMatches, type Board, type Pos } from '../../src/battle/board';
 import { applyHits, computeAttacks, computeHeal, type BattleConfig } from '../../src/battle/damage';
 import { evaluateLeaderTurn } from '../../src/battle/leader';
 import type { BattleState } from '../../src/battle/battle-state';
+import { buffAttackMultipliers, teamWithRcvToAtk } from '../../src/battle/skills/buffs';
+import { defenseProfile, isHeartSealed, sealedOrbs } from '../../src/battle/skills/status';
 import type { Strategy } from './strategies';
 
 export interface PlannerOptions {
@@ -32,22 +35,32 @@ export function scoreBoard(
   leaders: (LeaderSkillDef | undefined)[],
   strategy: Strategy,
   config: BattleConfig,
+  skillUsedThisTurn = false,
 ): number {
-  const groups = findMatches(board, 0);
+  const groups = findMatches(board, 0, sealedOrbs(state));
   if (groups.length === 0) return 0;
   const combo = groups.length;
   const hpPercent = (state.hp / state.maxHp) * 100;
-  const team = state.team;
-  const turn = evaluateLeaderTurn(leaders, { team, groups, combo, hpPercent, skillUsedThisTurn: false });
+  const team = teamWithRcvToAtk(state, state.team);
+  const heartSealed = isHeartSealed(state);
+  const turn = evaluateLeaderTurn(leaders, {
+    team,
+    groups: heartSealed ? groups.filter((g) => g.orb !== 'heart') : groups,
+    combo,
+    hpPercent,
+    skillUsedThisTurn,
+  });
+  const buffMul = buffAttackMultipliers(state);
+  const atkMultipliers = turn.atkMultipliers.map((v, i) => v * buffMul[i]);
   const hits = [
-    ...computeAttacks({ team, groups, combo, config, atkMultipliers: turn.atkMultipliers, ignoreDefense: turn.ignoreDefense }),
+    ...computeAttacks({ team, groups, combo, config, atkMultipliers, ignoreDefense: turn.ignoreDefense }),
     ...turn.followUps,
   ];
-  const enemies = state.enemies.map((e) => ({ ...e.def, hp: e.hp }));
+  const enemies = state.enemies.map((e) => ({ ...defenseProfile(e), hp: e.hp, maxHp: e.maxHp }));
   const before = enemies.reduce((a, e) => a + Math.max(0, e.hp), 0);
   const after = applyHits(hits, enemies, state.target, { combo, config }).hp.reduce((a, h) => a + Math.max(0, h), 0);
   const damageScore = before > 0 ? ((before - after) / before) * 100 : 0;
-  const heal = computeHeal({ team, groups, combo, config, rcvMultipliers: turn.rcvMultipliers });
+  const heal = heartSealed ? 0 : computeHeal({ team, groups, combo, config, rcvMultipliers: turn.rcvMultipliers });
   const healScore = (Math.min(heal, state.maxHp - state.hp) / state.maxHp) * 100 * strategy.healWeight(hpPercent);
   const attrs = [...new Set(team.map((m) => m.attribute))];
   const shape = strategy.shape({ groups, combo, mainAttribute: team[0].attribute, teamAttributes: attrs, hpPercent });
@@ -61,10 +74,11 @@ export function planMove(
   strategy: Strategy,
   config: BattleConfig,
   opts: PlannerOptions = DEFAULT_PLANNER,
+  skillUsedThisTurn = false,
 ): { path: Pos[]; score: number } {
   const { cols, rows } = state.board;
   const steps = Math.min(opts.maxSteps, Math.floor(state.moveTimeSeconds * opts.stepsPerSecond));
-  const evalCells = (cells: Board['cells']) => scoreBoard({ cols, rows, cells }, state, leaders, strategy, config);
+  const evalCells = (cells: Board['cells']) => scoreBoard({ cols, rows, cells }, state, leaders, strategy, config, skillUsedThisTurn);
 
   let beam: Node[] = [];
   for (let row = 0; row < rows; row++) {
