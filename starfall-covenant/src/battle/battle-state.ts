@@ -556,7 +556,7 @@ export function startBattle(
       };
       events.emit('turnResolved', summary);
       // 任務與成就計數用全遊戲事件
-      bus.emit('comboResolved', { combo, orbsCleared: groups.reduce((sum, g) => sum + g.cells.length, 0) });
+      bus.emit('comboResolved', { combo, orbsCleared: groups.reduce((sum, g) => sum + g.cells.length, 0), stageId: stage.id });
 
       // 敵人行動
       const enemyAttacks: EnemyAttack[] = [];

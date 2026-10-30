@@ -224,6 +224,8 @@ export function subscribeQuestCounters(
   const offs = types.map((type) =>
     bus.on(type, (payload) => {
       const stageId = (payload as { stageId?: string }).stageId;
+      // 練習場與新手教學不是正式關卡（查不到關卡種類）：轉珠不算任務的 Combo 與消除數
+      if (type === 'comboResolved' && stageId !== undefined && stageKindOf(stageId) === undefined) return;
       const delta = countersForEvent(type, payload, { stageKind: stageId ? stageKindOf(stageId) : undefined });
       if (Object.keys(delta).length > 0) update((s) => addQuestCounters(s, delta, quests, now()));
     }),
