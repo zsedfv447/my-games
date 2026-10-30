@@ -7,6 +7,8 @@ import type { StageDef } from '../../core/types';
 import { startBattle, type Battle, type BattleData, type BattleState, type EnemyState, type TurnSummary } from '../../battle/battle-state';
 import { BoardView } from '../../battle/view/board-view';
 import { completeStage, type StageClearResult } from '../../progression/stages';
+import { planDrops, planMatches, plannedCards, type DropPlan } from '../../progression/drops';
+import { chestBadge, DropCounter } from '../battle-fx/drops';
 import { CONTINUE_COST_GEMS, payContinue } from '../../progression/continue';
 import { enemySvg } from '../art/enemy';
 import { ATTRIBUTE_NAMES } from '../art/palette';
@@ -41,10 +43,12 @@ import type { CardExpGain } from '../../growth';
 
 const CELL = 63;
 
-// 出戰確認扣過體力才發「入場券」；重新整理戰鬥頁不會白白再扣一次，也不能免費重打
-let ticket: string | null = null;
-export function armBattle(stageId: string): void {
-  ticket = stageId;
+// 出戰確認扣過體力才發「入場券」；重新整理戰鬥頁不會白白再扣一次，也不能免費重打。
+// 掉落在發券時就骰好並跟著券走（提案 13），撤退後要重新付體力才會有新的一份。
+let ticket: { stageId: string; drops: DropPlan } | null = null;
+export function armBattle(stageId: string, drops?: DropPlan): void {
+  const stage = gameData.stages.find((s) => s.id === stageId);
+  ticket = { stageId, drops: drops ?? (stage ? planDrops(stage, createRng()) : { stageId, drops: [] }) };
 }
 
 function enemyArt(e: EnemyState, boss: boolean): Element {
@@ -78,6 +82,8 @@ interface Setup {
   memberUids?: string[];
   /** 新手教學戰鬥的引導層 */
   guide?: BattleGuide;
+  /** 進場時骰好的掉落；練習與教學沒有 */
+  drops?: DropPlan;
 }
 
 function setup(stageId: string, nav: Navigator): Setup | string {
@@ -94,11 +100,12 @@ function setup(stageId: string, nav: Navigator): Setup | string {
   }
   const stage = gameData.stages.find((s) => s.id === stageId);
   if (!stage) return '找不到這一關';
-  if (ticket !== stageId) return '戰鬥已中斷，請重新出發';
+  if (ticket?.stageId !== stageId) return '戰鬥已中斷，請重新出發';
+  const drops = planMatches(ticket.drops, stage) ? ticket.drops : { stageId, drops: [] };
   ticket = null;
   const team = buildSortieTeam(stage, getSave(), growth.card);
   try {
-    return { stage, data: gameData, practice: false, battle: startBattle(stage, team.members, team.helper, createRng(), gameData), memberUids: sortieUids(team) };
+    return { stage, data: gameData, practice: false, battle: startBattle(stage, team.members, team.helper, createRng(), gameData), memberUids: sortieUids(team), drops };
   } catch (err) {
     return err instanceof Error ? err.message : String(err);
   }
@@ -136,6 +143,9 @@ class BattleView {
   private boardView: BoardView;
   private state: BattleState;
   private enemyEls: HTMLElement[] = [];
+  private dropCounter: DropCounter;
+  /** 這回合倒下、還沒播放寶箱的敵人（enemyDefeated 事件在結算當下就發） */
+  private fallen: number[] = [];
   private shownHp: number;
   private dialog?: DialogHandle;
   private speed: number;
@@ -153,6 +163,7 @@ class BattleView {
     this.shownHp = this.state.hp;
     this.speed = getSettings().battleSpeed;
     this.hud = new BattleHud(s.stage);
+    this.dropCounter = new DropCounter(s.drops);
     this.boardView = new BoardView({
       cellSize: CELL,
       moveSeconds: () => this.state.moveTimeSeconds,
@@ -183,6 +194,7 @@ class BattleView {
     this.offs.push(
       ev.on('statusApplied', (e) => this.queue.push({ kind: 'status', enemy: e.side === 'enemy' ? e.enemy : undefined, text: STATUS_NAMES[e.status.id] ?? e.status.id, resisted: e.resisted })),
       ev.on('poisonTick', (e) => this.queue.push({ kind: 'poison', damage: e.damage })),
+      ev.on('enemyDefeated', (e) => this.fallen.push(e.enemy)),
     );
     if (!s.practice) this.maybeBossStory();
     s.guide?.attach({
@@ -223,6 +235,7 @@ class BattleView {
         { type: 'button', class: ['enemy', i === this.state.target && 'targeted', e.hp <= 0 && 'dead'], 'aria-label': `${e.def.name}，設為目標`, onClick: () => this.setTarget(i) },
         h('div', { class: 'enemy-cd' }, `${e.cooldown}`),
         h('div', { class: 'enemy-intent' }),
+        e.hp > 0 && chestBadge(this.s.drops, this.state.wave, i),
         h('div', { class: 'enemy-art' }, enemyArt(e, boss)),
         h('div', { class: 'enemy-name' }, badge(ATTRIBUTE_NAMES[e.def.attribute], `attr-${e.def.attribute}`), e.def.name),
         weakHint(e, this.s.data.config.battle),
@@ -233,6 +246,7 @@ class BattleView {
       return el;
     });
     this.enemyZone.appendChild(row);
+    this.enemyZone.appendChild(this.dropCounter.element);
     this.renderIntents();
   }
 
@@ -417,6 +431,7 @@ class BattleView {
       return;
     }
     this.queue = [];
+    this.fallen = [];
     const res = this.s.battle.submitMove(path);
     if (!res.ok) {
       toast(res.reason);
@@ -528,8 +543,8 @@ class BattleView {
     return true;
   }
 
-  private animateHits(before: BattleState, summary: Pick<TurnSummary, 'hits'>): Promise<void> {
-    return playStrikes({
+  private async animateHits(before: BattleState, summary: Pick<TurnSummary, 'hits'>): Promise<void> {
+    await playStrikes({
       root: this.element,
       teamRow: this.teamRow,
       enemyZone: this.enemyZone,
@@ -538,6 +553,10 @@ class BattleView {
       speed: this.speed,
       updateEnemy: (i, e, previousHp) => this.updateEnemy(i, e, previousHp),
     }, before, summary.hits);
+    // 這段攻擊打倒的敵人掉出寶箱（被持續傷害打倒的，等那段動畫播完再掉）
+    const shown = this.fallen.filter((i) => this.enemyEls[i]?.classList.contains('dead'));
+    this.fallen = this.fallen.filter((i) => !shown.includes(i));
+    for (const i of shown) await this.dropCounter.collect(this.element, before.wave, i, this.enemyEls[i], this.speed);
   }
 
   private banner(text: string, extra = ''): void {
@@ -589,7 +608,7 @@ class BattleView {
     let expGains: CardExpGain[] = [];
     if (!this.s.practice) {
       const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
-      const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages), gameData.config, createRng(), Date.now());
+      const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages), gameData.config, createRng(), Date.now(), this.s.drops && plannedCards(this.s.drops));
       const exp = grantClearExp(done.save, this.s.memberUids ?? [], done.result.cardExp);
       expGains = exp.gains;
       commit(exp.save);
