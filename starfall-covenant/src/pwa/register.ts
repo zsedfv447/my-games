@@ -1,4 +1,6 @@
-// 註冊 service worker（只在正式版）。新版本接手後，等玩家回到主城才重新整理，避免打斷戰鬥或抽卡演出。
+// 註冊 service worker（只在正式版）。新版本接手後先提示，等玩家回到主城才重新整理，避免打斷戰鬥或抽卡演出。
+import { toast } from '../ui/components/overlay';
+
 let updateReady = false;
 
 export const isUpdateReady = () => updateReady;
@@ -8,7 +10,9 @@ export function registerServiceWorker(): void {
   const hadController = !!navigator.serviceWorker.controller;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     // 第一次安裝不算更新
-    if (hadController) updateReady = true;
+    if (!hadController || updateReady) return;
+    updateReady = true;
+    toast('有新版本，回到主城時會自動重新整理', 4000);
   });
   window.addEventListener('load', () => {
     // updateViaCache: 'none'：檢查 sw.js 時不吃瀏覽器 HTTP 快取，部署後能立刻發現新版

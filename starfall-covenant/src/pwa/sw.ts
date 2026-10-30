@@ -1,5 +1,6 @@
 // Service worker：建置時由 tools/pwa-plugin.ts 打包成 dist/sw.js，並填入版本與檔案清單
-import { splitPrecache, strategyFor } from './strategy';
+// 只處理網路請求與 Cache Storage，不碰 localStorage 的存檔。
+import { cacheableSize, entriesToTrim, shellFiles, strategyFor } from './strategy';
 
 declare const __SW_VERSION__: string;
 declare const __SW_FILES__: string[];
@@ -16,33 +17,31 @@ interface SwScope {
 }
 
 const sw = self as unknown as SwScope;
-const CACHE = `starfall-${__SW_VERSION__}`;
-const FONT_CACHE = 'starfall-fonts';
+/** 外殼快取跟著版本走，新版啟用時刪掉舊的 */
+const SHELL = `starfall-shell-${__SW_VERSION__}`;
+/** 素材（雜湊檔名，內容不變）跨版本共用，超過上限刪最舊的 */
+const ASSETS = 'starfall-assets';
+const FONTS = 'starfall-fonts';
+const KEEP = new Set([SHELL, ASSETS, FONTS]);
 const scope = sw.registration.scope;
-const { core, warm } = splitPrecache(__SW_FILES__);
 const url = (f: string) => new URL(f, scope).href;
 // 伺服器可能回 Vary: Origin，而模組腳本請求會帶 Origin 標頭；比對快取時忽略 Vary，否則離線時會找不到
 const MATCH = { ignoreVary: true };
 
 sw.addEventListener('install', (e) => {
-  // 新版下載完就直接接手；頁面會在玩家回到主城時重新整理（見 src/pwa/register.ts）
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll([scope, ...core.map(url)])).then(() => sw.skipWaiting()));
+  // 新版外殼下載完就接手；頁面會提示並在玩家回到主城時重新整理（見 src/pwa/register.ts）
+  e.waitUntil(caches.open(SHELL).then((c) => c.addAll([scope, ...shellFiles(__SW_FILES__).map(url)])).then(() => sw.skipWaiting()));
 });
 
 sw.addEventListener('activate', (e) => {
   e.waitUntil((async () => {
-    for (const key of await caches.keys()) if (key.startsWith('starfall-') && key !== CACHE && key !== FONT_CACHE) await caches.delete(key);
+    for (const key of await caches.keys()) if (key.startsWith('starfall-') && !KEEP.has(key)) await caches.delete(key);
     await sw.clients.claim();
-    // 圖片在背景補齊，失敗的等實際用到時再存
-    const c = await caches.open(CACHE);
-    for (const f of warm) {
-      if (!(await c.match(url(f), MATCH))) await c.add(url(f)).catch(() => undefined);
-    }
   })());
 });
 
 async function networkFirst(req: Request, navigate: boolean): Promise<Response> {
-  const c = await caches.open(CACHE);
+  const c = await caches.open(SHELL);
   try {
     const res = await fetch(req, { cache: 'no-cache' });
     if (res.ok) await c.put(navigate ? scope : req, res.clone());
@@ -53,19 +52,24 @@ async function networkFirst(req: Request, navigate: boolean): Promise<Response> 
 }
 
 async function cacheFirst(req: Request): Promise<Response> {
-  const c = await caches.open(CACHE);
-  const hit = await c.match(req, MATCH);
+  const hit = await caches.match(req, MATCH);
   if (hit) return hit;
   const res = await fetch(req);
-  if (res.ok) await c.put(req, res.clone());
+  if (res.ok && cacheableSize(res.headers.get('content-length'), new URL(req.url).pathname)) {
+    const c = await caches.open(ASSETS);
+    await c.put(req, res.clone());
+    for (const old of entriesToTrim(await c.keys())) await c.delete(old);
+  }
   return res;
 }
 
 async function staleWhileRevalidate(req: Request): Promise<Response> {
-  const c = await caches.open(FONT_CACHE);
+  const c = await caches.open(FONTS);
   const hit = await c.match(req, MATCH);
   const fresh = fetch(req).then((res) => {
-    if (res.ok || res.type === 'opaque') void c.put(req, res.clone());
+    if (res.ok || res.type === 'opaque') {
+      void c.put(req, res.clone()).then(async () => { for (const old of entriesToTrim(await c.keys())) await c.delete(old); });
+    }
     return res;
   });
   return hit ?? fresh;
