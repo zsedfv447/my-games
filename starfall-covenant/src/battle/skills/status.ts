@@ -17,10 +17,12 @@
 // | enrage          | 敵人     | 攻擊倍率                |                                    | 0／不填 = 永久 |
 // | delayImmune     | 敵人     |                         |                                    | 0／不填 = 永久 |
 // | multiHit        | 敵人     | 段數（總傷不變，拆段）  |                                    | 0／不填 = 永久 |
+// | attributeSeal   | 我方     |                         | attribute：「fire,water」或 leader | 封印回合       |
 //
 // 觸發時機 trigger：onStart（出場時）、onAttack（每次攻擊之後）、
 // hpBelow（生命低於 params.percent %，預設 50，只觸發一次）、everyNTurns（每 params.n 回合，預設 3）。
 // attributeShield 的 rotate：從焰開始，每經過一回合換下一個屬性（焰→潮→森→輝→蝕）。
+// attributeSeal（星紋封印）：指定屬性的隊員轉珠攻擊無效（不影響主動技與回復）；leader = 封印我方隊長的屬性。
 
 import {
   ATTRIBUTES,
@@ -53,6 +55,7 @@ export const STATUS_INFO: Record<StatusId, { name: string; side: StatusSide }> =
   enrage: { name: '狂暴', side: 'enemy' },
   delayImmune: { name: '不受延遲', side: 'enemy' },
   multiHit: { name: '連擊', side: 'enemy' },
+  attributeSeal: { name: '星紋封印', side: 'team' },
 };
 
 const DEFAULT_ORB_COUNT = 5;
@@ -204,6 +207,19 @@ export function releaseBoardStatus(board: Board, status: StatusInstance): Board 
 export function sealedOrbs(state: BattleState): OrbType[] {
   const orb = parseOrb(findStatus(state.teamStatuses, 'lockedOrbs')?.params?.orb);
   return orb ? [orb] : [];
+}
+
+/** attributeSeal：目前被封印、轉珠不能攻擊的屬性；leader 代表我方隊長的屬性 */
+export function sealedAttributes(state: BattleState): Attribute[] {
+  const raw = findStatus(state.teamStatuses, 'attributeSeal')?.params?.attribute;
+  if (raw === 'leader') return state.team[0] ? [state.team[0].attribute] : [];
+  return parseAttributes(raw);
+}
+
+/** 每位隊員的攻擊倍率：被星紋封印的屬性為 0，其餘為 1 */
+export function attributeSealMultipliers(state: BattleState): number[] {
+  const sealed = sealedAttributes(state);
+  return state.team.map((m) => (sealed.includes(m.attribute) ? 0 : 1));
 }
 
 /** 我方是否被封印主動技／心珠 */
