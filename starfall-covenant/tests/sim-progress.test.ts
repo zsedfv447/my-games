@@ -81,6 +81,13 @@ describe('sim --progress：組隊', () => {
     expect(t.members.some((m) => m.evolved)).toBe(false);
   });
 
+  it('星核期望值是小數相加（≈ 0.9999…）也算夠 1 張', () => {
+    const cores = { ...zeroCores, fire: 0.7 + 0.1 + 0.1 + 0.1 };
+    expect(cores.fire).toBeLessThan(1);
+    const t = buildProgressTeam('berserk', ['c102', 'c107', 'c111', 'c109', 'c108'], [], fake({ coin: 1_000_000, cores, teamCostLimit: 200 }), ctx);
+    expect(t.members[0].awakened).toBe(1);
+  });
+
   it('隊長有剩下的星核與金幣時解鎖第 1 個覺醒', () => {
     const leaderWithAwaken = ['c102', 'c107', 'c111', 'c109', 'c108'];
     const rich = fake({ cardExpPerMember: 0, coin: 1_000_000, cores: { ...zeroCores, fire: 1 }, teamCostLimit: 200 });

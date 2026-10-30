@@ -68,6 +68,8 @@ export interface ProgressEstimate {
 }
 
 const ATTRS: Attribute[] = ['fire', 'water', 'wood', 'light', 'dark'];
+/** 期望值是小數相加，比較時留一點誤差（0.2 × 5 會變成 0.9999…） */
+const EPS = 1e-9;
 
 /** 到 stage 之前，玩家的等級、金幣、卡片經驗與星核期望值 */
 export function estimateProgress(
@@ -193,7 +195,7 @@ export function buildProgressTeam(
       const need = new Map<string, number>();
       for (const m of evo.materials) need.set(m, (need.get(m) ?? 0) + 1);
       const coreOf = (id: string) => ATTRS.find((x) => ctx.rules.awakenMaterialByAttribute[x] === id);
-      const ok = [...need].every(([id, n]) => { const at = coreOf(id); return at ? cores[at] >= n : false; });
+      const ok = [...need].every(([id, n]) => { const at = coreOf(id); return at ? cores[at] + EPS >= n : false; });
       if (ok) {
         for (const [id, n] of need) cores[coreOf(id)!] -= n;
         coin -= evo.coin;
@@ -222,7 +224,7 @@ export function buildProgressTeam(
   const ldef = ctx.card(leader.cardId)!;
   const gate = ctx.rules.awakenLimitBreakGate[0] ?? 0;
   const at = ldef.attribute;
-  if (ldef.awakenings?.length && gate === 0 && cores[at] >= (ctx.rules.awakenMaterialCount[0] ?? 1) && coin >= (ctx.rules.awakenCoin[0] ?? 0)) {
+  if (ldef.awakenings?.length && gate === 0 && cores[at] + EPS >= (ctx.rules.awakenMaterialCount[0] ?? 1) && coin >= (ctx.rules.awakenCoin[0] ?? 0)) {
     leader.awakened = 1;
   }
 
