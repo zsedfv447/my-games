@@ -4,7 +4,7 @@ import { maxStamina } from './player';
 import { fail, ok, type SaveResult } from './result';
 import { grantReward } from './rewards';
 import { regenStamina } from './stamina';
-import { eventPeriod, type EventDef } from './events';
+import { eventPeriod, eventPeriodKey, type EventDef } from './events';
 import { dateKey, weekKey } from './time';
 
 export type ShopFail = 'soldOut' | 'notEnoughGems' | 'notEnoughCoin' | 'notEnoughTokens' | 'alreadyFull';
@@ -26,9 +26,7 @@ function purchaseKey(item: ShopItemDef, now: number, events: EventDef[]): string
     case 'week': return `${item.id}@w${weekKey(now)}`;
     case 'event': {
       const event = shopItemEvent(item, events);
-      if (!event) return item.id;
-      const { start } = eventPeriod(event, now);
-      return `${item.id}@e${event.id}${start === null ? '' : `:${dateKey(start)}`}`;
+      return event ? `${item.id}${eventPeriodKey(event, now)}` : item.id;
     }
     default: return item.id;
   }

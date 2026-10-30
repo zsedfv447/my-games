@@ -11,7 +11,8 @@ export type RevealItem =
   | { kind: 'stat'; label: string; value: string }
   /** 金幣、經驗、星晶等數量，從 0 滾到 amount */
   | { kind: 'count'; icon: ResourceIcon | 'exp'; label: string; amount: number; tag?: string; special?: boolean }
-  | { kind: 'card'; cardId: string; count: number; /** 第一次獲得（圖鑑裡原本沒有） */ isNew?: boolean }
+  /** tag：例如「首通」，掉落卡沒有；isNew：第一次獲得（圖鑑裡原本沒有） */
+  | { kind: 'card'; cardId: string; count: number; tag?: string; isNew?: boolean }
   | { kind: 'star'; text: string; got: boolean; isNew: boolean }
   /** 隊員經驗：每位隊員各得 amount，列出升級的隊員 */
   | { kind: 'team'; amount: number; members: TeamExpMember[] };
@@ -38,7 +39,7 @@ export function rewardItems(reward: Reward, tag?: string): RevealItem[] {
   if (reward.coin) out.push({ kind: 'count', icon: 'coin', label: '金幣', amount: reward.coin, tag });
   if (reward.stamina) out.push({ kind: 'count', icon: 'stamina', label: '體力', amount: reward.stamina, tag });
   for (const [t, n] of Object.entries(reward.tokens ?? {})) out.push({ kind: 'count', icon: 'token', label: tokenName(t), amount: n, tag });
-  for (const c of reward.cards ?? []) out.push({ kind: 'card', cardId: c.card, count: c.count });
+  for (const c of reward.cards ?? []) out.push({ kind: 'card', cardId: c.card, count: c.count, ...(tag ? { tag } : {}) });
   if (reward.gems) out.push({ kind: 'count', icon: 'gem', label: '星晶', amount: reward.gems, tag, special: true });
   return out;
 }
@@ -61,6 +62,7 @@ export function clearItems(
   if (clear.cardExp && extras.team?.length) out.push({ kind: 'team', amount: clear.cardExp, members: extras.team });
   if (clear.tokens) out.push(...rewardItems({ tokens: clear.tokens }));
   if (clear.firstClear) out.push(...rewardItems(clear.firstClear, '首通'));
+  if (clear.periodFirstClear) out.push(...rewardItems(clear.periodFirstClear, '本週首通'));
   if (extras.chapterReward) out.push(...rewardItems(extras.chapterReward, '章節'));
   // 同一張卡掉兩次也分開翻，每張都是一次驚喜
   for (const d of clear.drops) out.push({ kind: 'card', cardId: d.cardId, count: 1 });
@@ -164,9 +166,9 @@ function chipParts(items: RevealItem[]): { parts: { icon: ResourceIcon | 'card';
  * 關卡列表的首通預告：text 是 chip 上的精簡版（圖示＋「首通 +1」，還有其他獎勵就加「…」），
  * full 是完整內容（「首通：星晶 +1、獸王代幣 +20」），放在 title。沒有首通獎勵回傳 null。
  */
-export function firstClearPreview(reward: Reward | undefined, cleared: boolean): {
+export function firstClearPreview(reward: Reward | undefined, cleared: boolean, label = '首通'): {
   text: string; full: string; claimed: boolean; icon: ResourceIcon | 'card';
-  /** chip 上的圖示＋數字（星晶、代幣等），最多 maxParts 種；more 表示還有其他獎勵沒列出 */
+  /** chip 上的圖示＋數字（星晶、代幣等），最多兩種；more 表示還有其他獎勵沒列出 */
   parts: { icon: ResourceIcon | 'card'; amount: number }[]; more: boolean;
 } | null {
   if (!reward) return null;
@@ -178,8 +180,8 @@ export function firstClearPreview(reward: Reward | undefined, cleared: boolean):
   // 完整清單：每一項實際的獎勵，數量寫成「+N」
   const list = rewardParts(reward).map((p) => p.label.replace(' ×', ' +')).join('、');
   return {
-    text: cleared ? '首通 已領' : `首通${amount}${more}`,
-    full: `首通：${list}`,
+    text: cleared ? `${label} 已領` : `${label}${amount}${more}`,
+    full: `${label}：${list}`,
     ...chipParts(items),
     claimed: cleared,
     icon: top.kind === 'count' ? (top.icon === 'exp' ? 'gem' : top.icon) : 'card',

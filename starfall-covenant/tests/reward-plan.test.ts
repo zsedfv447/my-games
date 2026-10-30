@@ -34,6 +34,21 @@ describe('結算演出項目', () => {
     const items = clearItems({ turns: 3, maxCombo: 2 }, { ...clear, cardExp: 0, firstClear: undefined, drops: [] });
     expect(items.map((i) => (i.kind === 'count' ? i.label : i.kind))).toEqual(['stat', 'stat', '金幣', '玩家經驗']);
   });
+  it('首通給的卡片與代幣都會列進演出並標上「首通」；每次通關的代幣不標；首通卡排在掉落卡前面', () => {
+    const items = clearItems({ turns: 5, maxCombo: 6 }, {
+      ...clear, cardExp: 0, tokens: { 'token-gear': 4 },
+      firstClear: { gems: 3, cards: [{ card: 'c920', count: 1 }], tokens: { 'token-gear': 20 } },
+      drops: [{ cardId: 'c913', uid: 'u3' }],
+    });
+    const cards = items.filter((i) => i.kind === 'card');
+    expect(cards).toEqual([
+      { kind: 'card', cardId: 'c920', count: 1, tag: '首通' },
+      { kind: 'card', cardId: 'c913', count: 1 },
+    ]);
+    const tokens = items.filter((i) => i.kind === 'count' && i.icon === 'token');
+    expect(tokens.map((t) => t.kind === 'count' && [t.amount, t.tag])).toEqual([[4, undefined], [20, '首通']]);
+    expect(items.find((i) => i.kind === 'count' && i.icon === 'gem')).toMatchObject({ amount: 3, tag: '首通' });
+  });
   it('一般獎勵：星晶放最後壓軸，卡片與代幣都拆出來', () => {
     const items = rewardItems({ gems: 5, coin: 1000, stamina: 10, tokens: { 'token-beast': 3 }, cards: [{ card: 'c901', count: 2 }] });
     expect(items.map((i) => (i.kind === 'count' ? i.label : i.kind))).toEqual(['金幣', '體力', '獸王代幣', 'card', '星晶']);
@@ -97,6 +112,9 @@ describe('升級卡與首通預告', () => {
     expect(firstClearPreview({ gems: 1, tokens: { 'token-beast': 20 } }, false)).toMatchObject({ parts: [{ icon: 'gem', amount: 1 }, { icon: 'token', amount: 20 }], more: false });
     expect(firstClearPreview({ coin: 500, gems: 2, tokens: { 'token-beast': 20 } }, false)).toMatchObject({ parts: [{ icon: 'gem', amount: 2 }, { icon: 'coin', amount: 500 }], more: true });
     expect(firstClearPreview({ cards: [{ card: 'c901', count: 1 }] }, false)).toMatchObject({ parts: [{ icon: 'card', amount: 1 }], more: false });
+    // 流派克星週：同一套格式，標籤換成「本週首通」
+    expect(firstClearPreview({ gems: 1, tokens: { 'token-beast': 10 } }, false, '本週首通')).toMatchObject({ text: '本週首通 +1 …', full: '本週首通：星晶 +1、獸王代幣 +10', parts: [{ icon: 'gem', amount: 1 }, { icon: 'token', amount: 10 }] });
+    expect(firstClearPreview({ gems: 1 }, true, '本週首通')?.text).toBe('本週首通 已領');
     expect(firstClearPreview(undefined, false)).toBeNull();
     expect(firstClearPreview({}, false)).toBeNull();
   });

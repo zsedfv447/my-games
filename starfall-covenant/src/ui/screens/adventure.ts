@@ -8,8 +8,9 @@ import { chapterProgress, nextMainStage, sideStoryProgress, stageContext } from 
 import { getSave } from '../state';
 import { userAsset } from '../assets';
 import { eventStatusText } from '../../progression/events';
+import { nemesisView } from '../nemesis';
 import { puzzleEntrySub } from './puzzle';
-import type { ScreenDef } from '../router';
+import type { Navigator, ScreenDef } from '../router';
 
 export const adventureScreen: ScreenDef = {
   name: 'adventure',
@@ -61,7 +62,8 @@ export const adventureScreen: ScreenDef = {
         'div',
         { class: 'list' },
         listItem({ leading: icon('history'), title: '每日關卡', sub: '素材、進化素材、金幣關每日輪替', onClick: () => nav.go('stages', ['daily']) }),
-        listItem({ leading: icon('event'), title: '限時活動', sub: gameData.events.map((e) => `${e.name}・${eventStatusText(e, Date.now())}`).join('／') || '活動 Boss 與兌換商店', onClick: () => nav.go('stages', ['event']) }),
+        listItem({ leading: icon('event'), title: '限時活動', sub: gameData.events.filter((e) => !e.series).map((e) => `${e.name}・${eventStatusText(e, Date.now())}`).join('／') || '活動 Boss 與兌換商店', onClick: () => nav.go('stages', ['event']) }),
+        nemesisEntry(nav),
         listItem({
           leading: icon('scroll'),
           title: '外傳・灰燈港夜話',
@@ -77,3 +79,15 @@ export const adventureScreen: ScreenDef = {
     );
   },
 };
+
+/** 「其他」區的流派克星週入口：本週主題、剩餘時間、推薦流派 */
+function nemesisEntry(nav: Navigator): HTMLElement | null {
+  const week = nemesisView(gameData.events, gameData.stages, (id) => gameData.archetypes.find((a) => a.id === id)?.name ?? id, Date.now());
+  if (!week) return null;
+  return listItem({
+    leading: icon('constellation'),
+    title: `流派克星週・${week.event.name.replace(/^流派克星週・/, '')}`,
+    sub: `${week.status}・推薦 ${week.archetypes.join('、')}`,
+    onClick: () => nav.go('stages', ['nemesis']),
+  });
+}

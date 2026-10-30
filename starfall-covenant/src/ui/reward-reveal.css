@@ -64,7 +64,14 @@
 @keyframes rv-rare { 50% { opacity: 0.45; } }
 .rv-card { margin-bottom: 16px; }
 .rv-card-name { position: absolute; left: -10px; right: -10px; top: 100%; margin-top: 2px; font-size: 10px; text-align: center; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rv-card-new { position: absolute; left: -4px; top: -6px; z-index: 1; font-size: 9px; font-weight: 800; color: #1a1205; background: var(--gold); border-radius: 3px; padding: 0 3px; box-shadow: 0 0 6px var(--gold); }
+/* NEW 放左下角，上方留給「首通」來源標籤 */
+.rv-card-new { position: absolute; left: -4px; bottom: 2px; z-index: 1; font-size: 9px; font-weight: 800; color: #1a1205; background: var(--gold); border-radius: 3px; padding: 0 3px; box-shadow: 0 0 6px var(--gold); }
+.rv-card-tag {
+  position: absolute; left: 50%; top: -7px; transform: translateX(-50%); white-space: nowrap; z-index: 1;
+  font-size: 10px; font-weight: 800; color: #1b1203; background: var(--gold); border-radius: 999px; padding: 0 6px;
+  opacity: 0;
+}
+.rv-card.shown .rv-card-tag { animation: fade-in 200ms ease-out 380ms both; }
 .rv-card-count { position: absolute; right: -4px; bottom: -4px; font-size: 11px; font-weight: 800; background: var(--bg-deep); border: 1px solid var(--gold-deep); border-radius: 999px; padding: 0 5px; }
 
 /* 星章：逐顆點亮 */
