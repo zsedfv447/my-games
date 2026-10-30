@@ -7,7 +7,7 @@ import { audio } from '../audio';
 import {
   countDuration, countValue, firstClearPreview, revealSchedule, revealSfx, rewardItems, tickInterval, type LevelUpView, type RevealItem,
 } from '../reward-plan';
-import { badge, button, panel, resourceIcon } from './basic';
+import { badge, button, iconButton, panel, resourceIcon } from './basic';
 import { cardThumb } from './card-thumb';
 import { overlayRoot } from './overlay';
 import type { LeaderLine } from '../victory-line';
@@ -193,6 +193,10 @@ export interface ClearResultOptions {
   levelUp?: LevelUpView;
   /** 演出最後出現的開放提示 */
   notes?: ResultNote[];
+  /** 項目播完後接著出現的圖（章節星座） */
+  constellation?: HTMLElement | null;
+  /** 有給時在按鈕上方放「契約回憶」分享鈕 */
+  share?: () => void;
   /** 隊長勝利台詞，顯示在標題下方（victory-line.ts 的 leaderLineOf） */
   leaderLine?: LeaderLine;
   /** 底部按鈕，由呼叫端決定（再戰、返回、下一關…）；false／null 會略過 */
@@ -225,11 +229,18 @@ export function openClearResult(host: HTMLElement, opts: ClearResultOptions): { 
     await play.done;
     hint.remove();
     if (!layer.isConnected) return;
+    if (opts.constellation) {
+      reveal.appendChild(opts.constellation);
+      await new Promise((r) => setTimeout(r, opts.instantCount ? 200 : 900));
+    }
     if (opts.levelUp) await showLevelUp(opts.levelUp);
     if (!layer.isConnected) return;
     for (const n of opts.notes ?? []) notes.appendChild(h('div', { class: ['result-note', n.big && 'big'] }, n.text));
     if (opts.notes?.length) audio.play(opts.notes.some((n) => n.big) ? 'levelup' : 'star');
-    actions.appendChild(h('div', { class: 'row' }, opts.actions.filter((b): b is HTMLElement => !!b)));
+    const share = opts.share && iconButton('constellation', '契約回憶', opts.share);
+    if (share) share.classList.add('share-btn');
+    actions.appendChild(h('div', { class: 'row' }, share, opts.actions.filter((b): b is HTMLElement => !!b)));
+    actions.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   })();
   return { close };
 }

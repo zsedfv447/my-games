@@ -12,6 +12,7 @@ import type { ChapterDef } from '../../core/types';
 import type { Navigator, ScreenDef } from '../router';
 import type { IconName } from '../art/icons';
 import { firstClearChip, revealReward } from '../components/reward-reveal';
+import { chapterConstellation } from '../components/constellation-view';
 
 function row(r: StageRow, nav: Navigator, leading: IconName, fresh = new Set<string>()): HTMLElement {
   const s = r.stage;
@@ -56,6 +57,7 @@ function chapterReward(info: ChapterDef): HTMLElement {
     if (!r.ok) return toast(r.reason === 'alreadyClaimed' ? '已經領過了' : '星章還沒集滿');
     commit(r.save);
     void revealReward('星章獎勵', r.reward!, `第 ${info.chapter} 章・${info.name}`);
+    el.parentElement?.querySelector('.constellation-box.claimable')?.classList.remove('claimable');
     el.replaceWith(chapterReward(info));
   };
   return el;
@@ -109,6 +111,7 @@ export const stagesScreen: ScreenDef = {
       panel(
         { gold: true },
         h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, `第 ${chapter} 章・${info?.name ?? ''}`), info && badge(info.constellation, 'gold')),
+        info && chapterConstellation(info, { claimable: chapterRewardStatus(save, info.chapter, gameData.stages) === 'claimable' }),
         info && chapterReward(info),
       ),
       h('div', { class: 'list' }, rows.map((r) => row(r, nav, 'adventure', fresh))),
