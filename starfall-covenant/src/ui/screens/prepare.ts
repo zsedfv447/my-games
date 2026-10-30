@@ -4,7 +4,7 @@ import { gameData } from '../../data/load';
 import '../flow-polish.css';
 import { stageStoryToPlay } from '../../progression/stage-story';
 import type { Attribute, EnemyDef, StageDef, StarCondition } from '../../core/types';
-import { enterStage } from '../../progression/stages';
+import { enterStage, periodFirstClearClaimed } from '../../progression/stages';
 import { badge, button, emptyState, panel } from '../components/basic';
 import { cardThumb, emptySlot } from '../components/card-thumb';
 import { toast } from '../components/overlay';
@@ -167,7 +167,9 @@ export const prepareScreen: ScreenDef = {
         { title: '星章挑戰' },
         h('div', { class: 'list' }, stage.stars!.map((c, i) => h('div', { class: 'row small-text' }, h('span', { class: 'stars', style: { opacity: gotStars[i] ? '1' : '0.3' } }, '★'), starText(c)))),
       ),
-      stageRewardPanel(stage, save.progress.clearedStages.includes(stage.id)),
+      stageRewardPanel(stage, stage.rewards.periodFirstClear
+        ? periodFirstClearClaimed(save, stage, gameData.events, Date.now())
+        : save.progress.clearedStages.includes(stage.id)),
       // 出發列固定在畫面底部（375×812 不用捲到最下面才能出發），上面的內容照常捲動
       h('div', { class: 'sortie-bar' },
         problem && h('p', { class: 'small-text sortie-problem' }, VIOLATION_TEXT[problem]),

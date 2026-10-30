@@ -6,6 +6,7 @@ import { createRng } from '../../core/rng';
 import type { StageDef } from '../../core/types';
 import { startBattle, type Battle, type BattleData, type BattleState, type EnemyState, type TurnSummary } from '../../battle/battle-state';
 import { BoardView } from '../../battle/view/board-view';
+import { isMemberSealed } from '../../battle/skills/status';
 import { completeStage, liveStarStatus, type StageClearResult } from '../../progression/stages';
 import { plannedCards, type DropPlan } from '../../progression/drops';
 import { chestBadge, DropCounter } from '../battle-fx/drops';
@@ -14,15 +15,15 @@ import { enemySvg } from '../art/enemy';
 import { enemyArtUrl } from '../art/enemy-art';
 import { ATTRIBUTE_NAMES } from '../art/palette';
 import { buzz, flashClass, skillCutin } from '../battle-fx/effects';
-import { openPauseMenu } from '../battle-fx/pause';
-import { clearCombo, finishCombo, flashReadySkills, markMatchups, renderCombo, renderIntent, weakHint } from '../battle-fx/readability';
+import { openPauseMenu, type PauseHandle } from '../battle-fx/pause';
+import { clearCombo, finishCombo, flashReadySkills, markMatchups, markSeals, renderCombo, renderIntent, weakHint } from '../battle-fx/readability';
 import { playStrikes } from '../battle-fx/strikes';
 import { userAsset } from '../assets';
 import { audio } from '../audio';
 import { badge, bar, button, emptyState, iconButton } from '../components/basic';
 import { cardThumb } from '../components/card-thumb';
 import { confirmDialog, openDialog, toast, type DialogHandle } from '../components/overlay';
-import { DEMO_DATA, DEMO_HELPER, DEMO_STAGE, DEMO_TEAM } from '../demo';
+import { DEMO_HELPER, DEMO_TEAM, PRACTICE_MODES, isPracticeMode, practiceSetup, type PracticeMode } from '../demo';
 import { stageContext, stageListPath } from '../stage-nav';
 import { commit, getSave, getSettings } from '../state';
 import type { Navigator, ScreenDef } from '../router';
@@ -89,13 +90,15 @@ interface Setup {
   /** 正式關卡：結算掉落的亂數種子、是否從中斷處還原 */
   dropSeed?: number;
   resumed?: boolean;
+  /** 練習場目前的模式 */
+  practiceMode?: PracticeMode;
   /** 新手教學戰鬥的引導層 */
   guide?: BattleGuide;
   /** 進場時骰好的掉落；練習與教學沒有 */
   drops?: DropPlan;
 }
 
-function setup(stageId: string, nav: Navigator): Setup | string {
+function setup(stageId: string, nav: Navigator, variant?: string): Setup | string {
   if (stageId === 'tutorial') {
     const t = createTutorialBattle(gameData);
     const guide = new TutorialBattleGuide(guideTexts(t.battle.getState(), t.data), {
@@ -105,7 +108,10 @@ function setup(stageId: string, nav: Navigator): Setup | string {
     return { stage: t.stage, data: t.data, practice: true, battle: t.battle, guide };
   }
   if (stageId === 'practice') {
-    return { stage: DEMO_STAGE, data: DEMO_DATA, practice: true, battle: startBattle(DEMO_STAGE, DEMO_TEAM, DEMO_HELPER, createRng(), DEMO_DATA) };
+    // 第二個參數是練習模式（暫停選單可切換敵人機制）
+    const mode: PracticeMode = isPracticeMode(variant) ? variant : 'normal';
+    const { stage, data } = practiceSetup(mode);
+    return { stage, data, practice: true, practiceMode: mode, battle: startBattle(stage, DEMO_TEAM, DEMO_HELPER, createRng(), data) };
   }
   const stage = gameData.stages.find((s) => s.id === stageId);
   if (!stage) return '找不到這一關';
@@ -119,7 +125,7 @@ export const battleScreen: ScreenDef = {
   chrome: 'bare',
   parent: 'adventure',
   render({ route, nav, onLeave }) {
-    const s = setup(route.args[0] ?? '', nav);
+    const s = setup(route.args[0] ?? '', nav, route.args[1]);
     if (typeof s === 'string') {
       return h('div', { style: { justifyContent: 'center', padding: '24px' } },
         emptyState('sword', s),
@@ -158,6 +164,8 @@ class BattleView {
   private enableWhenResumed = false;
   /** 轉珠或主動技的結算動畫播放中（state.phase 此時還是 player） */
   private resolving = false;
+  /** 開著的暫停選單（結算剛好結束時更新撤退按鈕） */
+  private pauseMenu?: PauseHandle;
   private get guard() {
     return { phase: this.state.phase, resolving: this.resolving };
   }
@@ -299,6 +307,7 @@ class BattleView {
       this.teamRow.appendChild(thumb);
     }
     markMatchups(this.teamRow, this.state, this.s.data.config.battle);
+    markSeals(this.teamRow, this.state);
   }
 
   private renderHp(previous?: number): void {
@@ -330,10 +339,14 @@ class BattleView {
     this.boardView.setEnabled(false);
     const close = () => {
       this.paused = false;
+      this.pauseMenu = undefined;
       this.speed = getSettings().battleSpeed;
       this.element.classList.toggle('low-fx', getSettings().lowFx);
     };
-    openPauseMenu({
+    this.pauseMenu = openPauseMenu({
+      practice: this.s.practiceMode && !this.s.guide
+        ? { modes: PRACTICE_MODES, current: this.s.practiceMode, onSwitch: (mode) => { close(); this.nav.replace('battle', ['practice', mode]); } }
+        : undefined,
       stars: this.s.practice ? [] : (this.s.stage.stars ?? []).map((cond) => ({ cond, status: liveStarStatus(cond, liveSummary(this.state), false) })),
       onResume: () => {
         close();
@@ -372,10 +385,11 @@ class BattleView {
     if (!m || !skill) return toast(`${m?.card.name ?? ''}沒有主動技`);
     const blocked = this.s.guide?.checkSkill(i);
     if (blocked) return toast(blocked);
-    const ready = m.skillCooldown === 0;
+    const sealed = isMemberSealed(this.state, i);
+    const ready = m.skillCooldown === 0 && !sealed;
     const dlg = openDialog(skill.name, h('div', null,
       h('p', null, skill.description),
-      h('p', { class: 'small-text dim' }, ready ? '可以施放' : `冷卻中，還要 ${m.skillCooldown} 回合`),
+      h('p', { class: 'small-text dim' }, sealed ? '被星紋封印，暫時不能施放' : ready ? '可以施放' : `冷卻中，還要 ${m.skillCooldown} 回合`),
     ), [
       button('取消', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
       button('施放', { variant: 'primary', disabled: !ready, onClick: () => { dlg.close(); void this.castSkill(i); } }),
@@ -393,6 +407,7 @@ class BattleView {
       await this.playSkill(i, before, r);
     } finally {
       this.resolving = false;
+      this.pauseMenu?.setCanRetreat(canAct(this.guard));
     }
   }
 
@@ -464,6 +479,7 @@ class BattleView {
       await this.playTurn(before, res);
     } finally {
       this.resolving = false;
+      this.pauseMenu?.setCanRetreat(canAct(this.guard));
     }
   }
 
@@ -656,7 +672,7 @@ class BattleView {
     // then：離開後要去的 hash 路徑（下一關）；沒給就回到這關所屬的關卡列表（練習回上一頁）
     const leave = (then?: string) => {
       this.dialog?.close();
-      const target = then ?? (this.s.practice ? 'back' : stageListPath(this.s.stage));
+      const target = then ?? (this.s.practice ? 'back' : stageListPath(this.s.stage, gameData.events));
       // 通關後的劇情只在首次通關時播放
       const after = stageStoryToPlay(this.s.stage, 'after', gameData.story, getSave().progress.storySeen, firstClear);
       if (after) this.nav.replace('story', [after], { next: target });

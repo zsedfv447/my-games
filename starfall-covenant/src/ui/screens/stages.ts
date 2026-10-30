@@ -4,8 +4,9 @@ import { sortEventsForList } from '../event-order';
 import { h } from '../dom';
 import { gameData } from '../../data/load';
 import type { StageDef } from '../../core/types';
-import { chapterRewardStatus, chapterStars, claimChapterStarReward } from '../../progression/stages';
+import { chapterRewardStatus, chapterStars, claimChapterStarReward, periodFirstClearClaimed } from '../../progression/stages';
 import { chapterStarStoryToPlay } from '../../progression/stage-story';
+import { isSeriesStage, nemesisView } from '../nemesis';
 import { badge, bar, button, emptyState, icon, listItem, panel } from '../components/basic';
 import { rewardChips } from '../components/rewards';
 import { toast } from '../components/overlay';
@@ -26,7 +27,9 @@ function row(r: StageRow, nav: Navigator, leading: IconName, fresh = new Set<str
   if (s.kind === 'daily') sub.push(weekdayText(s.weekdays));
   if (!playable) sub.push(lockText(r, gameData.stages));
   const trailing = h('div', { class: 'row', style: { gap: '4px' } },
-    firstClearChip(s.rewards.firstClear, getSave().progress.clearedStages.includes(s.id)),
+    s.rewards.periodFirstClear
+      ? firstClearChip(s.rewards.periodFirstClear, periodFirstClearClaimed(getSave(), s, gameData.events, Date.now()), '本週首通')
+      : firstClearChip(s.rewards.firstClear, getSave().progress.clearedStages.includes(s.id)),
     r.stars.length > 0 && h('span', { class: 'stars small-text' }, r.stars.map((g) => h('span', { style: { opacity: g ? '1' : '0.25' } }, '★'))),
     r.status === 'cleared' ? badge('通過', 'gold') : r.status === 'open' ? badge('NEW') : icon('lock'),
   );
@@ -72,9 +75,12 @@ function chapterReward(info: ChapterDef, nav: Navigator): HTMLElement {
   return el;
 }
 
+const archetypeName = (id: string) => gameData.archetypes.find((a) => a.id === id)?.name ?? id;
+
 const GROUPS: Record<string, { title: string; kind: StageDef['kind']; icon: IconName }> = {
   daily: { title: '每日關卡', kind: 'daily', icon: 'history' },
   event: { title: '限時活動', kind: 'event', icon: 'event' },
+  nemesis: { title: '流派克星週', kind: 'event', icon: 'constellation' },
   tower: { title: '挑戰之塔', kind: 'tower', icon: 'tower' },
   side: { title: '外傳・灰燈港夜話', kind: 'side', icon: 'scroll' },
 };
@@ -92,13 +98,17 @@ export const stagesScreen: ScreenDef = {
     const group = GROUPS[key];
 
     if (group) {
-      let list = gameData.stages.filter((s) => s.kind === group.kind);
+      const week = key === 'nemesis' ? nemesisView(gameData.events, gameData.stages, archetypeName, now) : null;
+      // 限時活動不含系列活動（流派克星週）；克星週只列本週主題的 3 關
+      let list = key === 'nemesis'
+        ? (week?.stages ?? [])
+        : gameData.stages.filter((s) => s.kind === group.kind && !(key === 'event' && isSeriesStage(s, gameData.events)));
       let rows = list.map((s) => stageRow(save, s, ctx, now));
       // 每日關卡把今天開放的排前面；塔從高樓層往下排，目前樓層在最上面
       if (group.kind === 'daily') rows = [...rows.filter((r) => r.status !== 'wrongDay'), ...rows.filter((r) => r.status === 'wrongDay')];
       // 活動：開放中的限時活動排最前面（快結束的在前），常駐活動排後面
       const events = sortEventsForList(gameData.events, now);
-      if (group.kind === 'event') {
+      if (key === 'event') {
         const order = new Map(events.map((e, i) => [e.id, i]));
         rows = rows.map((r, i) => ({ r, i })).sort((a, b) => (order.get(a.r.stage.event ?? '') ?? 99) - (order.get(b.r.stage.event ?? '') ?? 99) || a.i - b.i).map((x) => x.r);
       }
@@ -112,7 +122,9 @@ export const stagesScreen: ScreenDef = {
         'div',
         null,
         h('h2', { class: 'section-title' }, group.title),
-        group.kind === 'event' && events.map((e) => eventBanner(e, { nav, onLeave })),
+        key === 'event' && events.map((e) => eventBanner(e, { nav, onLeave })),
+        week && eventBanner(week.event, { nav, onLeave }),
+        week && panel(null, h('p', { class: 'small-text', style: { margin: '0' } }, `本週推薦流派：${week.archetypes.join('、')}。每週一 00:00 換主題，每關每週第一次通關都有星晶，中級以上另有星核。`)),
         group.kind === 'side' && panel(null, h('p', { class: 'small-text dim', style: { margin: '0' } }, '第一部開始前的那個晚上，灰燈港的燈一盞一盞熄滅。港口的海豹提米和鐵匠赫姆，度過了漫長的一夜。')),
         group.kind === 'tower' && panel(null, h('p', { class: 'small-text dim' }, `目前到達第 ${save.progress.towerFloor} 層，共 ${gameData.stages.filter((s) => s.kind === 'tower').length} 層。每 10 層有星晶獎勵。`)),
         rows.length ? h('div', { class: 'list' }, rows.map((r) => row(r, nav, group.icon, fresh))) : emptyState(group.icon, '目前沒有關卡'),

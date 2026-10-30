@@ -17,6 +17,13 @@ export interface PauseOptions {
   onRetreat: () => void;
   /** 現在能不能撤退（結算動畫播放中為 false）；不給視為可以 */
   canRetreat?: boolean;
+  /** 練習場：切換練習的敵人（新敵人機制） */
+  practice?: { modes: { id: string; label: string }[]; current: string; onSwitch: (mode: string) => void };
+}
+
+export interface PauseHandle {
+  /** 選單開著時結算剛好結束：即時更新撤退按鈕 */
+  setCanRetreat(canRetreat: boolean): void;
 }
 
 /** 撤退按鈕的狀態：不能撤退時停用，旁邊顯示原因 */
@@ -24,10 +31,21 @@ export function retreatControl(canRetreat = true): { disabled: boolean; note: st
   return canRetreat ? { disabled: false, note: null } : { disabled: true, note: '結算中無法撤退' };
 }
 
-export function openPauseMenu(opts: PauseOptions): void {
+export function openPauseMenu(opts: PauseOptions): PauseHandle {
   const s = getSettings();
   const retreat = retreatControl(opts.canRetreat);
+  const note = h('p', { class: 'small-text dim pause-retreat-note' }, retreat.note ?? '');
+  note.hidden = !retreat.note;
+  const retreatBtn = button('撤退', { variant: 'ghost', sound: 'back', disabled: retreat.disabled, onClick: () => { dlg.close(); opts.onRetreat(); } });
+  const p = opts.practice;
   const dlg = openDialog('暫停', h('div', { class: 'list pause-menu' },
+    p && h('div', { class: 'pause-practice' },
+      h('strong', { class: 'small-text' }, '練習敵人'),
+      h('div', { class: 'row wrap' }, p.modes.map((m) => button(m.label, {
+        small: true,
+        variant: m.id === p.current ? 'primary' : 'ghost',
+        onClick: () => { if (m.id === p.current) return; dlg.close(); p.onSwitch(m.id); },
+      })))),
     toggle('戰鬥加速 ×2', s.battleSpeed === 2, (v) => updateSettings({ battleSpeed: v ? 2 : 1 })),
     toggle('顯示轉珠倒數', s.showMoveTimer, (v) => updateSettings({ showMoveTimer: v })),
     toggle('技能與攻擊演出', s.battleFx, (v) => updateSettings({ battleFx: v })),
@@ -39,9 +57,17 @@ export function openPauseMenu(opts: PauseOptions): void {
         h('span', { class: 'pause-star-icon', 'aria-hidden': 'true' }, '★'),
         h('span', { class: 'pause-star-text' }, starText(cond)),
         h('span', { class: 'pause-star-status' }, STATUS_TEXT[status])))),
-    retreat.note && h('p', { class: 'small-text dim pause-retreat-note' }, retreat.note),
+    note,
   ), [
-    button('撤退', { variant: 'ghost', sound: 'back', disabled: retreat.disabled, onClick: () => { dlg.close(); opts.onRetreat(); } }),
+    retreatBtn,
     button('繼續', { variant: 'primary', onClick: () => { dlg.close(); opts.onResume(); } }),
   ], { dismissible: false });
+  return {
+    setCanRetreat(canRetreat) {
+      const next = retreatControl(canRetreat);
+      retreatBtn.disabled = next.disabled;
+      note.textContent = next.note ?? '';
+      note.hidden = !next.note;
+    },
+  };
 }

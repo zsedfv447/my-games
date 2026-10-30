@@ -22,6 +22,13 @@ describe('活動排序', () => {
     expect(sortEventsForList([always, ended, later, upcoming, soon], NOW).map((e) => e.id)).toEqual(['soon', 'later', 'upcoming', 'always', 'ended']);
   });
 
+  it('系列活動（流派克星週）不進活動列表與主城橫幅', () => {
+    const nemesis = { ...ev('nemesis-week', { start: '2026-10-26T00:00:00', end: '2026-11-02T00:00:00' }), series: 'nemesis' };
+    expect(sortEventsForList([always, nemesis, soon], NOW).map((e) => e.id)).toEqual(['soon', 'always']);
+    expect(openLimitedEvents([nemesis, soon], NOW).map((e) => e.id)).toEqual(['soon']);
+    for (const e of openLimitedEvents(gameData.events, NOW)) expect(e.series).toBeUndefined();
+  });
+
   it('主城橫幅只放開放中的限時活動，不放常駐活動', () => {
     expect(openLimitedEvents([always, later, soon, upcoming], NOW).map((e) => e.id)).toEqual(['soon', 'later']);
   });

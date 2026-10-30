@@ -8,6 +8,7 @@ import { chapterProgress, nextMainStage, sideStoryProgress, stageContext } from 
 import { getSave } from '../state';
 import { userAsset } from '../assets';
 import { eventStatusText } from '../../progression/events';
+import { nemesisView } from '../nemesis';
 import { puzzleEntrySub } from './puzzle';
 import type { Navigator, ScreenDef } from '../router';
 import type { IconName } from '../art/icons';
@@ -55,10 +56,12 @@ export const adventureScreen: ScreenDef = {
     const lockedChapters = chapters.filter((x) => !x.p.unlocked).map((x) => x.c);
     const limited = openLimitedEvents(gameData.events, now)[0];
     // 小卡的順序：每天會用的在前。之後的新入口（例如克星週）照同樣格式加進這個陣列
+    const nemesis = nemesisTile(now);
     const otherTiles: AdventureTile[] = [
       { icon: 'history', title: '每日關卡', sub: '素材、進化素材、金幣關', to: ['stages', ['daily']] },
       { icon: 'event', title: '活動', sub: limited ? `${limited.name}・${eventStatusText(limited, now)}` : '活動 Boss 與兌換商店', to: ['stages', ['event']], dot: !!limited },
       { icon: 'puzzle', title: '星紋謎題', sub: puzzleEntrySub(now), to: ['puzzle', []], dot: !solvedToday(save, now) },
+      ...(nemesis ? [nemesis] : []),
       { icon: 'tower', title: '挑戰之塔', sub: `不耗體力・第 ${save.progress.towerFloor} 層`, to: ['stages', ['tower']] },
       {
         icon: 'scroll', title: '外傳・灰燈港夜話',
@@ -105,3 +108,15 @@ export const adventureScreen: ScreenDef = {
     );
   },
 };
+
+/** 「其他」區的流派克星週小卡：本週主題、剩餘時間、推薦流派；這週沒有開放時不顯示 */
+function nemesisTile(now: number): AdventureTile | null {
+  const week = nemesisView(gameData.events, gameData.stages, (id) => gameData.archetypes.find((a) => a.id === id)?.name ?? id, now);
+  if (!week) return null;
+  return {
+    icon: 'trophy',
+    title: `克星週・${week.event.name.replace(/^流派克星週・/, '')}`,
+    sub: `${week.status}・推薦 ${week.archetypes.join('、')}`,
+    to: ['stages', ['nemesis']],
+  };
+}
