@@ -13,7 +13,15 @@ import { audio } from './audio';
 /** 只影響介面、不屬於存檔規格的偏好 */
 interface UiPrefs {
   showMoveTimer: boolean;
+  /** 主動技施放演出與隊員攻擊演出 */
+  battleFx: boolean;
+  /** 轉珠與受擊時的震動回饋（navigator.vibrate） */
+  vibration: boolean;
+  /** 低特效：關掉閃光、震畫面等較耗效能的效果 */
+  lowFx: boolean;
 }
+
+const UI_PREF_KEYS: (keyof UiPrefs)[] = ['showMoveTimer', 'battleFx', 'vibration', 'lowFx'];
 
 export interface PlayerView {
   name: string;
@@ -75,7 +83,7 @@ function resetSaveInMemory(): SaveData {
   return resetSave({ getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => void mem.set(k, v), removeItem: () => {} }, config, Date.now());
 }
 
-let prefs: UiPrefs = { showMoveTimer: true };
+let prefs: UiPrefs = { showMoveTimer: true, battleFx: true, vibration: true, lowFx: false };
 try {
   prefs = { ...prefs, ...JSON.parse(storage.getItem(PREFS_KEY) ?? '{}') };
 } catch {
@@ -124,9 +132,14 @@ export function getSettings(): Readonly<Settings> {
 }
 
 export function updateSettings(patch: Partial<Settings>): void {
-  const { showMoveTimer, ...saved } = patch;
-  if (showMoveTimer !== undefined) {
-    prefs = { ...prefs, showMoveTimer };
+  const saved: Partial<SaveData['settings']> = {};
+  const ui: Partial<UiPrefs> = {};
+  for (const [k, v] of Object.entries(patch)) {
+    if ((UI_PREF_KEYS as string[]).includes(k)) Object.assign(ui, { [k]: v });
+    else Object.assign(saved, { [k]: v });
+  }
+  if (Object.keys(ui).length) {
+    prefs = { ...prefs, ...ui };
     try {
       storage.setItem(PREFS_KEY, JSON.stringify(prefs));
     } catch {

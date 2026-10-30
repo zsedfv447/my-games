@@ -9,7 +9,7 @@
 | `backgrounds/` | `title`、`home`、`story`、`battle`、`battle-boss`、`chapter-1`… | 場景背景 |
 | `ui/` | `logo` 等 | 介面圖 |
 | `bgm/` | `title`、`home`、`battle`、`boss`、`victory`（.ogg／.mp3） | 背景音樂 |
-| `sfx/` | `tap`、`confirm`、`back`、`match`、`skill`、`win`、`lose`、`summon` | 音效（沒有檔案時用 Web Audio 合成） |
+| `sfx/` | `tap`、`confirm`、`back`、`match`、`skill`、`win`、`lose`、`summon`；結算演出：`reward`（項目跳出）、`gem`（星晶）、`count`（數字滾動）、`star`（星章點亮）、`levelup`（玩家升級）、`finisher`（最後一擊） | 音效（沒有檔案時用 Web Audio 合成；結算演出這 6 種目前全部是合成音） |
 
 圖片建議轉成 WebP、音樂轉成 OGG 或 MP3 以縮小檔案。
 

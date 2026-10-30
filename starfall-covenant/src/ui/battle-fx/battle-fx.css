@@ -1,0 +1,109 @@
+/* 戰鬥可讀性與手感：剋制提示、敵人預告、Combo 演出、技能就緒、暫停選單、攻擊與主動技演出 */
+
+.battle { --fx-fire: var(--orb-fire); --fx-water: var(--orb-water); --fx-wood: var(--orb-wood); --fx-light: var(--orb-light); --fx-dark: var(--orb-dark); --fx-none: #fff6d8; }
+.battle .attr-fire { --fx: var(--fx-fire); }
+.battle .attr-water { --fx: var(--fx-water); }
+.battle .attr-wood { --fx: var(--fx-wood); }
+.battle .attr-light { --fx: var(--fx-light); }
+.battle .attr-dark { --fx: var(--fx-dark); }
+.battle .attr-none { --fx: var(--fx-none); }
+
+/* ---------- 屬性剋制 ---------- */
+.weak-hint { font-size: 10px; line-height: 1; color: #ffe39a; text-shadow: 0 1px 2px #000, 0 0 4px #000; white-space: nowrap; }
+.matchup-tag {
+  position: absolute; right: 1px; top: 1px; z-index: 2;
+  font-size: 13px; line-height: 1; padding: 2px 3px; border-radius: 2px;
+  background: rgba(0, 0, 0, 0.72); pointer-events: none;
+}
+.matchup-tag.advantage { color: #ffd76a; text-shadow: 0 0 4px #ffb300; box-shadow: 0 0 0 1px #ffd76a; }
+.matchup-tag.disadvantage { color: #9aa0ab; }
+
+/* ---------- 敵人下一招預告 ---------- */
+.enemy-intent { position: absolute; top: 2px; left: 4px; right: 56px; z-index: 2; display: flex; justify-content: flex-start; pointer-events: none; }
+.intent-bubble {
+  pointer-events: auto; max-width: 100%;
+  padding: 2px 7px; border-radius: 10px; border: 1px solid #c9a35a;
+  background: rgba(16, 18, 12, 0.88); color: #f6e7c1;
+  font-size: 11px; font-weight: 700; line-height: 15px; text-align: left;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
+  box-shadow: 0 2px 4px #0008;
+}
+.intent-bubble.danger { border-color: var(--danger); color: #ffd0c4; animation: intent-pulse 1.1s ease-in-out infinite; }
+.intent-bubble.quiet { padding: 0 5px; opacity: 0.7; border-color: #7d6c48; font-weight: 400; }
+@keyframes intent-pulse { 50% { box-shadow: 0 0 0 1px var(--danger), 0 0 10px var(--danger); } }
+
+/* ---------- Combo ---------- */
+.combo-count { transform-origin: right center; scale: var(--combo-scale, 1); transition: color 120ms; text-align: right; }
+.combo-count.pop { animation: pop 220ms ease-out; }
+.combo-count.tier-1 { color: #ffd27a; }
+.combo-count.tier-2 { color: #ffb4f0; text-shadow: 2px 3px #5a1d52, 0 0 14px #ff8fe0; }
+.combo-count.tier-3 { color: #bff2ff; text-shadow: 2px 3px #163a5c, 0 0 18px #6fd6ff, 0 0 30px #c792ff; }
+.combo-count.tier-2.pop, .combo-count.tier-3.pop { animation: pop-flash 280ms ease-out; }
+@keyframes pop-flash { from { transform: scale(1.7); filter: brightness(2); } to { transform: scale(1); filter: none; } }
+.combo-bonus { font-size: 13px; font-style: normal; letter-spacing: 0.05em; color: #fff3cf; text-shadow: 0 1px 2px #000; animation: fade-in 200ms ease-out both; }
+.wave-banner.combo-title { color: #e8f8ff; text-shadow: 0 0 10px #6fd6ff, 0 0 20px #c792ff; letter-spacing: 0.4em; }
+.battle.combo-glow::after {
+  content: ''; position: absolute; inset: 0; z-index: 5; pointer-events: none;
+  background: radial-gradient(70% 50% at 50% 40%, rgba(160, 220, 255, 0.35), transparent 70%);
+  animation: glow-fade 700ms ease-out both;
+}
+@keyframes glow-fade { from { opacity: 1; } to { opacity: 0; } }
+
+/* ---------- 技能就緒 ---------- */
+.team-row .card-thumb.just-ready { animation: ready-burst 700ms ease-out, ready-glow 1.2s 700ms ease-in-out infinite; }
+@keyframes ready-burst { 0% { box-shadow: 0 0 0 0 #fff6d8; filter: brightness(2); } 100% { box-shadow: 0 0 0 10px transparent; filter: none; } }
+.float-num.ready { top: -4px; font-size: 11px; color: #ffe39a; letter-spacing: 0.04em; animation-duration: 1.3s; }
+
+/* ---------- 隊員攻擊演出 ---------- */
+.team-row .card-thumb.striking { animation: strike-up 260ms ease-out; }
+@keyframes strike-up { 40% { transform: translateY(-8px); filter: brightness(1.6); } }
+.float-num.member-dmg { top: -10px; font-size: 14px; color: var(--fx); }
+.strike-orb {
+  position: absolute; left: 0; top: 0; z-index: 7; width: 18px; height: 18px; margin: -9px 0 0 -9px;
+  border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, #fff 0 25%, var(--fx) 60%, transparent 72%);
+  box-shadow: 0 0 12px 4px var(--fx);
+}
+.float-num.dmg { color: var(--fx, #fff6d8); display: flex; flex-direction: column; align-items: center; line-height: 1.05; }
+.float-num.dmg.advantage { font-size: 26px; }
+.float-num.dmg.disadvantage { font-size: 15px; color: #a7abb3; }
+.weak-tag { font-size: 12px; color: #ffe066; letter-spacing: 0.08em; }
+.resist-tag { font-size: 10px; color: #a7abb3; }
+.battle.sweep .enemy-line::before {
+  content: ''; position: absolute; left: -10%; right: -10%; top: 40%; height: 26px; z-index: 3; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 246, 216, 0.85), transparent);
+  animation: sweep 420ms ease-out both;
+}
+@keyframes sweep { from { transform: translateX(-60%) scaleY(0.4); opacity: 0; } 40% { opacity: 1; } to { transform: translateX(60%) scaleY(1); opacity: 0; } }
+
+/* ---------- 主動技施放 ---------- */
+.skill-cutin { position: absolute; inset: 0; z-index: 9; pointer-events: none; overflow: hidden; }
+.skill-cutin::before { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 15%, color-mix(in srgb, var(--fx) 35%, rgba(0, 0, 0, 0.6)) 45%, transparent 85%); animation: fade-in 160ms ease-out both; }
+.cutin-art { position: absolute; left: 0; top: 18%; width: 62%; height: 46%; animation: cutin-slide 650ms cubic-bezier(.2, .9, .3, 1) both; }
+.cutin-art img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; mask-image: linear-gradient(90deg, #000 60%, transparent); -webkit-mask-image: linear-gradient(90deg, #000 60%, transparent); }
+.cutin-art .card-thumb { margin: 20px; }
+.cutin-name {
+  position: absolute; right: 0; top: 52%; padding: 8px 18px 8px 34px; min-width: 55%;
+  font-family: var(--font-title); font-size: 22px; font-weight: 900; color: #fff6d8; text-align: right;
+  background: linear-gradient(90deg, transparent, rgba(10, 10, 8, 0.9) 22%);
+  border-bottom: 2px solid var(--fx); text-shadow: 0 0 8px var(--fx);
+  animation: cutin-name 650ms cubic-bezier(.2, .9, .3, 1) both;
+}
+.cutin-name small { display: block; font-size: 11px; color: #e4d7b4; letter-spacing: 0.1em; }
+.skill-cutin.leaving { animation: fade-out 200ms ease-in both; }
+@keyframes cutin-slide { from { transform: translateX(-70%); opacity: 0; } 30% { transform: translateX(0); opacity: 1; } to { transform: translateX(4%); } }
+@keyframes cutin-name { from { transform: translateX(80%); opacity: 0; } 35% { transform: translateX(0); opacity: 1; } to { transform: translateX(-3%); } }
+
+/* ---------- 暫停選單 ---------- */
+.pause-menu { gap: 6px; }
+.pause-stars { display: flex; flex-direction: column; gap: 3px; padding-top: 6px; border-top: 1px solid var(--line); }
+
+/* ---------- 低特效 ---------- */
+.battle.low-fx .intent-bubble.danger,
+.battle.low-fx .team-row .card-thumb.skill-ready,
+.battle.low-fx .enemy-cd.urgent { animation: none; }
+.battle.low-fx .team-row .card-thumb.skill-ready { box-shadow: 0 0 0 2px var(--gold); }
+.battle.low-fx .enemy-art { filter: none; }
+@media (prefers-reduced-motion: reduce) {
+  .intent-bubble.danger, .team-row .card-thumb.just-ready, .cutin-art, .cutin-name { animation: none; }
+}

@@ -3,12 +3,12 @@ import type { QuestDef } from '../../core/types';
 import { gameData } from '../../data/load';
 import { claimAllQuests, claimableQuests, claimQuest, questProgress, resetQuestsIfNeeded } from '../../progression/quests';
 import { mergeRewards } from '../../progression/rewards';
-import { audio } from '../audio';
 import { badge, bar, button, emptyState, tabs } from '../components/basic';
 import { toast } from '../components/overlay';
 import { rewardChips, screenBanner } from '../components/rewards';
+import { revealReward } from '../components/reward-reveal';
 import { clear, h } from '../dom';
-import { questDerived, rewardParts, sortQuests } from '../economy';
+import { questDerived, sortQuests } from '../economy';
 import type { ScreenDef } from '../router';
 import { commit, getSave } from '../state';
 
@@ -20,9 +20,8 @@ export function claimAll(kinds: QuestDef['kind'][]): number {
   const { save, claimed } = claimAllQuests(getSave(), kinds, gameData.quests, gameData.config, Date.now(), questDerived);
   if (!claimed.length) return 0;
   commit(save);
-  audio.play('confirm');
   const total = mergeRewards(...claimed.map((q) => q.reward));
-  toast(`領取 ${claimed.length} 項：${rewardParts(total).map((p) => p.label).join('、')}`, 2600);
+  void revealReward('任務獎勵', total, `領取 ${claimed.length} 項`);
   return claimed.length;
 }
 
@@ -35,8 +34,7 @@ function claimOne(q: QuestDef): void {
     return;
   }
   commit(r.save);
-  audio.play('confirm');
-  toast(`獲得 ${rewardParts(q.reward).map((p) => p.label).join('、')}`);
+  void revealReward(q.kind === 'achievement' ? '成就達成' : '任務完成', q.reward, q.name);
 }
 
 function questRow(q: QuestDef, p: ReturnType<typeof questProgress>, refresh: () => void): HTMLElement {

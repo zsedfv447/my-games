@@ -24,6 +24,7 @@ export const ICONS = {
   scroll: wrap('<path d="M7 4h11a2 2 0 0 1 2 2v1h-4"/><path d="M16 7v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1h10"/><path d="M7 4a2 2 0 0 0-2 2v11"/><path d="M9 9h4M9 12h4"/>'),
   history: wrap('<path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/><path d="M12 8v4.5l3 2"/>'),
   sword: wrap('<path d="M14.5 3.5H20v5.5L9 20l-5-5z"/><path d="M6 13l5 5M3 21l2.5-2.5"/>'),
+  pause: wrap('<path d="M8 5v14M16 5v14" stroke-width="3"/>'),
   play: wrap('<path d="M7 4.5v15l12-7.5z" fill="currentColor"/>'),
   sound: wrap('<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>'),
   save: wrap('<path d="M5 3.5h11l3.5 3.5v13.5H5z"/><path d="M8 3.5v5h7v-5M8 20.5v-6h8v6"/>'),

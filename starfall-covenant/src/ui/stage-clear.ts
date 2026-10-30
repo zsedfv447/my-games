@@ -25,16 +25,22 @@ export function grantClearExp(save: SaveData, uids: string[], cardExp: number): 
 }
 
 /**
- * 首次通關時的開放提示：標記關卡列表要閃的關卡，回傳要放在結算最上面的提示列；
+ * 首次通關時的開放提示：標記關卡列表要閃的關卡，回傳要放在結算最上面的提示列與文字（結算演出用 text）；
  * chapter 有值代表開放了新章節（呼叫端可播橫幅）。
  */
-export function unlockNotice(stage: StageDef): { row: HTMLElement | null; chapter?: number } {
+export function unlockNotice(stage: StageDef): { row: HTMLElement | null; text?: string; chapter?: number } {
   const opened = stagesUnlockedBy(stage.id, gameData.stages);
   markJustUnlocked(opened.map((s) => s.id));
   const newChapter = opened.find((s) => s.kind === 'main' && s.chapter !== undefined && s.chapter !== stage.chapter);
   const chapter = newChapter && gameData.chapters.find((c) => c.chapter === newChapter.chapter);
-  if (chapter) return { row: h('div', { class: 'unlock-note gold-text' }, `第 ${chapter.chapter} 章「${chapter.name}」開放！`), chapter: chapter.chapter };
-  if (opened.length) return { row: h('div', { class: 'unlock-note small-text' }, `新關卡開放：${opened.map((s) => s.name).join('、')}`) };
+  if (chapter) {
+    const text = `第 ${chapter.chapter} 章「${chapter.name}」開放！`;
+    return { row: h('div', { class: 'unlock-note gold-text' }, text), text, chapter: chapter.chapter };
+  }
+  if (opened.length) {
+    const text = `新關卡開放：${opened.map((s) => s.name).join('、')}`;
+    return { row: h('div', { class: 'unlock-note small-text' }, text), text };
+  }
   return { row: null };
 }
 

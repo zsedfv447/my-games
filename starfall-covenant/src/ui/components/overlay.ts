@@ -12,6 +12,11 @@ export function setOverlayHost(stage: HTMLElement): void {
   stage.appendChild(toastHost);
 }
 
+/** 彈窗掛載點（全螢幕演出層也掛這裡） */
+export function overlayRoot(): HTMLElement {
+  return host ?? document.body;
+}
+
 export interface DialogHandle {
   close(): void;
 }

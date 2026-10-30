@@ -1,0 +1,181 @@
+/* 獎勵逐一跳出、契約結算、升級卡、Boss 最後一擊 */
+
+/* ---------- 共用項目 ---------- */
+.rv-list, .result-reveal { display: flex; flex-direction: column; gap: 10px; }
+.rv-rows { display: flex; flex-direction: column; gap: 6px; }
+.rv-item { opacity: 0; transform: translateY(10px) scale(0.96); }
+.rv-item.shown { opacity: 1; transform: none; transition: opacity 180ms ease-out, transform 260ms cubic-bezier(0.2, 1.5, 0.4, 1); }
+.rv-stat, .rv-count {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px; border-radius: var(--radius-s);
+  background: rgba(6, 10, 31, 0.45); border: 1px solid var(--line);
+}
+.rv-stat span { flex: 1; color: var(--text-dim); font-size: 13px; }
+.rv-stat strong { font-size: 16px; }
+.rv-icon { display: inline-flex; width: 22px; height: 22px; }
+.rv-icon svg { width: 100%; height: 100%; }
+.rv-exp { font-size: 10px; font-weight: 800; color: #7ff0b2; border: 1px solid #3c8f66; border-radius: 4px; padding: 1px 3px; line-height: 1.2; }
+.rv-label { flex: 1; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+.rv-tag { font-style: normal; font-size: 10px; color: var(--gold-soft); border: 1px solid var(--gold-deep); border-radius: 999px; padding: 0 6px; }
+.rv-num { font-size: 18px; font-variant-numeric: tabular-nums; color: var(--gold-soft); min-width: 64px; text-align: right; }
+.rv-num.settled { animation: rv-settle 260ms ease-out; }
+@keyframes rv-settle { 40% { transform: scale(1.25); color: #fff; } }
+
+/* 星晶：從天落入、發光 */
+.rv-count.special { border-color: #6fd6ff; background: linear-gradient(90deg, rgba(63, 168, 224, 0.28), rgba(6, 10, 31, 0.5)); }
+.rv-count.special .rv-num { color: #b6ecff; text-shadow: 0 0 10px #6fd6ff; }
+.rv-count.special .rv-icon { width: 28px; height: 28px; }
+.rv-count.special.shown { animation: rv-gem-fall 560ms cubic-bezier(0.3, 1.4, 0.5, 1) both; }
+.rv-count.special.shown .rv-icon { animation: rv-gem-glow 1.6s ease-in-out 520ms infinite; }
+@keyframes rv-gem-fall { from { opacity: 0; transform: translateY(-60px) scale(1.4); filter: brightness(2.5); } 60% { opacity: 1; transform: translateY(4px) scale(0.98); } }
+@keyframes rv-gem-glow { 50% { filter: drop-shadow(0 0 6px #b6ecff) brightness(1.3); } }
+
+/* 隊員經驗：每位隊員頭像＋等級變化 */
+.rv-team { display: flex; flex-direction: column; gap: 6px; }
+.rv-team-row { display: flex; justify-content: center; gap: 6px; padding-top: 8px; }
+.rv-member { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.rv-member-lv { font-size: 10px; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+.rv-member.up .rv-member-lv { color: var(--ok); font-weight: 700; }
+.rv-member-up {
+  position: absolute; top: -8px; left: 50%; transform: translateX(-50%); white-space: nowrap;
+  font-size: 9px; font-weight: 800; color: #1b1203; background: var(--gold); border-radius: 999px; padding: 0 4px;
+  opacity: 0;
+}
+.rv-team.shown .rv-member.up .rv-member-up { animation: rv-member-up 520ms cubic-bezier(0.2, 1.6, 0.4, 1) 700ms both; }
+.rv-team.shown .rv-member.up .card-thumb { animation: rv-member-glow 900ms ease-out 700ms both; }
+.rv-done .rv-member.up .rv-member-up { opacity: 1; animation: none; }
+@keyframes rv-member-up { from { opacity: 0; transform: translate(-50%, 8px) scale(0.6); } to { opacity: 1; transform: translateX(-50%); } }
+@keyframes rv-member-glow { 30% { filter: brightness(1.8) drop-shadow(0 0 6px var(--gold)); } }
+
+/* 掉落卡：翻面，3★ 以上加光暈 */
+.rv-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.rv-card { position: relative; width: 60px; height: 60px; perspective: 400px; transform: none; opacity: 0; }
+.rv-card.shown { opacity: 1; }
+.rv-card-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transform: rotateY(180deg); }
+.rv-card.shown .rv-card-inner { transform: none; transition: transform 420ms cubic-bezier(0.3, 1.3, 0.5, 1); }
+.rv-card-back, .rv-card-face { position: absolute; inset: 0; display: grid; place-items: center; backface-visibility: hidden; border-radius: var(--radius-s); }
+.rv-card-back { transform: rotateY(180deg); background: radial-gradient(circle, #44539b, #16204a); border: 1px solid var(--gold-deep); }
+.rv-card.rare.shown::after {
+  content: ''; position: absolute; inset: -6px; border-radius: 12px; pointer-events: none;
+  box-shadow: 0 0 14px 2px var(--rarity-4); animation: rv-rare 1.6s ease-in-out 400ms infinite;
+}
+.rv-card.r5.shown::after { box-shadow: 0 0 16px 3px var(--rarity-5); }
+.rv-card.r6.shown::after { box-shadow: 0 0 18px 4px var(--rarity-6); }
+@keyframes rv-rare { 50% { opacity: 0.45; } }
+.rv-card-count { position: absolute; right: -4px; bottom: -4px; font-size: 11px; font-weight: 800; background: var(--bg-deep); border: 1px solid var(--gold-deep); border-radius: 999px; padding: 0 5px; }
+
+/* 星章：逐顆點亮 */
+.rv-stars { display: flex; flex-direction: column; gap: 4px; }
+.rv-star { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-dim); }
+.rv-star-icon { font-size: 16px; color: var(--text-faint); }
+.rv-star.got { color: var(--text); }
+.rv-star.got.shown .rv-star-icon { color: var(--gold); text-shadow: 0 0 8px var(--gold); animation: rv-star-pop 360ms cubic-bezier(0.2, 1.8, 0.4, 1) both; }
+@keyframes rv-star-pop { from { transform: scale(2.4) rotate(-40deg); opacity: 0; } }
+
+/* ---------- 全螢幕領獎層 ---------- */
+.rv-overlay { overflow: hidden; }
+.rv-rays {
+  position: absolute; left: 50%; top: 42%; width: 720px; height: 720px; pointer-events: none; opacity: 0.35;
+  background: repeating-conic-gradient(from 0deg, rgba(247, 220, 152, 0.28) 0deg 8deg, transparent 8deg 22deg);
+  mask-image: radial-gradient(circle, #000 0%, transparent 62%);
+  -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 62%);
+  animation: rays-spin 24s linear infinite;
+}
+.rv-panel { position: relative; width: 100%; max-height: 82%; overflow-y: auto; animation: pop-in 220ms cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+.rv-title { text-align: center; }
+.rv-sub { text-align: center; }
+.rv-actions { display: flex; gap: 8px; margin-top: 12px; }
+.rv-actions .btn { flex: 1; animation: fade-in 200ms ease-out both; }
+.rv-hint { text-align: center; font-size: 11px; color: var(--text-faint); margin: 8px 0 0; animation: blink 1.4s ease-in-out infinite; }
+
+/* ---------- 契約結算（戰鬥勝利） ---------- */
+.result-layer {
+  position: absolute; inset: 0; z-index: 40; overflow: hidden;
+  display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 12px; padding: 24px 18px;
+  background: radial-gradient(80% 50% at 50% 30%, rgba(42, 58, 133, 0.92), rgba(6, 10, 31, 0.96));
+  animation: fade-in 240ms ease-out both;
+}
+.result-layer.closing { animation: fade-out 140ms ease-in both; }
+.result-title {
+  position: relative; text-align: center; font-family: var(--font-title); font-size: 34px; letter-spacing: 0.2em;
+  color: var(--gold-soft); text-shadow: 0 0 18px rgba(242, 196, 90, 0.7);
+  animation: result-drop 520ms cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+.result-stage { text-align: center; color: var(--text-dim); font-size: 13px; margin-top: -8px; animation: fade-in 300ms ease-out 300ms both; }
+@keyframes result-drop { from { opacity: 0; transform: translateY(-80px) scale(1.6); } }
+.result-reveal { position: relative; }
+.result-actions { position: relative; display: flex; flex-direction: column; gap: 8px; min-height: 44px; }
+.result-actions > .row { display: flex; gap: 8px; }
+.result-actions > .row .btn { flex: 1; }
+.result-actions .btn { animation: fade-in 220ms ease-out both; }
+/* 開放提示（第一次通關：新關卡／新章節） */
+.result-notes { display: flex; flex-direction: column; gap: 6px; }
+.result-notes:empty { display: none; }
+.result-note { text-align: center; font-size: 12px; color: var(--text-dim); animation: fade-in 260ms ease-out both; }
+.result-note.big {
+  font-family: var(--font-title); font-size: 18px; letter-spacing: 0.08em; color: var(--gold-soft);
+  padding: 6px 10px; border: 1px solid var(--gold-deep); border-radius: var(--radius-s);
+  background: linear-gradient(90deg, transparent, rgba(242, 196, 90, 0.2), transparent);
+  animation: result-note-in 520ms cubic-bezier(0.2, 1.5, 0.4, 1) both;
+}
+@keyframes result-note-in { from { opacity: 0; transform: scaleX(0.2); } }
+.result-layer .rv-hint { position: absolute; left: 0; right: 0; bottom: 14px; }
+
+/* ---------- 升級卡 ---------- */
+.lv-card { position: relative; width: 82%; text-align: center; animation: lv-in 420ms cubic-bezier(0.2, 1.5, 0.4, 1) both; }
+@keyframes lv-in { from { opacity: 0; transform: scale(0.6) rotate(-4deg); } }
+.lv-head { font-family: var(--font-title); color: var(--gold-soft); letter-spacing: 0.12em; font-size: 16px; }
+.lv-level { display: flex; align-items: baseline; justify-content: center; gap: 4px; margin: 6px 0 10px; color: var(--gold); }
+.lv-level span { font-size: 18px; font-weight: 700; }
+.lv-to { display: inline-block; font-size: 48px; line-height: 1; font-variant-numeric: tabular-nums; }
+.lv-to.flipped { animation: lv-flip 360ms ease-out both; text-shadow: 0 0 16px var(--gold); }
+@keyframes lv-flip { from { transform: rotateX(90deg); } }
+.lv-rows { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.lv-row { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: var(--radius-s); background: rgba(6, 10, 31, 0.45); font-size: 13px; }
+.lv-row > span:first-child { flex: 1; text-align: left; color: var(--text-dim); }
+.lv-from { color: var(--text-faint); }
+.lv-arrow { color: var(--gold-deep); }
+.lv-row strong { color: var(--ok); font-size: 16px; min-width: 32px; text-align: right; }
+
+/* ---------- Boss 最後一擊 ---------- */
+.battle.finisher .enemy-zone { animation: finisher-zoom 900ms ease-in-out both; }
+.battle.finisher .battle-bottom { filter: brightness(0.55) saturate(0.6); transition: filter 300ms; }
+@keyframes finisher-zoom { 0% { transform: none; } 35% { transform: scale(1.06); } 100% { transform: scale(1.02); } }
+.enemy.shatter > :not(.stardust) { animation: enemy-shatter 620ms ease-in both; }
+@keyframes enemy-shatter {
+  0% { filter: brightness(1); }
+  30% { filter: brightness(3) saturate(0); transform: scale(1.05); }
+  100% { opacity: 0; filter: brightness(4) blur(4px); transform: scale(1.25); }
+}
+.stardust { position: absolute; left: 50%; top: 45%; width: 6px; height: 6px; margin: -3px; border-radius: 50%; pointer-events: none; z-index: 3;
+  background: #fff6d8; box-shadow: 0 0 6px 1px var(--gold);
+  animation: stardust 800ms cubic-bezier(0.1, 0.7, 0.3, 1) both; }
+@keyframes stardust { from { transform: translate(0, 0) scale(1.2); opacity: 1; } to { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; } }
+.finisher-flash { position: absolute; inset: 0; z-index: 30; pointer-events: none; background: radial-gradient(circle at 50% 30%, rgba(255, 246, 216, 0.9), transparent 60%); animation: ritual-flash 600ms ease-out both; }
+.finisher-text {
+  position: absolute; left: 0; right: 0; top: 26%; z-index: 31; text-align: center; pointer-events: none;
+  font-family: var(--font-title); font-size: 36px; letter-spacing: 0.24em; color: #fff6d8;
+  text-shadow: 0 0 12px var(--gold), 0 0 28px rgba(242, 196, 90, 0.6);
+  animation: finisher-text 1100ms ease-out both;
+}
+@keyframes finisher-text { 0% { opacity: 0; transform: scale(2); letter-spacing: 0.6em; } 25% { opacity: 1; transform: none; letter-spacing: 0.24em; } 85% { opacity: 1; } 100% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .rv-item.shown, .rv-card.shown .rv-card-inner { transition: none; }
+  .rv-count.special.shown, .result-title, .lv-card, .finisher-text, .stardust { animation-duration: 1ms; }
+}
+
+/* ---------- 關卡列表的首通預告 ---------- */
+.first-clear-chip {
+  display: inline-flex; align-items: center; gap: 2px; white-space: nowrap;
+  font-size: 11px; font-weight: 700; color: #b6ecff;
+  padding: 1px 6px 1px 3px; border-radius: 999px; border: 1px solid #3fa8e0; background: rgba(63, 168, 224, 0.16);
+}
+.first-clear-chip svg { width: 14px; height: 14px; }
+.first-clear-chip.claimed { color: var(--text-faint); border-color: var(--line); background: none; filter: grayscale(1); opacity: 0.7; }
+
+/* ---------- 出戰確認的關卡獎勵 ---------- */
+.stage-first-clear, .stage-drops { display: flex; flex-direction: column; gap: 4px; }
+.stage-first-clear + .stage-drops { margin-top: 8px; }
+.stage-first-clear.claimed { filter: grayscale(1); opacity: 0.55; }
+.stage-drop { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10px; color: var(--text-dim); }
