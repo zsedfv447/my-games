@@ -31,6 +31,7 @@ export function questDestination(quest: QuestDef, save: SaveData, stages: StageD
     case 'cardEnhance':
     case 'cardEvolve':
     case 'evolvedOwned':
+    case 'maxCardLevel':
       return { name: 'cards', args: [] };
     case 'shopPurchase':
       return { name: 'shop', args: [] };
@@ -44,6 +45,7 @@ export function questDestination(quest: QuestDef, save: SaveData, stages: StageD
       return { name: 'adventure', args: [] };
     case 'stageClear':
     case 'stageClear3Stars':
+    case 'starsEarned':
     case 'mainCleared':
     case 'playerLevel':
     case 'helperClears':

@@ -21,7 +21,8 @@ import { puzzleOf } from './puzzle';
  * - 成就專用、由存檔推算的數值（見 derivedCounters）：playerLevel、cardsOwned、towerFloor、mainCleared、trialCleared
  * - 新手契約另外可用的推算數值：teamEdited（隊伍跟開新存檔時不同）、helperClears（帶流浪契印師通關次數）、
  *   puzzleSolved（解過的每日謎題天數）、chapterRewards（領過的章節星章獎勵數）、
- *   summoned（召喚紀錄筆數）、evolvedOwned（圖鑑裡擁有過的進化後型態張數）
+ *   summoned（召喚紀錄筆數）、evolvedOwned（圖鑑裡擁有過的進化後型態張數）、
+ *   maxCardLevel（持有卡片的最高等級）、starsEarned（已點亮的星章總數）
  * 新手契約（kind starter）跟成就一樣用終身計數、不重置；推算數值讓老玩家讀檔時就能直接算達成
  */
 export const COMBO_THRESHOLDS = [5, 8, 10] as const;
@@ -39,6 +40,7 @@ const KNOWN_COUNTERS = new Set([
 export const DERIVED_COUNTERS = [
   'playerLevel', 'cardsOwned', 'towerFloor', 'mainCleared', 'trialCleared',
   'teamEdited', 'helperClears', 'puzzleSolved', 'chapterRewards', 'summoned', 'evolvedOwned',
+  'maxCardLevel', 'starsEarned',
 ] as const;
 export type DerivedCounters = Partial<Record<(typeof DERIVED_COUNTERS)[number], number>>;
 
@@ -61,6 +63,8 @@ export function derivedCounters(
     chapterRewards: save.progress.chapterRewardsClaimed.length,
     summoned: save.gacha.history.length,
     evolvedOwned: save.collection.owned.filter((id) => evolvedForms.has(id)).length,
+    maxCardLevel: save.inventory.cards.reduce((m, c) => Math.max(m, c.level), 0),
+    starsEarned: Object.values(save.progress.stars).reduce((n, st) => n + st.filter(Boolean).length, 0),
   };
 }
 
