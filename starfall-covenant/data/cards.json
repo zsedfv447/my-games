@@ -2898,6 +2898,42 @@
     "flavor": "英雄座的星靈之一，卻不記得自己做過什麼偉大的事。他相信英雄不是一個人，而是一群願意站在一起的普通人。塔頂的獎勵，也是主角未來的導師。"
   },
   {
+    "id": "c604",
+    "name": "龍脊信使・艾嵐",
+    "attribute": "water",
+    "race": "dragon",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        630,
+        2070
+      ],
+      "atk": [
+        300,
+        1040
+      ],
+      "rcv": [
+        100,
+        310
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 8,
+    "activeSkill": "s604",
+    "leaderSkill": "l604",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "leader"
+      }
+    ],
+    "art": {},
+    "flavor": "住在龍脊山頂燈塔的信使，負責替四散的龍嗣傳話。他把每一條龍的名字刻在燈籠裡，燈越亮，代表回來的龍越多。"
+  },
+  {
     "id": "c901",
     "name": "焰塵靈・微光",
     "attribute": "fire",

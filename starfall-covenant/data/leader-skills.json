@@ -1217,5 +1217,35 @@
       }
     ],
     "description": "人傑攻擊 2.5 倍、生命 1.3 倍、回復 1.3 倍。"
+  },
+  {
+    "id": "l604",
+    "name": "燈籠裡的名字",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "race": "dragon"
+            },
+            "value": 2.5
+          },
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "race": "dragon"
+            },
+            "value": 1.2
+          }
+        ]
+      }
+    ],
+    "description": "龍嗣攻擊 2.5 倍、生命 1.2 倍。"
   }
 ]

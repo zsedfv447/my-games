@@ -11,10 +11,10 @@ const materials = gameData.cards.filter((c) => c.race === 'material');
 const evolvedIds = new Set(gameData.cards.flatMap((c) => (c.evolution ? [c.evolution.to] : [])));
 
 describe('正式卡片資料', () => {
-  it('63 張戰鬥卡＋20 張素材卡，對應 43 位角色', () => {
-    expect(battle).toHaveLength(63);
+  it('64 張戰鬥卡＋20 張素材卡，對應 44 位角色', () => {
+    expect(battle).toHaveLength(64);
     expect(materials).toHaveLength(20);
-    expect(battle.filter((c) => !evolvedIds.has(c.id))).toHaveLength(43);
+    expect(battle.filter((c) => !evolvedIds.has(c.id))).toHaveLength(44);
   });
 
   it('進化用同屬性星核，進化後稀有度 +1 且流派不變', () => {

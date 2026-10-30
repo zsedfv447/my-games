@@ -1222,5 +1222,29 @@
       }
     ],
     "description": "人傑攻擊 1.5 倍（1 回合），受到傷害減少 30%（1 回合）。"
+  },
+  {
+    "id": "s604",
+    "name": "龍信",
+    "cooldown": {
+      "max": 9,
+      "min": 6
+    },
+    "effects": [
+      {
+        "type": "buffAttack",
+        "target": {
+          "race": "dragon"
+        },
+        "multiplier": 1.5,
+        "turns": 1
+      },
+      {
+        "type": "extendMoveTime",
+        "seconds": 1,
+        "turns": 1
+      }
+    ],
+    "description": "龍嗣攻擊 1.5 倍（1 回合），轉珠時間延長 1 秒（1 回合）。"
   }
 ]
