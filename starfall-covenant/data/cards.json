@@ -73,7 +73,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 10,
+    "cost": 9,
     "activeSkill": "s102",
     "leaderSkill": "l102",
     "awakenings": [
@@ -196,7 +196,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 10,
+    "cost": 9,
     "activeSkill": "s104",
     "awakenings": [
       {
@@ -313,7 +313,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s106",
     "leaderSkill": "l106",
     "expValue": 600,
@@ -349,7 +349,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s107",
     "expValue": 600,
     "sellValue": 300,
@@ -384,7 +384,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s108",
     "expValue": 600,
     "sellValue": 300,
@@ -427,7 +427,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 6,
+    "cost": 4,
     "activeSkill": "s109",
     "leaderSkill": "l109",
     "evolution": {
@@ -470,7 +470,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s110",
     "leaderSkill": "l110",
     "expValue": 600,
@@ -506,7 +506,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 6,
+    "cost": 4,
     "activeSkill": "s111",
     "evolution": {
       "to": "c112",
@@ -552,7 +552,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s112",
     "expValue": 600,
     "sellValue": 300,
@@ -644,7 +644,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 10,
+    "cost": 9,
     "activeSkill": "s202",
     "leaderSkill": "l202",
     "awakenings": [
@@ -755,7 +755,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 10,
+    "cost": 9,
     "activeSkill": "s204",
     "leaderSkill": "l204",
     "awakenings": [
@@ -870,7 +870,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s206",
     "leaderSkill": "l206",
     "expValue": 600,
@@ -906,7 +906,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s207",
     "expValue": 600,
     "sellValue": 300,
@@ -941,7 +941,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s208",
     "expValue": 600,
     "sellValue": 300,
@@ -980,7 +980,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 6,
+    "cost": 4,
     "activeSkill": "s209",
     "leaderSkill": "l209",
     "evolution": {
@@ -1023,7 +1023,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s209",
     "leaderSkill": "l210",
     "expValue": 600,
@@ -1059,7 +1059,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 6,
+    "cost": 4,
     "activeSkill": "s211",
     "evolution": {
       "to": "c212",
@@ -1101,7 +1101,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s212",
     "expValue": 600,
     "sellValue": 300,
@@ -1189,7 +1189,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 10,
+    "cost": 9,
     "activeSkill": "s302",
     "leaderSkill": "l302",
     "awakenings": [
@@ -1304,7 +1304,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 10,
+    "cost": 9,
     "activeSkill": "s304",
     "awakenings": [
       {
@@ -1425,7 +1425,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s306",
     "leaderSkill": "l306",
     "expValue": 600,
@@ -1461,7 +1461,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s307",
     "leaderSkill": "l307",
     "expValue": 600,
@@ -1497,7 +1497,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s308",
     "expValue": 600,
     "sellValue": 300,
@@ -1544,7 +1544,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 6,
+    "cost": 4,
     "activeSkill": "s309",
     "leaderSkill": "l309",
     "evolution": {
@@ -1591,7 +1591,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s309",
     "leaderSkill": "l310",
     "expValue": 600,
@@ -1631,7 +1631,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 6,
+    "cost": 4,
     "activeSkill": "s311",
     "leaderSkill": "l311",
     "evolution": {
@@ -1674,7 +1674,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s312",
     "leaderSkill": "l312",
     "expValue": 600,
@@ -1762,7 +1762,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 10,
+    "cost": 9,
     "activeSkill": "s402",
     "leaderSkill": "l402",
     "awakenings": [
@@ -1877,7 +1877,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 10,
+    "cost": 9,
     "activeSkill": "s404",
     "leaderSkill": "l404",
     "awakenings": [
@@ -1992,7 +1992,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s406",
     "leaderSkill": "l406",
     "expValue": 600,
@@ -2028,7 +2028,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s407",
     "leaderSkill": "l407",
     "expValue": 600,
@@ -2064,7 +2064,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s408",
     "expValue": 600,
     "sellValue": 300,
@@ -2107,7 +2107,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 6,
+    "cost": 4,
     "activeSkill": "s409",
     "leaderSkill": "l409",
     "evolution": {
@@ -2150,7 +2150,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s410",
     "leaderSkill": "l410",
     "expValue": 600,
@@ -2186,7 +2186,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 6,
+    "cost": 4,
     "activeSkill": "s411",
     "evolution": {
       "to": "c412",
@@ -2228,7 +2228,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s412",
     "expValue": 600,
     "sellValue": 300,
@@ -2315,7 +2315,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 10,
+    "cost": 9,
     "activeSkill": "s502",
     "leaderSkill": "l502",
     "awakenings": [
@@ -2430,7 +2430,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 10,
+    "cost": 9,
     "activeSkill": "s504",
     "awakenings": [
       {
@@ -2549,7 +2549,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s506",
     "leaderSkill": "l506",
     "expValue": 600,
@@ -2585,7 +2585,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s507",
     "expValue": 600,
     "sellValue": 300,
@@ -2620,7 +2620,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s508",
     "expValue": 600,
     "sellValue": 300,
@@ -2655,7 +2655,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 6,
+    "cost": 4,
     "activeSkill": "s509",
     "leaderSkill": "l509",
     "evolution": {
@@ -2698,7 +2698,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s510",
     "leaderSkill": "l510",
     "expValue": 600,
@@ -2734,7 +2734,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 6,
+    "cost": 4,
     "activeSkill": "s511",
     "evolution": {
       "to": "c512",
@@ -2776,7 +2776,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s512",
     "expValue": 600,
     "sellValue": 300,
@@ -2811,7 +2811,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s601",
     "leaderSkill": "l601",
     "expValue": 600,
@@ -2847,7 +2847,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s602",
     "leaderSkill": "l602",
     "expValue": 600,
@@ -2883,7 +2883,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s603",
     "leaderSkill": "l603",
     "expValue": 600,
@@ -2919,7 +2919,7 @@
       ]
     },
     "growthCurve": 1,
-    "cost": 8,
+    "cost": 6,
     "activeSkill": "s604",
     "leaderSkill": "l604",
     "expValue": 600,
