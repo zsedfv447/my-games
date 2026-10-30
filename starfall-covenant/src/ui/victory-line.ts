@@ -1,10 +1,5 @@
-// 隊長勝利台詞（data/card-lines.json）：結算第一幕由隊長說一句；沒有專屬台詞就用屬性預設句。純邏輯。
+// 隊長勝利台詞（cards.json 的 lines.victory）：結算第一幕由隊長說一句；沒有專屬台詞就用屬性預設句。純邏輯。
 import type { Attribute, CardDef } from '../core/types';
-import cardLines from '../../data/card-lines.json';
-
-export type CardLines = Record<string, { victory?: string }>;
-
-export const CARD_LINES: CardLines = cardLines;
 
 export const DEFAULT_VICTORY: Record<Attribute, string> = {
   fire: '火還沒熄。下一場，也交給我吧。',
@@ -14,8 +9,8 @@ export const DEFAULT_VICTORY: Record<Attribute, string> = {
   dark: '黑夜過去了。……暫時，安全了。',
 };
 
-export function victoryLine(card: Pick<CardDef, 'id' | 'attribute'>, lines: CardLines = CARD_LINES): string {
-  return lines[card.id]?.victory ?? DEFAULT_VICTORY[card.attribute];
+export function victoryLine(card: Pick<CardDef, 'attribute' | 'lines'>): string {
+  return card.lines?.victory || DEFAULT_VICTORY[card.attribute];
 }
 
 export interface LeaderLine {
