@@ -89,6 +89,8 @@ export interface GuideAction {
   go?: [string, string[]];
   /** 完成目前這一步 */
   advance?: boolean;
+  /** 直接按下引導指向的那顆按鈕（target），例如召喚一次 */
+  press?: boolean;
 }
 
 export interface GuideSpec {
@@ -126,9 +128,11 @@ export function guideFor(step: TutorialStep, route: { name: string; args: string
     case 'summon':
       if (route.name === 'summon') {
         return {
-          lines: ['在這裡用星晶解開封印，就能和新的夥伴締結契約。', '我送你一次單抽的星晶，按「單次封印」試試看，再把封印往下拉開！'],
+          lines: ['在這裡用星晶解開封印，就能和新的夥伴締結契約。', '我送你一次單抽的星晶，按「召喚一次」試試看，再把封印往下拉開！'],
           target: '.seal-pull-actions .btn',
           placement: 'top',
+          // 主按鈕直接觸發單抽；「先不召喚」只當次要選項，免得以為唯一的按鈕就是要按的
+          action: { label: '召喚一次', press: true },
           secondary: { label: '先不召喚', advance: true },
         };
       }

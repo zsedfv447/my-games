@@ -114,3 +114,12 @@ export function stageListPath(stage: StageDef, events: EventDef[] = []): string 
   if (stage.kind === 'trial') return 'archetypes';
   return `stages/${stage.kind}`;
 }
+
+/**
+ * 分批上線的章節還沒做好的關卡範圍（ChapterDef.stageCount 大於已上線關數時），例如第 6 章 { from: 4, to: 9 }。
+ * 關卡都上線後回傳 null，列表上的「製作中」提示就會自動消失。
+ */
+export function upcomingStageRange(stageCount: number | undefined, liveCount: number): { from: number; to: number } | null {
+  if (!stageCount || stageCount <= liveCount) return null;
+  return { from: liveCount + 1, to: stageCount };
+}

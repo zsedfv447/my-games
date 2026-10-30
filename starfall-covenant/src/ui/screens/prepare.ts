@@ -1,6 +1,7 @@
 // 出戰確認：關卡情報、推薦流派、隊伍限制或借用隊伍、星章條件，確認後扣體力進入戰鬥
 import { h, svg } from '../dom';
 import { gameData } from '../../data/load';
+import '../flow-polish.css';
 import { stageStoryToPlay } from '../../progression/stage-story';
 import type { Attribute, EnemyDef, StageDef, StarCondition } from '../../core/types';
 import { enterStage, periodFirstClearClaimed } from '../../progression/stages';
@@ -169,9 +170,11 @@ export const prepareScreen: ScreenDef = {
       stageRewardPanel(stage, stage.rewards.periodFirstClear
         ? periodFirstClearClaimed(save, stage, gameData.events, Date.now())
         : save.progress.clearedStages.includes(stage.id)),
-      problem && h('p', { class: 'small-text', style: { color: 'var(--danger)', textAlign: 'center', margin: '0' } }, VIOLATION_TEXT[problem]),
-      // data-tut：新手教學用來指向出發鈕
-      h('div', { 'data-tut': 'sortie' }, button('出發', { variant: 'primary', block: true, icon: 'sword', disabled: !!problem, cost: { kind: 'stamina', amount: stage.stamina }, onClick: start })),
+      // 出發列固定在畫面底部（375×812 不用捲到最下面才能出發），上面的內容照常捲動
+      h('div', { class: 'sortie-bar' },
+        problem && h('p', { class: 'small-text sortie-problem' }, VIOLATION_TEXT[problem]),
+        // data-tut：新手教學用來指向出發鈕
+        h('div', { 'data-tut': 'sortie' }, button('出發', { variant: 'primary', block: true, icon: 'sword', disabled: !!problem, cost: { kind: 'stamina', amount: stage.stamina }, onClick: start }))),
     );
   },
 };

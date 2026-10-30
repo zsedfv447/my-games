@@ -31,9 +31,11 @@ export function installTutorial(stage: HTMLElement, nav: Navigator): TutorialCon
   /** 領獎演出播放中，先不疊引導 */
   let revealing = false;
 
-  const run = (a: GuideAction) => {
+  const run = (a: GuideAction, target?: string) => {
     if (a.advance) commit(advanceTutorial(getSave(), tutorialStep(getSave())));
     if (a.go) nav.go(a.go[0], a.go[1]);
+    // 和玩家自己按一樣走原本的流程（確認視窗、扣星晶、召喚演出）
+    if (a.press && target) screenEl?.querySelector<HTMLElement>(target)?.click();
   };
 
   const askSkip = async () => {
@@ -77,7 +79,7 @@ export function installTutorial(stage: HTMLElement, nav: Navigator): TutorialCon
     const actions = [spec.secondary, spec.action].filter((a): a is GuideAction => !!a).map((a) => ({
       label: a.label,
       variant: a === spec.secondary ? ('ghost' as const) : ('primary' as const),
-      onClick: () => run(a),
+      onClick: () => run(a, spec.target),
     }));
     layer.say({ lines: spec.lines, placement: spec.placement ?? 'bottom', actions, onSkip: () => void askSkip() });
     if (spec.target) {
