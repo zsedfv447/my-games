@@ -42,6 +42,7 @@ import {
 import {
   abilitiesToTrigger,
   applyEnemyAbility,
+  attributeSealMultipliers,
   defenseProfile,
   enemyAtkMultiplier,
   enemyHitCount,
@@ -521,7 +522,9 @@ export function startBattle(
         skillUsedThisTurn,
       });
       const buffMul = buffAttackMultipliers(state);
-      const atkMultipliers = turn.atkMultipliers.map((v, i) => v * buffMul[i]);
+      // 星紋封印：被封印屬性的隊員這回合轉珠攻擊無效
+      const sealMul = attributeSealMultipliers(state);
+      const atkMultipliers = turn.atkMultipliers.map((v, i) => v * buffMul[i] * sealMul[i]);
       const hits = [
         ...computeAttacks({ team, groups, combo, config: config.battle, atkMultipliers, ignoreDefense: turn.ignoreDefense }),
         ...turn.followUps,

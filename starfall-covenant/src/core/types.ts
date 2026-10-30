@@ -152,7 +152,7 @@ export type PassiveEffect =
 export const STATUS_IDS = [
   'poison', 'skillSeal', 'orbLock', 'moveTimeDown', 'shield', 'attributeShield',
   'comboShield', 'heartSeal', 'darkOrbs', 'poisonOrbs', 'lockedOrbs',
-  'damageAbsorb', 'enrage', 'delayImmune', 'multiHit',
+  'damageAbsorb', 'enrage', 'delayImmune', 'multiHit', 'attributeSeal',
 ] as const;
 export type StatusId = (typeof STATUS_IDS)[number];
 
