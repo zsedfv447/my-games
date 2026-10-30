@@ -35,6 +35,7 @@ import { resultConstellation, shareClear } from '../clear-extras';
 import { showDefeatGuide } from '../components/defeat-guide';
 import { trackBattleRecords, type BattleRecordTracker } from '../battle-records';
 import { leaderLineOf } from '../victory-line';
+import { helperBondOnClear } from '../helper-bond-clear';
 import { markStorySeen } from './story';
 import { createTutorialBattle } from '../tutorial/battle-setup';
 import { TutorialBattleGuide, texts as guideTexts, type BattleGuide } from '../tutorial/battle-guide';
@@ -642,6 +643,9 @@ class BattleView {
       const notice = unlockNotice(this.s.stage);
       if (notice.text) notes.push({ text: notice.text, big: notice.chapter !== undefined });
     }
+    // 借用流浪契印師通關：同行情誼 +1，跨過門檻時加提示，感謝台詞取代隊長台詞
+    const bond = this.s.practice ? null : helperBondOnClear(this.s.stage, this.state.team.find((m) => m.isHelper)?.card);
+    if (bond) notes.push(...bond.notes);
     // then：離開後要去的 hash 路徑（下一關）；沒給就回上一頁
     const leave = (then?: string) => {
       this.dialog?.close();
@@ -665,7 +669,7 @@ class BattleView {
       notes,
       constellation: resultConstellation(this.s.stage, clear),
       share: () => shareClear(this.s.stage, this.state.team, this.s.memberUids ?? [], result, clear, firstClear, (this.s.stage.stars ?? []).map(starText)),
-      leaderLine: leaderLineOf(this.state),
+      leaderLine: bond?.thanks ?? leaderLineOf(this.state),
       actions: [
         button(next ? '再戰' : '再戰一次', { variant: next ? 'ghost' : undefined, onClick: () => { this.dialog?.close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', [this.s.stage.id]); } }),
         button('返回', { variant: next ? undefined : 'primary', onClick: () => leave() }),

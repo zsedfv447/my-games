@@ -373,4 +373,6 @@ export interface SaveData {
   settings: { bgm: number; sfx: number; battleSpeed: 1 | 2 };
   /** 契印師手札的個人戰績（可選；讀取一律經過 progression/records.ts 的 recordsOf 補預設值） */
   records?: import('../progression/records').PlayerRecords;
+  /** 流浪契印師的同行情誼：NPC id → 點數（可選；讀取一律經過 progression/helper-bond.ts 的 bondPoints 補預設值） */
+  helperBond?: Record<string, number>;
 }

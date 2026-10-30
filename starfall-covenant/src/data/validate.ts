@@ -8,6 +8,7 @@ import {
 import { checkLeaderEvolution, checkLeaderTier, lintLeaderSkill } from '../battle/leader';
 import { isKnownCounter } from '../progression/quests';
 import type { EventDef } from '../progression/events';
+import { BOND_TIERS, type HelperBondDef } from '../progression/helper-bond';
 
 export interface GameData {
   config: GameConfig;
@@ -174,5 +175,32 @@ export function validateGameData(d: GameData): string[] {
     checkReward(w, q.reward);
   }
 
+  return errors;
+}
+
+/** 流浪契印師情誼資料（data/helper-bonds.json）：每位 NPC 剛好一筆，各門檻一段 3～6 句劇情與一句感謝台詞 */
+export function validateHelperBonds(bonds: HelperBondDef[], npcs: { id: string }[]): string[] {
+  const errors: string[] = [];
+  const err = (where: string, msg: string) => errors.push(`${where}: ${msg}`);
+  const ids = new Set(npcs.map((n) => n.id));
+  const seen = new Set<string>();
+  for (const b of bonds) {
+    const w = `helper-bonds/${b.npc}`;
+    if (!ids.has(b.npc)) err(w, '找不到這位 NPC');
+    if (seen.has(b.npc)) err(w, '重複的 NPC');
+    seen.add(b.npc);
+    if (b.stories.length !== BOND_TIERS.length) err(w, `劇情要有 ${BOND_TIERS.length} 段`);
+    if (b.thanks.length !== BOND_TIERS.length) err(w, `感謝台詞要有 ${BOND_TIERS.length} 句`);
+    for (const [i, s] of b.stories.entries()) {
+      if (!s.title) err(w, `第 ${i + 1} 段劇情沒有標題`);
+      if (s.lines.length < 3 || s.lines.length > 6) err(w, `第 ${i + 1} 段劇情要 3～6 句`);
+      if (s.lines.some((l) => !l.text)) err(w, `第 ${i + 1} 段劇情有空白的句子`);
+    }
+    for (const [i, t] of b.thanks.entries()) {
+      if (!t) err(w, `第 ${i + 1} 句感謝台詞是空的`);
+      else if ([...t].length > VICTORY_LINE_MAX) err(w, `第 ${i + 1} 句感謝台詞超過 ${VICTORY_LINE_MAX} 字`);
+    }
+  }
+  for (const id of ids) if (!seen.has(id)) err('helper-bonds', `${id} 沒有情誼資料`);
   return errors;
 }

@@ -215,7 +215,7 @@ export function openClearResult(host: HTMLElement, opts: ClearResultOptions): { 
     h('div', { class: 'result-stage' }, opts.stageName),
     opts.leaderLine && h('div', { class: 'result-leader-line' },
       cardThumb(opts.leaderLine.card, { size: 44 }),
-      h('div', null, h('div', { class: 'result-leader-name' }, opts.leaderLine.card.name), h('p', null, `「${opts.leaderLine.text}」`))),
+      h('div', null, h('div', { class: 'result-leader-name' }, opts.leaderLine.speaker ?? opts.leaderLine.card.name), h('p', null, `「${opts.leaderLine.text}」`))),
     notes, reveal, actions, hint);
   const close = () => {
     layer.classList.add('closing');
