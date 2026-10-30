@@ -375,4 +375,6 @@ export interface SaveData {
   records?: import('../progression/records').PlayerRecords;
   /** 星紋謎題每日一題的紀錄（可選；讀取一律經過 progression/puzzle.ts 的 puzzleOf 補預設值） */
   puzzle?: import('../progression/puzzle').PuzzleRecord;
+  /** 已收集的星骸殘頁 id（可選；讀取一律經過 progression/lore.ts 的 collectedLorePages 補預設值） */
+  lorePages?: string[];
 }

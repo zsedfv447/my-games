@@ -8,6 +8,7 @@ import {
 import { checkLeaderEvolution, checkLeaderTier, lintLeaderSkill } from '../battle/leader';
 import { isKnownCounter } from '../progression/quests';
 import type { EventDef } from '../progression/events';
+import type { LoreData } from '../progression/lore';
 
 export interface GameData {
   config: GameConfig;
@@ -23,6 +24,8 @@ export interface GameData {
   quests: QuestDef[];
   story: StoryData;
   events: EventDef[];
+  /** 星骸殘頁（data/lore.json）；測試用的精簡資料可以省略 */
+  lore?: LoreData;
 }
 
 /** 卡片勝利台詞（lines.victory）的字數上限 */
@@ -180,6 +183,26 @@ export function validateGameData(d: GameData): string[] {
   for (const [t, where] of usedTokens) if (!tokenNames.get(t)) err(where, `代幣 ${t} 沒有名稱（請在 events.json 填 token 與 tokenName）`);
 
   for (const s of d.stages) if (s.kind === 'event' && (!s.event || !eventIds.has(s.event))) err(`stages/${s.id}`, `活動 ${s.event} 不在 events.json`);
+
+  if (d.lore) {
+    const stageIds = new Set(d.stages.map((s) => s.id));
+    const pageIds = new Set<string>();
+    const pageStages = new Set<string>();
+    uniqueIds('lore', d.lore.volumes);
+    for (const v of d.lore.volumes) {
+      const w = `lore/${v.id}`;
+      if (!v.pages.length) err(w, '每卷至少要有一頁');
+      if (!v.secret.lines.length) err(w, '隱藏對話至少要有一句');
+      for (const p of v.pages) {
+        if (pageIds.has(p.id)) err(w, `殘頁 ${p.id} 重複`);
+        pageIds.add(p.id);
+        if (!stageIds.has(p.stage)) err(w, `殘頁 ${p.id} 的關卡 ${p.stage} 不存在`);
+        if (pageStages.has(p.stage)) err(w, `關卡 ${p.stage} 有兩頁殘頁`);
+        pageStages.add(p.stage);
+        if (!p.text.length || p.text.some((t) => !t)) err(w, `殘頁 ${p.id} 沒有內容`);
+      }
+    }
+  }
 
   for (const item of d.shop) {
     const w = `shop/${item.id}`;

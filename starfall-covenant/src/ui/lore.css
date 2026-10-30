@@ -1,0 +1,17 @@
+/* ---------- 劇情回顧・星骸殘頁 ---------- */
+.lore-intro { margin: 10px 2px; line-height: 1.6; }
+.lore-pages { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
+.lore-page {
+  display: flex; flex-direction: column; gap: 6px; min-height: 112px; padding: 10px 8px;
+  border-radius: var(--radius); border: 1px solid var(--gold-deep);
+  background: linear-gradient(180deg, rgba(247, 220, 152, 0.14), rgba(22, 32, 74, 0.6));
+  color: var(--text); font-family: var(--font); text-align: left; cursor: pointer;
+}
+.lore-page strong { color: var(--gold-soft); font-family: var(--font-title); font-size: 13px; line-height: 1.35; }
+.lore-page span { font-size: 11px; line-height: 1.5; color: var(--text-dim); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+/* 未收集：只留剪影與取得方式 */
+.lore-page.silhouette { cursor: default; border-style: dashed; border-color: rgba(154, 164, 214, 0.35); background: rgba(6, 10, 31, 0.55); }
+.lore-page.silhouette strong { color: var(--text-faint); letter-spacing: 0.2em; }
+.lore-page.silhouette span { color: var(--text-faint); }
+.lore-text p { margin: 0 0 10px; line-height: 1.75; }
+.lore-text p:first-child { color: var(--text-dim); font-size: 13px; }

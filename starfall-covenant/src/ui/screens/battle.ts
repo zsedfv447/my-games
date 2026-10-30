@@ -30,6 +30,7 @@ import { starText } from './prepare';
 import { enemyChips, teamChips, STATUS_NAMES, type StatusChip } from '../status-labels';
 import { storyBox } from '../components/story';
 import { openClearResult, type ResultNote } from '../components/reward-reveal';
+import { grantLorePage, loreNotes } from '../../progression/lore';
 import { clearItems, levelUpView } from '../reward-plan';
 import { resultConstellation, shareClear } from '../clear-extras';
 import { showDefeatGuide } from '../components/defeat-guide';
@@ -622,13 +623,17 @@ class BattleView {
     let clear: StageClearResult | null = null;
     const firstClear = !this.s.practice && !getSave().progress.clearedStages.includes(this.s.stage.id);
     let expGains: CardExpGain[] = [];
+    let loreGained: ResultNote[] = [];
     if (!this.s.practice) {
       const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
       const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages, gameData.events), gameData.config, createRng(this.s.dropSeed), Date.now(), this.s.drops && plannedCards(this.s.drops));
       const exp = grantClearExp(done.save, this.s.memberUids ?? [], done.result.cardExp);
       expGains = exp.gains;
+      // 星骸殘頁：首次通關有殘頁的關卡（progression/lore.ts）
+      const lore = grantLorePage(exp.save, this.s.stage.id, firstClear, gameData.lore!);
+      loreGained = loreNotes(lore);
       // 發獎與清掉進行中的戰鬥同一次寫入，重新整理不會重複領或重骰掉落
-      commit({ ...exp.save, activeBattle: null });
+      commit({ ...lore.save, activeBattle: null });
       clear = done.result;
       bus.emit('stageCleared', { stageId: this.s.stage.id, turns: result.turns, stars: clear.stars });
       for (const d of clear.drops) bus.emit('cardObtained', { cardId: d.cardId, uid: d.uid, source: 'drop' });
@@ -638,6 +643,7 @@ class BattleView {
       const notice = unlockNotice(this.s.stage);
       if (notice.text) notes.push({ text: notice.text, big: notice.chapter !== undefined });
     }
+    notes.push(...loreGained);
     // then：離開後要去的 hash 路徑（下一關）；沒給就回到這關所屬的關卡列表（練習回上一頁）
     const leave = (then?: string) => {
       this.dialog?.close();
