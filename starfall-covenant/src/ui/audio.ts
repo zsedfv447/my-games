@@ -11,45 +11,78 @@ export function comboFrequency(combo: number): number {
   return 523.25 * Math.pow(2, Math.min(semis, 36) / 12);
 }
 
-class AudioManager {
+export class AudioManager {
   private ctx?: AudioContext;
   private bgmEl?: HTMLAudioElement;
   private bgmName?: string;
   private sfxCache = new Map<string, HTMLAudioElement>();
+  private unlocked = false;
+  private listening = false;
+  private focused = true;
+  private activeSfx = new Set<HTMLAudioElement>();
   bgmVolume = 0.8;
   sfxVolume = 0.8;
 
-  /** 瀏覽器規定要在使用者互動後才能出聲，第一次點擊時呼叫 */
+  /** 延後綁定，讓模組可在非瀏覽器環境載入。 */
+  private listen(): void {
+    if (this.listening || typeof window === 'undefined') return;
+    this.listening = true;
+    window.addEventListener('blur', () => { this.focused = false; this.syncPlayback(); });
+    window.addEventListener('focus', () => { this.focused = true; this.syncPlayback(); });
+    document.addEventListener('visibilitychange', () => this.syncPlayback());
+  }
+
+  private get foreground(): boolean {
+    return this.focused && (typeof document === 'undefined' || !document.hidden);
+  }
+
+  private syncPlayback(): void {
+    if (this.unlocked && this.foreground && this.bgmVolume > 0) {
+      if (this.bgmEl?.paused) void this.bgmEl.play().catch(() => {});
+    } else this.bgmEl?.pause();
+    if (!this.foreground) {
+      for (const el of this.activeSfx) el.pause();
+      this.activeSfx.clear();
+      void this.ctx?.suspend().catch(() => {});
+    } else if (this.unlocked) void this.ctx?.resume().catch(() => {});
+  }
+
+  /** 必須直接在使用者互動事件裡呼叫，解鎖當下也嘗試播放目前曲目。 */
   unlock(): void {
+    this.listen();
+    this.unlocked = true;
+    this.focused = true;
     if (!this.ctx) {
       const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
       if (Ctor) this.ctx = new Ctor();
     }
-    void this.ctx?.resume();
-    if (this.bgmEl?.paused && this.bgmVolume > 0) void this.bgmEl.play().catch(() => {});
+    this.syncPlayback();
   }
 
   setVolumes(bgm: number, sfx: number): void {
-    this.bgmVolume = bgm;
-    this.sfxVolume = sfx;
-    if (this.bgmEl) this.bgmEl.volume = bgm;
+    const clamp = (value: number) => Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
+    this.bgmVolume = clamp(bgm);
+    this.sfxVolume = clamp(sfx);
+    if (this.bgmEl) this.bgmEl.volume = this.bgmVolume;
+    for (const el of this.activeSfx) el.volume = this.sfxVolume;
+    this.syncPlayback();
   }
 
-  /** 換 BGM；沒有對應檔案時保持安靜（BGM 不合成） */
+  /** 換曲先停止舊曲，未解鎖時只記住待播曲目。 */
   playBgm(name: string): void {
-    if (this.bgmName === name) return;
+    this.listen();
+    if (this.bgmName === name) { this.syncPlayback(); return; }
     this.bgmName = name;
     this.bgmEl?.pause();
     const url = userAsset('bgm', name);
-    if (!url) {
-      this.bgmEl = undefined;
-      return;
-    }
+    this.bgmEl = undefined;
+    if (!url) return;
     const el = new Audio(url);
     el.loop = true;
+    el.preload = 'auto';
     el.volume = this.bgmVolume;
     this.bgmEl = el;
-    if (this.bgmVolume > 0) void el.play().catch(() => {});
+    this.syncPlayback();
   }
 
   stopBgm(): void {
@@ -59,21 +92,33 @@ class AudioManager {
   }
 
   play(name: SfxName, combo = 1): void {
-    if (this.sfxVolume <= 0) return;
-    const url = userAsset('sfx', name);
+    if (!this.unlocked || !this.foreground || this.sfxVolume <= 0) return;
+    const comboStep = Math.max(1, Math.min(9, Math.floor(Number.isFinite(combo) ? combo : 1)));
+    const variant = name === 'match' && comboStep > 1 ? `match-${comboStep}` : name;
+    const variantUrl = userAsset('sfx', variant);
+    const url = variantUrl ?? userAsset('sfx', name);
     if (url) {
-      let base = this.sfxCache.get(name);
+      let base = this.sfxCache.get(url);
       if (!base) {
         base = new Audio(url);
-        this.sfxCache.set(name, base);
+        base.preload = 'auto';
+        this.sfxCache.set(url, base);
       }
       const el = base.cloneNode() as HTMLAudioElement;
       el.volume = this.sfxVolume;
-      if (name === 'match') el.playbackRate = Math.min(2, 1 + (combo - 1) * 0.06);
-      void el.play().catch(() => {});
+      if (name === 'match' && !variantUrl) el.playbackRate = Math.min(2, 1 + (comboStep - 1) * 0.06);
+      // 保留短音效重疊，但連續點擊也不會無限制堆積播放中的元素。
+      if (this.activeSfx.size >= 24) {
+        const oldest = this.activeSfx.values().next().value!;
+        oldest.pause();
+        this.activeSfx.delete(oldest);
+      }
+      this.activeSfx.add(el);
+      el.onended = () => this.activeSfx.delete(el);
+      void el.play().catch(() => { this.activeSfx.delete(el); });
       return;
     }
-    this.synth(name, combo);
+    this.synth(name, comboStep);
   }
 
   private synth(name: SfxName, combo: number): void {

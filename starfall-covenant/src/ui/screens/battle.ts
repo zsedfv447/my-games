@@ -406,7 +406,7 @@ class BattleView {
 
   private onWin(): void {
     audio.play('win');
-    audio.stopBgm();
+    audio.playBgm('victory');
     const result = this.s.battle.getResult()!;
     let clear: StageClearResult | null = null;
     if (!this.s.practice) {

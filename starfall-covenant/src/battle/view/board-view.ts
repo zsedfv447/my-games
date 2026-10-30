@@ -3,6 +3,7 @@
 import { swapOrbs, toIndex, type Board, type MatchGroup, type Orb, type Pos, type ResolveStep } from '../board';
 import { orbDataUrl, type OrbKind } from '../../ui/art/orbs';
 import { cellAt, remainingMs, stepsBetween } from './drag';
+import { userAsset } from '../../ui/assets';
 
 export interface BoardViewOptions {
   cellSize: number;
@@ -43,6 +44,7 @@ export class BoardView {
   private drops = new Map<number, number>();
   private dropT = 1;
   private raf = 0;
+  private boardTexture?: HTMLImageElement;
 
   constructor(private opts: BoardViewOptions) {
     this.canvas = document.createElement('canvas');
@@ -57,6 +59,12 @@ export class BoardView {
     this.element = document.createElement('div');
     this.element.className = 'board-view';
     this.element.append(timer, this.canvas);
+    const texture = userAsset('ui', 'board');
+    if (texture) {
+      this.boardTexture = new Image();
+      this.boardTexture.onload = () => this.draw();
+      this.boardTexture.src = texture;
+    }
 
     this.canvas.addEventListener('pointerdown', this.onDown);
     this.canvas.addEventListener('pointermove', this.onMovePointer);
@@ -299,9 +307,12 @@ export class BoardView {
 
     for (let r = 0; r < board.rows; r++) {
       for (let c = 0; c < board.cols; c++) {
-        ctx.fillStyle = (r + c) % 2 ? '#16204a' : '#1c2858';
+        ctx.fillStyle = (r + c) % 2 ? '#392b24' : '#66513f';
         ctx.fillRect(c * s, r * s, s, s);
       }
+    }
+    if (this.boardTexture?.complete && this.boardTexture.naturalWidth) {
+      ctx.drawImage(this.boardTexture, 0, 0, board.cols * s, board.rows * s);
     }
 
     const heldPos = this.held ? this.path[this.path.length - 1] : null;

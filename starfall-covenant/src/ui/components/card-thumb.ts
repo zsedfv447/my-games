@@ -35,7 +35,7 @@ export function cardThumb(card: CardLike, opts: ThumbOptions = {}): HTMLElement 
   if (portrait) (face as HTMLImageElement).style.objectFit = 'cover';
   return h(
     'button',
-    { type: 'button', class: ['card-thumb', opts.selected && 'selected'], style: opts.size ? { '--thumb': `${opts.size}px` } : undefined, 'aria-label': card.name, onClick: opts.onClick },
+    { type: 'button', class: ['card-thumb', `card-attr-${card.attribute}`, opts.selected && 'selected'], style: opts.size ? { '--thumb': `${opts.size}px` } : undefined, 'aria-label': card.name, onClick: opts.onClick },
     face,
     opts.level !== undefined && h('span', { class: 'lv' }, `Lv.${opts.level}`),
     opts.locked && h('span', { class: 'lock' }, icon('lock')),

@@ -5,6 +5,7 @@ import { RACE_NAMES } from '../art/palette';
 import { badge, bar, icon, listItem, sectionTitle } from '../components/basic';
 import { chapterProgress, nextMainStage, stageContext } from '../stage-nav';
 import { getSave } from '../state';
+import { userAsset } from '../assets';
 import type { ScreenDef } from '../router';
 
 export const adventureScreen: ScreenDef = {
@@ -38,6 +39,7 @@ export const adventureScreen: ScreenDef = {
           return h(
             'button',
             { type: 'button', class: ['chapter-card', !p.unlocked && 'locked'], disabled: !p.unlocked, onClick: () => nav.go('stages', [c.chapter]) },
+            userAsset('backgrounds', `chapter-${c.chapter}`) && h('img', { class: 'chapter-art', src: userAsset('backgrounds', `chapter-${c.chapter}`), alt: '', loading: 'lazy' }),
             h('div', { class: 'row between' },
               h('div', null, h('div', { class: 'chapter-no' }, `第 ${c.chapter} 章`), h('div', { class: 'chapter-name' }, c.name)),
               h('div', { class: 'row', style: { gap: '4px' } }, badge(c.constellation, 'gold'), badge(RACE_NAMES[c.race]))),

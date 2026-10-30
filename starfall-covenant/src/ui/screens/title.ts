@@ -26,7 +26,7 @@ export const titleScreen: ScreenDef = {
         h('h1', null, '星骸契約'),
         h('p', { class: 'en' }, 'STARFALL COVENANT'),
         h('p', { class: 'tap' }, '點擊畫面開始'),
-        h('p', { class: 'ver' }, `v${APP_VERSION}・原創作品`),
+        h('p', { class: 'ver' }, `v${APP_VERSION}・個人遊玩版`),
       ),
     );
     el.addEventListener('click', () => {

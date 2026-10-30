@@ -79,7 +79,7 @@ export const settingsScreen: ScreenDef = {
         { title: '開發者' },
         button('介面元件展示', { small: true, block: true, onClick: () => nav.go('gallery') }),
       ),
-      h('p', { class: 'faint small-text', style: { textAlign: 'center' } }, `星骸契約 v${APP_VERSION}・全部角色、名稱與美術皆為原創`),
+      h('p', { class: 'faint small-text', style: { textAlign: 'center' } }, `星骸契約 v${APP_VERSION}・個人遊玩版`),
     );
   },
 };

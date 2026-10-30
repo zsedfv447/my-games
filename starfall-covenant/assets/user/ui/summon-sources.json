@@ -1,0 +1,97 @@
+{
+  "note": "使用者提供素材包；本機個人遊玩使用；機率與角色池由本作自行設定。",
+  "assets": [
+    {
+      "output": "assets/user/ui/summon-stone.webp",
+      "source": "03-community-repositories/chenFlyingkite__MyTosWiki/app/src/main/res/drawable-xhdpi/diamond.png",
+      "source_page": "https://github.com/chenFlyingkite/MyTosWiki",
+      "download_url": "https://raw.githubusercontent.com/chenFlyingkite/MyTosWiki/master/app/src/main/res/drawable-xhdpi/diamond.png",
+      "source_sha256": "df13160ef8db880fa18042efc24a73e0a00610a4eaeaeedf4a1301defdca7ee9"
+    },
+    {
+      "output": "assets/user/ui/summon-halo.webp",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/卡片发光.imageset/抽卡发光@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "download_url": "https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets.xcassets/11%20%E6%A8%A1%E6%8B%9F%E6%8A%BD%E5%8D%A1/%E5%8D%A1%E7%89%87%E5%8F%91%E5%85%89.imageset/%E6%8A%BD%E5%8D%A1%E5%8F%91%E5%85%89%402x.png",
+      "source_sha256": "dd9ab4071246bdc76108e2d20231a7e54db89283796d919d3ae4a5d0da52753b"
+    },
+    {
+      "output": "assets/user/ui/summon-card-platinum.webp",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/卡片背面_白金.imageset/卡片背面_白金@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "download_url": "https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets.xcassets/11%20%E6%A8%A1%E6%8B%9F%E6%8A%BD%E5%8D%A1/%E5%8D%A1%E7%89%87%E8%83%8C%E9%9D%A2_%E7%99%BD%E9%87%91.imageset/%E5%8D%A1%E7%89%87%E8%83%8C%E9%9D%A2_%E7%99%BD%E9%87%91%402x.png",
+      "source_sha256": "39e04d188176fe2bbe0c29dae3ab7aae97a262a992066fae0c574d28b80909bf"
+    },
+    {
+      "output": "assets/user/ui/summon-card-silver.webp",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/卡片背面_白银.imageset/卡片背面_白银@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "download_url": "https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets.xcassets/11%20%E6%A8%A1%E6%8B%9F%E6%8A%BD%E5%8D%A1/%E5%8D%A1%E7%89%87%E8%83%8C%E9%9D%A2_%E7%99%BD%E9%93%B6.imageset/%E5%8D%A1%E7%89%87%E8%83%8C%E9%9D%A2_%E7%99%BD%E9%93%B6%402x.png",
+      "source_sha256": "4dc22ab334e1654682e05a79db194676c66eef20328fa5dbe1104e04a23f35ea"
+    },
+    {
+      "output": "assets/user/ui/summon-card-bronze.webp",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/卡片背面_青铜.imageset/卡片背面_青铜@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "download_url": "https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets.xcassets/11%20%E6%A8%A1%E6%8B%9F%E6%8A%BD%E5%8D%A1/%E5%8D%A1%E7%89%87%E8%83%8C%E9%9D%A2_%E9%9D%92%E9%93%9C.imageset/%E5%8D%A1%E7%89%87%E8%83%8C%E9%9D%A2_%E9%9D%92%E9%93%9C%402x.png",
+      "source_sha256": "0700910d73c66840bfdc4e79c3794ae5dd5a973c67e8ba0b69f33289bbe30a02"
+    },
+    {
+      "output": "assets/user/ui/summon-card-gold.webp",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/卡片背面_黄金.imageset/卡片背面_黄金@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "download_url": "https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets.xcassets/11%20%E6%A8%A1%E6%8B%9F%E6%8A%BD%E5%8D%A1/%E5%8D%A1%E7%89%87%E8%83%8C%E9%9D%A2_%E9%BB%84%E9%87%91.imageset/%E5%8D%A1%E7%89%87%E8%83%8C%E9%9D%A2_%E9%BB%84%E9%87%91%402x.png",
+      "source_sha256": "e9eab348358b0de73cecd8fd2c71450cebf14c5c53239a1d34323fb3ac26b864"
+    },
+    {
+      "output": "assets/user/ui/summon-card-black.webp",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/卡片背面_黑金.imageset/卡片背面_黑金@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "download_url": "https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets.xcassets/11%20%E6%A8%A1%E6%8B%9F%E6%8A%BD%E5%8D%A1/%E5%8D%A1%E7%89%87%E8%83%8C%E9%9D%A2_%E9%BB%91%E9%87%91.imageset/%E5%8D%A1%E7%89%87%E8%83%8C%E9%9D%A2_%E9%BB%91%E9%87%91%402x.png",
+      "source_sha256": "2d3679450617ed83329e3ddef69241c21fb8710c5d0d9b574a630b846844045a"
+    },
+    {
+      "output": "assets/user/ui/summon-light.webp",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/发光体.imageset/发光体@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "download_url": "https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets.xcassets/11%20%E6%A8%A1%E6%8B%9F%E6%8A%BD%E5%8D%A1/%E5%8F%91%E5%85%89%E4%BD%93.imageset/%E5%8F%91%E5%85%89%E4%BD%93%402x.png",
+      "source_sha256": "75b363d997ff4f8b6c40db8c9c866cb4bc5dd59478982f3b15622231d4fc24f5"
+    },
+    {
+      "output": "assets/user/ui/summon-gate-back.webp",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/抽卡背景.imageset/抽卡背景@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "download_url": "https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets.xcassets/11%20%E6%A8%A1%E6%8B%9F%E6%8A%BD%E5%8D%A1/%E6%8A%BD%E5%8D%A1%E8%83%8C%E6%99%AF.imageset/%E6%8A%BD%E5%8D%A1%E8%83%8C%E6%99%AF%402x.png",
+      "source_sha256": "a780f9231cfd5fc84cd8b264be84455a04bbd9cf1ca9f5586982b8a89d05c73a",
+      "transformation": "Converted to WebP; removed connected near-white exterior background to transparency."
+    },
+    {
+      "output": "assets/user/ui/summon-rim-left.webp",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/抽卡部件01.imageset/抽卡部件01@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "download_url": "https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets.xcassets/11%20%E6%A8%A1%E6%8B%9F%E6%8A%BD%E5%8D%A1/%E6%8A%BD%E5%8D%A1%E9%83%A8%E4%BB%B601.imageset/%E6%8A%BD%E5%8D%A1%E9%83%A8%E4%BB%B601%402x.png",
+      "source_sha256": "84a9b52d6ad5fe62009f78a5f38938e822ead24d7c8577807021029beeb7cb09"
+    },
+    {
+      "output": "assets/user/ui/summon-rim-right.webp",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/抽卡部件02.imageset/抽卡部件02@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "download_url": "https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets.xcassets/11%20%E6%A8%A1%E6%8B%9F%E6%8A%BD%E5%8D%A1/%E6%8A%BD%E5%8D%A1%E9%83%A8%E4%BB%B602.imageset/%E6%8A%BD%E5%8D%A1%E9%83%A8%E4%BB%B602%402x.png",
+      "source_sha256": "c508c2f9d7a5138a05705d69ca02504b75f742cb14fe2e5899a17622106d6e5e"
+    },
+    {
+      "output": "assets/user/ui/summon-gate-left.webp",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/抽卡部件05.imageset/抽卡部件05@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "download_url": "https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets.xcassets/11%20%E6%A8%A1%E6%8B%9F%E6%8A%BD%E5%8D%A1/%E6%8A%BD%E5%8D%A1%E9%83%A8%E4%BB%B605.imageset/%E6%8A%BD%E5%8D%A1%E9%83%A8%E4%BB%B605%402x.png",
+      "source_sha256": "4d4789e9b76a2dc86d4caf977adb6c4bc0d1535668b59e6168aa368c3900dcbe"
+    },
+    {
+      "output": "assets/user/ui/summon-gate-right.webp",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/11 模拟抽卡/抽卡部件06.imageset/抽卡部件06@2x.png",
+      "source_page": "https://github.com/jordengit/TowerOfSaviorsHelper",
+      "download_url": "https://raw.githubusercontent.com/jordengit/TowerOfSaviorsHelper/master/iOS%20Source%20Code/TowerOfSaviors/Assets.xcassets/11%20%E6%A8%A1%E6%8B%9F%E6%8A%BD%E5%8D%A1/%E6%8A%BD%E5%8D%A1%E9%83%A8%E4%BB%B606.imageset/%E6%8A%BD%E5%8D%A1%E9%83%A8%E4%BB%B606%402x.png",
+      "source_sha256": "4e50fe6b363b48728ab42c79315e05b10129c5254697c3e41d4e93e8d51c970b"
+    }
+  ]
+}

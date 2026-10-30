@@ -1,6 +1,7 @@
 // 星紋珠：每種珠除了顏色，還有不同符號（照顧色弱玩家，GDD 2.6）
 import type { OrbType } from '../../core/types';
 import { ORB_COLORS } from './palette';
+import { userAsset } from '../assets';
 
 /** 符號只用形狀區分：焰＝火焰、潮＝水滴、森＝葉片、輝＝四芒星、蝕＝新月、心＝愛心 */
 export const ORB_SYMBOLS: Record<OrbType, string> = {
@@ -23,9 +24,14 @@ export interface OrbOptions {
 
 const POISON = { base: '#5b3a6e', light: '#b48ccf', dark: '#2a1636' };
 const HIDDEN = { base: '#2a2f4a', light: '#596089', dark: '#12152a' };
+function orbTexture(kind: OrbKind, opts: OrbOptions): string | undefined {
+  return userAsset('ui', `orb-${kind}${opts.enhanced ? '-enhanced' : ''}${opts.locked ? '-locked' : ''}`);
+}
 const POISON_SYMBOL = 'M50 26a18 17 0 0 0-18 17c0 7 3 11 7 13v8h22v-8c4-2 7-6 7-13a18 17 0 0 0-18-17zM42 44a4 4 0 1 0 0 .1zm16 0a4 4 0 1 0 0 .1zM44 64v6M50 64v6M56 64v6';
 
 export function orbSvg(kind: OrbKind, opts: OrbOptions = {}): string {
+  const texture = orbTexture(kind, opts);
+  if (texture) return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img"><image href="${texture}" width="100" height="100"/></svg>`;
   const c = kind === 'poison' ? POISON : kind === 'hidden' ? HIDDEN : ORB_COLORS[kind];
   const symbol = kind === 'poison' ? POISON_SYMBOL : kind === 'hidden' ? '' : ORB_SYMBOLS[kind];
   const id = `orb-${kind}${opts.enhanced ? '-e' : ''}`;
@@ -63,5 +69,7 @@ export function orbSvg(kind: OrbKind, opts: OrbOptions = {}): string {
 
 /** 給 Canvas 用：轉成可直接 drawImage 的 data URL */
 export function orbDataUrl(kind: OrbKind, opts: OrbOptions = {}): string {
+  const texture = orbTexture(kind, opts);
+  if (texture) return texture;
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(orbSvg(kind, opts))}`;
 }

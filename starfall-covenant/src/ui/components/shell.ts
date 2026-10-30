@@ -36,9 +36,11 @@ export class Shell {
 
   mount = (screen: ScreenDef, el: HTMLElement, _route: Route): void => {
     this.screen = screen;
+    if (screen.chrome !== 'bare') audio.playBgm(screen.name.startsWith('summon') ? 'summon' : 'home');
     this.renderTop(screen);
     this.renderBottom(screen);
     el.classList.add('screen', 'screen-enter');
+    el.dataset.screen = screen.name;
     if (screen.chrome === 'bare') el.classList.add('bare');
     clear(this.main);
     this.main.appendChild(el);
@@ -64,7 +66,7 @@ export class Shell {
       );
     } else {
       bar.append(
-        h('span', { class: 'badge gold' }, `Lv.${p.level}`),
+        h('div', { class: 'player-rank' }, h('small', null, 'RANK'), h('strong', null, p.level)),
         ...resources,
         h('div', { class: 'spacer' }),
         iconButton('gear', '設定', () => this.nav.go('settings')),

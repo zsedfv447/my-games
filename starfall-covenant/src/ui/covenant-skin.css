@@ -1,0 +1,126 @@
+/* 個人遊玩版：古銅金框、石紋面板與直式卡牌戰鬥。 */
+:root {
+  --bg: #171613; --bg-deep: #080a0b; --bg-elev: #29251f; --bg-elev-2: #40382b;
+  --line: #625039; --line-strong: #94784d; --text: #f2ebd9; --text-dim: #c2b69d; --text-faint: #9b907a;
+  --gold: #e4c785; --gold-soft: #fff0c1; --gold-deep: #967240;
+  --radius-s: 3px; --radius: 5px; --radius-l: 7px;
+  --topbar-h: 59px; --navbar-h: 70px; --gap: 11px;
+}
+body { background: radial-gradient(ellipse at 50% 35%, #283333, #090b0e 65%); }
+#app { background: radial-gradient(ellipse at 50% 15%, #3b3c33, #171816 50%, #0b0e10); box-shadow: 0 0 90px #000, 0 0 0 1px #675536; }
+#app > .starfield { opacity: .16; }
+button { cursor: pointer; }
+button:focus-visible { outline: 2px solid #ffe1a0; outline-offset: 3px; }
+.topbar { background: linear-gradient(#3f372a, #171611 44%, #25221a); border-bottom: 3px double #a98a51; gap: 5px; padding: 0 8px; box-shadow: 0 3px 12px #0008; }
+.player-rank { width: 40px; flex: none; display: grid; place-content: center; text-align: center; color: #f7dfaa; line-height: 1.1; border-right: 1px solid #796443; padding-right: 7px; }
+.player-rank small { font-size: 8px; letter-spacing: 1px; }
+.player-rank strong { font: 25px Georgia, serif; }
+.resource { border-radius: 3px; background: #090b0bbd; border: 1px solid #665336; padding: 0 5px; height: 28px; box-shadow: inset 0 1px 4px #000; font-size: 12px; }
+.topbar .icon-btn { width: 28px; }
+.navbar { height: 70px; border-top: 3px double #b09562; background: linear-gradient(#55442e, #24211a 15%, #141412 80%, #35291c); box-shadow: 0 -5px 16px #0009; }
+.navbar button { color: #c2b59c; gap: 3px; font-size: 11px; font-weight: 700; border-right: 1px solid #76634666; text-shadow: 0 2px 2px #000; }
+.navbar button svg { width: 29px; height: 29px; color: #c8ad76; filter: drop-shadow(0 2px 1px #000); }
+.navbar button.active { background: radial-gradient(ellipse at bottom, #99703e88, #77522711); color: #ffedbb; }
+.navbar button.active::before { height: 2px; left: 10%; right: 10%; background: #ffdc8f; box-shadow: 0 0 8px #ffe09d; }
+.btn { border-radius: 4px; border-color: #8c7148; background: linear-gradient(#514433, #27221b); box-shadow: inset 0 1px #d9bd7b33, 0 2px 4px #0006; text-shadow: 0 1px 2px #000; }
+.btn.primary { background: linear-gradient(#bda06a, #6d4a29 48%, #3d291b 50%, #745535); color: #fff0c8; border: 1px solid #dfbf7c; }
+.btn.ghost { background: #12141099; border-color: #6b593c; }
+.panel, .list-item { border-color: #6a573c; background: linear-gradient(120deg, #38352ce8, #191b18f5); box-shadow: inset 0 0 0 2px #1119, 0 4px 10px #0004; }
+.panel.gold { border-color: #c2a266; box-shadow: inset 0 0 0 3px #171710, 0 0 15px #c3a15b14; }
+.badge { border-radius: 2px; }
+.section-title { color: #e2c791; }
+.tabs { border-radius: 3px; border-color: #75603c; background: #111512; }
+.tabs button.active { background: linear-gradient(#a5844a, #594529); color: #fff0cd; }
+.bar { border-radius: 2px; background: #120d0c; border-color: #9c8052; }
+.bar.hp .fill { background: linear-gradient(#ffadc8, #d72975 40%, #6e113e 75%, #c2477d); }
+.bar .label { text-shadow: 1px 1px 1px #000, -1px -1px 1px #000; }
+.card-thumb { border-radius: 3px; background: linear-gradient(#736044, #22231c); border: 1px solid #a38b5c; box-shadow: 0 2px 4px #0009; }
+.card-thumb > img { border-radius: 2px; object-fit: cover; }
+.card-thumb .lv { font-size: 10px; color: #fff0c7; text-shadow: 1px 1px 2px #000; }
+.card-thumb.selected { border-radius: 3px; }
+.card-portrait { max-width: 330px; }
+.card-portrait img { max-height: 340px; object-fit: contain; border-radius: 0; }
+.card-attr-fire { --card-element: #d4523d; }.card-attr-water { --card-element: #489be2; }.card-attr-wood { --card-element: #58b762; }.card-attr-light { --card-element: #f0ce64; }.card-attr-dark { --card-element: #b178d9; }
+.card-thumb { border-bottom: 3px solid var(--card-element, #a38b5c); }
+.dialog { border: 3px double #b29b68; background: linear-gradient(#34352e, #141917); border-radius: 6px; }
+.story-box { background: linear-gradient(#2d302df5, #101614f5); border: 3px double #bca370; border-radius: 5px; }
+.toast { background: #141a17f5; border-radius: 4px; }
+
+/* 主城：主視覺、章節入口、現役隊伍。 */
+.screen.sanctuary { padding: 0; gap: 0; background: #141813; }
+.sanctuary .home-hero { height: 357px; border: 0; border-radius: 0; background: #151a15; }
+.home-hero > img { opacity: .9; object-position: center 35%; }
+.home-hero::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(#050a0844, transparent 25%, transparent 65%, #101711); }
+.home-heading { position: absolute; top: 15px; left: 17px; z-index: 2; text-shadow: 0 2px 6px #000; }
+.home-heading > span { font: 8px Georgia, serif; letter-spacing: 2px; color: #ecdfb9; }
+.home-heading h1 { font-family: var(--font-title); font-size: 25px; letter-spacing: 4px; color: #f4dfaa; margin: 2px 0; }
+.home-leader { position: absolute; left: 64px; right: 0; top: 44px; bottom: 12px; background: transparent; border: 0; z-index: 1; padding: 0; }
+.home-hero .home-leader img { width: 100%; height: 100%; object-fit: contain; object-position: center bottom; filter: drop-shadow(0 8px 10px #0009); }
+.home-side-links { position: absolute; left: 12px; top: 95px; z-index: 3; display: flex; flex-direction: column; gap: 12px; }
+.home-side-links button { width: 48px; height: 52px; display: grid; justify-items: center; background: linear-gradient(#485046ed, #161b15ed); border: 2px ridge #b9a174; border-radius: 5px; color: #f0deae; font-size: 10px; text-shadow: 0 1px #000; box-shadow: 0 2px 7px #000b; }
+.home-hero .home-side-links svg { position: static; inset: auto; width: 26px; height: 26px; }
+.home-hero .caption { z-index: 2; left: 19px; bottom: 9px; text-shadow: 0 2px 4px #000; }
+.home-hero .caption .place { font-size: 18px; letter-spacing: 3px; }
+.home-hero .caption .small-text { font-size: 11px; color: #e6ddbf; }
+.quest-banner { position: relative; min-height: 85px; flex: none; width: 100%; display: flex; align-items: center; text-align: left; padding: 10px 18px; gap: 13px; border: 0; border-top: 3px double #af925d; border-bottom: 3px double #af925d; background: linear-gradient(100deg, #292e24, #4a4734, #252a23); box-shadow: inset 0 0 20px #070e0bbb; }
+.quest-seal { width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid #9a8255; transform: rotate(45deg); background: #171d15; box-shadow: 0 0 0 3px #88774c33; flex: none; margin: 0 3px; }
+.quest-seal svg { width: 35px; height: 35px; transform: rotate(-45deg); color: #e4cb89; }
+.quest-copy { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.quest-copy small { font-size: 10px; color: #c9bd9d; }
+.quest-copy strong { font-family: var(--font-title); font-size: 20px; letter-spacing: 2px; color: #ffe9b4; }
+.quest-arrow { font: 34px Georgia, serif; color: #d5bb80; }
+.home-party { padding: 10px 14px 12px; background: linear-gradient(#151b16, #252a21); border-bottom: 1px solid #6f6140; }
+.home-section-label { display: flex; align-items: center; justify-content: space-between; font-size: 11px; letter-spacing: 2px; color: #d8c395; margin-bottom: 7px; }
+.home-section-label button { font-size: 10px; background: none; border: 0; color: #dbc798; }
+.home-party-cards { display: flex; justify-content: space-between; gap: 7px; }
+.sanctuary .home-tiles { grid-template-columns: repeat(5, 1fr); gap: 5px; padding: 10px 10px 6px; }
+.sanctuary .tile { background: linear-gradient(#3b3b2d, #1f241c); border: 1px solid #796642; border-radius: 3px; font-size: 9px; padding: 7px 1px; color: #e1cfaa; }
+.sanctuary .tile svg { width: 26px; height: 26px; }
+.sanctuary > .btn { margin: 0 10px 8px; width: calc(100% - 20px); min-height: 30px; font-size: 11px; }
+
+/* 標題與關卡：素材保持完整比例，文字另以深色遮罩承載。 */
+.title-screen { background: linear-gradient(#02080b33 25%, #0b1418bb 63%, #050909dd); justify-content: flex-end; padding-bottom: 120px; }
+.title-screen .logo { width: 100px; height: 100px; }
+.title-screen h1 { font-size: 43px; color: #f5deb1; text-shadow: 0 3px 0 #634427, 0 6px 15px #000; letter-spacing: .18em; }
+.title-screen .en { color: #f3dfb9; font-size: 9px; }
+.title-screen .tap { margin-top: 33px; padding: 11px 44px; border-top: 1px solid #b9a27188; border-bottom: 1px solid #b9a27188; background: linear-gradient(90deg, transparent, #172019cc, transparent); color: #ffebbb; font-size: 14px; }
+.title-screen .ver { color: #c2b89f; }
+.chapter-card { position: relative; min-height: 118px; overflow: hidden; isolation: isolate; border: 2px ridge #9e8557; border-radius: 4px; background: #1b2520; padding: 17px; }
+.chapter-card .chapter-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+.chapter-card:has(.chapter-art)::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #081411ee, #10211a88 70%, #17251a44); z-index: -1; }
+.chapter-card .chapter-name { color: #ffe8b1; text-shadow: 0 2px 4px #000; }
+.chapter-card.locked { opacity: .6; filter: saturate(.45); }
+
+/* 戰鬥：六卡齊排、粉紅生命條、石紋盤面。 */
+.battle { background: #10140f; }
+.battle-top { padding-bottom: 5px; background: linear-gradient(#443e2b, #191b12); border-bottom: 2px ridge #aa8c56; min-height: 43px; }
+.battle-top .stage-name { color: #eadbb6; font-size: 12px; }
+.wave-label { font: bold 12px Georgia, serif; color: #ffe3a6; white-space: nowrap; }
+.battle-bg { opacity: 1; object-position: center; }
+.enemy-zone { align-items: flex-end; padding-bottom: 35px; }
+.enemy-zone::after { content: ''; position: absolute; inset: auto 0 0; height: 50px; background: linear-gradient(transparent, #10140f); pointer-events: none; }
+.enemy-line { z-index: 1; gap: 0; padding: 0 12px; }
+.enemy { flex-basis: 174px; padding: 2px; }
+.enemy-line.boss .enemy { flex-basis: 290px; }
+.enemy-art { filter: drop-shadow(0 8px 6px #0009); }
+.enemy-cd { border: 0; background: transparent; font: bold 22px Georgia, serif; color: #ffe6a0; text-shadow: 1px 2px 2px #000, -1px -1px #000; }
+.enemy-cd::before { content: 'CD '; font: 11px Georgia, serif; }
+.enemy-name { color: #f2ead6; text-shadow: 0 2px 2px #000; max-width: 100%; font-size: 10px; }
+.enemy .bar { height: 6px; border: 1px solid #bda67a; }
+.enemy .bar.hp .fill { background: linear-gradient(#a9e773, #3a892b, #205b1b); }
+.battle-bottom { gap: 2px; padding: 0 6px 6px; background: linear-gradient(#27291e, #11120d); border-top: 2px ridge #baa06a; }
+.team-row { gap: 2px; padding: 4px 0 1px; }
+.team-row .card-thumb { width: 60px; height: 65px; border-radius: 1px; }
+.team-row .card-thumb.skill-ready { border-radius: 1px; }
+.team-row .card-thumb > img { height: 100%; object-fit: cover; }
+.skill-cd { color: #fff7d7; background: #000a; border-radius: 2px; min-width: 23px; font-size: 13px; }
+.helper-tag { border-radius: 1px; background: #c4a36c; }
+.team-hp .bar { height: 20px; border: 2px ridge #bc9a68; border-radius: 0; }
+.team-hp .bar .label { font: bold 12px Georgia, serif; letter-spacing: .5px; }
+.board-canvas { border: 0; border-radius: 0; outline: 1px solid #897449; }
+.board-view { gap: 2px; }
+.move-timer { height: 4px; border-radius: 0; }
+.combo-count { top: auto; bottom: 433px; right: 18px; font: italic bold 34px Georgia, serif; color: #ffe599; text-shadow: 2px 3px #62351c, -1px -1px #ffffcd, 0 0 12px #000; }
+.team-chips:empty { display: none; }
+.chip { background: #182015ec; border-color: #958058; border-radius: 2px; font-size: 10px; }
+@media (prefers-reduced-motion: reduce) { .home-leader { animation: none; } }
