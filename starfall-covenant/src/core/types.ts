@@ -123,13 +123,16 @@ export type LeaderEffect =
   | { type: 'rcvMultiplier'; target?: UnitFilter; value: number }
   | { type: 'damageReduction'; percent: number }
   | { type: 'extendMoveTime'; seconds: number }
-  | { type: 'followUpDamage'; mode: 'multiplier' | 'fixed'; value: number }
+  /** perStep：每超過條件 1 級再加的數值（例：每多消除 1 組心珠追打更多），maxValue 為上限 */
+  | { type: 'followUpDamage'; mode: 'multiplier' | 'fixed'; value: number; perStep?: number; maxValue?: number }
   | { type: 'ignoreDefense' }
   | { type: 'enemyCooldownPlus'; turns: number }
   | { type: 'skillCooldownStart'; charged: boolean }
   /** 每回合全隊技能冷卻額外減少 turns（提案 001，用於技能循環） */
   | { type: 'allyCooldownPerTurn'; turns: number }
-  | { type: 'boardSize'; cols: number; rows: number };
+  | { type: 'boardSize'; cols: number; rows: number }
+  /** 天降珠為強化珠的機率（0–1），和主動技的設定取較高者（用於強化珠增幅） */
+  | { type: 'enhancedSkyfall'; rate: number };
 
 export interface LeaderSkillDef {
   id: string;

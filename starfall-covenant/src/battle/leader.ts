@@ -4,12 +4,12 @@
 // 規則：
 // - 一個隊長技有多條 rule；條件全部成立的 rule 才套用效果，多條 rule 的攻擊倍率相乘。
 //   分段倍率（例：4 色 ×4、5 色 ×6）請用 perStep 表達，不要拆成兩條 rule，否則會相乘。
-// - perStep 的「超過幾級」取 rule 裡第一個可分級的條件：
+// - perStep（攻擊倍率、追打）的「超過幾級」取 rule 裡第一個可分級的條件：
 //   comboAtLeast（超過幾 Combo）、attributesMatched（多幾種）、orbsInOneMatch（最大一組多幾顆）、
 //   heartsMatched（多幾組）、enhancedOrbsMatched（多幾顆）。
 // - heartsMatched 的 count 是心珠「組數」，方便做「每消除 1 組心珠追打」這類設計。
 // - 開場就決定的效果（生命、回復、轉珠時間、盤面大小、敵人 CD、技能初始冷卻）
-//   與每回合技能冷卻加速）只看 always／teamAll 條件；帶其他條件的 rule 不會套用這些效果（lintLeaderSkill 會提醒）。
+//   與每回合技能冷卻加速、強化珠天降）只看 always／teamAll 條件；帶其他條件的 rule 不會套用這些效果（lintLeaderSkill 會提醒）。
 
 import { ATTRIBUTES, type LeaderCondition, type OrbType, type LeaderEffect, type LeaderSkillDef, type UnitFilter } from '../core/types';
 import type { MatchGroup } from './board';
@@ -18,6 +18,7 @@ import type { BattleMember, Hit } from './damage';
 const STATIC_CONDITIONS = new Set<LeaderCondition['type']>(['always', 'teamAll']);
 const STATIC_EFFECTS = new Set<LeaderEffect['type']>([
   'hpMultiplier', 'extendMoveTime', 'boardSize', 'enemyCooldownPlus', 'skillCooldownStart', 'allyCooldownPerTurn',
+  'enhancedSkyfall',
 ]);
 
 const asArray = <T>(v: T | T[] | undefined): T[] | undefined => (v === undefined ? undefined : Array.isArray(v) ? v : [v]);
@@ -46,6 +47,8 @@ export interface LeaderStaticResult {
   skillsStartCharged: boolean;
   /** 每回合技能冷卻額外減少的回合數 */
   allyCooldownPerTurn: number;
+  /** 天降強化珠機率（0–1），多個取最高 */
+  enhancedSkyfall: number;
 }
 
 /** team 為全隊（含助戰）；leaders 依序為隊長、助戰的隊長技，可為 undefined */
@@ -57,6 +60,7 @@ export function evaluateLeaderStatic(leaders: (LeaderSkillDef | undefined)[], te
     enemyCooldownPlus: 0,
     skillsStartCharged: false,
     allyCooldownPerTurn: 0,
+    enhancedSkyfall: 0,
   };
   const ctx = { team } as LeaderTurnContext;
   for (const leader of leaders) {
@@ -87,6 +91,9 @@ export function evaluateLeaderStatic(leaders: (LeaderSkillDef | undefined)[], te
             break;
           case 'allyCooldownPerTurn':
             result.allyCooldownPerTurn += e.turns;
+            break;
+          case 'enhancedSkyfall':
+            result.enhancedSkyfall = Math.max(result.enhancedSkyfall, e.rate);
             break;
         }
       }
@@ -209,13 +216,15 @@ export function evaluateLeaderTurn(leaders: (LeaderSkillDef | undefined)[], ctx:
               if (matchesFilter(m, e.target)) result.rcvMultipliers[i] *= e.value;
             });
             break;
-          case 'followUpDamage':
+          case 'followUpDamage': {
+            const value = steppedValue(e, steps);
             result.followUps.push(
               e.mode === 'fixed'
-                ? { member: -1, target: 'single', amount: e.value, fixed: true }
-                : { member: -1, target: 'single', amount: e.value * totalAtk },
+                ? { member: -1, target: 'single', amount: value, fixed: true }
+                : { member: -1, target: 'single', amount: value * totalAtk },
             );
             break;
+          }
           case 'ignoreDefense':
             result.ignoreDefense = true;
             break;
@@ -242,8 +251,8 @@ export function lintLeaderSkill(def: LeaderSkillDef): string[] {
       }
     }
     for (const e of rule.effects) {
-      if (e.type === 'atkMultiplier' && e.perStep && !rule.conditions.some((c) => STEPPED.has(c.type))) {
-        issues.push(`rule ${i}：atkMultiplier 有 perStep，但沒有可分級的條件`);
+      if ((e.type === 'atkMultiplier' || e.type === 'followUpDamage') && e.perStep && !rule.conditions.some((c) => STEPPED.has(c.type))) {
+        issues.push(`rule ${i}：${e.type} 有 perStep，但沒有可分級的條件`);
       }
     }
   });
@@ -269,6 +278,7 @@ export interface LeaderSkillProfile {
   moveTime: number;
   enemyCooldown: number;
   allyCooldown: number;
+  enhancedSkyfall: number;
   ignoreDefense: boolean;
   /** 出現過的條件／效果種類，用來比對進化前後是否同主題 */
   conditionTypes: Set<LeaderCondition['type']>;
@@ -278,7 +288,7 @@ export interface LeaderSkillProfile {
 export function leaderSkillProfile(def: LeaderSkillDef): LeaderSkillProfile {
   const p: LeaderSkillProfile = {
     rules: def.rules.length, maxConditions: 0, effects: 0, peakAtk: 1, hp: 1, rcv: 1, reduction: 0,
-    fixedFollowUp: 0, moveTime: 0, enemyCooldown: 0, allyCooldown: 0, ignoreDefense: false,
+    fixedFollowUp: 0, moveTime: 0, enemyCooldown: 0, allyCooldown: 0, enhancedSkyfall: 0, ignoreDefense: false,
     conditionTypes: new Set(), effectTypes: new Set(),
   };
   let taken = 1;
@@ -293,10 +303,11 @@ export function leaderSkillProfile(def: LeaderSkillDef): LeaderSkillProfile {
         case 'hpMultiplier': p.hp *= e.value; break;
         case 'rcvMultiplier': p.rcv *= e.value; break;
         case 'damageReduction': taken *= 1 - e.percent / 100; break;
-        case 'followUpDamage': if (e.mode === 'fixed') p.fixedFollowUp += e.value; break;
+        case 'followUpDamage': if (e.mode === 'fixed') p.fixedFollowUp += e.maxValue ?? e.value; break;
         case 'extendMoveTime': p.moveTime += e.seconds; break;
         case 'enemyCooldownPlus': p.enemyCooldown += e.turns; break;
         case 'allyCooldownPerTurn': p.allyCooldown += e.turns; break;
+        case 'enhancedSkyfall': p.enhancedSkyfall = Math.max(p.enhancedSkyfall, e.rate); break;
         case 'ignoreDefense': p.ignoreDefense = true; break;
       }
     }
@@ -317,14 +328,16 @@ export interface LeaderTier {
   moveTime: number;
   enemyCooldown: number;
   allyCooldown: number;
+  /** 天降強化珠機率 */
+  enhancedSkyfall: number;
   ignoreDefense: boolean;
 }
 
 export const LEADER_TIERS: Record<3 | 4 | 5 | 6, LeaderTier> = {
-  3: { rules: 1, maxConditions: 1, effects: 2, peakAtk: 2, stat: 1.2, reduction: 0, fixedFollowUp: 0, moveTime: 0, enemyCooldown: 1, allyCooldown: 0, ignoreDefense: false },
-  4: { rules: 2, maxConditions: 1, effects: 4, peakAtk: 3, stat: 1.5, reduction: 20, fixedFollowUp: 3000, moveTime: 1, enemyCooldown: 1, allyCooldown: 0, ignoreDefense: true },
-  5: { rules: 2, maxConditions: 2, effects: 5, peakAtk: 4, stat: 1.5, reduction: 30, fixedFollowUp: 8000, moveTime: 1, enemyCooldown: 1, allyCooldown: 0, ignoreDefense: true },
-  6: { rules: 3, maxConditions: 2, effects: 6, peakAtk: 6, stat: 2, reduction: 40, fixedFollowUp: 15000, moveTime: 2, enemyCooldown: 1, allyCooldown: 1, ignoreDefense: true },
+  3: { rules: 2, maxConditions: 1, effects: 3, peakAtk: 2, stat: 1.2, reduction: 0, fixedFollowUp: 0, moveTime: 0, enemyCooldown: 1, allyCooldown: 0, enhancedSkyfall: 0.1, ignoreDefense: false },
+  4: { rules: 2, maxConditions: 1, effects: 4, peakAtk: 3, stat: 1.5, reduction: 20, fixedFollowUp: 4000, moveTime: 1, enemyCooldown: 1, allyCooldown: 0, enhancedSkyfall: 0.15, ignoreDefense: true },
+  5: { rules: 2, maxConditions: 2, effects: 5, peakAtk: 4, stat: 1.5, reduction: 30, fixedFollowUp: 10000, moveTime: 1, enemyCooldown: 1, allyCooldown: 0, enhancedSkyfall: 0.2, ignoreDefense: true },
+  6: { rules: 3, maxConditions: 2, effects: 6, peakAtk: 6, stat: 2, reduction: 40, fixedFollowUp: 18000, moveTime: 2, enemyCooldown: 1, allyCooldown: 1, enhancedSkyfall: 0.25, ignoreDefense: true },
 };
 
 /** 檢查隊長技有沒有超出該星數的上限；3★ 以下用 3★ 的上限 */
@@ -346,6 +359,7 @@ export function checkLeaderTier(def: LeaderSkillDef, rarity: number): string[] {
   over('轉珠時間', p.moveTime, tier.moveTime);
   over('敵人 CD', p.enemyCooldown, tier.enemyCooldown);
   over('技能冷卻加速', p.allyCooldown, tier.allyCooldown);
+  over('強化珠天降', p.enhancedSkyfall, tier.enhancedSkyfall);
   if (p.ignoreDefense && !tier.ignoreDefense) issues.push(`${rarity}★ 不能無視防禦`);
   return issues;
 }
@@ -357,7 +371,7 @@ export function checkLeaderEvolution(before: LeaderSkillDef, after: LeaderSkillD
   const issues: string[] = [];
   for (const t of a.conditionTypes) if (!b.conditionTypes.has(t)) issues.push(`進化後少了條件 ${t}`);
   for (const t of a.effectTypes) if (!b.effectTypes.has(t)) issues.push(`進化後少了效果 ${t}`);
-  for (const k of ['peakAtk', 'hp', 'rcv', 'reduction', 'fixedFollowUp', 'moveTime'] as const) {
+  for (const k of ['peakAtk', 'hp', 'rcv', 'reduction', 'fixedFollowUp', 'moveTime', 'enhancedSkyfall'] as const) {
     if (b[k] < a[k] - 1e-9) issues.push(`進化後 ${k} 變弱（${a[k]} → ${b[k]}）`);
   }
   if (JSON.stringify(before.rules) === JSON.stringify(after.rules)) issues.push('進化前後隊長技完全相同');
