@@ -9,6 +9,7 @@ import { pickCard } from '../components/card-picker';
 import { openDialog, toast } from '../components/overlay';
 import { commit, getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
+import { overCostText, suggestSwapOut } from '../team-cost-hint';
 import { cleanTeamName, leaderHighlights, TEAM_NAME_MAX, teamTotals } from '../team-summary';
 import '../convenience.css';
 
@@ -96,10 +97,37 @@ export const teamScreen: ScreenDef = {
         const from = uid ? members.indexOf(uid) : -1;
         if (from >= 0) members[from] = members[slot];
         members[slot] = uid;
-        if (teamCost(members) > limit) return toast(`超過隊伍空間上限 ${limit}`);
+        const total = teamCost(members);
+        if (total > limit) return offerSwap(slot, members, total);
+        saveMembers(members);
+      };
+
+      const saveMembers = (members: (string | null)[]) => {
+        const s = getSave();
         const teams = s.teams.map((t, i) => (i === index ? { ...t, members } : t));
         commit({ ...s, teams });
         draw();
+      };
+
+      // 超過上限：說明幾級可以放入，並建議換下 Cost 最高、最不合流派的隊員
+      const offerSwap = (slot: number, members: (string | null)[], total: number) => {
+        const cards = getSave().inventory.cards;
+        const swap = suggestSwapOut(members.map((uid) => {
+          const c = uid ? cards.find((x) => x.uid === uid) : undefined;
+          return c && uid ? { uid, cost: growth.card(c.cardId)?.cost ?? 0, fits: fit.get(uid)?.fits ?? true } : null;
+        }), slot, total, limit);
+        const swapCard = swap && growth.card(cards.find((c) => c.uid === swap.uid)!.cardId);
+        const text = overCostText(total, limit, swapCard ? { name: swapCard.name, cost: swapCard.cost } : undefined);
+        if (!swap || !swapCard) return toast(text, 3500);
+        const dlg = openDialog('隊伍空間不足', h('p', null, `${text}。`), [
+          button('取消', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
+          button('換下並放入', { variant: 'primary', onClick: () => {
+            dlg.close();
+            const next = [...members];
+            next[swap.slot] = null;
+            saveMembers(next);
+          } }),
+        ]);
       };
 
       host.replaceChildren(

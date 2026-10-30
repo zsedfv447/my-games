@@ -5,7 +5,7 @@ import { createNewSave } from '../src/save/save';
 import {
   addStamina, msUntilFullStamina, msUntilNextStamina, refillStaminaWithGems, regenStamina, spendStamina,
 } from '../src/progression/stamina';
-import { addPlayerExp, expToNext, maxStamina, MAX_PLAYER_LEVEL, teamCostLimit } from '../src/progression/player';
+import { addPlayerExp, expToNext, levelForTeamCost, maxStamina, MAX_PLAYER_LEVEL, teamCostLimit } from '../src/progression/player';
 
 const config = gameData.config;
 const MIN = 60_000;
@@ -96,9 +96,34 @@ describe('玩家等級', () => {
   });
 
   it('隊伍空間上限隨等級成長', () => {
-    expect(teamCostLimit(1)).toBe(30);
-    expect(teamCostLimit(4)).toBe(36);
-    expect(teamCostLimit(50)).toBe(128);
-    expect(teamCostLimit(60)).toBe(138);
+    expect(teamCostLimit(1)).toBe(33);
+    expect(teamCostLimit(4)).toBe(39);
+    expect(teamCostLimit(50)).toBe(131);
+    expect(teamCostLimit(60)).toBe(141);
+  });
+
+  it('Lv1 入門隊可以換進 1 張 5★，Lv10 可以放 2 張 5★', () => {
+    const cost = (id: string) => gameData.cards.find((c) => c.id === id)!.cost;
+    const starter = config.newPlayer.starterCards.map(cost);
+    const five = Math.max(...gameData.cards.filter((c) => c.rarity === 5 && c.race !== 'material').map((c) => c.cost));
+    const minStarter = Math.min(...starter);
+    const sum = starter.reduce((a, b) => a + b, 0);
+    expect(teamCostLimit(1)).toBeGreaterThanOrEqual(sum - minStarter + five);
+    expect(teamCostLimit(10)).toBeGreaterThanOrEqual(sum - 2 * minStarter + 2 * five);
+  });
+
+  it('新公式每一級都不低於舊公式（已存的隊伍不會變成超過上限）', () => {
+    const old = (lv: number) => 30 + (Math.min(lv, 50) - 1) * 2 + Math.max(lv - 50, 0);
+    for (let lv = 1; lv <= MAX_PLAYER_LEVEL; lv++) {
+      expect(teamCostLimit(lv)).toBeGreaterThanOrEqual(old(lv));
+      if (lv > 1) expect(teamCostLimit(lv)).toBeGreaterThan(teamCostLimit(lv - 1));
+    }
+  });
+
+  it('隊伍 Cost 要幾級才放得下', () => {
+    expect(levelForTeamCost(30)).toBe(1);
+    expect(levelForTeamCost(34)).toBe(2);
+    expect(levelForTeamCost(teamCostLimit(20))).toBe(20);
+    expect(levelForTeamCost(10_000)).toBeNull();
   });
 });

@@ -2,14 +2,14 @@
 import { h, type Child } from '../dom';
 import type { CardDef, OwnedCard } from '../../core/types';
 import {
-  awaken, computeStats, enhance, expToNextLevel, limitBreak, maxSkillLevel, nextAwakening, previewEnhance,
+  awaken, computeStats, enhance, enhanceRiskyMaterials, expToNextLevel, limitBreak, maxSkillLevel, nextAwakening, previewEnhance,
   skillCooldown, skillUp, type GrowthResult,
 } from '../../growth';
 import { userAsset } from '../assets';
 import { audio } from '../audio';
 import { badge, bar, button, emptyState, panel, stars, tabs } from '../components/basic';
 import { cardPortrait, cardThumb } from '../components/card-thumb';
-import { openDialog, toast } from '../components/overlay';
+import { confirmDialog, openDialog, toast } from '../components/overlay';
 import { commit, getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
 import {
@@ -35,17 +35,20 @@ export function statTable(lines: StatLine[]): HTMLElement {
   }));
 }
 
-/** 成功演出：立繪閃光＋大字；按確定或點背景關閉 */
-// 存檔與換頁要在呼叫前完成：點背景關閉時不會有任何回呼
-export function celebrate(def: CardDef, headline: string, detail: Child, sound: 'win' | 'skill' | 'summon-release' = 'win'): void {
+type CelebrateSound = 'win' | 'skill' | 'summon-release';
+
+/** 成功演出：立繪閃光＋大字；按確定或點背景關閉，關閉後才呼叫 onClose（例如更新畫面） */
+export function celebrate(def: CardDef, headline: string, detail: Child, sound: CelebrateSound = 'win', onClose?: () => void): void {
   audio.play(sound);
   const dlg = openDialog(headline, h('div', { class: 'growth-celebrate' },
     h('div', { class: 'burst' }),
     cardPortrait(def),
     h('div', { class: 'headline' }, headline),
     h('div', { class: 'detail' }, detail),
-  ), [button('確定', { variant: 'primary', block: true, onClick: () => dlg.close() })]);
+  ), [button('確定', { variant: 'primary', block: true, onClick: () => dlg.close() })], { onClose });
 }
+
+interface Celebration { headline: string; detail: Child; sound?: CelebrateSound }
 
 interface ModeView {
   /** 上方說明（等級與經驗、技能冷卻…） */
@@ -56,8 +59,12 @@ interface ModeView {
   blocked?: string;
   coin: number;
   canRun: boolean;
-  run: () => GrowthResult<object>;
-  onSuccess: (before: OwnedCard, after: OwnedCard) => void;
+  /** confirmed：玩家已在確認框同意吃掉高星角色卡 */
+  run: (confirmed: boolean) => GrowthResult<object>;
+  /** 需要先確認的素材（強化吃 4★ 以上角色卡） */
+  risky?: string[];
+  /** 成功後的演出內容；畫面等演出關閉後才更新，避免先看到結果 */
+  onSuccess: (before: OwnedCard, after: OwnedCard) => Celebration;
   autoPick: () => string[];
 }
 
@@ -69,8 +76,42 @@ export const enhanceScreen: ScreenDef = {
   render({ route, nav }) {
     const uid = route.args[0];
     let mode: GrowthMode = parseMode(route.query.mode);
-    let selected: string[] = [];
+    // 從素材卡詳情「拿去強化…」過來時，先放好那張素材
+    let selected: string[] = route.query.mat ? [route.query.mat] : [];
+    // 防連點：確認框開著、或演出還沒關時不再執行
+    let busy = false;
     const root = h('div', { class: 'growth-screen', style: growthBackdrop() });
+
+    const runMode = async (btn: HTMLButtonElement, view: ModeView, owned: OwnedCard, def: CardDef) => {
+      if (busy) return;
+      busy = true;
+      btn.disabled = true;
+      let celebrating = false;
+      try {
+        const save = getSave();
+        const risky = view.risky ?? [];
+        if (risky.length) {
+          const ok = await confirmDialog('確認素材', h('div', null,
+            h('p', { style: { margin: '0 0 8px' } }, `素材裡有 ${risky.length} 張 ${growth.rules.enhanceConfirmRarity}★ 以上的角色卡，強化後會消失。確定要用嗎？`),
+            h('div', { class: 'row wrap', style: { gap: '6px' } }, risky.map((m) => {
+              const c = save.inventory.cards.find((x) => x.uid === m)!;
+              return cardThumb(growth.card(c.cardId)!, { level: c.level, size: 44 });
+            }))), '確定強化');
+          if (!ok) return;
+        }
+        const r = view.run(risky.length > 0);
+        if (!r.ok) return toast(r.error.message);
+        commit(r.save);
+        const after = r.save.inventory.cards.find((c) => c.uid === uid)!;
+        selected = [];
+        const show = view.onSuccess(owned, after);
+        celebrating = true;
+        // 演出關閉後才更新畫面，結果不會被提前看到
+        celebrate(def, show.headline, show.detail, show.sound, () => { busy = false; draw(); });
+      } finally {
+        if (!celebrating) { busy = false; btn.disabled = false; }
+      }
+    };
     const body = h('div', { class: 'growth-body' });
 
     const draw = () => {
@@ -128,20 +169,7 @@ export const enhanceScreen: ScreenDef = {
           button(GROWTH_MODES.find((m) => m.id === mode)!.label, {
             variant: 'primary', block: true, disabled: !view.canRun || coinShort,
             cost: view.coin ? { kind: 'coin', amount: view.coin } : undefined,
-            onClick: (e) => {
-              // 防連點：先停用這顆按鈕，成功後 draw() 會換上新的按鈕
-              const btn = e.currentTarget as HTMLButtonElement;
-              if (btn.disabled) return;
-              btn.disabled = true;
-              const r = view.run();
-              if (!r.ok) btn.disabled = false;
-              if (!r.ok) return toast(r.error.message);
-              commit(r.save);
-              const after = r.save.inventory.cards.find((c) => c.uid === uid)!;
-              selected = [];
-              draw();
-              view.onSuccess(owned, after);
-            },
+            onClick: (e) => void runMode(e.currentTarget as HTMLButtonElement, view, owned, def),
           })),
         def.evolution ? button(owned.level >= def.maxLevel ? '可以進化了！前往進化' : `進化（需 Lv${def.maxLevel}）`, {
           block: true, variant: owned.level >= def.maxLevel ? undefined : 'ghost', onClick: () => nav.go('evolve', [uid]),
@@ -182,11 +210,14 @@ function modeView(mode: GrowthMode, owned: OwnedCard, def: CardDef, selected: st
       blocked: maxed ? '已經是最高等級，不需要再強化' : undefined,
       coin: p?.ok ? p.coin : 0,
       canRun: !!p?.ok,
-      run: () => enhance(getSave(), growth, owned.uid, selected),
-      onSuccess: (before, after) => celebrate(def, after.level > before.level ? '等級提升！' : '強化完成',
-        h('div', null,
+      run: (confirmed) => enhance(getSave(), growth, owned.uid, selected, { confirmRisky: confirmed }),
+      risky: enhanceRiskyMaterials(save, growth, selected),
+      onSuccess: (before, after) => ({
+        headline: after.level > before.level ? '等級提升！' : '強化完成',
+        detail: h('div', null,
           h('div', { class: 'growth-level-jump big' }, h('span', null, `Lv ${before.level}`), h('span', { class: 'arrow' }, '→'), h('strong', { class: 'up' }, `Lv ${after.level}`)),
-          statTable(statLines(computeStats(def, before, growth.rules), computeStats(def, after, growth.rules))))),
+          statTable(statLines(computeStats(def, before, growth.rules), computeStats(def, after, growth.rules)))),
+      }),
       autoPick: () => autoPickEnhance(getSave(), growth, owned.uid),
     };
   }
@@ -206,8 +237,11 @@ function modeView(mode: GrowthMode, owned: OwnedCard, def: CardDef, selected: st
       coin: 0,
       canRun: !!skill && selected.length > 0,
       run: () => skillUp(getSave(), growth, owned.uid, selected),
-      onSuccess: (before, after) => celebrate(def, '技能升級！', h('div', { class: 'growth-level-jump big' },
-        h('span', null, `Lv ${before.skillLevel}`), h('span', { class: 'arrow' }, '→'), h('strong', { class: 'up' }, `Lv ${after.skillLevel}`)), 'skill'),
+      onSuccess: (before, after) => ({
+        headline: '技能升級！', sound: 'skill',
+        detail: h('div', { class: 'growth-level-jump big' },
+          h('span', null, `Lv ${before.skillLevel}`), h('span', { class: 'arrow' }, '→'), h('strong', { class: 'up' }, `Lv ${after.skillLevel}`)),
+      }),
       autoPick: () => autoPickCount(materialOptions(getSave(), growth, owned.uid, 'skill'), max - owned.skillLevel),
     };
   }
@@ -226,9 +260,12 @@ function modeView(mode: GrowthMode, owned: OwnedCard, def: CardDef, selected: st
       coin: 0,
       canRun: selected.length > 0,
       run: () => limitBreak(getSave(), growth, owned.uid, selected),
-      onSuccess: (before, after) => celebrate(def, '突破成功！', h('div', null,
-        h('div', { class: 'growth-level-jump big' }, h('span', null, `+${before.limitBreak}`), h('span', { class: 'arrow' }, '→'), h('strong', { class: 'up' }, `+${after.limitBreak}`)),
-        statTable(statLines(computeStats(def, before, growth.rules), computeStats(def, after, growth.rules))))),
+      onSuccess: (before, after) => ({
+        headline: '突破成功！',
+        detail: h('div', null,
+          h('div', { class: 'growth-level-jump big' }, h('span', null, `+${before.limitBreak}`), h('span', { class: 'arrow' }, '→'), h('strong', { class: 'up' }, `+${after.limitBreak}`)),
+          statTable(statLines(computeStats(def, before, growth.rules), computeStats(def, after, growth.rules)))),
+      }),
       autoPick: () => autoPickCount(materialOptions(getSave(), growth, owned.uid, 'limit'), max - owned.limitBreak),
     };
   }
@@ -256,7 +293,7 @@ function modeView(mode: GrowthMode, owned: OwnedCard, def: CardDef, selected: st
     coin: req?.coin ?? 0,
     canRun: !!req && gateOk && selected.length === req.materials,
     run: () => awaken(getSave(), growth, owned.uid, selected),
-    onSuccess: () => celebrate(def, '星紋覺醒！', h('strong', { class: 'up' }, req ? passiveText(req.passive) : ''), 'summon-release'),
+    onSuccess: () => ({ headline: '星紋覺醒！', sound: 'summon-release', detail: h('strong', { class: 'up' }, req ? passiveText(req.passive) : '') }),
     autoPick: () => autoPickCount(materialOptions(getSave(), growth, owned.uid, 'awaken'), req?.materials ?? 0),
   };
 }
