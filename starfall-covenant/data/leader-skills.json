@@ -747,6 +747,10 @@
           {
             "type": "skillCooldownStart",
             "charged": true
+          },
+          {
+            "type": "allyCooldownPerTurn",
+            "turns": 1
           }
         ]
       },

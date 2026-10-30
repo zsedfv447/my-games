@@ -527,6 +527,11 @@
       {
         "type": "enhanceOrbs",
         "orbs": "all"
+      },
+      {
+        "type": "setEnhancedSkyfallRate",
+        "rate": 0.3,
+        "turns": 3
       }
     ],
     "description": "強化全部珠子，3 回合內天降強化珠機率提升到 30%。"
@@ -906,7 +911,8 @@
     },
     "effects": [
       {
-        "type": "balanceBoard"
+        "type": "fillMissingOrbs",
+        "count": 3
       },
       {
         "type": "extendMoveTime",
