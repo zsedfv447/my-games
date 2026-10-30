@@ -71,4 +71,13 @@ describe('強化', () => {
     expect(materialBaseExp(ctx.card('c905')!, { level: 1 }, ctx)).toBe(1000);
     expect(materialBaseExp(ctx.card('c107')!, { level: 11 }, ctx)).toBe(200);
   });
+
+  it('經驗表調整前的存檔：經驗超過新的滿級經驗時，強化不會算出負的經驗', () => {
+    const def = ctx.card('c106')!;
+    const save = makeSave([owned('u1', 'c106', { level: 20, exp: maxExp(def, ctx.rules) + 5000 }), owned('u2', 'c905')]);
+    const p = previewEnhance(save, ctx, 'u1', ['u2']);
+    expect(p.ok && [p.expGained, p.levelAfter]).toEqual([0, def.maxLevel]);
+    const r = enhance(save, ctx, 'u1', ['u2']);
+    expect(r.ok && r.card.exp).toBe(maxExp(def, ctx.rules));
+  });
 });

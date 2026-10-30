@@ -42,8 +42,10 @@ export interface GrowthRules {
 }
 
 export const GROWTH_RULES: GrowthRules = {
-  expScale: { 1: 2, 2: 3, 3: 4, 4: 6, 5: 8, 6: 10 },
-  expExponent: 2.5,
+  // 依 sim --progress 校正（tools/sim/reports/2026-10-31-card-exp-curve.md）：
+  // 照主線推進，3★ 約第 3 章末滿級可進化，5★ 約第 5 章前段滿級；稀有度越高每級需要的經驗越多
+  expScale: { 1: 100, 2: 104, 3: 108, 4: 110, 5: 112, 6: 116 },
+  expExponent: 1.3,
   sameAttributeExpBonus: 1.5,
   materialLevelExpBonus: 0.1,
   enhanceCoinPerMaterialLevel: 100,
@@ -63,4 +65,10 @@ export const GROWTH_RULES: GrowthRules = {
   sellConfirmRarity: 5,
   inventoryWarnFree: 5,
   collectionGems: { 1: 0, 2: 0, 3: 1, 4: 1, 5: 3, 6: 5 },
+};
+
+/** 經驗表調整（2026-10-31）之前的曲線；讀舊存檔時用來換算卡片經驗（見 level.ts 的 normalizeCardExp） */
+export const LEGACY_EXP_CURVE: Pick<GrowthRules, 'expScale' | 'expExponent'> = {
+  expScale: { 1: 2, 2: 3, 3: 4, 4: 6, 5: 8, 6: 10 },
+  expExponent: 2.5,
 };

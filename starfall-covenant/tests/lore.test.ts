@@ -69,6 +69,9 @@ describe('收集殘頁', () => {
     const notes = loreNotes(last);
     expect(notes[0].text).toContain('獲得星骸殘頁');
     expect(notes[1]).toMatchObject({ big: true });
+    // 結算上收成小標籤，點了可以前往劇情回顧的殘頁分頁（#71）
+    expect(notes[0]).toMatchObject({ chip: '📜 殘頁', go: 'stories/lore' });
+    expect(notes[1]).toMatchObject({ chip: '📜 隱藏對話', go: 'stories/lore' });
     expect(loreNotes({ save })).toEqual([]);
   });
 });

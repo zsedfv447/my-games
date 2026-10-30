@@ -2,7 +2,7 @@
 // 規則全部在 save/、progression/、growth/ 的純函式；這裡只負責保存目前的存檔與時間。
 import type { SaveData } from '../core/types';
 import { gameData } from '../data/load';
-import { createGrowthContext, type GrowthContext } from '../growth';
+import { createGrowthContext, normalizeSaveCardExp, type GrowthContext } from '../growth';
 import { maxStamina } from '../progression/player';
 import { msUntilNextStamina, regenStamina } from '../progression/stamina';
 import {
@@ -53,6 +53,8 @@ function pickStorage(): SaveStorage {
 const storage = pickStorage();
 const config = gameData.config;
 
+export const growth: GrowthContext = createGrowthContext(gameData);
+
 let save: SaveData;
 /** 讀檔失敗（校驗碼不符、格式壞掉）時的原因；畫面據此詢問玩家要不要重置 */
 let loadProblem: Exclude<LoadResult, { ok: true }>['reason'] | null = null;
@@ -60,7 +62,8 @@ let loadProblem: Exclude<LoadResult, { ok: true }>['reason'] | null = null;
 {
   const loaded = loadSave(storage, config, Date.now());
   if (loaded.ok) {
-    save = withStarterCards(loaded.save);
+    // 經驗表改版：保留等級，把舊存檔的卡片經驗換算到新曲線（冪等，每次讀檔都套用）
+    save = withStarterCards(normalizeSaveCardExp(loaded.save, growth));
   } else {
     loadProblem = loaded.reason;
     // 不覆蓋壞掉的存檔，先用新存檔在記憶體裡玩，等玩家決定
@@ -91,7 +94,6 @@ try {
 }
 audio.setVolumes(save.settings.bgm, save.settings.sfx);
 
-export const growth: GrowthContext = createGrowthContext(gameData);
 
 /** 目前存檔（已結算體力回復）；請當作唯讀 */
 export function getSave(): SaveData {
@@ -173,7 +175,7 @@ export function importCode(code: string): string | null {
   const result = importSaveCode(code, config, Date.now());
   if (!result.ok) return LOAD_ERRORS[result.reason];
   loadProblem = null;
-  commit(result.save);
+  commit(normalizeSaveCardExp(result.save, growth));
   return null;
 }
 
