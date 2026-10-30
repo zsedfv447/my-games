@@ -2,7 +2,7 @@
 import type { GameConfig, Reward } from '../core/types';
 import type { ResourceIcon } from './art/icons';
 import type { SfxName } from './audio';
-import { tokenName } from './economy';
+import { rewardParts, tokenName } from './economy';
 import { maxStamina, teamCostLimit, type LevelUpInfo } from '../progression/player';
 import type { StageClearResult } from '../progression/stages';
 
@@ -137,16 +137,16 @@ export function levelUpView(info: LevelUpInfo, config: GameConfig): LevelUpView 
   };
 }
 
-/** 關卡列表的首通預告文字；沒有首通獎勵回傳 null */
+/** 關卡列表的首通預告文字（「首通：星晶 +1、獸王代幣 +20」）；沒有首通獎勵回傳 null */
 export function firstClearPreview(reward: Reward | undefined, cleared: boolean): { text: string; claimed: boolean; icon: ResourceIcon | 'card' } | null {
   if (!reward) return null;
   const items = rewardItems(reward);
   if (!items.length) return null;
   const top = items.at(-1)!;
-  const amount = top.kind === 'count' ? ` +${top.amount.toLocaleString()}` : '';
-  const more = items.length > 1 ? ' 等' : '';
+  // 列出每一項實際的獎勵；數量寫成「+N」
+  const list = rewardParts(reward).map((p) => p.label.replace(' ×', ' +')).join('、');
   return {
-    text: cleared ? '首通 已領' : `首通${amount}${more}`,
+    text: cleared ? '首通 已領' : `首通：${list}`,
     claimed: cleared,
     icon: top.kind === 'count' ? (top.icon === 'exp' ? 'gem' : top.icon) : 'card',
   };

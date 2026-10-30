@@ -35,6 +35,14 @@ export function advanceTutorial(save: SaveData, from: TutorialStep): SaveData {
 
 export const skipTutorial = (save: SaveData): SaveData => setTutorialStep(save, 'done');
 
+/**
+ * 略過教學：還沒領過召喚贈禮的話直接補發（熟手玩家略過也不吃虧）；老玩家重看後再略過不會重複送。
+ * granted 是這次補發的星晶，呼叫端據此播領獎演出。
+ */
+export function skipTutorialWithGift(save: SaveData, gems: number): { save: SaveData; granted: number } {
+  return grantSummonGift(skipTutorial(save), gems);
+}
+
 /** 從設定重看：回到教學戰鬥。召喚贈禮只送一次 */
 export const restartTutorial = (save: SaveData): SaveData => setTutorialStep(save, 'battle');
 

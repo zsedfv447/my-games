@@ -8,8 +8,9 @@ import { confirmDialog, toast } from '../components/overlay';
 import { revealReward } from '../components/reward-reveal';
 import type { Navigator, Route, ScreenDef } from '../router';
 import { commit, getSave, growth, onStateChange } from '../state';
-import { FIRST_STAGE, advanceTutorial, grantSummonGift, guideFor, skipTutorial, tutorialStep, type GuideAction, type TeamFitHint } from './flow';
+import { FIRST_STAGE, advanceTutorial, grantSummonGift, guideFor, tutorialStep, type GuideAction, type TeamFitHint } from './flow';
 import { GuideLayer } from './guide-ui';
+import { skipTutorialNow } from './skip';
 
 export interface TutorialController {
   onRoute(screen: ScreenDef, el: HTMLElement, route: Route): void;
@@ -37,8 +38,8 @@ export function installTutorial(stage: HTMLElement, nav: Navigator): TutorialCon
 
   const askSkip = async () => {
     if (!(await confirmDialog('略過教學', '之後可以在「設定」重看新手教學。確定要略過嗎？', '略過'))) return;
-    commit(skipTutorial(getSave()));
     toast('已略過新手教學');
+    await skipTutorialNow();
   };
 
   const refresh = () => {
