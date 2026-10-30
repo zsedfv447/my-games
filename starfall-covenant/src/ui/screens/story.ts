@@ -19,7 +19,7 @@ export function markStorySeen(id: string): void {
 
 const lore: LoreData = gameData.lore ?? { volumes: [] };
 
-const PART_NAMES: Record<string, string> = { open: '開場', mid: '途中', boss: '決戰前', end: '尾聲', stars: '星章' };
+const PART_NAMES: Record<string, string> = { open: '開場', mid: '途中', mid2: '途中・二', boss: '決戰前', end: '尾聲', stars: '星章' };
 
 /** 劇情 id 轉成回顧列表上的標題 */
 export function storyTitle(id: string): string {
