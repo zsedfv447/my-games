@@ -112,6 +112,8 @@ export const cardsScreen: ScreenDef = {
             RARITY_CHIPS.map((r) => chip(r.label, r.values.every((v) => filter.rarity.includes(v)), () => setFilter({ ...filter, rarity: toggleValues(filter.rarity, r.values) })))),
           h('div', { class: 'chip-row' }, h('span', { class: 'chip-label' }, '種族'),
             RACE_CHIPS.map((r) => chip(RACE_NAMES[r], filter.race.includes(r), () => setFilter({ ...filter, race: toggleValues(filter.race, [r]) })))),
+          h('div', { class: 'chip-row' }, h('span', { class: 'chip-label' }, '流派'),
+            gameData.archetypes.map((a) => chip(a.name, filter.archetype.includes(a.id), () => setFilter({ ...filter, archetype: toggleValues(filter.archetype, [a.id]) })))),
           nFilter > 0 && h('div', { class: 'row between' },
             h('span', { class: 'small-text dim' }, `符合 ${list.length} 張`),
             button('清除篩選', { small: true, variant: 'ghost', onClick: () => setFilter(emptyBagFilter()) }))),
