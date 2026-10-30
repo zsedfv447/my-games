@@ -129,6 +129,8 @@ export interface StageClearResult {
   playerExp: number;
   /** 給出戰隊員的卡片經驗，由養成模組發放 */
   cardExp: number;
+  /** 每次通關都給的活動代幣 */
+  tokens?: Record<string, number>;
   firstClear?: Reward;
   drops: { cardId: string; uid: string }[];
   stars: boolean[];
@@ -171,6 +173,8 @@ export function completeStage(
     },
   };
 
+  const tokens = stage.rewards.tokens && Object.keys(stage.rewards.tokens).length ? stage.rewards.tokens : undefined;
+  if (tokens) s = grantReward(s, { tokens }, config, now).save;
   const firstClear = firstTime ? stage.rewards.firstClear : undefined;
   if (firstClear) s = grantReward(s, firstClear, config, now).save;
 
@@ -186,6 +190,7 @@ export function completeStage(
       coin: stage.rewards.coin,
       playerExp: stage.rewards.playerExp,
       cardExp: stage.rewards.cardExp ?? 0,
+      ...(tokens ? { tokens } : {}),
       ...(firstClear ? { firstClear } : {}),
       drops: dropped.added.map((c) => ({ cardId: c.cardId, uid: c.uid })),
       stars,

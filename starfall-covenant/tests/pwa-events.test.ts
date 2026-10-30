@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import manifest from '../public/manifest.webmanifest?raw';
 import { gameData } from '../src/data/load';
 import { validateGameData } from '../src/data/validate';
-import { eventStatusText, eventWindow, formatCountdown, isEventOpen, openEventIds, type EventDef } from '../src/progression/events';
+import { eventStatusText, eventWindow, formatCountdown, isEventOpen, type EventDef } from '../src/progression/events';
 import { stageLockReason } from '../src/progression/stages';
 import { createNewSave } from '../src/save/save';
 import { buildVersion, cacheableSize, entriesToTrim, keysToDelete, RUNTIME_CACHE_LIMIT, shellFiles, strategyFor } from '../src/pwa/strategy';
@@ -30,7 +30,7 @@ describe('活動期間', () => {
   });
 
   it('沒有檔期就是常駐', () => {
-    expect(eventStatusText(ev(null), 0)).toBe('常駐開放');
+    expect(eventStatusText(ev(null), 0)).toBe('常駐');
     expect(isEventOpen(ev(null), at('2099-01-01T00:00:00'))).toBe(true);
   });
 
@@ -43,16 +43,15 @@ describe('活動期間', () => {
     expect(eventStatusText(e, at('2026-10-31T23:00:00'))).toBe('01:00:00 後開放');
   });
 
-  it('活動關卡只在檔期內能進', () => {
-    const stage = gameData.stages.find((s) => s.kind === 'event')!;
+  it('活動關卡只在檔期內能進：齒輪活動 14 天開、7 天休；獸王常駐', () => {
+    const gear = gameData.stages.find((s) => s.event === 'ev-gear-theft')!;
+    const beast = gameData.stages.find((s) => s.event === 'ev-beast-call')!;
     const save = createNewSave(gameData.config, 0);
-    const [beast] = gameData.events;
-    // 現有活動設很長的檔期：v0.1 期間不會被關掉
-    const open = at('2026-11-12T12:00:00');
-    const closed = at('2028-01-02T00:00:00');
-    expect(openEventIds(gameData.events, open).has(beast.id)).toBe(true);
-    expect(stageLockReason(save, stage, stageContext(gameData.stages, gameData.events, open), open)).toBeNull();
-    expect(stageLockReason(save, stage, stageContext(gameData.stages, gameData.events, closed), closed)).toBe('eventClosed');
+    const lock = (stage: typeof gear, now: number) => stageLockReason(save, stage, stageContext(gameData.stages, gameData.events, now), now);
+    expect(lock(gear, at('2026-11-01T12:00:00'))).toBeNull();
+    expect(lock(gear, at('2026-11-12T12:00:00'))).toBe('eventClosed');
+    expect(lock(gear, at('2026-11-17T12:00:00'))).toBeNull();
+    for (const t of ['2026-11-12T12:00:00', '2030-01-01T00:00:00']) expect(lock(beast, at(t))).toBeNull();
   });
 
   it('資料驗證：活動關卡要對應 events.json', () => {

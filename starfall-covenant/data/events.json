@@ -5,6 +5,14 @@
     "summary": "獸座的群獸應召而來。擊敗活動 Boss 取得獸王代幣，到商店兌換金鬃獅王與獸裔夥伴。",
     "token": "token-beast",
     "tokenName": "獸王代幣",
-    "period": { "start": "2026-10-26T00:00:00", "end": "2027-12-31T23:59:59" }
+    "period": null
+  },
+  {
+    "id": "ev-gear-theft",
+    "name": "工匠座的失竊齒輪",
+    "summary": "鏽齒工坊的大齒輪不見了，整座工坊停了下來。追查偷走齒輪的機構星靈，收集黃銅齒輪兌換熔軌工匠卡朵與機構夥伴。",
+    "token": "token-gear",
+    "tokenName": "黃銅齒輪",
+    "period": { "start": "2026-10-26T00:00:00", "end": "2026-11-09T00:00:00", "repeatDays": 21 }
   }
 ]

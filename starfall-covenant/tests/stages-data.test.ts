@@ -6,12 +6,12 @@ const { stages, chapters } = gameData;
 const byKind = (kind: string) => stages.filter((s) => s.kind === kind);
 
 describe('關卡資料（docs/stage-plan.md）', () => {
-  it('數量：主線第 1～5 章各 9 關、第 6 章先上 3 關（預定 9 關）、每日 21、活動 5、塔 30、試煉 12', () => {
+  it('數量：主線第 1～5 章各 9 關、第 6 章先上 3 關（預定 9 關）、每日 21、活動 10（獸王 5＋齒輪 5）、塔 30、試煉 12', () => {
     expect(chapters.map((c) => c.chapter)).toEqual([1, 2, 3, 4, 5, 6]);
     for (const c of chapters) expect(byKind('main').filter((s) => s.chapter === c.chapter)).toHaveLength(c.chapter === 6 ? 3 : 9);
     expect(chapters[5].stageCount).toBe(9);
     expect(byKind('daily')).toHaveLength(21);
-    expect(byKind('event')).toHaveLength(5);
+    expect(byKind('event')).toHaveLength(10);
     expect(byKind('tower')).toHaveLength(30);
     expect(byKind('trial')).toHaveLength(12);
   });
