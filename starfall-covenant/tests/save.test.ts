@@ -108,7 +108,7 @@ describe('存檔 v2 → v3 遷移（章節星章獎勵）', () => {
   };
 
   it('補上空的已領取清單，其他進度不變', () => {
-    const out = migrate(v2());
+    const out = migrate(v2(), undefined, 3);
     expect(out.version).toBe(3);
     expect(out.progress).toMatchObject({ clearedStages: ['st-1-1'], stars: { 'st-1-1': [true, true, true] }, chapterRewardsClaimed: [] });
   });
@@ -123,7 +123,7 @@ describe('存檔 v2 → v3 遷移（章節星章獎勵）', () => {
     const r = importSaveCode(exportSaveCode(v2() as never), config, NOW);
     expect(r.ok && r.migratedFrom).toBe(2);
     if (!r.ok) return;
-    expect(r.save.version).toBe(3);
+    expect(r.save.version).toBe(CURRENT_SAVE_VERSION);
     expect(r.save.progress.chapterRewardsClaimed).toEqual([]);
     const again = importSaveCode(exportSaveCode(r.save), config, NOW);
     expect(again).toEqual({ ok: true, save: r.save });
@@ -134,7 +134,7 @@ describe('存檔 v2 → v3 遷移（章節星章獎勵）', () => {
     const r = importSaveCode(OLD_V2_CODE, config, NOW);
     expect(r.ok && r.migratedFrom).toBe(2);
     if (!r.ok) return;
-    expect(r.save.version).toBe(3);
+    expect(r.save.version).toBe(CURRENT_SAVE_VERSION);
     expect(r.save.player).toMatchObject({ name: '舊玩家', level: 7, coin: 3456, gems: 21 });
     expect(r.save.progress).toEqual({
       clearedStages: ['st-1-1', 'st-1-2'], stars: { 'st-1-1': [true, true, false] }, towerFloor: 3, tutorialDone: true,
@@ -148,5 +148,51 @@ describe('存檔 v2 → v3 遷移（章節星章獎勵）', () => {
     const v3 = createNewSave(config, NOW);
     v3.progress.chapterRewardsClaimed = [1, 2];
     expect(migrate(v3 as unknown as Record<string, unknown>)).toEqual(v3);
+  });
+});
+
+describe('存檔 v3 → v4 遷移（中斷續戰）', () => {
+  it('補上 activeBattle: null，其他欄位不變', () => {
+    const { activeBattle: _drop, ...rest } = createNewSave(config, NOW);
+    const v3 = { ...rest, version: 3 };
+    const out = migrate(v3);
+    expect(out.version).toBe(4);
+    expect(out).toEqual({ ...v3, version: 4, activeBattle: null });
+  });
+
+  it('凍結的 v3 舊匯出碼：升到 v4，沒有進行中的戰鬥，其他進度原樣保留', () => {
+    // 由 v3 版本格式手寫的存檔產生，不經過現在的 createNewSave
+    const OLD_V3_CODE = 'eyJkYXRhIjp7InZlcnNpb24iOjMsInBsYXllciI6eyJuYW1lIjoidjPnjqnlrrYiLCJsZXZlbCI6MTIsImV4cCI6NSwiY29pbiI6OTAwMCwiZ2VtcyI6NDAsInRva2VucyI6e319LCJzdGFtaW5hIjp7ImN1cnJlbnQiOjE4LCJsYXN0VXBkYXRlIjoxNzkzMzAwMDAwMDAwfSwiaW52ZW50b3J5Ijp7ImNhcGFjaXR5IjoxMDAsImNhcmRzIjpbeyJ1aWQiOiJ1MSIsImNhcmRJZCI6ImMxMDYiLCJsZXZlbCI6MjAsImV4cCI6MTUwMCwic2tpbGxMZXZlbCI6MiwibGltaXRCcmVhayI6MCwiYXdha2VuZWQiOjAsImxvY2tlZCI6dHJ1ZSwib2J0YWluZWRBdCI6MTc5MzMwMDAwMDAwMH1dfSwidGVhbXMiOlt7Im5hbWUiOiLpmorkvI0xIiwibWVtYmVycyI6WyJ1MSIsbnVsbCxudWxsLG51bGwsbnVsbF19XSwiYWN0aXZlVGVhbSI6MCwicHJvZ3Jlc3MiOnsiY2xlYXJlZFN0YWdlcyI6WyJzdC0xLTEiXSwic3RhcnMiOnsic3QtMS0xIjpbdHJ1ZSx0cnVlLHRydWVdfSwidG93ZXJGbG9vciI6MCwidHV0b3JpYWxEb25lIjp0cnVlLCJzdG9yeVNlZW4iOltdLCJjaGFwdGVyUmV3YXJkc0NsYWltZWQiOlsxXX0sInR1dG9yaWFsIjp7InN0ZXAiOiJkb25lIiwiZ2lmdEdpdmVuIjp0cnVlfSwiZ2FjaGEiOnsicGl0eUNvdW50ZXIiOnt9LCJoaXN0b3J5IjpbXX0sImNvbGxlY3Rpb24iOnsic2VlbiI6WyJjMTA2Il0sIm93bmVkIjpbImMxMDYiXSwiY2xhaW1lZCI6W119LCJxdWVzdHMiOnsiY291bnRlcnMiOnt9LCJjbGFpbWVkIjpbXSwiZGFpbHlSZXNldEF0IjoiIiwid2Vla2x5UmVzZXRBdCI6IiJ9LCJkYWlseSI6eyJsb2dpbkRheSI6MywibGFzdExvZ2luIjoiMjAyNi0xMC0zMSIsInNob3BQdXJjaGFzZXMiOnt9fSwic2V0dGluZ3MiOnsiYmdtIjowLjgsInNmeCI6MC44LCJiYXR0bGVTcGVlZCI6MX19LCJjaGVja3N1bSI6IjUxMTQwZGQ1In0=';
+    const r = importSaveCode(OLD_V3_CODE, config, NOW);
+    expect(r.ok && r.migratedFrom).toBe(3);
+    if (!r.ok) return;
+    expect(r.save.version).toBe(4);
+    expect(r.save.activeBattle).toBeNull();
+    expect(r.save.player).toMatchObject({ name: 'v3玩家', level: 12, coin: 9000, gems: 40 });
+    expect(r.save.progress.chapterRewardsClaimed).toEqual([1]);
+    expect(r.save.inventory.cards[0]).toMatchObject({ uid: 'u1', level: 20, exp: 1500, skillLevel: 2, locked: true });
+  });
+
+  it('冪等：已有進行中戰鬥的 v4 存檔，再存讀一次完全不變', () => {
+    const save = {
+      ...createNewSave(config, NOW),
+      activeBattle: {
+        stageId: 'st-1-1', seed: 123, members: [{ cardId: 'c106', level: 5, uid: 'u1' }], helper: null,
+        drops: { stageId: 'st-1-1', drops: [{ cardId: 'c106', wave: 0, enemy: 1 }] }, startedAt: NOW, snapshot: null,
+      },
+    };
+    expect(migrate(save as unknown as Record<string, unknown>)).toEqual(save);
+    const r = importSaveCode(exportSaveCode(save), config, NOW);
+    expect(r).toEqual({ ok: true, save });
+  });
+
+  it('v3 存檔帶著契印師手札 records（outside-battle 的選填欄位），遷移到 v4 後原樣保留', () => {
+    const records = { battles: 12, wins: 9, maxCombo: 11, maxTurnDamage: 54321, fastestTurns: { 'st-1-1': 2 }, leaderClears: { c106: 4 }, archetypeClears: { mono: 3 } };
+    const { activeBattle: _drop, ...rest } = createNewSave(config, NOW);
+    const v3 = { ...rest, version: 3, records };
+    expect(migrate(v3).records).toEqual(records);
+    const r = importSaveCode(exportSaveCode(v3 as never), config, NOW);
+    expect(r.ok && r.migratedFrom).toBe(3);
+    expect(r.ok && (r.save as unknown as { records: unknown }).records).toEqual(records);
   });
 });
