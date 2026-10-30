@@ -1,10 +1,19 @@
-// 介面讀取玩家資料的入口。
-// 存檔模組（src/save/）完成前先用新玩家預設值；之後只需要把 getSave／saveSettings 接到存檔模組，畫面不用改。
+// 介面讀寫玩家資料的入口：存檔放在記憶體，操作後透過 commit() 寫回 localStorage 並通知畫面更新。
+// 規則全部在 save/、progression/、growth/ 的純函式；這裡只負責保存目前的存檔與時間。
 import type { SaveData } from '../core/types';
 import { gameData } from '../data/load';
+import { createGrowthContext, type GrowthContext } from '../growth';
+import { maxStamina } from '../progression/player';
+import { msUntilNextStamina, regenStamina } from '../progression/stamina';
+import {
+  exportSaveCode, importSaveCode, loadSave, resetSave, writeSave, type LoadResult, type SaveStorage,
+} from '../save/save';
 import { audio } from './audio';
 
-type Settings = SaveData['settings'] & { showMoveTimer: boolean };
+/** 只影響介面、不屬於存檔規格的偏好 */
+interface UiPrefs {
+  showMoveTimer: boolean;
+}
 
 export interface PlayerView {
   name: string;
@@ -13,40 +22,141 @@ export interface PlayerView {
   gems: number;
   stamina: number;
   staminaMax: number;
+  /** 下一點體力回復的毫秒數；滿了為 0 */
+  staminaNextMs: number;
 }
 
-const SETTINGS_KEY = 'starfall.ui-settings';
+const PREFS_KEY = 'starfall.ui-prefs';
 const listeners = new Set<() => void>();
 
-function loadSettings(): Settings {
-  const defaults: Settings = { bgm: 0.8, sfx: 0.8, battleSpeed: 1, showMoveTimer: true };
+/** localStorage 不能用（無痕模式、權限）時退回記憶體，遊戲照玩，只是不會留存 */
+function pickStorage(): SaveStorage {
   try {
-    return { ...defaults, ...JSON.parse(localStorage.getItem(SETTINGS_KEY) ?? '{}') };
+    const probe = '__starfall_probe__';
+    localStorage.setItem(probe, '1');
+    localStorage.removeItem(probe);
+    return localStorage;
   } catch {
-    return defaults;
+    const mem = new Map<string, string>();
+    return { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => void mem.set(k, v), removeItem: (k) => void mem.delete(k) };
   }
 }
 
-let settings = loadSettings();
-audio.setVolumes(settings.bgm, settings.sfx);
+const storage = pickStorage();
+const config = gameData.config;
 
-export function getPlayer(): PlayerView {
-  const { newPlayer, stamina } = gameData.config;
-  return { name: '契印師', level: 1, coin: newPlayer.coin, gems: newPlayer.gems, stamina: stamina.baseMax, staminaMax: stamina.baseMax };
+let save: SaveData;
+/** 讀檔失敗（校驗碼不符、格式壞掉）時的原因；畫面據此詢問玩家要不要重置 */
+let loadProblem: Exclude<LoadResult, { ok: true }>['reason'] | null = null;
+
+{
+  const loaded = loadSave(storage, config, Date.now());
+  if (loaded.ok) {
+    save = loaded.save;
+  } else {
+    loadProblem = loaded.reason;
+    // 不覆蓋壞掉的存檔，先用新存檔在記憶體裡玩，等玩家決定
+    save = resetSaveInMemory();
+  }
 }
 
+function resetSaveInMemory(): SaveData {
+  const mem = new Map<string, string>();
+  return resetSave({ getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => void mem.set(k, v), removeItem: () => {} }, config, Date.now());
+}
+
+let prefs: UiPrefs = { showMoveTimer: true };
+try {
+  prefs = { ...prefs, ...JSON.parse(storage.getItem(PREFS_KEY) ?? '{}') };
+} catch {
+  // 偏好壞掉就用預設
+}
+audio.setVolumes(save.settings.bgm, save.settings.sfx);
+
+export const growth: GrowthContext = createGrowthContext(gameData);
+
+/** 目前存檔（已結算體力回復）；請當作唯讀 */
+export function getSave(): SaveData {
+  const regen = regenStamina(save, config, Date.now());
+  if (regen !== save) save = regen;
+  return save;
+}
+
+/** 寫入新的存檔：關鍵操作（戰鬥結算、抽卡、強化、購買）後立即存檔（GDD 2.4） */
+export function commit(next: SaveData): void {
+  save = next;
+  if (!loadProblem) writeSave(storage, save, Date.now());
+  notify();
+}
+
+export function getLoadProblem() {
+  return loadProblem;
+}
+
+export function getPlayer(): PlayerView {
+  const s = getSave();
+  const now = Date.now();
+  return {
+    name: s.player.name,
+    level: s.player.level,
+    coin: s.player.coin,
+    gems: s.player.gems,
+    stamina: s.stamina.current,
+    staminaMax: maxStamina(s.player.level, config),
+    staminaNextMs: msUntilNextStamina(s, config, now),
+  };
+}
+
+export type Settings = SaveData['settings'] & UiPrefs;
+
 export function getSettings(): Readonly<Settings> {
-  return settings;
+  return { ...getSave().settings, ...prefs };
 }
 
 export function updateSettings(patch: Partial<Settings>): void {
-  settings = { ...settings, ...patch };
-  audio.setVolumes(settings.bgm, settings.sfx);
-  try {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  } catch {
-    // 無痕模式等情況存不了，設定只在本次有效
+  const { showMoveTimer, ...saved } = patch;
+  if (showMoveTimer !== undefined) {
+    prefs = { ...prefs, showMoveTimer };
+    try {
+      storage.setItem(PREFS_KEY, JSON.stringify(prefs));
+    } catch {
+      // 存不了就只在本次有效
+    }
   }
+  const s = getSave();
+  const settings = { ...s.settings, ...saved };
+  audio.setVolumes(settings.bgm, settings.sfx);
+  if (Object.keys(saved).length) commit({ ...s, settings });
+  else notify();
+}
+
+export function exportCode(): string {
+  return exportSaveCode(getSave());
+}
+
+const LOAD_ERRORS: Record<Exclude<LoadResult, { ok: true }>['reason'], string> = {
+  empty: '存檔碼是空的',
+  corrupt: '存檔碼格式不正確',
+  checksum: '存檔碼內容被改動過，無法讀取',
+  tooNew: '這是較新版本遊戲的存檔，請先更新遊戲',
+};
+
+export function loadErrorText(reason: keyof typeof LOAD_ERRORS): string {
+  return LOAD_ERRORS[reason];
+}
+
+/** 匯入存檔碼；成功回傳 null，失敗回傳原因文字 */
+export function importCode(code: string): string | null {
+  const result = importSaveCode(code, config, Date.now());
+  if (!result.ok) return LOAD_ERRORS[result.reason];
+  loadProblem = null;
+  commit(result.save);
+  return null;
+}
+
+export function resetAll(): void {
+  loadProblem = null;
+  save = resetSave(storage, config, Date.now());
   notify();
 }
 

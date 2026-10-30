@@ -1,11 +1,9 @@
 // 劇情對話框：點一下顯示完整句子，再點一下換下一句
 import { h } from '../dom';
 import { audio } from '../audio';
+import type { StoryLine } from '../../core/types';
 
-export interface StoryLine {
-  speaker?: string;
-  text: string;
-}
+export type { StoryLine };
 
 export function storyBox(lines: StoryLine[], onDone: () => void): HTMLElement {
   let index = 0;

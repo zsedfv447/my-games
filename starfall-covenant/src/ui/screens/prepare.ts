@@ -1,0 +1,106 @@
+// 出戰確認：關卡情報、推薦流派、隊伍限制或借用隊伍、星章條件，確認後扣體力進入戰鬥
+import { h } from '../dom';
+import { gameData } from '../../data/load';
+import type { StageDef, StarCondition } from '../../core/types';
+import { enterStage } from '../../progression/stages';
+import { badge, button, emptyState, panel } from '../components/basic';
+import { cardThumb, emptySlot } from '../components/card-thumb';
+import { toast } from '../components/overlay';
+import { buildSortieTeam, describeTeamRule, sortieProblem, VIOLATION_TEXT } from '../sortie';
+import { commit, getSave, growth } from '../state';
+import { armBattle } from './battle';
+import type { ScreenDef } from '../router';
+
+const KIND_LABEL: Record<StageDef['kind'], string> = { main: '主線', daily: '每日', event: '活動', tower: '挑戰之塔', trial: '流派試煉' };
+
+const ENTER_ERRORS: Record<string, string> = {
+  locked: '還沒解鎖這一關',
+  wrongDay: '這一關今天沒有開放',
+  eventClosed: '活動目前沒有開放',
+  unknownStage: '找不到這一關',
+  inventoryFull: '背包滿了，先整理卡片再出發',
+  notEnoughStamina: '體力不足',
+  ...VIOLATION_TEXT,
+};
+
+const archetypeName = (id: string) => gameData.archetypes.find((a) => a.id === id)?.name ?? id;
+const cardName = (id: string) => growth.card(id)?.name ?? id;
+
+export function starText(c: StarCondition): string {
+  switch (c.type) {
+    case 'clearWithinTurns': return `${c.turns} 回合內通關`;
+    case 'noActiveSkill': return '不使用主動技';
+    case 'teamAll': return `全隊皆為${describeTeamRule({ filter: c.filter }, archetypeName, cardName)[0]?.replace('全隊必須是', '') ?? ''}`;
+    case 'maxCombo': return `單回合達成 ${c.combo} Combo`;
+    case 'noContinue': return '不續戰';
+  }
+}
+
+export const prepareScreen: ScreenDef = {
+  name: 'prepare',
+  title: '出戰確認',
+  chrome: 'sub',
+  parent: 'adventure',
+  render({ route, nav }) {
+    const stage = gameData.stages.find((s) => s.id === route.args[0]);
+    if (!stage) return h('div', null, emptyState('adventure', '找不到這一關'));
+
+    const save = getSave();
+    const team = buildSortieTeam(stage, save, growth.card);
+    const problem = sortieProblem(stage, team);
+    const rules = describeTeamRule(stage.teamRule, archetypeName, cardName);
+    const gotStars = save.progress.stars[stage.id] ?? [];
+
+    const start = () => {
+      const now = Date.now();
+      const entered = enterStage(getSave(), stage, { stages: gameData.stages }, gameData.config, now,
+        team.borrowed ? undefined : { members: team.cards, helper: team.helperCard });
+      if (!entered.ok) return toast(ENTER_ERRORS[entered.reason] ?? entered.reason);
+      commit(entered.save);
+      armBattle(stage.id);
+      nav.go('battle', [stage.id]);
+    };
+
+    return h(
+      'div',
+      null,
+      panel(
+        { gold: true },
+        h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, stage.name), badge(KIND_LABEL[stage.kind], 'gold')),
+        h('p', { class: 'small-text dim', style: { marginTop: '6px' } }, `${stage.waves.length} 波敵人・消耗體力 ${stage.stamina}`),
+        stage.recommendedArchetypes?.length
+          ? h('div', { class: 'row wrap', style: { gap: '4px' } }, h('span', { class: 'small-text' }, '推薦流派'), stage.recommendedArchetypes.map((a) => badge(archetypeName(a))))
+          : null,
+      ),
+      stage.kind === 'trial' && stage.archetype && panel(
+        { title: `試煉：${archetypeName(stage.archetype)}` },
+        h('p', { class: 'small-text' }, gameData.archetypes.find((a) => a.id === stage.archetype)?.howToPlay ?? ''),
+      ),
+      panel(
+        { title: team.borrowed ? '借用隊伍' : `出戰隊伍・${save.teams[save.activeTeam]?.name ?? ''}` },
+        team.borrowed && h('p', { class: 'small-text dim' }, '這一關由關卡提供隊伍，不需要擁有這些卡片。'),
+        h(
+          'div',
+          { class: 'grid-5', style: { gridTemplateColumns: 'repeat(6, 1fr)' } },
+          [0, 1, 2, 3, 4].map((i) => {
+            const m = team.members[i];
+            const def = m && growth.card(m.cardId);
+            return def ? cardThumb(def, { level: m.level, size: 52 }) : emptySlot(team.borrowed ? undefined : () => nav.go('team'), 52);
+          }),
+          team.helperCard ? cardThumb(team.helperCard, { level: team.helper!.level, size: 52 }) : h('div', { class: 'card-thumb empty', style: { '--thumb': '52px' } }, '助'),
+        ),
+        !team.borrowed && button('編成隊伍', { small: true, icon: 'team', onClick: () => nav.go('team') }),
+      ),
+      rules.length > 0 && panel(
+        { title: '隊伍限制' },
+        h('ul', { class: 'small-text', style: { margin: '0', paddingLeft: '20px' } }, rules.map((r) => h('li', null, r))),
+      ),
+      (stage.stars?.length ?? 0) > 0 && panel(
+        { title: '星章挑戰' },
+        h('div', { class: 'list' }, stage.stars!.map((c, i) => h('div', { class: 'row small-text' }, h('span', { class: 'stars', style: { opacity: gotStars[i] ? '1' : '0.3' } }, '★'), starText(c)))),
+      ),
+      problem && h('p', { class: 'small-text', style: { color: 'var(--danger)', textAlign: 'center', margin: '0' } }, VIOLATION_TEXT[problem]),
+      button('出發', { variant: 'primary', block: true, icon: 'sword', disabled: !!problem, cost: { kind: 'stamina', amount: stage.stamina }, onClick: start }),
+    );
+  },
+};
