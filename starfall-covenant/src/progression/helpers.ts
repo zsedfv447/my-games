@@ -29,7 +29,18 @@ export interface HelperOffer {
   problem: TeamRuleViolation | null;
 }
 
-export const HELPER_LEVEL = { base: 10, perStage: 2, skillEvery: 10, maxSkill: 5 } as const;
+/**
+ * 助戰等級曲線（依已通關的主線關數，各章開頭為錨點、中間線性內插）：
+ * 目標約比同進度玩家主力高 5～10 級（玩家等級見 tools/sim 的 --progress 報表），第 5 章通關前不超過 Lv75，
+ * 主線通關（已通關數 ≥ fullAt，也就是 st-5-9）後才拉到卡片滿級。技能等級每 skillEvery 關 +1，通關前最多 skillCapBefore。
+ */
+export const HELPER_LEVEL = {
+  anchors: [[0, 10], [9, 20], [18, 42], [27, 56], [36, 74], [44, 75]] as const,
+  fullAt: 45,
+  skillEvery: 15,
+  skillCapBefore: 3,
+  maxSkill: 5,
+} as const;
 
 const clearedMain = (save: SaveData, stages: StageDef[]) => {
   const cleared = new Set(save.progress.clearedStages);
@@ -49,12 +60,29 @@ export function helperCardId(save: SaveData, npc: HelperNpcDef): string {
 }
 
 /** 助戰等級：每通過一關主線 +2 級，不超過卡片上限 */
+/** 曲線上的等級（還沒套卡片滿級上限） */
+export function helperCurveLevel(mainCleared: number): number {
+  const { anchors, fullAt } = HELPER_LEVEL;
+  if (mainCleared >= fullAt) return Infinity;
+  let level: number = anchors[anchors.length - 1][1];
+  for (let i = 1; i < anchors.length; i++) {
+    const [x0, y0] = anchors[i - 1];
+    const [x1, y1] = anchors[i];
+    if (mainCleared <= x1) {
+      level = y0 + ((Math.max(mainCleared, x0) - x0) * (y1 - y0)) / (x1 - x0);
+      break;
+    }
+  }
+  return Math.round(level);
+}
+
 export function helperLevel(card: CardDef, mainCleared: number): number {
-  return Math.max(1, Math.min(card.maxLevel, HELPER_LEVEL.base + mainCleared * HELPER_LEVEL.perStage));
+  return Math.max(1, Math.min(card.maxLevel, helperCurveLevel(mainCleared)));
 }
 
 export function helperSkillLevel(mainCleared: number): number {
-  return Math.min(HELPER_LEVEL.maxSkill, 1 + Math.floor(mainCleared / HELPER_LEVEL.skillEvery));
+  if (mainCleared >= HELPER_LEVEL.fullAt) return HELPER_LEVEL.maxSkill;
+  return Math.min(HELPER_LEVEL.skillCapBefore, 1 + Math.floor(mainCleared / HELPER_LEVEL.skillEvery));
 }
 
 /** 只看助戰本身會不會違反關卡限制（隊員的問題另外判斷） */
