@@ -16,6 +16,8 @@ export function victoryLine(card: Pick<CardDef, 'attribute' | 'lines'>): string 
 export interface LeaderLine {
   card: CardDef;
   text: string;
+  /** 說話的人；沒給就用卡名（流浪契印師的感謝台詞用 NPC 名字） */
+  speaker?: string;
 }
 
 /** 結算第一幕的隊長台詞：隊伍裡第一位不是助戰的成員 */

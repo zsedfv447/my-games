@@ -377,4 +377,6 @@ export interface SaveData {
   puzzle?: import('../progression/puzzle').PuzzleRecord;
   /** 已收集的星骸殘頁 id（可選；讀取一律經過 progression/lore.ts 的 collectedLorePages 補預設值） */
   lorePages?: string[];
+  /** 流浪契印師的同行情誼：NPC id → 點數（可選；讀取一律經過 progression/helper-bond.ts 的 bondPoints 補預設值） */
+  helperBond?: Record<string, number>;
 }
