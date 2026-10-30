@@ -1,7 +1,9 @@
 // BGM 與音效：有使用者提供的檔案就播檔案，沒有就用 Web Audio 合成簡單音效（GDD 2.6）
 import { userAsset } from './assets';
 
-export type SfxName = 'tap' | 'confirm' | 'back' | 'match' | 'skill' | 'win' | 'lose' | 'summon' | 'summon-pull' | 'summon-release';
+export type SfxName = 'tap' | 'confirm' | 'back' | 'match' | 'skill' | 'win' | 'lose' | 'summon' | 'summon-pull' | 'summon-release'
+  // 結算與獎勵演出
+  | 'reward' | 'gem' | 'count' | 'levelup' | 'star' | 'finisher';
 
 /** 消除音隨 Combo 升高：以五聲音階往上爬，避免刺耳 */
 export function comboFrequency(combo: number): number {
@@ -100,7 +102,7 @@ export class AudioManager {
     const variantUrl = userAsset('sfx', variant);
     const url = variantUrl ?? userAsset('sfx', name);
     // 轉珠音一秒會響很多次，用 Web Audio 播已解碼的音效，不必每次建立 <audio>
-    if (url && name === 'tap' && this.playBuffer(url)) return;
+    if (url && (name === 'tap' || name === 'count') && this.playBuffer(url)) return;
     if (url) {
       let base = this.sfxCache.get(url);
       if (!base) {
@@ -161,14 +163,20 @@ export class AudioManager {
       : name === 'skill' ? [[523, 0, 0.1], [784, 0.08, 0.1], [1047, 0.16, 0.18]]
       : name === 'win' ? [[523, 0, 0.15], [659, 0.15, 0.15], [784, 0.3, 0.15], [1047, 0.45, 0.4]]
       : name === 'lose' ? [[392, 0, 0.25], [330, 0.25, 0.25], [262, 0.5, 0.5]]
+      : name === 'count' ? [[1320, 0, 0.03]]
+      : name === 'reward' ? [[880, 0, 0.06], [1320, 0.05, 0.12]]
+      : name === 'gem' ? [[1047, 0, 0.12], [1319, 0.07, 0.12], [1568, 0.14, 0.12], [2093, 0.21, 0.5]]
+      : name === 'star' ? [[1568, 0, 0.08], [2349, 0.06, 0.3]]
+      : name === 'levelup' ? [[392, 0, 0.12], [523, 0.1, 0.12], [659, 0.2, 0.12], [784, 0.3, 0.12], [1047, 0.42, 0.6]]
+      : name === 'finisher' ? [[196, 0, 0.5], [98, 0, 0.6], [1568, 0.35, 0.4], [2093, 0.45, 0.6]]
       : [[784, 0, 0.1], [988, 0.1, 0.1], [1175, 0.2, 0.1], [1568, 0.3, 0.35]];
     const t0 = ctx.currentTime;
     for (const [freq, start, len] of notes) {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = name === 'lose' ? 'triangle' : 'sine';
+      osc.type = name === 'lose' || (name === 'finisher' && freq < 400) ? 'triangle' : 'sine';
       osc.frequency.value = freq;
-      const peak = 0.18 * this.sfxVolume;
+      const peak = (name === 'count' ? 0.08 : 0.18) * this.sfxVolume;
       gain.gain.setValueAtTime(0, t0 + start);
       gain.gain.linearRampToValueAtTime(peak, t0 + start + 0.01);
       gain.gain.exponentialRampToValueAtTime(0.0001, t0 + start + len);

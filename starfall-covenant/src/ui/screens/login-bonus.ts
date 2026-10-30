@@ -2,12 +2,12 @@
 import { gameData } from '../../data/load';
 import { claimLoginReward, canClaimLogin } from '../../progression/login';
 import { addQuestCounters } from '../../progression/quests';
-import { audio } from '../audio';
 import { button, panel } from '../components/basic';
 import { openDialog, toast } from '../components/overlay';
 import { rewardArt, rewardChips, screenBanner } from '../components/rewards';
+import { revealReward } from '../components/reward-reveal';
 import { clear, h } from '../dom';
-import { loginCalendar, loginRewards, rewardParts } from '../economy';
+import { loginCalendar, loginRewards } from '../economy';
 import type { ScreenDef } from '../router';
 import { commit, getSave } from '../state';
 
@@ -20,8 +20,7 @@ export function claimToday(): boolean {
     return false;
   }
   commit(addQuestCounters(r.save, { login: 1 }, gameData.quests, now));
-  audio.play('confirm');
-  toast(`第 ${r.day} 天：獲得 ${rewardParts(r.reward).map((p) => p.label).join('、')}`);
+  void revealReward('七日星約', r.reward, `第 ${r.day} 天登入獎勵`);
   return true;
 }
 

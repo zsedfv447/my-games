@@ -9,6 +9,7 @@ import { isPlayable, LOCK_TEXT, stageContext, stageRow, weekdayText, type StageR
 import { getSave } from '../state';
 import type { Navigator, ScreenDef } from '../router';
 import type { IconName } from '../art/icons';
+import { firstClearChip } from '../components/reward-reveal';
 
 function row(r: StageRow, nav: Navigator, leading: IconName): HTMLElement {
   const s = r.stage;
@@ -19,6 +20,7 @@ function row(r: StageRow, nav: Navigator, leading: IconName): HTMLElement {
   if (s.kind === 'daily') sub.push(weekdayText(s.weekdays));
   if (!playable) sub.push(LOCK_TEXT[r.status as keyof typeof LOCK_TEXT]);
   const trailing = h('div', { class: 'row', style: { gap: '4px' } },
+    firstClearChip(s.rewards.firstClear, getSave().progress.clearedStages.includes(s.id)),
     r.stars.length > 0 && h('span', { class: 'stars small-text' }, r.stars.map((g) => h('span', { style: { opacity: g ? '1' : '0.25' } }, '★'))),
     r.status === 'cleared' ? badge('通過', 'gold') : r.status === 'open' ? badge('NEW') : icon('lock'),
   );

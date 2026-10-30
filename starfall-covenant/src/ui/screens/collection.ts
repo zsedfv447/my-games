@@ -10,6 +10,7 @@ import { ATTRIBUTE_NAMES, RACE_NAMES } from '../art/palette';
 import { badge, bar, button, emptyState, panel, stars, tabs } from '../components/basic';
 import { cardPortrait, cardThumb } from '../components/card-thumb';
 import { toast } from '../components/overlay';
+import { revealReward } from '../components/reward-reveal';
 import { commit, getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
 import '../collection-helper.css';
@@ -32,7 +33,7 @@ function claimAll(after: () => void): void {
   const r = claimAllCollectionRewards(getSave(), growth);
   if (!r.ok || !r.cards.length) return toast('目前沒有可以領取的圖鑑獎勵');
   commit(r.save);
-  toast(`領取 ${r.cards.length} 張卡的圖鑑獎勵，獲得星晶 ×${r.gems}`);
+  void revealReward('圖鑑獎勵', { gems: r.gems }, `領取 ${r.cards.length} 張卡的圖鑑獎勵`);
   after();
 }
 
@@ -185,7 +186,7 @@ export const collectionCardScreen: ScreenDef = {
             const r = claimCollectionReward(getSave(), growth, def.id);
             if (!r.ok) return toast(r.error.message);
             commit(r.save);
-            toast(`獲得星晶 ×${r.gems}`);
+            void revealReward('圖鑑獎勵', { gems: r.gems }, def.name);
             nav.replace('collection-card', [def.id]);
           },
         }),

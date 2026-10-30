@@ -12,7 +12,7 @@ import { enemySvg } from '../art/enemy';
 import { ATTRIBUTE_NAMES } from '../art/palette';
 import { resolveArtPath, userAsset } from '../assets';
 import { audio } from '../audio';
-import { badge, bar, button, emptyState, iconButton, resourceIcon } from '../components/basic';
+import { badge, bar, button, emptyState, iconButton } from '../components/basic';
 import { cardThumb } from '../components/card-thumb';
 import { confirmDialog, openDialog, toast, type DialogHandle } from '../components/overlay';
 import { DEMO_DATA, DEMO_HELPER, DEMO_STAGE, DEMO_TEAM } from '../demo';
@@ -23,6 +23,8 @@ import type { Navigator, ScreenDef } from '../router';
 import { starText } from './prepare';
 import { enemyChips, teamChips, STATUS_NAMES, type StatusChip } from '../status-labels';
 import { storyBox } from '../components/story';
+import { playReveal, showLevelUp } from '../components/reward-reveal';
+import { clearItems, levelUpView } from '../reward-plan';
 import { markStorySeen } from './story';
 import { createTutorialBattle } from '../tutorial/battle-setup';
 import { TutorialBattleGuide, texts as guideTexts, type BattleGuide } from '../tutorial/battle-guide';
@@ -437,7 +439,30 @@ class BattleView {
 
   // ---------- 結算 ----------
 
-  private onWin(): void {
+  /** 最後一擊：畫面放慢、敵人碎成星屑、「淨化完成」字樣，再進結算 */
+  private async playFinisher(): Promise<void> {
+    const boss = !!this.s.stage.waves[this.state.wave]?.boss;
+    const pace = Math.min(this.speed, 1.5);
+    audio.play('finisher');
+    this.element.classList.add('finisher');
+    this.element.appendChild(h('div', { class: 'finisher-flash' }));
+    this.enemyEls.forEach((el) => {
+      el.classList.add('shatter');
+      const n = boss ? 22 : 12;
+      for (let i = 0; i < n; i++) {
+        const a = (Math.PI * 2 * i) / n + Math.random() * 0.4;
+        const r = 50 + Math.random() * (boss ? 90 : 55);
+        el.appendChild(h('span', { class: 'stardust', style: { '--dx': `${Math.cos(a) * r}px`, '--dy': `${Math.sin(a) * r}px`, animationDelay: `${Math.random() * 120}ms` } }));
+      }
+    });
+    await wait(420 / pace);
+    this.element.appendChild(h('div', { class: 'finisher-text' }, '淨化完成'));
+    await wait((boss ? 1000 : 700) / pace);
+  }
+
+  private async onWin(): Promise<void> {
+    this.boardView.setEnabled(false);
+    await this.playFinisher();
     audio.play('win');
     audio.playBgm('victory');
     if (this.s.guide) return this.s.guide.onWin();
@@ -451,38 +476,46 @@ class BattleView {
       bus.emit('stageCleared', { stageId: this.s.stage.id, turns: result.turns, stars: clear.stars });
       for (const d of clear.drops) bus.emit('cardObtained', { cardId: d.cardId, uid: d.uid, source: 'drop' });
     }
-    const rows = [
-      h('div', { class: 'row between' }, h('span', null, '回合數'), h('strong', null, `${result.turns}`)),
-      h('div', { class: 'row between' }, h('span', null, '最高 Combo'), h('strong', null, `${result.maxCombo}`)),
-    ];
-    if (clear) {
-      rows.push(
-        h('div', { class: 'row between' }, h('span', null, '金幣'), h('strong', { class: 'row' }, resourceIcon('coin'), `+${clear.coin.toLocaleString()}`)),
-        h('div', { class: 'row between' }, h('span', null, '玩家經驗'), h('strong', null, `+${clear.playerExp}`)),
-      );
-      if (clear.firstClear?.gems) rows.push(h('div', { class: 'row between' }, h('span', null, '首通獎勵'), h('strong', { class: 'row' }, resourceIcon('gem'), `+${clear.firstClear.gems}`)));
-      if (clear.levelUp) rows.push(h('p', { class: 'gold-text' }, `玩家等級提升到 Lv.${clear.levelUp.to}！體力已補滿`));
-      (this.s.stage.stars ?? []).forEach((c, i) => rows.push(
-        h('div', { class: 'row small-text' }, h('span', { class: 'stars', style: { opacity: clear!.stars[i] ? '1' : '0.3' } }, '★'), starText(c), clear!.newStars[i] && badge('NEW', 'gold')),
-      ));
-      if (clear.drops.length) {
-        rows.push(h('div', { class: 'row wrap' }, clear.drops.map((d) => {
-          const def = growth.card(d.cardId);
-          return def ? cardThumb(def, { size: 52 }) : null;
-        })));
-      }
-    }
+    await this.showResult(result, clear);
+  }
+
+  /** 契約結算：標題落下 → 戰績 → 金幣／經驗滾動 → 首通星晶 → 掉落卡翻面 → 星章點亮 → 升級卡 → 按鈕 */
+  private async showResult(result: { turns: number; maxCombo: number }, clear: StageClearResult | null): Promise<void> {
+    const items = clearItems(result, clear, clear ? (this.s.stage.stars ?? []).map(starText) : []);
+    const reveal = h('div', { class: 'result-reveal' });
+    // 第 26 項「下一關」按鈕放進這裡（由修正分工實作）
+    const nextSlot = h('div', { class: 'result-next-slot' });
+    const actions = h('div', { class: 'result-actions' });
+    const hint = h('p', { class: 'rv-hint' }, '點擊畫面快轉');
+    const layer = h('div', { class: 'result-layer', role: 'dialog', 'aria-label': '契約結算' },
+      h('div', { class: 'rv-rays' }),
+      h('div', { class: 'result-title' }, '契約結算'),
+      h('div', { class: 'result-stage' }, this.s.stage.name),
+      reveal, actions, hint);
+    const close = () => {
+      layer.classList.add('closing');
+      setTimeout(() => layer.remove(), 140);
+    };
+    this.dialog = { close };
+    this.element.appendChild(layer);
+    await wait(450);
+    const play = playReveal(reveal, items, this.speed);
+    layer.addEventListener('click', () => play.skip());
+    await play.done;
+    hint.remove();
+    if (!layer.isConnected) return;
+    if (clear?.levelUp) await showLevelUp(levelUpView(clear.levelUp, gameData.config));
+
     const leave = () => {
-      this.dialog?.close();
+      close();
       const after = this.s.stage.story?.after;
       // 通關後的劇情只在第一次播放
       if (after && gameData.story[after] && !getSave().progress.storySeen.includes(after)) this.nav.replace('story', [after], { next: 'back' });
       else this.nav.back();
     };
-    this.dialog = openDialog('勝利！', h('div', { class: 'list' }, rows), [
-      button('再戰一次', { onClick: () => { this.dialog?.close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', [this.s.stage.id]); } }),
-      button('返回', { variant: 'primary', onClick: leave }),
-    ], { dismissible: false });
+    actions.append(nextSlot, h('div', { class: 'row' },
+      button('再戰一次', { onClick: () => { close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', [this.s.stage.id]); } }),
+      button('返回', { variant: 'primary', onClick: leave })));
   }
 
   private onLose(): void {
