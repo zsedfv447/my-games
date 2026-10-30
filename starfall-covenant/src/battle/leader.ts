@@ -9,7 +9,7 @@
 //   heartsMatched（多幾組）、enhancedOrbsMatched（多幾顆）。
 // - heartsMatched 的 count 是心珠「組數」，方便做「每消除 1 組心珠追打」這類設計。
 // - 開場就決定的效果（生命、回復、轉珠時間、盤面大小、敵人 CD、技能初始冷卻）
-//   只看 always／teamAll 條件；帶其他條件的 rule 不會套用這些效果（lintLeaderSkill 會提醒）。
+//   與每回合技能冷卻加速）只看 always／teamAll 條件；帶其他條件的 rule 不會套用這些效果（lintLeaderSkill 會提醒）。
 
 import { ATTRIBUTES, type LeaderCondition, type OrbType, type LeaderEffect, type LeaderSkillDef, type UnitFilter } from '../core/types';
 import type { MatchGroup } from './board';
@@ -17,7 +17,7 @@ import type { BattleMember, Hit } from './damage';
 
 const STATIC_CONDITIONS = new Set<LeaderCondition['type']>(['always', 'teamAll']);
 const STATIC_EFFECTS = new Set<LeaderEffect['type']>([
-  'hpMultiplier', 'extendMoveTime', 'boardSize', 'enemyCooldownPlus', 'skillCooldownStart',
+  'hpMultiplier', 'extendMoveTime', 'boardSize', 'enemyCooldownPlus', 'skillCooldownStart', 'allyCooldownPerTurn',
 ]);
 
 const asArray = <T>(v: T | T[] | undefined): T[] | undefined => (v === undefined ? undefined : Array.isArray(v) ? v : [v]);
@@ -44,6 +44,8 @@ export interface LeaderStaticResult {
   enemyCooldownPlus: number;
   /** 開場技能冷卻全滿 */
   skillsStartCharged: boolean;
+  /** 每回合技能冷卻額外減少的回合數 */
+  allyCooldownPerTurn: number;
 }
 
 /** team 為全隊（含助戰）；leaders 依序為隊長、助戰的隊長技，可為 undefined */
@@ -54,6 +56,7 @@ export function evaluateLeaderStatic(leaders: (LeaderSkillDef | undefined)[], te
     moveTimeBonus: 0,
     enemyCooldownPlus: 0,
     skillsStartCharged: false,
+    allyCooldownPerTurn: 0,
   };
   const ctx = { team } as LeaderTurnContext;
   for (const leader of leaders) {
@@ -81,6 +84,9 @@ export function evaluateLeaderStatic(leaders: (LeaderSkillDef | undefined)[], te
             break;
           case 'skillCooldownStart':
             result.skillsStartCharged ||= e.charged;
+            break;
+          case 'allyCooldownPerTurn':
+            result.allyCooldownPerTurn += e.turns;
             break;
         }
       }

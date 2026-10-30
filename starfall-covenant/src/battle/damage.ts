@@ -142,13 +142,13 @@ export function computeHeal(input: HealInput): number {
 export interface DefenseProfile {
   attribute: Attribute;
   def: number;
-  /** 一般護盾：所有傷害減少 percent% */
+  /** 護盾：所有傷害減少 percent%（100 = 完全免疫） */
   shieldPercent?: number;
   /** 屬性減傷：指定屬性的傷害減少 percent% */
   attributeShield?: { attributes: Attribute[]; percent: number };
   /** Combo 盾：本回合 Combo 未達此數時，屬性攻擊無效 */
   comboShield?: number;
-  /** 傷害吸收：單次傷害超過此值時變成 0 */
+  /** 傷害吸收：一回合內受到的傷害超過此值的部分改為回復敵人（固定傷害不受影響），由 applyHits 結算 */
   damageAbsorb?: number;
 }
 
@@ -166,22 +166,28 @@ export function damageAgainst(hit: Hit, enemy: DefenseProfile, ctx: DamageContex
     if (enemy.shieldPercent) amount *= 1 - enemy.shieldPercent / 100;
     const as = enemy.attributeShield;
     if (as && hit.attribute && as.attributes.includes(hit.attribute)) amount *= 1 - as.percent / 100;
+    // 被護盾完全擋下
+    if (amount <= 0) return 0;
   }
   if (!hit.ignoreDefense && !hit.fixed) amount -= enemy.def;
   // 加一點容差，避免 0.2 這類小數相乘後少 1 點
   amount = Math.floor(amount + 1e-9);
-  if (!hit.ignoreShield && enemy.damageAbsorb !== undefined && amount > enemy.damageAbsorb) return 0;
-  // 有出手就至少 1 點（被護盾完全擋下則為 0）
+  // 有出手就至少 1 點
   return Math.max(hit.amount > 0 ? 1 : 0, amount);
 }
 
 export interface EnemyTarget extends DefenseProfile {
   hp: number;
+  /** 傷害吸收回復時的上限；不填 = 不設上限 */
+  maxHp?: number;
+  /** 本回合已受到、會計入傷害吸收門檻的傷害 */
+  takenThisTurn?: number;
 }
 
 export interface HitResult {
   hit: Hit;
   enemy: number;
+  /** 實際扣除的生命；負數代表被傷害吸收轉為回復 */
   damage: number;
 }
 
@@ -194,8 +200,9 @@ export function applyHits(
   enemies: EnemyTarget[],
   targetIndex: number,
   ctx: DamageContext,
-): { results: HitResult[]; hp: number[] } {
+): { results: HitResult[]; hp: number[]; taken: number[] } {
   const hp = enemies.map((e) => e.hp);
+  const taken = enemies.map((e) => e.takenThisTurn ?? 0);
   const results: HitResult[] = [];
   const alive = (i: number) => hp[i] > 0;
   const pickTarget = () => {
@@ -206,12 +213,21 @@ export function applyHits(
   for (const hit of hits) {
     const targets = hit.target === 'all' ? enemies.map((_, i) => i).filter(alive) : [pickTarget()].filter((i) => i >= 0);
     for (const i of targets) {
-      const damage = Math.min(hp[i], damageAgainst(hit, enemies[i], ctx));
+      const raw = damageAgainst(hit, enemies[i], ctx);
+      const absorb = enemies[i].damageAbsorb;
+      let net = raw;
+      if (absorb !== undefined && !hit.fixed && !hit.ignoreShield) {
+        // 門檻以內照常扣血，超過的部分改為回復
+        const allowed = Math.max(0, absorb - taken[i]);
+        if (raw > allowed) net = allowed - (raw - allowed);
+        taken[i] += raw;
+      }
+      const damage = net >= 0 ? Math.min(hp[i], net) : -Math.min(-net, (enemies[i].maxHp ?? Infinity) - hp[i]);
       hp[i] -= damage;
       results.push({ hit, enemy: i, damage });
     }
   }
-  return { results, hp };
+  return { results, hp, taken };
 }
 
 // ---------- 我方受到的傷害 ----------
