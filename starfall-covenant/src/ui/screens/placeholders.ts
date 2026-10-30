@@ -16,8 +16,6 @@ interface Stub {
 }
 
 const STUBS: Stub[] = [
-  { name: 'helper', title: '選擇助戰', chrome: 'sub', parent: 'adventure', icon: 'team', waitsFor: 'NPC 助戰名單（progression）' },
-  { name: 'collection', title: '圖鑑', chrome: 'sub', parent: 'home', icon: 'book', waitsFor: '圖鑑（growth）' },
 ];
 
 function stubScreen(s: Stub): ScreenDef {

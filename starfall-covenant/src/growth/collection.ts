@@ -1,4 +1,4 @@
-import type { SaveData } from '../core/types';
+import type { ArchetypeId, CardDef, SaveData } from '../core/types';
 import type { GrowthContext } from './context';
 import { fail, type GrowthResult } from './result';
 import { addGems } from './save-ops';
@@ -86,4 +86,43 @@ export function collectionSummary(save: SaveData, ctx: GrowthContext): Collectio
     byRarity,
     materials,
   };
+}
+
+export type CollectionStatus = 'owned' | 'seen' | 'unseen';
+
+export function collectionStatus(save: SaveData, cardId: string): CollectionStatus {
+  if (save.collection.owned.includes(cardId)) return 'owned';
+  return save.collection.seen.includes(cardId) ? 'seen' : 'unseen';
+}
+
+/** 圖鑑篩選：不填的欄位代表不限；素材卡沒有流派，選流派時會被排除 */
+export interface CollectionFilter {
+  attribute?: CardDef['attribute'];
+  race?: CardDef['race'];
+  archetype?: ArchetypeId;
+  status?: CollectionStatus;
+}
+
+export interface CollectionEntry {
+  card: CardDef;
+  status: CollectionStatus;
+  /** 擁有過但還沒領的圖鑑獎勵鑽石數（0 代表沒有可領的） */
+  claimable: number;
+}
+
+/** 依圖鑑順序（卡號）列出卡片與收集狀態 */
+export function collectionEntries(save: SaveData, ctx: GrowthContext, filter: CollectionFilter = {}): CollectionEntry[] {
+  const claimed = new Set(save.collection.claimed);
+  return [...ctx.data.cards]
+    .sort((a, b) => a.id.localeCompare(b.id, 'en', { numeric: true }))
+    .map((card) => {
+      const status = collectionStatus(save, card.id);
+      const claimable = status === 'owned' && !claimed.has(card.id) ? collectionReward(ctx, card.id) : 0;
+      return { card, status, claimable };
+    })
+    .filter(({ card, status }) =>
+      (!filter.attribute || card.attribute === filter.attribute)
+      && (!filter.race || card.race === filter.race)
+      && (!filter.archetype || card.archetypes.some((a) => a.id === filter.archetype))
+      && (!filter.status || status === filter.status));
 }

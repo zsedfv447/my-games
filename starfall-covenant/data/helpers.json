@@ -1,0 +1,157 @@
+[
+  {
+    "id": "npc-mono",
+    "name": "燭芯・艾朵",
+    "title": "提燈的流浪契印師",
+    "archetype": "mono",
+    "unlockAfter": null,
+    "tiers": [
+      { "card": "c106", "after": null },
+      { "card": "c101", "after": "st-5-9" }
+    ],
+    "quote": "火只要一種顏色就夠了，剩下的交給我。"
+  },
+  {
+    "id": "npc-berserk",
+    "name": "鐵鍋・巴爾斯",
+    "title": "背著大鍋的傭兵",
+    "archetype": "berserk",
+    "unlockAfter": null,
+    "tiers": [
+      { "card": "c109", "after": null },
+      { "card": "c110", "after": "st-2-9" }
+    ],
+    "quote": "血少一點，菜才夠辣。"
+  },
+  {
+    "id": "npc-combo",
+    "name": "小鼓・妮可",
+    "title": "港口街頭鼓手",
+    "archetype": "combo",
+    "unlockAfter": null,
+    "tiers": [
+      { "card": "c206", "after": null },
+      { "card": "c202", "after": "st-3-9" },
+      { "card": "c203", "after": "st-5-9" }
+    ],
+    "quote": "咚、咚、咚——跟上拍子，一顆都別漏！"
+  },
+  {
+    "id": "npc-heart",
+    "name": "晨露・荷米",
+    "title": "溫室的見習醫者",
+    "archetype": "heart",
+    "unlockAfter": null,
+    "tiers": [
+      { "card": "c306", "after": null },
+      { "card": "c301", "after": "st-5-9" }
+    ],
+    "quote": "受傷了嗎？先喝口水，再繼續走。"
+  },
+  {
+    "id": "npc-enhance",
+    "name": "磨鏡匠・卡德",
+    "title": "把碎晶磨亮的工匠",
+    "archetype": "enhance",
+    "unlockAfter": "st-1-3",
+    "tiers": [
+      { "card": "c309", "after": null },
+      { "card": "c310", "after": "st-1-9" },
+      { "card": "c302", "after": "st-3-9" },
+      { "card": "c303", "after": "st-5-9" }
+    ],
+    "quote": "再亮一點……好，這顆可以上場了。"
+  },
+  {
+    "id": "npc-race",
+    "name": "牧笛・洛安",
+    "title": "召集同族的吹笛人",
+    "archetype": "race",
+    "unlockAfter": "st-1-5",
+    "tiers": [
+      { "card": "c311", "after": null },
+      { "card": "c312", "after": "st-2-9" },
+      { "card": "c404", "after": "st-4-3" },
+      { "card": "c405", "after": "st-5-9" }
+    ],
+    "quote": "同一首曲子，大家一起唱才會響。"
+  },
+  {
+    "id": "npc-control",
+    "name": "沙漏・奧伯",
+    "title": "總是遲到的鐘錶匠",
+    "archetype": "control",
+    "unlockAfter": "st-1-9",
+    "tiers": [
+      { "card": "c209", "after": null },
+      { "card": "c210", "after": "st-2-9" },
+      { "card": "c201", "after": "st-5-9" }
+    ],
+    "quote": "別急，讓敵人等一下又不會怎樣。"
+  },
+  {
+    "id": "npc-skillcycle",
+    "name": "抄經人・緹妮",
+    "title": "把咒文抄進袖口的書記",
+    "archetype": "skillcycle",
+    "unlockAfter": "st-2-3",
+    "tiers": [
+      { "card": "c409", "after": null },
+      { "card": "c410", "after": "st-2-9" },
+      { "card": "c402", "after": "st-3-9" },
+      { "card": "c403", "after": "st-5-9" }
+    ],
+    "quote": "第一頁唸完就翻第二頁，技能也是。"
+  },
+  {
+    "id": "npc-chain",
+    "name": "斷鏈・葛雷",
+    "title": "拖著長鏈的礦工",
+    "archetype": "chain",
+    "unlockAfter": "st-2-9",
+    "tiers": [
+      { "card": "c509", "after": null },
+      { "card": "c510", "after": "st-3-9" },
+      { "card": "c501", "after": "st-5-9" }
+    ],
+    "quote": "一條線拉到底，石頭就會自己裂開。"
+  },
+  {
+    "id": "npc-rainbow",
+    "name": "稜光・瑟菲",
+    "title": "收集光的旅行畫家",
+    "archetype": "rainbow",
+    "unlockAfter": "st-3-3",
+    "tiers": [
+      { "card": "c406", "after": null },
+      { "card": "c401", "after": "st-5-9" }
+    ],
+    "quote": "少一種顏色，這幅畫就不完整。"
+  },
+  {
+    "id": "npc-dual",
+    "name": "雙槳・米洛與米菈",
+    "title": "划同一條船的姊弟",
+    "archetype": "dual",
+    "unlockAfter": "st-3-9",
+    "tiers": [
+      { "card": "c506", "after": null },
+      { "card": "c204", "after": "st-4-3" },
+      { "card": "c205", "after": "st-5-9" }
+    ],
+    "quote": "「左邊！」「右邊！」——兩邊一起划才會快。"
+  },
+  {
+    "id": "npc-fixed",
+    "name": "燈守・薩隆",
+    "title": "替迷途者點燈的老人",
+    "archetype": "fixed",
+    "unlockAfter": "st-4-3",
+    "tiers": [
+      { "card": "c307", "after": null },
+      { "card": "c502", "after": "st-4-9" },
+      { "card": "c503", "after": "st-5-9" }
+    ],
+    "quote": "再硬的殼，燈火一樣照得進去。"
+  }
+]

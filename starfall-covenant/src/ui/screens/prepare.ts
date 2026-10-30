@@ -7,9 +7,11 @@ import { badge, button, emptyState, panel } from '../components/basic';
 import { cardThumb, emptySlot } from '../components/card-thumb';
 import { toast } from '../components/overlay';
 import { stageContext } from '../stage-nav';
-import { buildSortieTeam, describeTeamRule, sortieProblem, VIOLATION_TEXT } from '../sortie';
+import { buildSortieTeam, chosenHelper, describeTeamRule, ensureHelper, sortieProblem, VIOLATION_TEXT } from '../sortie';
 import { commit, getSave, growth } from '../state';
 import { armBattle } from './battle';
+import { npcAvatar, rosterFor } from './helper';
+import { HELPER_NPCS, stageAllowsHelper } from '../../progression/helpers';
 import type { ScreenDef } from '../router';
 
 const KIND_LABEL: Record<StageDef['kind'], string> = { main: '主線', daily: '每日', event: '活動', tower: '挑戰之塔', trial: '流派試煉' };
@@ -47,7 +49,12 @@ export const prepareScreen: ScreenDef = {
     if (!stage) return h('div', null, emptyState('adventure', '找不到這一關'));
 
     const save = getSave();
+    const helperAllowed = stageAllowsHelper(stage);
+    if (helperAllowed) ensureHelper(stage.id, rosterFor(stage));
     const team = buildSortieTeam(stage, save, growth.card);
+    const pickHelper = () => nav.go('helper', [stage.id], { from: 'prepare' });
+    const npc = !team.borrowed && team.helperCard ? HELPER_NPCS.find((n) => n.id === chosenHelper(stage.id)?.npcId) : undefined;
+    const helperLeader = team.helperCard?.leaderSkill ? growth.leaderSkill(team.helperCard.leaderSkill) : undefined;
     const problem = sortieProblem(stage, team);
     const rules = describeTeamRule(stage.teamRule, archetypeName, cardName);
     const gotStars = save.progress.stars[stage.id] ?? [];
@@ -91,9 +98,22 @@ export const prepareScreen: ScreenDef = {
             const def = m && growth.card(m.cardId);
             return def ? cardThumb(def, { level: m.level, size: 52 }) : emptySlot(team.borrowed ? undefined : () => nav.go('team'), 52);
           }),
-          team.helperCard ? cardThumb(team.helperCard, { level: team.helper!.level, size: 52 }) : h('div', { class: 'card-thumb empty', style: { '--thumb': '52px' } }, '助'),
+          team.helperCard
+            ? cardThumb(team.helperCard, { level: team.helper!.level, size: 52, onClick: helperAllowed ? pickHelper : undefined })
+            : h('button', { type: 'button', class: 'card-thumb empty', style: { '--thumb': '52px' }, 'aria-label': '選擇助戰', disabled: !helperAllowed, onClick: helperAllowed ? pickHelper : undefined }, '助'),
         ),
         !team.borrowed && button('編成隊伍', { small: true, icon: 'team', onClick: () => nav.go('team') }),
+      ),
+      (helperAllowed || team.helperCard) && panel(
+        { title: team.borrowed ? '借用助戰' : '助戰' },
+        team.helperCard
+          ? h('div', { class: 'row', style: { alignItems: 'flex-start' } },
+            npc ? npcAvatar(npc, 44) : null,
+            h('div', { class: 'grow' },
+              h('div', { class: 'small-text' }, npc ? `${npc.name}・${team.helperCard.name}` : team.helperCard.name),
+              helperLeader && h('div', { class: 'small-text dim' }, h('strong', { class: 'gold-text' }, `隊長技・${helperLeader.name}　`), helperLeader.description)))
+          : h('p', { class: 'small-text dim', style: { margin: '0' } }, '沒有帶助戰。助戰卡的隊長技會和你的隊長技一起生效。'),
+        helperAllowed && button(team.helperCard ? '更換助戰' : '選擇助戰', { small: true, icon: 'team', onClick: pickHelper }),
       ),
       rules.length > 0 && panel(
         { title: '隊伍限制' },
