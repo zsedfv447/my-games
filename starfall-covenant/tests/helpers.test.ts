@@ -37,6 +37,14 @@ describe('助戰資料', () => {
   });
 });
 
+describe('助戰強度', () => {
+  it('6★ 助戰只在主線通關（st-5-9）後出現', () => {
+    for (const npc of HELPER_NPCS) {
+      for (const t of npc.tiers) if (cardById(t.card)!.rarity >= 6) expect(t.after, `${npc.id} ${t.card}`).toBe('st-5-9');
+    }
+  });
+});
+
 describe('助戰名單', () => {
   it('新玩家只有一開始就有的 NPC，通關後解鎖更多', () => {
     const early = roster(withCleared(0)).map((o) => o.npc.id);

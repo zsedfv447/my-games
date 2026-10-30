@@ -66,8 +66,11 @@ export const helperScreen: ScreenDef = {
 
     const roster = rosterFor(stage);
     // 在助戰名單上看到的卡登錄為圖鑑「見過」
-    const seen = markSeen(getSave(), roster.map((o) => o.card.id));
-    if (seen !== getSave()) commit(seen);
+    // 畫面建好後才寫入存檔，不在 render 裡觸發狀態更新
+    queueMicrotask(() => {
+      const seen = markSeen(getSave(), roster.map((o) => o.card.id));
+      if (seen !== getSave()) commit(seen);
+    });
     const current = chosenHelper(stage.id);
     const done = (helper: ReturnType<typeof offerToHelper> | null) => {
       chooseHelper(stage.id, helper);

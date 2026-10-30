@@ -7,7 +7,7 @@
     "unlockAfter": null,
     "tiers": [
       { "card": "c106", "after": null },
-      { "card": "c101", "after": "st-3-9" }
+      { "card": "c101", "after": "st-5-9" }
     ],
     "quote": "火只要一種顏色就夠了，剩下的交給我。"
   },
@@ -44,7 +44,7 @@
     "unlockAfter": null,
     "tiers": [
       { "card": "c306", "after": null },
-      { "card": "c301", "after": "st-4-9" }
+      { "card": "c301", "after": "st-5-9" }
     ],
     "quote": "受傷了嗎？先喝口水，再繼續走。"
   },

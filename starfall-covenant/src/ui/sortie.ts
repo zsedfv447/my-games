@@ -35,12 +35,12 @@ export function offerToHelper(offer: HelperOffer): ChosenHelper {
 
 /**
  * 出戰確認時整理助戰：已選的 NPC 換成最新等級與卡片；
- * 還沒選過（或已選的不在名單上）就自動帶第一位符合限制的 NPC。
+ * 還沒選過（或已選的不在名單上、不符合本關限制）就自動帶第一位符合限制的 NPC。
  */
 export function ensureHelper(stageId: string, roster: HelperOffer[]): void {
   const current = chosenHelpers.get(stageId);
   if (current === null) return;
-  const same = current && roster.find((o) => o.npc.id === current.npcId);
+  const same = current && roster.find((o) => o.npc.id === current.npcId && !o.problem);
   const pick = same || roster.find((o) => !o.problem);
   if (pick) chosenHelpers.set(stageId, offerToHelper(pick));
   else chosenHelpers.delete(stageId);
