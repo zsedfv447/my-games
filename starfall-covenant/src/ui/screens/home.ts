@@ -11,6 +11,10 @@ import { cardPortraitUrl, cardThumb, emptySlot } from '../components/card-thumb'
 import { chapterProgress, nextMainStage, stageContext } from '../stage-nav';
 import { homeBadges, type HomeBadges } from '../economy';
 import { maybeShowLoginPopup } from './login-bonus';
+import { openLimitedEvents } from '../event-order';
+import { eventStatusText } from '../../progression/events';
+import '../flow-polish.css';
+import { maybeOfferResume } from '../battle-session';
 
 /** 捷徑上的紅點：有可領的登入、任務或成就獎勵 */
 const BADGE_OF: Record<string, keyof HomeBadges> = { 'login-bonus': 'login', quests: 'quests', achievements: 'achievements' };
@@ -35,17 +39,18 @@ export const homeScreen: ScreenDef = {
   render({ nav, onLeave }) {
     audio.playBgm('home');
     // 每天第一次回到主城自動跳出登入獎勵（等畫面掛上後再開）
-    const popup = setTimeout(() => maybeShowLoginPopup(() => root.querySelectorAll('[data-badge="login"]').forEach((el) => el.remove())), 350);
+    // 有沒打完的戰鬥時先問要不要繼續，這次就不跳登入獎勵
+    const popup = maybeOfferResume(nav) ? undefined : setTimeout(() => maybeShowLoginPopup(() => root.querySelectorAll('[data-badge="login"]').forEach((el) => el.remove())), 350);
     onLeave(() => clearTimeout(popup));
     const bg = userAsset('backgrounds', 'home');
     const save = getSave();
     const members = save.teams[save.activeTeam].members.map((uid) => save.inventory.cards.find((c) => c.uid === uid));
     const leader = members[0] && growth.card(members[0].cardId);
     const portrait = leader && cardPortraitUrl(leader);
-    const ctx = stageContext(gameData.stages);
+    const ctx = stageContext(gameData.stages, gameData.events);
     const next = nextMainStage(save, ctx, Date.now());
     const chapter = gameData.chapters.find((c) => c.chapter === next?.chapter);
-    const progress = chapter && chapterProgress(save, chapter.chapter, ctx, Date.now());
+    const progress = chapter && chapterProgress(save, chapter.chapter, ctx, Date.now(), chapter.stageCount);
     const badges = homeBadges(save, Date.now());
     const dot = (to: string) => BADGE_OF[to] && badges[BADGE_OF[to]] && h('span', { class: 'badge dot', dataset: { badge: BADGE_OF[to] }, 'aria-label': '有可領取的獎勵' });
     const root = h(
@@ -65,6 +70,11 @@ export const homeScreen: ScreenDef = {
         h('span', { class: 'quest-copy' }, h('small', null, chapter ? `第 ${chapter.chapter} 章 · ${chapter.name}` : '星骸遠征'), h('strong', null, next?.name ?? '踏上新的冒險'), h('small', null, progress ? `章節進度 ${progress.cleared} / ${progress.total}` : '探索關卡與挑戰之塔')),
         h('span', { class: 'quest-arrow' }, '›'),
         badges.chapters && h('span', { class: 'badge dot', dataset: { badge: 'chapters' }, 'aria-label': '有可領取的章節獎勵' })),
+      // 開放中的限時活動（常駐活動不顯示），點了進活動列表
+      openLimitedEvents(gameData.events, Date.now()).map((e) => h('button', { type: 'button', class: 'home-event-banner', onClick: () => nav.go('stages', ['event']) },
+        icon('event'),
+        h('span', { class: 'grow' }, h('strong', null, e.name), h('small', null, `限時活動・${eventStatusText(e, Date.now())}`)),
+        h('span', { class: 'quest-arrow' }, '›'))),
       h('div', { class: 'home-party' }, h('div', { class: 'home-section-label' }, h('span', null, '出戰隊伍'), h('button', { type: 'button', onClick: () => nav.go('team') }, '編成 ›')),
         h('div', { class: 'home-party-cards' }, members.map((owned) => {
           const def = owned && growth.card(owned.cardId);

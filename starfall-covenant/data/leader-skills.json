@@ -2198,5 +2198,392 @@
       }
     ],
     "description": "龍嗣攻擊 2.5 倍、生命 1.2 倍。"
+  },
+  {
+    "id": "l701",
+    "name": "萌芽之群",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2,
+            "target": {
+              "race": "beast"
+            }
+          }
+        ]
+      }
+    ],
+    "description": "獸裔攻擊 2 倍。"
+  },
+  {
+    "id": "l702",
+    "name": "渡魂燈火",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2.5,
+            "target": {
+              "race": "nether"
+            }
+          },
+          {
+            "type": "hpMultiplier",
+            "value": 1.3,
+            "target": {
+              "race": "nether"
+            }
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "heartsMatched",
+            "count": 1
+          }
+        ],
+        "effects": [
+          {
+            "type": "damageReduction",
+            "percent": 20
+          }
+        ]
+      }
+    ],
+    "description": "冥裔攻擊 2.5 倍、生命 1.3 倍；消除心珠時受到傷害減少 20%。"
+  },
+  {
+    "id": "l703",
+    "name": "不棄之群",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2,
+            "target": {
+              "race": "beast"
+            }
+          },
+          {
+            "type": "hpMultiplier",
+            "value": 1.2,
+            "target": {
+              "race": "beast"
+            }
+          }
+        ]
+      }
+    ],
+    "description": "獸裔攻擊 2 倍、生命 1.2 倍。"
+  },
+  {
+    "id": "l704",
+    "name": "霧裡的光",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2,
+            "target": {
+              "race": "nether"
+            }
+          }
+        ]
+      }
+    ],
+    "description": "冥裔攻擊 2 倍。"
+  },
+  {
+    "id": "l705",
+    "name": "盾衛之陣",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3,
+            "target": {
+              "race": "human"
+            }
+          },
+          {
+            "type": "hpMultiplier",
+            "value": 1.5,
+            "target": {
+              "race": "human"
+            }
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "comboAtLeast",
+            "combo": 6
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 1.3,
+            "target": {
+              "race": "human"
+            }
+          }
+        ]
+      }
+    ],
+    "description": "人傑攻擊 3 倍、生命 1.5 倍；Combo ≥ 6 時人傑攻擊再 1.3 倍。"
+  },
+  {
+    "id": "l706",
+    "name": "燃誓",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3.5,
+            "target": {
+              "race": "human"
+            }
+          },
+          {
+            "type": "hpMultiplier",
+            "value": 1.3,
+            "target": {
+              "race": "human"
+            }
+          },
+          {
+            "type": "rcvMultiplier",
+            "value": 1.3,
+            "target": {
+              "race": "human"
+            }
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "attributesMatched",
+            "count": 3
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 1.3,
+            "target": {
+              "race": "human"
+            }
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "hpBelow",
+            "percent": 50
+          }
+        ],
+        "effects": [
+          {
+            "type": "damageReduction",
+            "percent": 25
+          }
+        ]
+      }
+    ],
+    "description": "人傑攻擊 3.5 倍、生命與回復 1.3 倍；同時消除 3 種以上屬性時人傑攻擊再 1.3 倍；生命 < 50% 時受到傷害減少 25%。"
+  },
+  {
+    "id": "l707",
+    "name": "戰首之血",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3,
+            "target": {
+              "race": "beast"
+            }
+          },
+          {
+            "type": "hpMultiplier",
+            "value": 1.3,
+            "target": {
+              "race": "beast"
+            }
+          }
+        ]
+      }
+    ],
+    "description": "獸裔攻擊 3 倍、生命 1.3 倍。"
+  },
+  {
+    "id": "l708",
+    "name": "生死同藤",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "attributesMatched",
+            "count": 2,
+            "attributes": [
+              "wood",
+              "dark"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 3.5
+          }
+        ]
+      }
+    ],
+    "description": "同時消除森珠與蝕珠時全隊攻擊 3.5 倍。"
+  },
+  {
+    "id": "l709",
+    "name": "抄寫長卷",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "orbsInOneMatch",
+            "count": 6
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2.5
+          }
+        ]
+      }
+    ],
+    "description": "一串消除 6 顆以上珠時全隊攻擊 2.5 倍。"
+  },
+  {
+    "id": "l710",
+    "name": "晝夜雙角",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "attributesMatched",
+            "count": 2,
+            "attributes": [
+              "light",
+              "dark"
+            ]
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2.5
+          }
+        ]
+      }
+    ],
+    "description": "同時消除輝珠與蝕珠時全隊攻擊 2.5 倍。"
+  },
+  {
+    "id": "l711",
+    "name": "一直線",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "orbsInOneMatch",
+            "count": 6
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2
+          }
+        ]
+      }
+    ],
+    "description": "一串消除 6 顆以上珠時全隊攻擊 2 倍。"
+  },
+  {
+    "id": "l606",
+    "name": "重立之誓",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "value": 2.5,
+            "target": {
+              "race": "human"
+            }
+          },
+          {
+            "type": "hpMultiplier",
+            "value": 1.3,
+            "target": {
+              "race": "human"
+            }
+          }
+        ]
+      }
+    ],
+    "description": "人傑攻擊 2.5 倍、生命 1.3 倍。"
   }
 ]

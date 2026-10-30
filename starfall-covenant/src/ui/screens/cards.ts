@@ -2,12 +2,13 @@
 import { append, clear, h } from '../dom';
 import { gameData } from '../../data/load';
 import {
-  computeStats, filterCards, inventoryUsage, inventoryWarning, previewSell, ROLE_LABEL, sellCards, setLocked, sortCards, type SortKey,
+  computeStats, filterCards, inventoryUsage, inventoryWarning, isStarCore, materialBaseExp, previewSell, ROLE_LABEL, sellCards, setLocked, sortCards, type SortKey,
 } from '../../growth';
 import { teamUids } from '../../growth/save-ops';
 import { ATTRIBUTE_NAMES, RACE_NAMES } from '../art/palette';
 import { badge, button, emptyState, panel, stars, tabs } from '../components/basic';
 import { cardPortrait, cardThumb } from '../components/card-thumb';
+import { pickCard } from '../components/card-picker';
 import { confirmDialog, toast } from '../components/overlay';
 import { commit, getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
@@ -15,6 +16,8 @@ import {
   activeFilterCount, ATTRIBUTE_CHIPS, emptyBagFilter, RACE_CHIPS, RARITY_CHIPS, toCardFilter, toggleValues, type BagFilterState,
 } from './bag-view';
 import '../bag.css';
+import { cardBondPanel } from '../card-bond-view';
+import { closeBondStories } from '../bond-story';
 
 let sortKey: SortKey = 'obtainedAt';
 // 篩選條件跨畫面保留（從卡片詳情返回時不會被清掉）
@@ -141,8 +144,9 @@ export const cardScreen: ScreenDef = {
   title: '卡片詳情',
   chrome: 'sub',
   parent: 'cards',
-  render({ route, nav }) {
+  render({ route, nav, onLeave }) {
     const owned = getSave().inventory.cards.find((c) => c.uid === route.args[0]);
+    onLeave(closeBondStories);
     const def = owned && growth.card(owned.cardId);
     if (!owned || !def) return h('div', null, emptyState('cards', '找不到這張卡片'));
     const st = computeStats(def, owned, growth.rules);
@@ -157,6 +161,20 @@ export const cardScreen: ScreenDef = {
         nav.replace('card', [owned.uid]);
       },
     });
+    const isMaterial = def.race === 'material';
+    const starCore = isStarCore(def.id, growth);
+    // 素材卡：選一張要強化的角色卡，帶著這張素材進入強化畫面
+    const feed = () => {
+      const s = getSave();
+      if (owned.locked || teamUids(s).has(owned.uid)) return toast('上鎖或隊伍中的卡不能當素材');
+      const maxed = s.inventory.cards.filter((c) => {
+        const d = growth.card(c.cardId);
+        return !d || c.level >= d.maxLevel;
+      }).map((c) => c.uid);
+      pickCard('要強化哪一張卡？', { exclude: new Set(maxed) }, (target) => {
+        if (target) nav.go('enhance', [target], { mat: owned.uid });
+      });
+    };
     return h(
       'div',
       null,
@@ -167,16 +185,23 @@ export const cardScreen: ScreenDef = {
         h('div', { class: 'row wrap', style: { gap: '4px', margin: '6px 0' } },
           badge(`${ATTRIBUTE_NAMES[def.attribute]}屬性`, `attr-${def.attribute}`), badge(RACE_NAMES[def.race]), badge(`Cost ${def.cost}`),
           def.archetypes.map((a) => badge(`${gameData.archetypes.find((x) => x.id === a.id)?.name ?? a.id}・${ROLE_LABEL[a.role]}`, 'gold'))),
-        h('div', { class: 'stat-row' },
-          h('div', null, h('span', { class: 'dim' }, '等級'), h('strong', null, `${owned.level} / ${def.maxLevel}`)),
-          h('div', null, h('span', { class: 'dim' }, '生命'), h('strong', null, st.hp.toLocaleString())),
-          h('div', null, h('span', { class: 'dim' }, '攻擊'), h('strong', null, st.atk.toLocaleString())),
-          h('div', null, h('span', { class: 'dim' }, '回復'), h('strong', null, st.rcv.toLocaleString()))),
+        isMaterial
+          ? h('p', { class: 'material-exp' }, starCore
+            ? `星紋覺醒素材：${ATTRIBUTE_NAMES[def.attribute]}屬性角色解鎖星紋時使用`
+            : `提供 ${Math.floor(materialBaseExp(def, owned, growth)).toLocaleString()} 經驗（同屬 ×${growth.rules.sameAttributeExpBonus}）`)
+          : h('div', { class: 'stat-row' },
+            h('div', null, h('span', { class: 'dim' }, '等級'), h('strong', null, `${owned.level} / ${def.maxLevel}`)),
+            h('div', null, h('span', { class: 'dim' }, '生命'), h('strong', null, st.hp.toLocaleString())),
+            h('div', null, h('span', { class: 'dim' }, '攻擊'), h('strong', null, st.atk.toLocaleString())),
+            h('div', null, h('span', { class: 'dim' }, '回復'), h('strong', null, st.rcv.toLocaleString()))),
       ),
       skill && panel({ title: `主動技・${skill.name}` }, h('p', null, skill.description), h('p', { class: 'small-text dim' }, `冷卻 ${skill.cooldown.max} 回合（技能等級 ${owned.skillLevel}）`)),
       leader && panel({ title: `隊長技・${leader.name}` }, h('p', null, leader.description)),
       def.flavor && panel(null, h('p', { class: 'small-text dim' }, def.flavor)),
-      h('div', { class: 'row' }, lockBtn, button('強化', { small: true, onClick: () => nav.go('enhance', [owned.uid]) }), def.evolution && button('進化', { small: true, onClick: () => nav.go('evolve', [owned.uid]) })),
+      !isMaterial && cardBondPanel(def),
+      isMaterial
+        ? h('div', { class: 'row' }, lockBtn, !starCore && button('拿去強化…', { small: true, variant: 'primary', onClick: feed }))
+        : h('div', { class: 'row' }, lockBtn, button('強化', { small: true, onClick: () => nav.go('enhance', [owned.uid]) }), def.evolution && button('進化', { small: true, onClick: () => nav.go('evolve', [owned.uid]) })),
     );
   },
 };

@@ -1,4 +1,6 @@
 // 畫面路由：以網址 hash 表示目前畫面（#/stage-list/1?from=map），方便返回鍵與重新整理後回到原畫面
+import { closeRouteScoped } from './route-scope';
+
 export interface Route {
   name: string;
   args: string[];
@@ -43,6 +45,8 @@ export interface Navigator {
   go(name: string, args?: (string | number)[], query?: Record<string, string | number>): void;
   replace(name: string, args?: (string | number)[], query?: Record<string, string | number>): void;
   back(): void;
+  /** 回到 hash 路徑 path：瀏覽紀錄裡有就退回那一步（中間的頁面一起丟掉），沒有就換成它 */
+  backTo(path: string): void;
 }
 
 export interface ScreenContext {
@@ -116,12 +120,25 @@ export class Router implements Navigator {
     }
   }
 
+  backTo(path: string): void {
+    const r = parseHash(`#/${path}`);
+    const hash = buildHash(r.name, r.args, r.query);
+    const i = this.stack.lastIndexOf(hash);
+    if (i < 0) return this.replace(r.name, r.args, r.query);
+    const steps = this.stack.length - i;
+    // render() 會在網址回到 stack 頂端時把它彈掉
+    this.stack.length = i + 1;
+    history.go(-steps);
+  }
+
   private render(): void {
     // 使用者按瀏覽器／手機返回鍵時，同步站內紀錄
     if (this.stack.length && this.stack[this.stack.length - 1] === location.hash) this.stack.pop();
     const route = parseHash(location.hash);
     const screen = this.screens.get(route.name) ?? this.screens.get(this.fallback)!;
     this.leaveFns.splice(0).forEach((fn) => fn());
+    // 上一個畫面自動跳出的彈窗（登入獎勵、未完成戰鬥的詢問）不跟到新畫面
+    closeRouteScoped();
     this.current = screen;
     const el = screen.render({ route, nav: this, onLeave: (fn) => this.leaveFns.push(fn) });
     this.mount(screen, el, route);

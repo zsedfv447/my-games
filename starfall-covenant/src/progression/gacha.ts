@@ -1,5 +1,5 @@
 // 召喚：常駐／限定卡池、單抽、十連（保底最低稀有度）、N 抽保底、限定角色機率提升、抽卡紀錄
-import type { GachaPoolDef, Rarity, SaveData } from '../core/types';
+import type { CardDef, GachaPoolDef, Rarity, SaveData } from '../core/types';
 import type { Rng } from '../core/rng';
 import { fail } from './result';
 import { addCards } from './rewards';
@@ -105,12 +105,40 @@ export function checkGachaPool(pool: GachaPoolDef): string[] {
   return errors;
 }
 
+/**
+ * 新手第一抽的候選：卡池裡隊伍還沒有、而且和隊長同屬性或同流派的卡。
+ * owned 傳玩家已擁有的卡號（入門隊）；沒有候選時回傳空陣列。
+ */
+export function firstPullCandidates(pool: GachaPoolDef, cards: CardDef[], owned: string[], leader: CardDef): string[] {
+  const have = new Set(owned);
+  const styles = new Set(leader.archetypes.map((a) => a.id));
+  const byId = new Map(cards.map((c) => [c.id, c]));
+  return Object.values(pool.cards).flat().filter((id): id is string => {
+    const c = id ? byId.get(id) : undefined;
+    return !!c && !have.has(c.id) && (c.attribute === leader.attribute || c.archetypes.some((a) => styles.has(a.id)));
+  });
+}
+
+/** 只留下候選卡的卡池；候選卡都不在可抽的稀有度時回傳 null */
+function narrowPool(pool: GachaPoolDef, only: string[]): GachaPoolDef | null {
+  const keep = new Set(only);
+  const cards = Object.fromEntries(Object.entries(pool.cards).map(([r, list]) => [r, (list ?? []).filter((id) => keep.has(id))])) as GachaPoolDef['cards'];
+  const narrowed = { ...pool, cards };
+  return effectiveRates(narrowed).length > 0 ? narrowed : null;
+}
+
+export interface PullOptions {
+  /** 第一抽只從這些卡裡選（新手教學）；稀有度照卡池機率，在有候選卡的稀有度之間重新分配 */
+  firstFrom?: string[];
+}
+
 export function pullGacha(
   save: SaveData,
   pool: GachaPoolDef,
   count: 1 | 10,
   rng: Rng,
   now: number,
+  opts: PullOptions = {},
 ): { ok: true; save: SaveData; results: PullResult[] } | { ok: false; reason: GachaFail } {
   if (!isPoolOpen(pool, now)) return fail('poolClosed');
   if (effectiveRates(pool).length === 0) return fail('emptyPool');
@@ -120,6 +148,7 @@ export function pullGacha(
 
   const rates = effectiveRates(pool);
   const guaranteeRates = effectiveRates(pool, pool.tenPullGuarantee.minRarity);
+  const narrowed = opts.firstFrom?.length ? narrowPool(pool, opts.firstFrom) : null;
   const owned = new Set(save.collection.owned);
   let counter = save.gacha.pityCounter[pool.id] ?? 0;
   let gotGuaranteed = false;
@@ -136,12 +165,14 @@ export function pullGacha(
       rarity = rollRarity(guaranteeRates, rng);
       guarantee = true;
     } else {
-      rarity = rollRarity(rates, rng);
+      rarity = rollRarity(i === 0 && narrowed ? effectiveRates(narrowed) : rates, rng);
     }
     if (rarity >= pool.tenPullGuarantee.minRarity) gotGuaranteed = true;
     counter = rarity >= pool.pity.rarity ? 0 : counter + 1;
 
-    const cardId = pickCard(pool, rarity, rng);
+    // 保底抽到的稀有度沒有候選卡時，照原卡池抽
+    const from = i === 0 && narrowed?.cards[rarity]?.length ? narrowed : pool;
+    const cardId = pickCard(from, rarity, rng);
     const isNew = !owned.has(cardId);
     owned.add(cardId);
     results.push({

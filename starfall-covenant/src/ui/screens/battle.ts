@@ -6,55 +6,60 @@ import { createRng } from '../../core/rng';
 import type { StageDef } from '../../core/types';
 import { startBattle, type Battle, type BattleData, type BattleState, type EnemyState, type TurnSummary } from '../../battle/battle-state';
 import { BoardView } from '../../battle/view/board-view';
-import { completeStage, type StageClearResult } from '../../progression/stages';
-import { planDrops, planMatches, plannedCards, type DropPlan } from '../../progression/drops';
+import { isMemberSealed } from '../../battle/skills/status';
+import { completeStage, liveStarStatus, type StageClearResult } from '../../progression/stages';
+import { plannedCards, type DropPlan } from '../../progression/drops';
 import { chestBadge, DropCounter } from '../battle-fx/drops';
 import { CONTINUE_COST_GEMS, payContinue } from '../../progression/continue';
 import { enemySvg } from '../art/enemy';
+import { enemyArtUrl } from '../art/enemy-art';
 import { ATTRIBUTE_NAMES } from '../art/palette';
 import { buzz, flashClass, skillCutin } from '../battle-fx/effects';
-import { openPauseMenu } from '../battle-fx/pause';
-import { clearCombo, finishCombo, flashReadySkills, markMatchups, renderCombo, renderIntent, weakHint } from '../battle-fx/readability';
+import { openPauseMenu, type PauseHandle } from '../battle-fx/pause';
+import { clearCombo, finishCombo, flashReadySkills, markMatchups, markSeals, renderCombo, renderIntent, weakHint } from '../battle-fx/readability';
 import { playStrikes } from '../battle-fx/strikes';
-import { resolveArtPath, userAsset } from '../assets';
+import { userAsset } from '../assets';
 import { audio } from '../audio';
 import { badge, bar, button, emptyState, iconButton } from '../components/basic';
 import { cardThumb } from '../components/card-thumb';
 import { confirmDialog, openDialog, toast, type DialogHandle } from '../components/overlay';
-import { DEMO_DATA, DEMO_HELPER, DEMO_STAGE, DEMO_TEAM } from '../demo';
-import { stageContext } from '../stage-nav';
-import { buildSortieTeam } from '../sortie';
-import { commit, getSave, getSettings, growth } from '../state';
+import { DEMO_HELPER, DEMO_TEAM, PRACTICE_MODES, isPracticeMode, practiceSetup, type PracticeMode } from '../demo';
+import { stageContext, stageListPath } from '../stage-nav';
+import { commit, getSave, getSettings } from '../state';
 import type { Navigator, ScreenDef } from '../router';
 import { starText } from './prepare';
 import { enemyChips, teamChips, STATUS_NAMES, type StatusChip } from '../status-labels';
 import { storyBox } from '../components/story';
+import { stageStoryToPlay } from '../../progression/stage-story';
 import { openClearResult, type ResultNote } from '../components/reward-reveal';
+import { grantLorePage, loreNotes } from '../../progression/lore';
 import { clearItems, levelUpView } from '../reward-plan';
+import { resultConstellation, shareClear } from '../clear-extras';
 import { showDefeatGuide } from '../components/defeat-guide';
 import { trackBattleRecords, type BattleRecordTracker } from '../battle-records';
 import { leaderLineOf } from '../victory-line';
+import { helperBondOnClear } from '../helper-bond-clear';
+import { cardBondOnClear } from '../card-bond-clear';
 import { markStorySeen } from './story';
 import { createTutorialBattle } from '../tutorial/battle-setup';
 import { TutorialBattleGuide, texts as guideTexts, type BattleGuide } from '../tutorial/battle-guide';
-import { advanceTutorial, skipTutorial } from '../tutorial/flow';
-import { BattleHud } from '../components/battle-hud';
+import { advanceTutorial } from '../tutorial/flow';
+import { skipTutorialNow } from '../tutorial/skip';
+import { BattleHud, liveSummary } from '../components/battle-hud';
 import { canAct, reenableAfterCancel } from '../battle-guard';
-import { grantClearExp, nextStageButton, sortieUids, unlockNotice } from '../stage-clear';
+import { grantClearExp, nextStageButton, unlockNotice } from '../stage-clear';
+import { endBattle, openStageBattle, saveBattle } from '../battle-session';
+import { collectedDrops } from '../../progression/active-battle';
 import type { CardExpGain } from '../../growth';
 
 const CELL = 63;
 
-// 出戰確認扣過體力才發「入場券」；重新整理戰鬥頁不會白白再扣一次，也不能免費重打。
-// 掉落在發券時就骰好並跟著券走（提案 13），撤退後要重新付體力才會有新的一份。
-let ticket: { stageId: string; drops: DropPlan } | null = null;
-export function armBattle(stageId: string, drops?: DropPlan): void {
-  const stage = gameData.stages.find((s) => s.id === stageId);
-  ticket = { stageId, drops: drops ?? (stage ? planDrops(stage, createRng()) : { stageId, drops: [] }) };
-}
+// 出戰確認扣過體力才發「入場券」（寫在存檔，見 battle-session.ts）；重新整理會從中斷處繼續，不會重扣也不能重打。
+// 掉落在發券時就骰好並跟著券走（提案 13），重新整理或續戰都沿用同一份。
+export { armBattle } from '../battle-session';
 
 function enemyArt(e: EnemyState, boss: boolean): Element {
-  const url = userAsset('enemies', e.def.id) ?? resolveArtPath(e.def.art.sprite);
+  const url = enemyArtUrl(e.def);
   return url ? h('img', { src: url, alt: e.def.name, draggable: 'false' }) : svg(enemySvg({ ...e.def, boss }));
 }
 
@@ -82,35 +87,36 @@ interface Setup {
   battle: Battle;
   /** 出戰的玩家卡 uid（不含助戰），結算發卡片經驗用 */
   memberUids?: string[];
+  /** 正式關卡：結算掉落的亂數種子、是否從中斷處還原 */
+  dropSeed?: number;
+  resumed?: boolean;
+  /** 練習場目前的模式 */
+  practiceMode?: PracticeMode;
   /** 新手教學戰鬥的引導層 */
   guide?: BattleGuide;
   /** 進場時骰好的掉落；練習與教學沒有 */
   drops?: DropPlan;
 }
 
-function setup(stageId: string, nav: Navigator): Setup | string {
+function setup(stageId: string, nav: Navigator, variant?: string): Setup | string {
   if (stageId === 'tutorial') {
     const t = createTutorialBattle(gameData);
     const guide = new TutorialBattleGuide(guideTexts(t.battle.getState(), t.data), {
       onFinish: () => { commit(advanceTutorial(getSave(), 'battle')); nav.replace('team'); },
-      onSkip: () => { commit(skipTutorial(getSave())); nav.replace('home'); },
+      onSkip: () => { nav.replace('home'); void skipTutorialNow(); },
     });
     return { stage: t.stage, data: t.data, practice: true, battle: t.battle, guide };
   }
   if (stageId === 'practice') {
-    return { stage: DEMO_STAGE, data: DEMO_DATA, practice: true, battle: startBattle(DEMO_STAGE, DEMO_TEAM, DEMO_HELPER, createRng(), DEMO_DATA) };
+    // 第二個參數是練習模式（暫停選單可切換敵人機制）
+    const mode: PracticeMode = isPracticeMode(variant) ? variant : 'normal';
+    const { stage, data } = practiceSetup(mode);
+    return { stage, data, practice: true, practiceMode: mode, battle: startBattle(stage, DEMO_TEAM, DEMO_HELPER, createRng(), data) };
   }
   const stage = gameData.stages.find((s) => s.id === stageId);
   if (!stage) return '找不到這一關';
-  if (ticket?.stageId !== stageId) return '戰鬥已中斷，請重新出發';
-  const drops = planMatches(ticket.drops, stage) ? ticket.drops : { stageId, drops: [] };
-  ticket = null;
-  const team = buildSortieTeam(stage, getSave(), growth.card);
-  try {
-    return { stage, data: gameData, practice: false, battle: startBattle(stage, team.members, team.helper, createRng(), gameData), memberUids: sortieUids(team), drops };
-  } catch (err) {
-    return err instanceof Error ? err.message : String(err);
-  }
+  const opened = openStageBattle(stage);
+  return typeof opened === 'string' ? opened : { stage, data: gameData, practice: false, ...opened };
 }
 
 export const battleScreen: ScreenDef = {
@@ -119,7 +125,7 @@ export const battleScreen: ScreenDef = {
   chrome: 'bare',
   parent: 'adventure',
   render({ route, nav, onLeave }) {
-    const s = setup(route.args[0] ?? '', nav);
+    const s = setup(route.args[0] ?? '', nav, route.args[1]);
     if (typeof s === 'string') {
       return h('div', { style: { justifyContent: 'center', padding: '24px' } },
         emptyState('sword', s),
@@ -158,6 +164,8 @@ class BattleView {
   private enableWhenResumed = false;
   /** 轉珠或主動技的結算動畫播放中（state.phase 此時還是 player） */
   private resolving = false;
+  /** 開著的暫停選單（結算剛好結束時更新撤退按鈕） */
+  private pauseMenu?: PauseHandle;
   private get guard() {
     return { phase: this.state.phase, resolving: this.resolving };
   }
@@ -205,6 +213,7 @@ class BattleView {
       this.offs.push(this.records.dispose);
     }
     if (!s.practice) this.maybeBossStory();
+    if (s.resumed) queueMicrotask(() => this.afterResume());
     s.guide?.attach({
       root: this.element,
       board: this.boardView.element,
@@ -213,6 +222,20 @@ class BattleView {
       setBoardEnabled: (on) => this.boardView.setEnabled(on),
       getState: () => this.state,
     });
+  }
+
+  /** 從中斷處還原：已分出勝負的直接進結算或失敗選單 */
+  private afterResume(): void {
+    toast('已回到中斷的戰鬥');
+    // 中斷前已倒下的敵人，寶箱直接算進計數器（不播飛行動畫）
+    if (this.s.drops) for (const d of collectedDrops(this.s.drops, this.state)) void this.dropCounter.collect(this.element, d.wave, d.enemy, undefined, this.speed);
+    if (this.state.phase === 'won') void this.onWin();
+    else if (this.state.phase === 'lost') this.onLose();
+  }
+
+  /** 正式關卡每次行動結算後存檔 */
+  private persist(): void {
+    if (!this.s.practice) saveBattle(this.s.battle);
   }
 
   destroy(): void {
@@ -271,6 +294,8 @@ class BattleView {
     el.classList.toggle('dead', e.hp <= 0);
     el.classList.toggle('targeted', i === this.state.target);
     el.querySelector('.enemy-chips')!.replaceWith(chipRow(enemyChips(e), 'enemy-chips'));
+    // 減傷狀態會變（護盾到期、輪替），弱點跟著更新
+    el.querySelector('.weak-hint')?.replaceWith(weakHint(e, this.s.data.config.battle));
   }
 
   private renderTeam(): void {
@@ -284,6 +309,7 @@ class BattleView {
       this.teamRow.appendChild(thumb);
     }
     markMatchups(this.teamRow, this.state, this.s.data.config.battle);
+    markSeals(this.teamRow, this.state);
   }
 
   private renderHp(previous?: number): void {
@@ -315,26 +341,25 @@ class BattleView {
     this.boardView.setEnabled(false);
     const close = () => {
       this.paused = false;
+      this.pauseMenu = undefined;
       this.speed = getSettings().battleSpeed;
       this.element.classList.toggle('low-fx', getSettings().lowFx);
     };
-    openPauseMenu({
-      stars: this.s.practice ? [] : this.s.stage.stars ?? [],
+    this.pauseMenu = openPauseMenu({
+      practice: this.s.practiceMode && !this.s.guide
+        ? { modes: PRACTICE_MODES, current: this.s.practiceMode, onSwitch: (mode) => { close(); this.nav.replace('battle', ['practice', mode]); } }
+        : undefined,
+      stars: this.s.practice ? [] : (this.s.stage.stars ?? []).map((cond) => ({ cond, status: liveStarStatus(cond, liveSummary(this.state), false) })),
       onResume: () => {
         close();
         // 結算動畫中按繼續不開放盤面，動畫播完會自己開
         if ((wasEnabled || this.enableWhenResumed) && canAct(this.guard)) this.boardView.setEnabled(true);
         this.enableWhenResumed = false;
       },
+      // 結算動畫播放中撤退按鈕直接停用
+      canRetreat: canAct(this.guard),
       onRetreat: () => {
         close();
-        // 結算動畫播放中不能撤退：當作繼續，動畫播完照常開放盤面
-        if (this.resolving) {
-          toast('結算中，請等動畫播完再撤退');
-          if (this.enableWhenResumed && this.state.phase === 'player') this.boardView.setEnabled(true);
-          this.enableWhenResumed = false;
-          return;
-        }
         // 暫停時盤面已被關掉，取消撤退後要照暫停前的狀態恢復
         const restore = wasEnabled || this.enableWhenResumed;
         this.enableWhenResumed = false;
@@ -362,10 +387,11 @@ class BattleView {
     if (!m || !skill) return toast(`${m?.card.name ?? ''}沒有主動技`);
     const blocked = this.s.guide?.checkSkill(i);
     if (blocked) return toast(blocked);
-    const ready = m.skillCooldown === 0;
+    const sealed = isMemberSealed(this.state, i);
+    const ready = m.skillCooldown === 0 && !sealed;
     const dlg = openDialog(skill.name, h('div', null,
       h('p', null, skill.description),
-      h('p', { class: 'small-text dim' }, ready ? '可以施放' : `冷卻中，還要 ${m.skillCooldown} 回合`),
+      h('p', { class: 'small-text dim' }, sealed ? '被星紋封印，暫時不能施放' : ready ? '可以施放' : `冷卻中，還要 ${m.skillCooldown} 回合`),
     ), [
       button('取消', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
       button('施放', { variant: 'primary', disabled: !ready, onClick: () => { dlg.close(); void this.castSkill(i); } }),
@@ -377,11 +403,13 @@ class BattleView {
     const before = this.state;
     const r = this.s.battle.useSkill(i);
     if (!r.ok) return toast(r.reason);
+    this.persist();
     this.resolving = true;
     try {
       await this.playSkill(i, before, r);
     } finally {
       this.resolving = false;
+      this.pauseMenu?.setCanRetreat(canAct(this.guard));
     }
   }
 
@@ -447,11 +475,13 @@ class BattleView {
       this.enableBoard();
       return;
     }
+    this.persist();
     this.resolving = true;
     try {
       await this.playTurn(before, res);
     } finally {
       this.resolving = false;
+      this.pauseMenu?.setCanRetreat(canAct(this.guard));
     }
   }
 
@@ -536,9 +566,10 @@ class BattleView {
 
   /** 進入 Boss 波時播放 beforeBoss 劇情（看過的不再播）。有播放時回傳 true，播完才開放轉珠 */
   private async maybeBossStory(): Promise<boolean> {
-    const id = this.s.stage.story?.beforeBoss;
-    const lines = id ? gameData.story[id] : undefined;
-    if (!id || !lines || !this.s.stage.waves[this.state.wave]?.boss || getSave().progress.storySeen.includes(id)) return false;
+    const save = getSave();
+    const id = this.s.practice ? undefined : stageStoryToPlay(this.s.stage, 'beforeBoss', gameData.story, save.progress.storySeen, !save.progress.clearedStages.includes(this.s.stage.id));
+    if (!id || !this.s.stage.waves[this.state.wave]?.boss) return false;
+    const lines = gameData.story[id];
     this.boardView.setEnabled(false);
     await wait(900);
     await new Promise<void>((resolve) => {
@@ -609,38 +640,56 @@ class BattleView {
     await this.playFinisher();
     audio.play('win');
     audio.playBgm('victory');
-    if (this.s.guide) return this.s.guide.onWin();
+    if (this.s.guide) return this.tutorialResult(this.s.guide);
     const result = this.s.battle.getResult()!;
     let clear: StageClearResult | null = null;
     const firstClear = !this.s.practice && !getSave().progress.clearedStages.includes(this.s.stage.id);
     let expGains: CardExpGain[] = [];
+    let loreGained: ResultNote[] = [];
+    // 結算前的圖鑑：掉落卡是不是第一次獲得（NEW）
+    const ownedBefore = [...getSave().collection.owned];
     if (!this.s.practice) {
       const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
-      const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages), gameData.config, createRng(), Date.now(), this.s.drops && plannedCards(this.s.drops));
+      const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages, gameData.events), gameData.config, createRng(this.s.dropSeed), Date.now(), this.s.drops && plannedCards(this.s.drops));
       const exp = grantClearExp(done.save, this.s.memberUids ?? [], done.result.cardExp);
       expGains = exp.gains;
-      commit(exp.save);
+      // 星骸殘頁：首次通關有殘頁的關卡（progression/lore.ts）
+      const lore = grantLorePage(exp.save, this.s.stage.id, firstClear, gameData.lore!);
+      loreGained = loreNotes(lore);
+      // 發獎與清掉進行中的戰鬥同一次寫入，重新整理不會重複領或重骰掉落
+      commit({ ...lore.save, activeBattle: null });
       clear = done.result;
       bus.emit('stageCleared', { stageId: this.s.stage.id, turns: result.turns, stars: clear.stars });
       for (const d of clear.drops) bus.emit('cardObtained', { cardId: d.cardId, uid: d.uid, source: 'drop' });
     }
-    const notes: ResultNote[] = (this.records?.newRecordTexts() ?? []).map((text) => ({ text }));
+    // 結算提示收成小標籤（點了展開）：新紀錄合成一個、章節開放放最前面
+    const notes: ResultNote[] = [];
     if (firstClear) {
       const notice = unlockNotice(this.s.stage);
-      if (notice.text) notes.push({ text: notice.text, big: notice.chapter !== undefined });
+      if (notice.note) notes.push(notice.note);
     }
-    // then：離開後要去的 hash 路徑（下一關）；沒給就回上一頁
+    const records = this.records?.newRecordTexts() ?? [];
+    if (records.length) notes.push({ text: records.join('、'), chip: records.length > 1 ? `🏆 新紀錄 ×${records.length}` : '🏆 新紀錄' });
+    notes.push(...loreGained);
+    // 借用流浪契印師通關：同行情誼 +1，跨過門檻時加提示，感謝台詞取代隊長台詞
+    const bond = this.s.practice ? null : helperBondOnClear(this.s.stage, this.state.team.find((m) => m.isHelper)?.card);
+    if (bond) notes.push(...bond.notes);
+    // 出戰的玩家角色：羈絆 +1，10、30 場解鎖小劇場
+    if (!this.s.practice) notes.push(...cardBondOnClear(this.s.stage, this.s.memberUids ?? []));
+    // then：離開後要去的 hash 路徑（下一關）；沒給就回到這關所屬的關卡列表（練習回上一頁）
     const leave = (then?: string) => {
       this.dialog?.close();
-      const after = this.s.stage.story?.after;
-      // 通關後的劇情只在第一次播放
-      if (after && gameData.story[after] && !getSave().progress.storySeen.includes(after)) this.nav.replace('story', [after], { next: then ?? 'back' });
-      else if (then) this.nav.replace(then.split('/')[0], then.split('/').slice(1));
-      else this.nav.back();
+      const target = then ?? (this.s.practice ? 'back' : stageListPath(this.s.stage, gameData.events));
+      // 通關後的劇情只在首次通關時播放
+      const after = stageStoryToPlay(this.s.stage, 'after', gameData.story, getSave().progress.storySeen, firstClear);
+      if (after) this.nav.replace('story', [after], { next: target });
+      else if (target === 'back') this.nav.back();
+      else this.nav.backTo(target);
     };
     const next = this.s.practice ? null : nextStageButton(this.s.stage, getSave(), leave);
     const items = clearItems(result, clear, clear ? (this.s.stage.stars ?? []).map(starText) : [], {
       team: expGains.map((g) => ({ cardId: g.cardId, from: g.levelBefore, to: g.levelAfter })),
+      ownedBefore,
     });
     // 契約結算：戰績 → 金幣／經驗滾動 → 首通星晶 → 掉落卡翻面 → 星章點亮 → 升級卡 → 開放提示 → 按鈕
     this.dialog = openClearResult(this.element, {
@@ -650,12 +699,29 @@ class BattleView {
       instantCount: getSettings().lowFx,
       levelUp: clear?.levelUp && levelUpView(clear.levelUp, gameData.config),
       notes,
-      leaderLine: leaderLineOf(this.state),
+      onGo: (path) => leave(path),
+      constellation: resultConstellation(this.s.stage, clear),
+      share: () => shareClear(this.s.stage, this.state.team, this.s.memberUids ?? [], result, clear, firstClear, (this.s.stage.stars ?? []).map(starText)),
+      leaderLine: bond?.thanks ?? leaderLineOf(this.state),
       actions: [
         button(next ? '再戰' : '再戰一次', { variant: next ? 'ghost' : undefined, onClick: () => { this.dialog?.close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', [this.s.stage.id]); } }),
         button('返回', { variant: next ? undefined : 'primary', onClick: () => leave() }),
         next,
       ],
+    });
+  }
+
+  /** 教學戰鬥的簡化結算：只有戰績與隊長台詞，不發任何獎勵；按繼續後交回教學引導 */
+  private tutorialResult(guide: BattleGuide): void {
+    guide.hide();
+    this.dialog = openClearResult(this.element, {
+      stageName: this.s.stage.name,
+      items: clearItems(this.s.battle.getResult()!, null),
+      speed: this.speed,
+      instantCount: getSettings().lowFx,
+      notes: [{ text: '正式關卡會在這裡結算金幣、經驗與掉落' }],
+      leaderLine: leaderLineOf(this.state),
+      actions: [button('繼續', { variant: 'primary', onClick: () => { this.dialog?.close(); guide.onWin(); } })],
     });
   }
 
@@ -676,6 +742,7 @@ class BattleView {
       }
       const r = this.s.battle.continueBattle();
       if (!r.ok) return toast(r.reason);
+      this.persist();
       this.dialog?.close();
       this.state = this.s.battle.getState();
       this.shownHp = this.state.hp;
@@ -691,6 +758,7 @@ class BattleView {
   /** 失敗離場：正式關卡先顯示失敗引導（components/defeat-guide.ts），練習與教學直接返回 */
   private leaveDefeated(): void {
     if (this.s.practice || this.s.guide) return this.nav.back();
+    endBattle();
     showDefeatGuide(this.s.stage, { wave: this.state.wave, waveCount: this.state.waveCount, hasHelper: this.state.team.some((m) => m.isHelper) }, this.nav);
   }
 }

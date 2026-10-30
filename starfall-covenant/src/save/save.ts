@@ -2,9 +2,10 @@
 // 全部是純函式；實際的 localStorage 由呼叫端以 SaveStorage 注入，方便測試。
 import type { GameConfig, SaveData } from '../core/types';
 import { bus } from '../core/events';
+import { sanitizeActiveBattle } from '../progression/active-battle';
 
 export const SAVE_KEY = 'starfall.save';
-export const CURRENT_SAVE_VERSION = 3;
+export const CURRENT_SAVE_VERSION = 4;
 
 /** 寫入 localStorage 的外層：存檔本體＋校驗碼（校驗碼只防手動改壞，不防作弊） */
 interface SaveEnvelope {
@@ -40,6 +41,7 @@ export function createNewSave(config: GameConfig, now: number): SaveData {
     activeTeam: 0,
     progress: { clearedStages: [], stars: {}, towerFloor: 0, tutorialDone: false, storySeen: [], chapterRewardsClaimed: [] },
     tutorial: { step: 'battle', giftGiven: false },
+    activeBattle: null,
     gacha: { pityCounter: {}, history: [] },
     collection: { seen: starterIds, owned: starterIds, claimed: [] },
     quests: { counters: {}, claimed: [], dailyResetAt: '', weeklyResetAt: '' },
@@ -70,6 +72,8 @@ const MIGRATIONS: Record<number, Migration> = {
     const claimed = Array.isArray(progress.chapterRewardsClaimed) ? progress.chapterRewardsClaimed : [];
     return { ...old, progress: { ...progress, chapterRewardsClaimed: claimed } };
   },
+  // v3 → v4：加入進行中的戰鬥（中斷續戰）。舊存檔沒有進行中的戰鬥
+  3: (old) => ({ ...old, activeBattle: old.activeBattle ?? null }),
 };
 
 export function migrate(
@@ -138,6 +142,8 @@ export function parseSave(text: string | null, config: GameConfig, now: number):
     return { ok: false, reason: 'corrupt' };
   }
   const save = fillDefaults(migrated, createNewSave(config, now));
+  // 進行中的戰鬥壞掉時直接丟掉，不能讓整個存檔讀不進來
+  save.activeBattle = sanitizeActiveBattle(save.activeBattle);
   return from < CURRENT_SAVE_VERSION ? { ok: true, save, migratedFrom: from } : { ok: true, save };
 }
 

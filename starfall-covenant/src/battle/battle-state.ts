@@ -12,7 +12,7 @@
 // 7. 判定勝敗與換波
 
 import { bus, EventBus } from '../core/events';
-import type { Rng } from '../core/rng';
+import { createRng, type Rng } from '../core/rng';
 import type { CardDef, GameConfig, LeaderSkillDef, OwnedCard, StageDef } from '../core/types';
 import { gameData } from '../data/load';
 import type { GameData } from '../data/validate';
@@ -42,10 +42,12 @@ import {
 import {
   abilitiesToTrigger,
   applyEnemyAbility,
+  attributeSealMultipliers,
   defenseProfile,
   enemyAtkMultiplier,
   enemyHitCount,
   isHeartSealed,
+  isMemberSealed,
   isSkillSealed,
   moveTimePenalty,
   poisonPercent,
@@ -164,6 +166,38 @@ export interface Battle {
   forfeit(): BattleResult;
   /** 戰鬥結束後才有值 */
   getResult(): BattleResult | null;
+  /** 可存進存檔的快照（純 JSON）；用 resumeBattle 還原後，之後的盤面與隨機結果和沒中斷時完全相同 */
+  snapshot(): BattleSnapshot;
+}
+
+// ---------- 中斷續戰 ----------
+
+export const BATTLE_SNAPSHOT_VERSION = 1;
+
+/** 存檔用的戰鬥狀態：卡片與敵人只記 id，還原時再從資料查回來 */
+export type StoredBattleState = Omit<BattleState, 'team' | 'enemies'> & {
+  team: Omit<MemberState, 'card'>[];
+  enemies: (Omit<EnemyState, 'def'> & { defId: string })[];
+};
+
+export interface BattleSnapshot {
+  v: number;
+  stageId: string;
+  team: TeamMemberInput[];
+  helper: TeamMemberInput | null;
+  /** 亂數產生器的內部狀態 */
+  rng: number;
+  state: StoredBattleState;
+  result: BattleResult | null;
+  skillUsedThisTurn: boolean;
+  takenThisTurn: number[];
+}
+
+/** 從快照還原戰鬥。關卡或卡片、敵人資料對不上時丟出錯誤（例如改版後舊快照） */
+export function resumeBattle(stage: StageDef, snap: BattleSnapshot, data: BattleData = gameData): Battle {
+  if (snap.v !== BATTLE_SNAPSHOT_VERSION) throw new Error(`不支援的戰鬥快照版本 ${snap.v}`);
+  if (snap.stageId !== stage.id) throw new Error(`快照是關卡 ${snap.stageId}，不是 ${stage.id}`);
+  return startBattle(stage, snap.team, snap.helper, createRng(snap.rng), data, snap);
 }
 
 /** 毒珠每顆扣最大生命的百分比（之後可移到 config） */
@@ -184,6 +218,7 @@ export function startBattle(
   helper: TeamMemberInput | null,
   rng: Rng,
   data: BattleData = gameData,
+  restore?: BattleSnapshot,
 ): Battle {
   const config: GameConfig = data.config;
   const byId = <T extends { id: string }>(list: T[], id: string, kind: string): T => {
@@ -237,7 +272,20 @@ export function startBattle(
       };
     });
 
-  const state: BattleState = {
+  const hydrate = (stored: StoredBattleState): BattleState => {
+    if (stored.team.length !== members.length || stored.wave >= stage.waves.length) throw new Error('快照與關卡資料不符');
+    return {
+      ...structuredClone(stored),
+      team: stored.team.map((m, i) => {
+        if (m.cardId !== members[i].cardId) throw new Error('快照與隊伍不符');
+        return { ...structuredClone(m), card: members[i].card };
+      }),
+      enemies: stored.enemies.map(({ defId, ...e }) => ({ ...structuredClone(e), def: byId(data.enemies, defId, '敵人') })),
+    };
+  };
+
+  // 還原時不能用 rng 產生新盤面，否則亂數序列會和中斷前不同
+  const state: BattleState = restore ? hydrate(restore.state) : {
     stageId: stage.id,
     phase: 'player',
     wave: 0,
@@ -258,10 +306,10 @@ export function startBattle(
   };
 
   const events = new EventBus<BattleEvents>();
-  let result: BattleResult | null = null;
-  let skillUsedThisTurn = false;
+  let result: BattleResult | null = restore ? structuredClone(restore.result) : null;
+  let skillUsedThisTurn = restore?.skillUsedThisTurn ?? false;
   /** 每隻敵人本回合已受到的傷害（傷害吸收用），回合結束與換波時歸零 */
-  let takenThisTurn: number[] = [];
+  let takenThisTurn: number[] = restore ? [...restore.takenThisTurn] : [];
 
   const snapshot = (): BattleState => structuredClone(state);
   const fail = (reason: string): ActionError => ({ ok: false, reason });
@@ -391,12 +439,32 @@ export function startBattle(
     updateMoveTime();
   };
 
-  spawnWave(0);
+  if (!restore) spawnWave(0);
 
   const battle: Battle = {
     events,
     getState: snapshot,
     getResult: () => result,
+
+    snapshot() {
+      if (!rng.state) throw new Error('這個亂數產生器不能存檔');
+      const s = structuredClone(state);
+      return {
+        v: BATTLE_SNAPSHOT_VERSION,
+        stageId: stage.id,
+        team: structuredClone(team),
+        helper: helper ? structuredClone(helper) : null,
+        rng: rng.state(),
+        state: {
+          ...s,
+          team: s.team.map(({ card: _card, ...m }) => m),
+          enemies: s.enemies.map(({ def, ...e }) => ({ ...e, defId: def.id })),
+        },
+        result: structuredClone(result),
+        skillUsedThisTurn,
+        takenThisTurn: [...takenThisTurn],
+      };
+    },
 
     setTarget(enemy) {
       if (!state.enemies[enemy] || state.enemies[enemy].hp <= 0) return fail('目標不存在或已倒下');
@@ -410,6 +478,7 @@ export function startBattle(
       const skill = skills[member];
       if (!m || !skill || m.skillCooldown === null) return fail('這名隊員沒有主動技');
       if (isSkillSealed(state)) return fail('主動技被封印');
+      if (isMemberSealed(state, member)) return fail('這名隊員被星紋封印');
       if (m.skillCooldown > 0) return fail('主動技冷卻中');
 
       const outcome = applyActiveSkill(state, member, skill, rng);
@@ -458,7 +527,9 @@ export function startBattle(
         skillUsedThisTurn,
       });
       const buffMul = buffAttackMultipliers(state);
-      const atkMultipliers = turn.atkMultipliers.map((v, i) => v * buffMul[i]);
+      // 星紋封印：被封印屬性的隊員這回合轉珠攻擊無效
+      const sealMul = attributeSealMultipliers(state);
+      const atkMultipliers = turn.atkMultipliers.map((v, i) => v * buffMul[i] * sealMul[i]);
       const hits = [
         ...computeAttacks({ team, groups, combo, config: config.battle, atkMultipliers, ignoreDefense: turn.ignoreDefense }),
         ...turn.followUps,
@@ -549,7 +620,7 @@ export function startBattle(
   // 讓呼叫端先訂閱事件再收到開場事件
   queueMicrotask(() => {
     events.emit('battleStart', { state: snapshot() });
-    events.emit('waveStart', { wave: 0, enemies: structuredClone(state.enemies) });
+    if (!restore) events.emit('waveStart', { wave: 0, enemies: structuredClone(state.enemies) });
   });
   return battle;
 }

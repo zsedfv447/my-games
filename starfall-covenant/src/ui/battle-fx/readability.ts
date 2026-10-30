@@ -1,22 +1,33 @@
 // 戰鬥可讀性：屬性剋制提示（提案 25）、敵人下一招預告（提案 5）、Combo 演出（提案 6）、技能就緒（提案 15）
 import type { BattleState, EnemyState } from '../../battle/battle-state';
 import type { BattleConfig } from '../../battle/damage';
-import { comboBonusText, comboTier, enemyAbilityList, matchup, newlyReadySkills, predictEnemyIntent, weakTo, type IntentAbility } from '../../battle/feedback';
+import { comboBonusText, comboTier, effectiveMatchup, effectiveWeakTo, enemyAbilityList, liveReductions, newlyReadySkills, predictEnemyIntent, reducedWeaknesses, weakTo, type IntentAbility } from '../../battle/feedback';
 import { ATTRIBUTE_NAMES } from '../art/palette';
 import { audio } from '../audio';
 import { button } from '../components/basic';
 import { openDialog } from '../components/overlay';
-import { h } from '../dom';
-import { STATUS_NAMES } from '../status-labels';
+import { h, svg } from '../dom';
+import { statusName } from '../status-labels';
 import { floatLabel } from './effects';
+import { isMemberSealed } from '../../battle/skills/status';
 
 // ---------- 屬性剋制 ----------
 
+/**
+ * 名牌的「弱：X」：剋制而且扣掉敵人目前的護盾／屬性減傷後仍大於 1 倍的屬性。
+ * 減傷是持續中的狀態，所以每次更新敵人時重畫，狀態結束就恢復顯示。
+ */
 export function weakHint(e: EnemyState, config: BattleConfig): HTMLElement {
-  return h('div', { class: 'weak-hint' }, `弱：${weakText(e, config)}`);
+  const reduced = reducedWeaknesses(e.def.attribute, liveReductions(e), config);
+  return h('div', { class: ['weak-hint', reduced.length > 0 && 'reduced'], title: reduced.length ? `${reduced.map((a) => ATTRIBUTE_NAMES[a]).join('、')}被減傷，目前不算弱點` : undefined }, `弱：${weakText(e, config)}`);
 }
 
-const weakText = (e: EnemyState, config: BattleConfig) => weakTo(e.def.attribute, config).map((a) => ATTRIBUTE_NAMES[a]).join('、');
+const weakText = (e: EnemyState, config: BattleConfig) => {
+  const weak = effectiveWeakTo(e.def.attribute, liveReductions(e), config);
+  if (weak.length) return weak.map((a) => ATTRIBUTE_NAMES[a]).join('、');
+  // 本來有弱點，但目前都被減傷擋下
+  return weakTo(e.def.attribute, config).length ? '—（減傷中）' : '—';
+};
 
 /** 隊員頭像標出對目前目標的剋制（▲）與被剋（▼）；teamRow 的子元素依隊員順序 */
 export function markMatchups(teamRow: HTMLElement, state: BattleState, config: BattleConfig): void {
@@ -25,15 +36,36 @@ export function markMatchups(teamRow: HTMLElement, state: BattleState, config: B
     const m = state.team[i];
     thumb.querySelector('.matchup-tag')?.remove();
     if (!m || !target) return;
-    const mu = matchup(m.card.attribute, target.def.attribute, config);
+    // 和名牌的「弱：X」一致：扣掉目標目前的減傷
+    const mu = effectiveMatchup(m.card.attribute, target, config);
     if (mu !== 'neutral') thumb.appendChild(h('span', { class: `matchup-tag ${mu}`, 'aria-label': mu === 'advantage' ? '剋制目標' : '被目標剋制' }, mu === 'advantage' ? '▲' : '▼'));
   });
 }
 
+/** 被星紋封印的隊員：頭像灰階＋鎖鏈（不攻擊、不能施放主動技） */
+export function markSeals(teamRow: HTMLElement, state: BattleState): void {
+  [...teamRow.children].forEach((thumb, i) => {
+    const sealed = isMemberSealed(state, i);
+    thumb.classList.toggle('sealed', sealed);
+    thumb.querySelector('.seal-chain')?.remove();
+    if (sealed) thumb.appendChild(h('span', { class: 'seal-chain', 'aria-label': '被星紋封印' }, svg(SEAL_CHAIN_SVG)));
+  });
+}
+
+/** 原創的封印鎖鏈：兩條交叉的鏈環＋中間的星紋鎖 */
+const SEAL_CHAIN_SVG = `<svg viewBox="0 0 60 64" aria-hidden="true">
+  <g fill="none" stroke="#d9dce8" stroke-width="3.2" stroke-linecap="round">
+    ${[0, 1, 2, 3, 4].map((k) => `<ellipse cx="${8 + k * 11}" cy="${8 + k * 12}" rx="6" ry="3.6" transform="rotate(45 ${8 + k * 11} ${8 + k * 12})"/>`).join('')}
+    ${[0, 1, 2, 3, 4].map((k) => `<ellipse cx="${52 - k * 11}" cy="${8 + k * 12}" rx="6" ry="3.6" transform="rotate(-45 ${52 - k * 11} ${8 + k * 12})"/>`).join('')}
+  </g>
+  <rect x="21" y="23" width="18" height="17" rx="3" fill="#3a3f5c" stroke="#d9dce8" stroke-width="2.2"/>
+  <path d="M30 26.5l1.6 3.4 3.6.4-2.7 2.4.8 3.6-3.3-1.9-3.3 1.9.8-3.6-2.7-2.4 3.6-.4z" fill="#bff2ff"/>
+</svg>`;
+
 // ---------- 敵人預告 ----------
 
 function abilityText(a: IntentAbility): string {
-  const name = STATUS_NAMES[a.status] ?? a.status;
+  const name = statusName(a.status, a.params);
   return a.turns ? `${name} ${a.turns} 回合` : name;
 }
 

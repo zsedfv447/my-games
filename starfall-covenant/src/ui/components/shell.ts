@@ -32,8 +32,12 @@ export class Shell {
   private staminaTimer?: HTMLElement;
   private shownStamina = -1;
 
-  constructor(stage: HTMLElement) {
+  constructor(private stage: HTMLElement) {
     stage.append(svg(starfieldSvg()), this.top, this.main, this.bottom);
+    // 舞台本身不該捲動（不支援 overflow: clip 的瀏覽器在 focus 時仍可能被捲走），被捲了就拉回來
+    stage.addEventListener('scroll', () => {
+      if (stage.scrollTop || stage.scrollLeft) stage.scrollTop = stage.scrollLeft = 0;
+    });
     setOverlayHost(stage);
     onStateChange(() => this.screen && this.renderTop(this.screen));
     // 體力回復倒數：每秒更新；回復了一點就重畫資源列
@@ -78,6 +82,7 @@ export class Shell {
     clear(this.main);
     this.main.appendChild(el);
     el.scrollTop = 0;
+    this.stage.scrollTop = 0;
   };
 
   private renderTop(screen: ScreenDef): void {

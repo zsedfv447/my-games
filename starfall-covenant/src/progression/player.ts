@@ -15,11 +15,26 @@ export function maxStamina(level: number, config: GameConfig): number {
   return config.stamina.baseMax + config.stamina.maxPerLevel * (level - 1);
 }
 
-/** 隊伍空間上限：Lv1 為 30（5 張 4★ 剛好排得下），之後每級 +2，Lv50 後每級 +1 */
+/** 隊伍空間公式：TEAM_COST_BASE + 2 ×（Lv − 1），Lv50 之後每級 +1 */
+export const TEAM_COST_BASE = 33;
+export const TEAM_COST_PER_LEVEL = 2;
+export const TEAM_COST_SLOW_FROM = 50;
+
+/**
+ * 隊伍空間上限。Lv1 為 33：入門隊（5 張 4★，Cost 6）換掉 1 張改放 1 張 5★（Cost 9）剛好放得下；
+ * Lv3 起可放 2 張 5★，Lv10 為 51。比舊公式（Lv1 為 30）每一級都多 3，已存的隊伍不會超過上限。
+ */
 export function teamCostLimit(level: number): number {
-  const fast = Math.min(level, 50) - 1;
-  const slow = Math.max(level - 50, 0);
-  return 30 + fast * 2 + slow;
+  const lv = Math.max(1, Math.floor(level));
+  const fast = Math.min(lv, TEAM_COST_SLOW_FROM) - 1;
+  const slow = Math.max(lv - TEAM_COST_SLOW_FROM, 0);
+  return TEAM_COST_BASE + fast * TEAM_COST_PER_LEVEL + slow;
+}
+
+/** 隊伍 Cost 到幾級才放得下；超過滿級也放不下時回傳 null */
+export function levelForTeamCost(cost: number): number | null {
+  for (let lv = 1; lv <= MAX_PLAYER_LEVEL; lv++) if (teamCostLimit(lv) >= cost) return lv;
+  return null;
 }
 
 export interface LevelUpInfo {

@@ -6,6 +6,8 @@ import type { BattleData } from '../../src/battle/battle-state';
 import proposal from './fixtures/proposal-001.json';
 import benchmark from './fixtures/benchmark.json';
 import type { SimTeam } from './simulate';
+import { createNewSave } from '../../src/save/save';
+import { HELPER_NPCS, helperRoster } from '../../src/progression/helpers';
 
 const useGameData = gameData.cards.length > 0;
 
@@ -33,6 +35,23 @@ export function fixedTeamOf(stage: StageDef): SimTeam | null {
     members: stage.fixedTeam.members.map(toInput),
     helper: stage.fixedTeam.helper ? toInput(stage.fixedTeam.helper) : null,
   };
+}
+
+/**
+ * 新存檔的入門隊（Lv1）＋該關預設帶的助戰（助戰名單第一個沒有限制問題的，和出擊準備畫面一樣）。
+ * 助戰每天輪替，所以每個 NPC 各跑一隊；流派用隊長的流派決定轉珠策略。
+ */
+export function newbieTeams(stage: StageDef, now = Date.now()): (SimTeam & { label: string })[] {
+  const save = createNewSave(gameData.config, now);
+  const byId = new Map(proposalCards.map((c) => [c.id, c]));
+  const members = save.teams[save.activeTeam].members.map((uid) => {
+    const owned = save.inventory.cards.find((c) => c.uid === uid)!;
+    return { cardId: owned.cardId, level: owned.level };
+  });
+  const archetype = byId.get(members[0].cardId)?.archetypes[0]?.id ?? 'mono';
+  const offers = helperRoster(save, stage, HELPER_NPCS, gameData.stages, (id) => byId.get(id), now).filter((o) => !o.problem);
+  const none = { label: '入門隊（無助戰）', archetype, members, helper: null };
+  return [none, ...offers.map((o) => ({ label: `入門隊＋${o.npc.name}`, archetype, members, helper: { cardId: o.card.id, level: o.level, skillLevel: o.skillLevel } }))];
 }
 
 /** 提案 001 第 8 節的免抽入門隊；全員滿等，助戰帶同一張隊長 */

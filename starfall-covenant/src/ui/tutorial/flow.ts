@@ -1,6 +1,7 @@
 // 新手教學的流程規則（純邏輯，不碰 DOM）：存檔裡的進度、每個畫面要說什麼、教學戰鬥的固定盤面。
 // 流程：教學戰鬥（拖曳、Combo、屬性剋制、隊長技、主動技）→ 編隊 → 召喚 → 第一章第一關。
-import { TUTORIAL_STEPS, type SaveData, type TutorialStep } from '../../core/types';
+import { TUTORIAL_STEPS, type CardDef, type GachaPoolDef, type SaveData, type TutorialStep } from '../../core/types';
+import { firstPullCandidates } from '../../progression/gacha';
 import { applyPath, boardFromStrings, findMatches, isAdjacent, type Board, type Pos } from '../../battle/board';
 import type { Rng } from '../../core/rng';
 
@@ -34,6 +35,14 @@ export function advanceTutorial(save: SaveData, from: TutorialStep): SaveData {
 
 export const skipTutorial = (save: SaveData): SaveData => setTutorialStep(save, 'done');
 
+/**
+ * 略過教學：還沒領過召喚贈禮的話直接補發（熟手玩家略過也不吃虧）；老玩家重看後再略過不會重複送。
+ * granted 是這次補發的星晶，呼叫端據此播領獎演出。
+ */
+export function skipTutorialWithGift(save: SaveData, gems: number): { save: SaveData; granted: number } {
+  return grantSummonGift(skipTutorial(save), gems);
+}
+
 /** 從設定重看：回到教學戰鬥。召喚贈禮只送一次 */
 export const restartTutorial = (save: SaveData): SaveData => setTutorialStep(save, 'battle');
 
@@ -50,7 +59,29 @@ export function grantSummonGift(save: SaveData, gems: number): { save: SaveData;
   };
 }
 
+/**
+ * 教學第一抽的候選名單（pullGacha 的 firstFrom）：只在教學召喚這一步、而且從沒抽過卡時才限定，
+ * 抽到和隊長同屬性或同流派、隊伍還沒有的夥伴，之後可以換掉隊長技加成不到的隊員。
+ */
+export function tutorialFirstPull(save: SaveData, pool: GachaPoolDef, cards: CardDef[]): string[] | undefined {
+  if (tutorialStep(save) !== 'summon' || save.gacha.history.length > 0) return undefined;
+  const team = save.teams[save.activeTeam]?.members ?? [];
+  const leaderCard = save.inventory.cards.find((c) => c.uid === team[0]);
+  const leader = leaderCard && cards.find((c) => c.id === leaderCard.cardId);
+  if (!leader) return undefined;
+  const list = firstPullCandidates(pool, cards, save.collection.owned, leader);
+  return list.length ? list : undefined;
+}
+
 // ---------- 各畫面的引導 ----------
+
+/** 編隊畫面上流派分析的結果，讓台詞和紅框一致（analyzeTeam 算好再傳進來） */
+export interface TeamFitHint {
+  /** 被標成不搭（紅框）的隊員數 */
+  misfits: number;
+  /** 第一位不搭隊員的原因，例如「隊長技只加成焰屬性」 */
+  reason?: string;
+}
 
 export interface GuideAction {
   label: string;
@@ -58,6 +89,8 @@ export interface GuideAction {
   go?: [string, string[]];
   /** 完成目前這一步 */
   advance?: boolean;
+  /** 直接按下引導指向的那顆按鈕（target），例如召喚一次 */
+  press?: boolean;
 }
 
 export interface GuideSpec {
@@ -75,7 +108,7 @@ export interface GuideSpec {
 /** 這些畫面不顯示引導：全螢幕演出、戰鬥（教學戰鬥自己有引導）、設定（讓玩家能略過或重看） */
 const QUIET_ROUTES = new Set(['title', 'story', 'summon-ritual', 'battle', 'settings', 'gallery']);
 
-export function guideFor(step: TutorialStep, route: { name: string; args: string[] }): GuideSpec | null {
+export function guideFor(step: TutorialStep, route: { name: string; args: string[] }, team?: TeamFitHint): GuideSpec | null {
   if (step === 'done' || QUIET_ROUTES.has(route.name)) return null;
   switch (step) {
     case 'battle':
@@ -86,7 +119,7 @@ export function guideFor(step: TutorialStep, route: { name: string; args: string
     case 'team':
       if (route.name === 'team') {
         return {
-          lines: ['這是你的隊伍。最左邊是「隊長」，隊長技會在戰鬥中一直生效。', '點頭像就能換人；隊伍空間有上限，稀有的卡比較佔位置。現在的隊伍已經很好用了！'],
+          lines: ['這是你的隊伍。最左邊是「隊長」，隊長技會在戰鬥中一直生效。', ...teamFitLines(team), '點頭像就能換人；隊伍空間有上限，稀有的卡比較佔位置。'],
           target: '.team-slot',
           action: { label: '知道了', advance: true },
         };
@@ -95,13 +128,15 @@ export function guideFor(step: TutorialStep, route: { name: string; args: string
     case 'summon':
       if (route.name === 'summon') {
         return {
-          lines: ['在這裡用星晶解開封印，就能和新的夥伴締結契約。', '我送你一次單抽的星晶，按「單次封印」試試看，再把封印往下拉開！'],
+          lines: ['在這裡用星晶解開封印，就能和新的夥伴締結契約。', '我送你一次單抽的星晶，按「召喚一次」試試看，再把封印往下拉開！'],
           target: '.seal-pull-actions .btn',
           placement: 'top',
+          // 主按鈕直接觸發單抽；「先不召喚」只當次要選項，免得以為唯一的按鈕就是要按的
+          action: { label: '召喚一次', press: true },
           secondary: { label: '先不召喚', advance: true },
         };
       }
-      return { lines: ['再來是召喚！我準備了一份見面禮。'], action: { label: '前往召喚', go: ['summon', []] } };
+      return { lines: ['再來是召喚！我準備了一份見面禮，去找一位和隊長合得來的夥伴吧。'], action: { label: '前往召喚', go: ['summon', []] } };
     case 'stage':
       if (route.name === 'prepare' && route.args[0] === FIRST_STAGE) {
         return {
@@ -115,6 +150,16 @@ export function guideFor(step: TutorialStep, route: { name: string; args: string
     default:
       return null;
   }
+}
+
+/** 和流派分析一致的編隊台詞：有紅框就說明原因，不說「隊伍已經很好用」 */
+function teamFitLines(team?: TeamFitHint): string[] {
+  if (!team) return [];
+  if (team.misfits === 0) return ['每位隊員都吃得到隊長技的加成，這支隊伍很搭！'];
+  return [
+    `有紅框的隊員和隊長不太搭${team.reason ? `：${team.reason}` : ''}。不過他們一樣會攻擊、提供生命與回復，先這樣出發也打得贏。`,
+    '等一下召喚到合得來的夥伴，再回來把紅框的隊員換掉吧。',
+  ];
 }
 
 // ---------- 教學戰鬥 ----------

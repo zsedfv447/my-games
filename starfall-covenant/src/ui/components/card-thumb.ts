@@ -15,8 +15,11 @@ export function cardPortraitUrl(card: CardLike): string | undefined {
   return userAsset('cards', card.id) ?? resolveArtPath(card.art?.portrait);
 }
 
-function img(url: string, alt: string): HTMLImageElement {
-  return h('img', { src: url, alt, draggable: 'false', loading: 'lazy' });
+/** 圖片載不到時（離線、改版後舊檔已下架）換成程式產生的卡面 */
+function img(url: string, alt: string, fallback: () => string): HTMLImageElement {
+  const el = h('img', { src: url, alt, draggable: 'false', loading: 'lazy' });
+  el.addEventListener('error', () => el.replaceWith(svg(fallback())), { once: true });
+  return el;
 }
 
 export interface ThumbOptions {
@@ -31,7 +34,7 @@ export function cardThumb(card: CardLike, opts: ThumbOptions = {}): HTMLElement 
   const url = cardIconUrl(card);
   // 只有立繪沒有頭像時，用立繪上半部當頭像
   const portrait = !url ? cardPortraitUrl(card) : undefined;
-  const face = url ? img(url, card.name) : portrait ? img(portrait, card.name) : svg(cardIconSvg(card));
+  const face = url ? img(url, card.name, () => cardIconSvg(card)) : portrait ? img(portrait, card.name, () => cardIconSvg(card)) : svg(cardIconSvg(card));
   if (portrait) (face as HTMLImageElement).style.objectFit = 'cover';
   return h(
     'button',
@@ -48,5 +51,5 @@ export function emptySlot(onClick?: () => void, size?: number): HTMLElement {
 
 export function cardPortrait(card: CardLike): HTMLElement {
   const url = cardPortraitUrl(card);
-  return h('div', { class: 'card-portrait' }, url ? img(url, card.name) : svg(cardPortraitSvg(card)));
+  return h('div', { class: 'card-portrait' }, url ? img(url, card.name, () => cardPortraitSvg(card)) : svg(cardPortraitSvg(card)));
 }

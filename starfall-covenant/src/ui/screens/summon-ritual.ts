@@ -223,7 +223,8 @@ class Ritual {
     { sound: false, onClick: () => { if (card.classList.contains('flipped') && !this.showcaseEl) this.showcase(r); } });
     card.className = `flip-card r-${r.rarity}${big ? ' big' : ''}`;
     card.setAttribute('aria-label', def?.name ?? r.cardId);
-    if (r.isNew) card.append(badge('NEW', 'gold new'));
+    // 角落標籤：第一次擁有標 NEW，其餘標已持有
+    card.append(r.isNew ? badge('NEW', 'gold new') : badge('已持有', 'new owned'));
     return card;
   }
   private finish(): void {
@@ -239,7 +240,7 @@ class Ritual {
     if (!def) return;
     const close = () => { this.showcaseEl?.remove(); this.showcaseEl = undefined; };
     this.showcaseEl = h('div', { class: `ritual-showcase r-${r.rarity}`, onClick: close },
-      cardPortrait(def), h('div', { class: 'ritual-info' }, stars(r.rarity), h('div', { class: 'ritual-name' }, def.name), r.isNew && badge('NEW', 'gold')),
+      cardPortrait(def), h('div', { class: 'ritual-info' }, stars(r.rarity), h('div', { class: 'ritual-name' }, def.name), r.isNew ? badge('NEW', 'gold') : badge('已持有', 'owned')),
       h('div', { class: 'small-text dim ritual-tap' }, '點一下繼續'));
     this.el.append(this.showcaseEl);
   }

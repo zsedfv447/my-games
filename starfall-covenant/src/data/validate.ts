@@ -7,6 +7,10 @@ import {
 } from '../core/types';
 import { checkLeaderEvolution, checkLeaderTier, lintLeaderSkill } from '../battle/leader';
 import { isKnownCounter } from '../progression/quests';
+import type { EventDef } from '../progression/events';
+import type { LoreData } from '../progression/lore';
+import { BOND_TIERS, type HelperBondDef } from '../progression/helper-bond';
+import { CARD_BOND_TIERS, type CardBondDef } from '../progression/card-bond';
 
 export interface GameData {
   config: GameConfig;
@@ -21,6 +25,9 @@ export interface GameData {
   shop: ShopItemDef[];
   quests: QuestDef[];
   story: StoryData;
+  events: EventDef[];
+  /** 星骸殘頁（data/lore.json）；測試用的精簡資料可以省略 */
+  lore?: LoreData;
 }
 
 /** 卡片勝利台詞（lines.victory）的字數上限 */
@@ -89,6 +96,8 @@ export function validateGameData(d: GameData): string[] {
     if (s.cooldown.min > s.cooldown.max) err(`skills/${s.id}`, '最短冷卻大於最長冷卻');
     for (const e of s.effects) {
       if (e.type === 'convertOrbs' && !ORB_TYPES.includes(e.to)) err(`skills/${s.id}`, `未知珠子 ${e.to}`);
+      if (e.type === 'rowToOrb' && !ORB_TYPES.includes(e.to)) err(`skills/${s.id}`, `未知珠子 ${e.to}`);
+      if (e.type === 'twoColorBoard' && (e.colors.length !== 2 || e.colors[0] === e.colors[1] || e.colors.some((c) => !ORB_TYPES.includes(c)))) err(`skills/${s.id}`, `雙色盤要指定兩種不同的珠 ${e.colors}`);
     }
   }
 
@@ -147,6 +156,58 @@ export function validateGameData(d: GameData): string[] {
     if (!r.coin && !r.gems && !r.stamina && !r.cards?.length && !Object.keys(r.tokens ?? {}).length) err(w, '獎勵是空的');
   };
 
+  const eventIds = uniqueIds('events', d.events);
+  for (const e of d.events) {
+    if (e.period && !(Date.parse(e.period.end) > Date.parse(e.period.start))) err(`events/${e.id}`, '結束時間要晚於開始時間');
+    if (e.period?.repeatDays !== undefined && e.period.repeatDays * 86_400_000 < Date.parse(e.period.end) - Date.parse(e.period.start)) {
+      err(`events/${e.id}`, 'repeatDays 比一檔活動還短');
+    }
+  }
+  // 活動限購要靠代幣找到所屬活動，才能依檔期重置
+  for (const item of d.shop) {
+    const tokens = Object.keys(item.price.tokens ?? {});
+    if (item.limit?.per === 'event' && !d.events.some((e) => e.token && tokens.includes(e.token))) {
+      err(`shop/${item.id}`, '活動限購的商品要用某個活動的代幣標價');
+    }
+  }
+
+  // 每種用到的代幣都要有活動資料提供名稱
+  const tokenNames = new Map(d.events.flatMap((e) => (e.token ? [[e.token, e.tokenName] as const] : [])));
+  const usedTokens = new Map<string, string>();
+  const useTokens = (where: string, tokens: Record<string, number> | undefined) => {
+    for (const t of Object.keys(tokens ?? {})) if (!usedTokens.has(t)) usedTokens.set(t, where);
+  };
+  for (const item of d.shop) {
+    useTokens(`shop/${item.id}`, item.price.tokens);
+    if (!('type' in item.reward)) useTokens(`shop/${item.id}`, item.reward.tokens);
+  }
+  for (const q of d.quests) useTokens(`quests/${q.id}`, q.reward.tokens);
+  for (const s of d.stages) useTokens(`stages/${s.id}`, s.rewards.firstClear?.tokens);
+  for (const c of d.chapters) useTokens(`chapters/${c.chapter}`, c.starReward.tokens);
+  for (const [t, where] of usedTokens) if (!tokenNames.get(t)) err(where, `代幣 ${t} 沒有名稱（請在 events.json 填 token 與 tokenName）`);
+
+  for (const s of d.stages) if (s.kind === 'event' && (!s.event || !eventIds.has(s.event))) err(`stages/${s.id}`, `活動 ${s.event} 不在 events.json`);
+
+  if (d.lore) {
+    const stageIds = new Set(d.stages.map((s) => s.id));
+    const pageIds = new Set<string>();
+    const pageStages = new Set<string>();
+    uniqueIds('lore', d.lore.volumes);
+    for (const v of d.lore.volumes) {
+      const w = `lore/${v.id}`;
+      if (!v.pages.length) err(w, '每卷至少要有一頁');
+      if (!v.secret.lines.length) err(w, '隱藏對話至少要有一句');
+      for (const p of v.pages) {
+        if (pageIds.has(p.id)) err(w, `殘頁 ${p.id} 重複`);
+        pageIds.add(p.id);
+        if (!stageIds.has(p.stage)) err(w, `殘頁 ${p.id} 的關卡 ${p.stage} 不存在`);
+        if (pageStages.has(p.stage)) err(w, `關卡 ${p.stage} 有兩頁殘頁`);
+        pageStages.add(p.stage);
+        if (!p.text.length || p.text.some((t) => !t)) err(w, `殘頁 ${p.id} 沒有內容`);
+      }
+    }
+  }
+
   for (const item of d.shop) {
     const w = `shop/${item.id}`;
     const { gems = 0, coin = 0, tokens = {} } = item.price;
@@ -163,5 +224,56 @@ export function validateGameData(d: GameData): string[] {
     checkReward(w, q.reward);
   }
 
+  return errors;
+}
+
+/** 流浪契印師情誼資料（data/helper-bonds.json）：每位 NPC 剛好一筆，各門檻一段 3～6 句劇情與一句感謝台詞 */
+export function validateHelperBonds(bonds: HelperBondDef[], npcs: { id: string }[]): string[] {
+  const errors: string[] = [];
+  const err = (where: string, msg: string) => errors.push(`${where}: ${msg}`);
+  const ids = new Set(npcs.map((n) => n.id));
+  const seen = new Set<string>();
+  for (const b of bonds) {
+    const w = `helper-bonds/${b.npc}`;
+    if (!ids.has(b.npc)) err(w, '找不到這位 NPC');
+    if (seen.has(b.npc)) err(w, '重複的 NPC');
+    seen.add(b.npc);
+    if (b.stories.length !== BOND_TIERS.length) err(w, `劇情要有 ${BOND_TIERS.length} 段`);
+    if (b.thanks.length !== BOND_TIERS.length) err(w, `感謝台詞要有 ${BOND_TIERS.length} 句`);
+    for (const [i, s] of b.stories.entries()) {
+      if (!s.title) err(w, `第 ${i + 1} 段劇情沒有標題`);
+      if (s.lines.length < 3 || s.lines.length > 6) err(w, `第 ${i + 1} 段劇情要 3～6 句`);
+      if (s.lines.some((l) => !l.text)) err(w, `第 ${i + 1} 段劇情有空白的句子`);
+    }
+    for (const [i, t] of b.thanks.entries()) {
+      if (!t) err(w, `第 ${i + 1} 句感謝台詞是空的`);
+      else if ([...t].length > VICTORY_LINE_MAX) err(w, `第 ${i + 1} 句感謝台詞超過 ${VICTORY_LINE_MAX} 字`);
+    }
+  }
+  for (const id of ids) if (!seen.has(id)) err('helper-bonds', `${id} 沒有情誼資料`);
+  return errors;
+}
+
+/** 角色羈絆小劇場（data/card-bonds.json）：family 必須是進化鏈最初型態的角色卡，各門檻一段 3～5 句的小劇場 */
+export function validateCardBonds(bonds: CardBondDef[], cards: CardDef[]): string[] {
+  const errors: string[] = [];
+  const err = (where: string, msg: string) => errors.push(`${where}: ${msg}`);
+  const evolvedInto = new Set(cards.flatMap((c) => (c.evolution ? [c.evolution.to] : [])));
+  const seen = new Set<string>();
+  for (const b of bonds) {
+    const w = `card-bonds/${b.family}`;
+    const card = cards.find((c) => c.id === b.family);
+    if (!card) err(w, '找不到這張卡');
+    else if (card.race === 'material') err(w, '素材卡不能有羈絆劇場');
+    if (evolvedInto.has(b.family)) err(w, '要用進化鏈最初型態的卡號');
+    if (seen.has(b.family)) err(w, '重複的角色');
+    seen.add(b.family);
+    if (b.scenes.length !== CARD_BOND_TIERS.length) err(w, `小劇場要有 ${CARD_BOND_TIERS.length} 段`);
+    for (const [i, s] of b.scenes.entries()) {
+      if (!s.title) err(w, `第 ${i + 1} 段小劇場沒有標題`);
+      if (s.lines.length < 3 || s.lines.length > 5) err(w, `第 ${i + 1} 段小劇場要 3～5 句`);
+      if (s.lines.some((l) => !l.text)) err(w, `第 ${i + 1} 段小劇場有空白的句子`);
+    }
+  }
   return errors;
 }

@@ -1,6 +1,7 @@
 // 關卡情報（出戰確認用）：每一波的敵人、屬性、能力說明，以及建議帶的屬性。純邏輯，不碰 DOM。
 import { ATTRIBUTES, type Attribute, type EnemyAbility, type EnemyDef, type StageDef } from '../core/types';
-import { attributeMultiplier, type BattleConfig } from '../battle/damage';
+import type { BattleConfig } from '../battle/damage';
+import { effectiveMultiplier, plannedReductions, reducedWeaknesses } from '../battle/feedback';
 import { ATTRIBUTE_NAMES } from './art/palette';
 import { STATUS_NAMES } from './status-labels';
 
@@ -19,8 +20,10 @@ export interface StageIntel {
   waves: WaveIntel[];
   /** 敵人出現的屬性（依出現順序、不重複） */
   enemyAttributes: Attribute[];
-  /** 剋制最多敵人（Boss 加倍計算）的屬性，最多 2 個 */
+  /** 剋制最多敵人（Boss 加倍計算）的屬性，最多 2 個；已扣掉敵人開場就有的屬性減傷（減到 1 倍以下不算剋制） */
   suggested: Attribute[];
+  /** 建議屬性的補充說明，例如「Boss 開場對潮減傷 50%」 */
+  notes: string[];
 }
 
 const attrName = (a: unknown) => (typeof a === 'string' && a in ATTRIBUTE_NAMES ? ATTRIBUTE_NAMES[a as Attribute] : '');
@@ -63,13 +66,21 @@ export function stageIntel(stage: Pick<StageDef, 'waves'>, enemies: EnemyDef[], 
   for (const w of waves) for (const e of w.enemies) if (!enemyAttributes.includes(e.def.attribute)) enemyAttributes.push(e.def.attribute);
 
   const score = new Map<Attribute, number>();
+  const notes: string[] = [];
   for (const w of waves) {
     for (const e of w.enemies) {
+      const reductions = plannedReductions(e.def);
       for (const a of ATTRIBUTES) {
-        if (attributeMultiplier(a, e.def.attribute, config) > 1) score.set(a, (score.get(a) ?? 0) + (w.boss ? 2 : 1));
+        if (effectiveMultiplier(a, e.def.attribute, reductions, config) > 1) score.set(a, (score.get(a) ?? 0) + (w.boss ? 2 : 1));
+      }
+      // 本來剋制、卻被開場減傷壓到 1 倍以下：在建議屬性旁說明
+      for (const a of reducedWeaknesses(e.def.attribute, reductions, config)) {
+        const shield = e.def.abilities.find((x) => x.trigger === 'onStart' && x.status === 'attributeShield' && typeof x.params?.attribute === 'string' && x.params.attribute.split(',').includes(a));
+        const note = `${w.boss ? 'Boss ' : e.def.name}開場對${ATTRIBUTE_NAMES[a]}減傷${shield?.value ? ` ${shield.value}%` : ''}`;
+        if (!notes.includes(note)) notes.push(note);
       }
     }
   }
   const suggested = [...score.entries()].sort((x, y) => y[1] - x[1] || ATTRIBUTES.indexOf(x[0]) - ATTRIBUTES.indexOf(y[0])).slice(0, 2).map(([a]) => a);
-  return { waves, enemyAttributes, suggested };
+  return { waves, enemyAttributes, suggested, notes };
 }

@@ -640,5 +640,110 @@
     "reward": {
       "coin": 1000
     }
+  },
+  {
+    "id": "st-clear-1-3",
+    "kind": "starter",
+    "name": "新手契約一：通過主線 1-3",
+    "counter": "mainCleared",
+    "target": 3,
+    "reward": {
+      "gems": 3,
+      "coin": 1000
+    }
+  },
+  {
+    "id": "st-enhance",
+    "kind": "starter",
+    "name": "新手契約二：強化一張卡片",
+    "counter": "cardEnhance",
+    "target": 1,
+    "reward": {
+      "gems": 3,
+      "cards": [
+        {
+          "card": "c902",
+          "count": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "st-team",
+    "kind": "starter",
+    "name": "新手契約三：在編隊換上一位新隊員",
+    "counter": "teamEdited",
+    "target": 1,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "st-helper",
+    "kind": "starter",
+    "name": "新手契約四：帶著流浪契印師通關一次",
+    "counter": "helperClears",
+    "target": 1,
+    "reward": {
+      "gems": 3,
+      "coin": 1000
+    }
+  },
+  {
+    "id": "st-summon",
+    "kind": "starter",
+    "name": "新手契約五：完成一次封印召喚",
+    "counter": "summoned",
+    "target": 1,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "st-puzzle",
+    "kind": "starter",
+    "name": "新手契約六：解開一次每日星紋謎題",
+    "counter": "puzzleSolved",
+    "target": 1,
+    "reward": {
+      "gems": 3,
+      "cards": [
+        {
+          "card": "c905",
+          "count": 2
+        }
+      ]
+    }
+  },
+  {
+    "id": "st-evolve",
+    "kind": "starter",
+    "name": "新手契約七：讓一張卡片進化",
+    "counter": "evolvedOwned",
+    "target": 1,
+    "reward": {
+      "gems": 4
+    }
+  },
+  {
+    "id": "st-chapter-reward",
+    "kind": "starter",
+    "name": "新手契約八：領取一次章節星章獎勵",
+    "counter": "chapterRewards",
+    "target": 1,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "st-chapter-1",
+    "kind": "starter",
+    "name": "新手契約九：通過第 1 章",
+    "counter": "mainCleared",
+    "target": 9,
+    "reward": {
+      "gems": 5,
+      "coin": 3000
+    }
   }
 ]

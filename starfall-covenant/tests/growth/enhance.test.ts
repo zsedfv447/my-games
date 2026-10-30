@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { enhance, expForLevel, maxExp, previewEnhance } from '../../src/growth';
+import { enhance, enhanceRiskyMaterials, expForLevel, materialBaseExp, maxExp, previewEnhance } from '../../src/growth';
 import { ctx, makeSave, owned } from './fixtures';
 
 describe('強化', () => {
@@ -57,5 +57,27 @@ describe('強化', () => {
     expect(code(enhance(save, ctx, 'u5', ['u4']))).toBe('maxLevel');
     expect(code(enhance(save, ctx, 'u1', Array.from({ length: 11 }, (_, i) => `m${i}`)))).toBe('tooManyMaterials');
     expect(code(enhance({ ...save, player: { ...save.player, coin: 0 } }, ctx, 'u1', ['u4']))).toBe('notEnoughCoin');
+  });
+
+  it('吃 4★ 以上的角色卡要先確認；素材卡與低星卡不用', () => {
+    const save = makeSave([owned('t', 'c102'), owned('a', 'c106'), owned('m', 'c915'), owned('f', 'c905'), owned('h', 'c102')]);
+    expect(enhanceRiskyMaterials(save, ctx, ['a', 'm', 'f', 'h'])).toEqual(['a', 'h']);
+    expect(enhance(save, ctx, 't', ['a', 'f'])).toMatchObject({ ok: false, error: { code: 'confirmRequired', subject: 'a' } });
+    expect(enhance(save, ctx, 't', ['a', 'f'], { confirmRisky: true }).ok).toBe(true);
+    expect(enhance(save, ctx, 't', ['m', 'f']).ok).toBe(true);
+  });
+
+  it('素材本身的經驗含等級加成、不含同屬加成', () => {
+    expect(materialBaseExp(ctx.card('c905')!, { level: 1 }, ctx)).toBe(1000);
+    expect(materialBaseExp(ctx.card('c107')!, { level: 11 }, ctx)).toBe(200);
+  });
+
+  it('經驗表調整前的存檔：經驗超過新的滿級經驗時，強化不會算出負的經驗', () => {
+    const def = ctx.card('c106')!;
+    const save = makeSave([owned('u1', 'c106', { level: 20, exp: maxExp(def, ctx.rules) + 5000 }), owned('u2', 'c905')]);
+    const p = previewEnhance(save, ctx, 'u1', ['u2']);
+    expect(p.ok && [p.expGained, p.levelAfter]).toEqual([0, def.maxLevel]);
+    const r = enhance(save, ctx, 'u1', ['u2']);
+    expect(r.ok && r.card.exp).toBe(maxExp(def, ctx.rules));
   });
 });

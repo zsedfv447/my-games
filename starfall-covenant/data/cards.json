@@ -3726,5 +3726,557 @@
     "archetypes": [],
     "art": {},
     "flavor": "內部有星座紋路緩緩轉動的水晶球。蝕屬卡片進化與星紋覺醒的素材。"
+  },
+  {
+    "id": "c701",
+    "name": "苔蹄小鹿・芽芽",
+    "attribute": "wood",
+    "race": "beast",
+    "rarity": 3,
+    "maxLevel": 50,
+    "stats": {
+      "hp": [
+        460,
+        1490
+      ],
+      "atk": [
+        150,
+        520
+      ],
+      "rcv": [
+        50,
+        180
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 4,
+    "activeSkill": "s701",
+    "leaderSkill": "l701",
+    "expValue": 300,
+    "sellValue": 100,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "support"
+      }
+    ],
+    "art": {},
+    "flavor": "苔原上剛學會走路的小鹿，蹄子踩過的地方會冒出嫩芽。獸座崩落後，牠一路跟著金鬃獅王的吼聲找到族人。",
+    "lines": {
+      "victory": "芽芽也幫上忙了！你看，新芽長出來了！"
+    }
+  },
+  {
+    "id": "c702",
+    "name": "渡魂提燈人・薇絲",
+    "attribute": "dark",
+    "race": "nether",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        740,
+        2420
+      ],
+      "atk": [
+        250,
+        860
+      ],
+      "rcv": [
+        100,
+        310
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s702",
+    "leaderSkill": "l702",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "core"
+      },
+      {
+        "id": "control",
+        "role": "support"
+      }
+    ],
+    "art": {},
+    "flavor": "替冥河擺渡人點燈的年輕亡魂。她提著的燈能讓迷路的靈魂停下腳步，也能讓敵人在原地多猶豫一會兒。",
+    "lines": {
+      "victory": "燈還亮著。今晚沒有人迷路。"
+    }
+  },
+  {
+    "id": "c703",
+    "name": "潮鬃狼・涅普",
+    "attribute": "water",
+    "race": "beast",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        740,
+        2420
+      ],
+      "atk": [
+        250,
+        860
+      ],
+      "rcv": [
+        100,
+        310
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s703",
+    "leaderSkill": "l703",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "沉船灣礁岩上的狼群首領，鬃毛裡總是滴著海水。牠只追隨會為同伴回頭的人。",
+    "lines": {
+      "victory": "嗷嗚——狼群不會丟下任何一個同伴。"
+    }
+  },
+  {
+    "id": "c704",
+    "name": "霧燈小魂・咪洛",
+    "attribute": "water",
+    "race": "nether",
+    "rarity": 3,
+    "maxLevel": 50,
+    "stats": {
+      "hp": [
+        460,
+        1490
+      ],
+      "atk": [
+        150,
+        520
+      ],
+      "rcv": [
+        50,
+        180
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 4,
+    "activeSkill": "s704",
+    "leaderSkill": "l704",
+    "expValue": 300,
+    "sellValue": 100,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "support"
+      }
+    ],
+    "art": {},
+    "flavor": "住在冥河霧裡的小小魂火，膽子很小，卻總是第一個發現危險的那一個。",
+    "lines": {
+      "victory": "咪、咪洛沒有發抖喔……真的沒有。"
+    }
+  },
+  {
+    "id": "c705",
+    "name": "白盾隊長・葛蘭",
+    "attribute": "light",
+    "race": "human",
+    "rarity": 5,
+    "maxLevel": 90,
+    "stats": {
+      "hp": [
+        1000,
+        3300
+      ],
+      "atk": [
+        380,
+        1300
+      ],
+      "rcv": [
+        150,
+        450
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s705",
+    "leaderSkill": "l705",
+    "awakenings": [
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 800
+      },
+      {
+        "type": "resistStatus",
+        "status": "multiHit",
+        "percent": 30
+      },
+      {
+        "type": "statUp",
+        "stat": "rcv",
+        "value": 150
+      }
+    ],
+    "expValue": 1500,
+    "sellValue": 1000,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "leader"
+      },
+      {
+        "id": "heart",
+        "role": "support"
+      }
+    ],
+    "art": {},
+    "flavor": "英雄座舊營地的盾衛隊長。他的盾上刻滿了戰友的名字，每多一個名字，盾就重一分，他就站得更穩一分。",
+    "lines": {
+      "victory": "盾上的名字一個都沒少。全員，收隊。"
+    }
+  },
+  {
+    "id": "c706",
+    "name": "燃誓英雄・艾琳",
+    "attribute": "fire",
+    "race": "human",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1170,
+        3780
+      ],
+      "atk": [
+        580,
+        1900
+      ],
+      "rcv": [
+        180,
+        530
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 12,
+    "activeSkill": "s706",
+    "leaderSkill": "l706",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "fire",
+        "percent": 10
+      },
+      {
+        "type": "orbDamageUp",
+        "orb": "light",
+        "percent": 10
+      },
+      {
+        "type": "resistStatus",
+        "status": "attributeShield",
+        "percent": 30
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "leader"
+      },
+      {
+        "id": "dual",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "四十年前在穹頂下舉起手、發誓要守住七曜的人之一。誓言燒了四十年，把她的劍燒成了一道光。",
+    "lines": {
+      "victory": "誓言還在燒。只要火不熄，我就不會退。"
+    }
+  },
+  {
+    "id": "c707",
+    "name": "赤鬃戰首・巴洛",
+    "attribute": "fire",
+    "race": "beast",
+    "rarity": 5,
+    "maxLevel": 90,
+    "stats": {
+      "hp": [
+        1000,
+        3300
+      ],
+      "atk": [
+        380,
+        1300
+      ],
+      "rcv": [
+        150,
+        450
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s707",
+    "leaderSkill": "l707",
+    "awakenings": [
+      {
+        "type": "statUp",
+        "stat": "atk",
+        "value": 200
+      },
+      {
+        "type": "orbDamageUp",
+        "orb": "fire",
+        "percent": 10
+      },
+      {
+        "type": "resistStatus",
+        "status": "poison",
+        "percent": 50
+      }
+    ],
+    "expValue": 1500,
+    "sellValue": 1000,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "core"
+      },
+      {
+        "id": "berserk",
+        "role": "support"
+      }
+    ],
+    "art": {},
+    "flavor": "獸座崩落時，帶著半數族人殺出包圍的戰首。他從不躲在後面發號施令，衝第一個是他唯一的戰術。",
+    "lines": {
+      "victory": "吼！下一個獵場，在哪裡？"
+    }
+  },
+  {
+    "id": "c708",
+    "name": "枯藤巫祝・瑪芙",
+    "attribute": "wood",
+    "race": "nether",
+    "rarity": 5,
+    "maxLevel": 90,
+    "stats": {
+      "hp": [
+        1000,
+        3300
+      ],
+      "atk": [
+        380,
+        1300
+      ],
+      "rcv": [
+        150,
+        450
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s708",
+    "leaderSkill": "l708",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "wood",
+        "percent": 10
+      },
+      {
+        "type": "orbDamageUp",
+        "orb": "dark",
+        "percent": 10
+      },
+      {
+        "type": "resistStatus",
+        "status": "heartSeal",
+        "percent": 50
+      }
+    ],
+    "expValue": 1500,
+    "sellValue": 1000,
+    "archetypes": [
+      {
+        "id": "dual",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "冥河岸邊替亡者編花圈的巫祝。她只用兩種藤：一種會開花，一種會結霜，她說生與死本來就纏在一起。",
+    "lines": {
+      "victory": "花開了，霜也落了。這一場，到此為止。"
+    }
+  },
+  {
+    "id": "c709",
+    "name": "碑文抄寫者・艾德",
+    "attribute": "wood",
+    "race": "human",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        740,
+        2420
+      ],
+      "atk": [
+        250,
+        860
+      ],
+      "rcv": [
+        100,
+        310
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s709",
+    "leaderSkill": "l709",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "chain",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "在英雄座的刻名碑林裡抄寫名字的少年。他抄得又快又長，一口氣能抄完整整一排石碑。",
+    "lines": {
+      "victory": "這一排，我全記下來了。一個字都沒漏。"
+    }
+  },
+  {
+    "id": "c710",
+    "name": "雙角羚・歐菈",
+    "attribute": "light",
+    "race": "beast",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        740,
+        2420
+      ],
+      "atk": [
+        250,
+        860
+      ],
+      "rcv": [
+        100,
+        310
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s710",
+    "leaderSkill": "l710",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "dual",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "左角在白天發光、右角在夜裡發亮的羚羊。日與夜交替的那一刻，牠跑得最快。",
+    "lines": {
+      "victory": "白天和黑夜，我都跑過了！"
+    }
+  },
+  {
+    "id": "c711",
+    "name": "掘地獾・波魯",
+    "attribute": "dark",
+    "race": "beast",
+    "rarity": 3,
+    "maxLevel": 50,
+    "stats": {
+      "hp": [
+        460,
+        1490
+      ],
+      "atk": [
+        150,
+        520
+      ],
+      "rcv": [
+        50,
+        180
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 4,
+    "activeSkill": "s711",
+    "leaderSkill": "l711",
+    "expValue": 300,
+    "sellValue": 100,
+    "archetypes": [
+      {
+        "id": "chain",
+        "role": "support"
+      }
+    ],
+    "art": {},
+    "flavor": "最喜歡挖隧道的獾，總是筆直地挖到底。牠挖過的地方，晶石會排成整整齊齊的一排。",
+    "lines": {
+      "victory": "呼……挖通了！一直線，沒有轉彎！"
+    }
+  },
+  {
+    "id": "c606",
+    "name": "守誓騎士・卡隆",
+    "attribute": "dark",
+    "race": "human",
+    "rarity": 4,
+    "maxLevel": 70,
+    "stats": {
+      "hp": [
+        740,
+        2420
+      ],
+      "atk": [
+        250,
+        860
+      ],
+      "rcv": [
+        100,
+        310
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 6,
+    "activeSkill": "s606",
+    "leaderSkill": "l606",
+    "expValue": 600,
+    "sellValue": 300,
+    "archetypes": [
+      {
+        "id": "race",
+        "role": "core"
+      }
+    ],
+    "art": {},
+    "flavor": "曾被星骸吞沒、守著被刮掉名字的斷誓騎影。誤會解開後，他把劍重新立在雷恩身旁，這次守的是活著的人。",
+    "lines": {
+      "victory": "誓約我會再立一次。這一次，不再弄丟。"
+    }
   }
 ]

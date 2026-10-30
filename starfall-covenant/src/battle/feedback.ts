@@ -1,7 +1,7 @@
 // 戰鬥可讀性用的純邏輯：屬性剋制提示、敵人下一招預告、Combo 演出分級、技能就緒、每位隊員的傷害拆分。
 // 不改戰鬥狀態，只從狀態快照推算給介面顯示。
 
-import type { Attribute, EnemyAbility, StatusId } from '../core/types';
+import type { Attribute, EnemyAbility, EnemyDef, StatusId } from '../core/types';
 import { attributeMultiplier, incomingDamage, type BattleConfig, type HitResult } from './damage';
 import type { BattleState, EnemyState, MemberState } from './runtime';
 import { buffDamageReductions } from './skills/buffs';
@@ -22,6 +22,87 @@ export function matchup(attacker: Attribute | undefined, defender: Attribute, co
 /** 打這個屬性的敵人時，會剋制它的屬性（敵人名牌的「弱：潮」） */
 export function weakTo(defender: Attribute, config: BattleConfig): Attribute[] {
   return ATTRIBUTES.filter((a) => matchup(a, defender, config) === 'advantage');
+}
+
+// ---------- 有效倍率（剋制 × 屬性減傷，提案 72） ----------
+
+/** 敵人身上會降低某些屬性傷害的效果；percent 為減傷 %（100 = 完全免疫） */
+export interface AttributeReduction {
+  attributes: Attribute[] | 'all';
+  percent: number;
+  kind: 'shield' | 'attributeShield' | 'rotate';
+}
+
+/** 有效倍率 = 剋制倍率 × Π(1 − 減傷)；只算涵蓋這個屬性的減傷 */
+export function effectiveMultiplier(attacker: Attribute, defender: Attribute, reductions: readonly AttributeReduction[], config: BattleConfig): number {
+  let mul = attributeMultiplier(attacker, defender, config);
+  for (const r of reductions) {
+    if (r.attributes === 'all' || r.attributes.includes(attacker)) mul *= 1 - Math.min(100, Math.max(0, r.percent)) / 100;
+  }
+  return mul;
+}
+
+export function effectiveMultipliers(defender: Attribute, reductions: readonly AttributeReduction[], config: BattleConfig): Record<Attribute, number> {
+  return Object.fromEntries(ATTRIBUTES.map((a) => [a, effectiveMultiplier(a, defender, reductions, config)])) as Record<Attribute, number>;
+}
+
+/** 剋制而且減傷後仍大於 1 倍的屬性（名牌的「弱：X」） */
+export function effectiveWeakTo(defender: Attribute, reductions: readonly AttributeReduction[], config: BattleConfig): Attribute[] {
+  return weakTo(defender, config).filter((a) => effectiveMultiplier(a, defender, reductions, config) > 1);
+}
+
+/**
+ * 隊員頭像對目標的標記：剋制且扣掉目前減傷後仍大於 1 倍才算 advantage（▲）；被剋照舊是 disadvantage（▼）；
+ * 剋制但被減傷壓到 1 倍以下就不標。
+ */
+export function effectiveMatchup(attacker: Attribute, enemy: Pick<EnemyState, 'def' | 'statuses' | 'turnsOnField'>, config: BattleConfig): Matchup {
+  const base = matchup(attacker, enemy.def.attribute, config);
+  if (base !== 'advantage') return base;
+  return effectiveMultiplier(attacker, enemy.def.attribute, liveReductions(enemy), config) > 1 ? 'advantage' : 'neutral';
+}
+
+/** 本來剋制、但被減傷壓到 1 倍以下的屬性 */
+export function reducedWeaknesses(defender: Attribute, reductions: readonly AttributeReduction[], config: BattleConfig): Attribute[] {
+  return weakTo(defender, config).filter((a) => effectiveMultiplier(a, defender, reductions, config) <= 1);
+}
+
+/** 戰鬥中：敵人目前持續中的護盾與屬性減傷（輪替減傷取這一回合輪到的屬性） */
+export function liveReductions(enemy: Pick<EnemyState, 'statuses' | 'turnsOnField'>): AttributeReduction[] {
+  const out: AttributeReduction[] = [];
+  for (const s of enemy.statuses) {
+    if (s.id === 'shield') out.push({ attributes: 'all', percent: s.value ?? 100, kind: 'shield' });
+    if (s.id === 'attributeShield') {
+      const raw = s.params?.attribute;
+      out.push(raw === 'rotate'
+        ? { attributes: [ATTRIBUTES[enemy.turnsOnField % ATTRIBUTES.length]], percent: s.value ?? 0, kind: 'rotate' }
+        : { attributes: parseAttributeList(raw), percent: s.value ?? 0, kind: 'attributeShield' });
+    }
+  }
+  return out;
+}
+
+/**
+ * 出戰前：敵人一出場就有、而且會一直持續的減傷（onStart、turns 不填或 0）。
+ * 只維持幾回合的護盾不影響帶什麼屬性，不算；輪替減傷每回合換一個屬性，平均分給五屬（各算 1/5）。
+ */
+export function plannedReductions(def: Pick<EnemyDef, 'abilities'>): AttributeReduction[] {
+  const out: AttributeReduction[] = [];
+  for (const a of def.abilities) {
+    if (a.trigger !== 'onStart' || (a.turns ?? 0) > 0) continue;
+    if (a.status === 'shield') out.push({ attributes: 'all', percent: a.value ?? 100, kind: 'shield' });
+    if (a.status === 'attributeShield') {
+      const raw = a.params?.attribute;
+      out.push(raw === 'rotate'
+        ? { attributes: 'all', percent: (a.value ?? 0) / ATTRIBUTES.length, kind: 'rotate' }
+        : { attributes: parseAttributeList(raw), percent: a.value ?? 0, kind: 'attributeShield' });
+    }
+  }
+  return out;
+}
+
+function parseAttributeList(v: number | string | undefined): Attribute[] {
+  if (typeof v !== 'string') return [];
+  return v.split(',').map((x) => x.trim()).filter((x): x is Attribute => (ATTRIBUTES as string[]).includes(x));
 }
 
 // ---------- 敵人下一招預告 ----------
