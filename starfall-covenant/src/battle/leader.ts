@@ -213,7 +213,10 @@ export function evaluateLeaderTurn(leaders: (LeaderSkillDef | undefined)[], ctx:
             result.followUps.push(
               e.mode === 'fixed'
                 ? { member: -1, target: 'single', amount: e.value, fixed: true }
-                : { member: -1, target: 'single', amount: e.value * totalAtk },
+                : e.mode === 'percentMaxHp'
+                  // 依目標最大生命換算，在 applyHits 結算；amount 先放上限給預估用
+                  ? { member: -1, target: 'single', amount: e.cap ?? 0, fixed: true, percentMaxHp: e.value, cap: e.cap }
+                  : { member: -1, target: 'single', amount: e.value * totalAtk },
             );
             break;
           case 'ignoreDefense':
@@ -245,6 +248,9 @@ export function lintLeaderSkill(def: LeaderSkillDef): string[] {
       if (e.type === 'atkMultiplier' && e.perStep && !rule.conditions.some((c) => STEPPED.has(c.type))) {
         issues.push(`rule ${i}：atkMultiplier 有 perStep，但沒有可分級的條件`);
       }
+      if (e.type === 'followUpDamage' && e.mode === 'percentMaxHp' && !(e.cap && e.cap > 0)) {
+        issues.push(`rule ${i}：百分比追打一定要有上限 cap，否則會秒殺 Boss`);
+      }
     }
   });
   return issues;
@@ -266,6 +272,10 @@ export interface LeaderSkillProfile {
   /** 合併後的減傷百分比 */
   reduction: number;
   fixedFollowUp: number;
+  /** 百分比追打：目標最大生命的 % 加總 */
+  percentFollowUp: number;
+  /** 百分比追打每次上限的加總（沒填 cap 為 Infinity），也就是對超高生命 Boss 的等效固定追打 */
+  percentFollowUpCap: number;
   moveTime: number;
   enemyCooldown: number;
   allyCooldown: number;
@@ -278,7 +288,7 @@ export interface LeaderSkillProfile {
 export function leaderSkillProfile(def: LeaderSkillDef): LeaderSkillProfile {
   const p: LeaderSkillProfile = {
     rules: def.rules.length, maxConditions: 0, effects: 0, peakAtk: 1, hp: 1, rcv: 1, reduction: 0,
-    fixedFollowUp: 0, moveTime: 0, enemyCooldown: 0, allyCooldown: 0, ignoreDefense: false,
+    fixedFollowUp: 0, percentFollowUp: 0, percentFollowUpCap: 0, moveTime: 0, enemyCooldown: 0, allyCooldown: 0, ignoreDefense: false,
     conditionTypes: new Set(), effectTypes: new Set(),
   };
   let taken = 1;
@@ -293,7 +303,13 @@ export function leaderSkillProfile(def: LeaderSkillDef): LeaderSkillProfile {
         case 'hpMultiplier': p.hp *= e.value; break;
         case 'rcvMultiplier': p.rcv *= e.value; break;
         case 'damageReduction': taken *= 1 - e.percent / 100; break;
-        case 'followUpDamage': if (e.mode === 'fixed') p.fixedFollowUp += e.value; break;
+        case 'followUpDamage':
+          if (e.mode === 'fixed') p.fixedFollowUp += e.value;
+          if (e.mode === 'percentMaxHp') {
+            p.percentFollowUp += e.value;
+            p.percentFollowUpCap += e.cap && e.cap > 0 ? e.cap : Infinity;
+          }
+          break;
         case 'extendMoveTime': p.moveTime += e.seconds; break;
         case 'enemyCooldownPlus': p.enemyCooldown += e.turns; break;
         case 'allyCooldownPerTurn': p.allyCooldown += e.turns; break;
@@ -314,6 +330,12 @@ export interface LeaderTier {
   stat: number;
   reduction: number;
   fixedFollowUp: number;
+  /**
+   * 百分比追打（目標最大生命 %）與每次上限。和固定追打分開算：固定追打對百萬生命的 Boss 不痛不癢，
+   * 百分比追打靠上限壓住，讓固定傷害流派打得動 Boss 但不會秒殺。
+   */
+  percentFollowUp: number;
+  percentFollowUpCap: number;
   moveTime: number;
   enemyCooldown: number;
   allyCooldown: number;
@@ -321,10 +343,10 @@ export interface LeaderTier {
 }
 
 export const LEADER_TIERS: Record<3 | 4 | 5 | 6, LeaderTier> = {
-  3: { rules: 1, maxConditions: 1, effects: 2, peakAtk: 2, stat: 1.2, reduction: 0, fixedFollowUp: 0, moveTime: 0, enemyCooldown: 1, allyCooldown: 0, ignoreDefense: false },
-  4: { rules: 2, maxConditions: 1, effects: 4, peakAtk: 3, stat: 1.5, reduction: 20, fixedFollowUp: 3000, moveTime: 1, enemyCooldown: 1, allyCooldown: 0, ignoreDefense: true },
-  5: { rules: 2, maxConditions: 2, effects: 5, peakAtk: 4, stat: 1.5, reduction: 30, fixedFollowUp: 8000, moveTime: 1, enemyCooldown: 1, allyCooldown: 0, ignoreDefense: true },
-  6: { rules: 3, maxConditions: 2, effects: 6, peakAtk: 6, stat: 2, reduction: 40, fixedFollowUp: 15000, moveTime: 2, enemyCooldown: 1, allyCooldown: 1, ignoreDefense: true },
+  3: { rules: 1, maxConditions: 1, effects: 2, peakAtk: 2, stat: 1.2, reduction: 0, fixedFollowUp: 0, percentFollowUp: 0, percentFollowUpCap: 0, moveTime: 0, enemyCooldown: 1, allyCooldown: 0, ignoreDefense: false },
+  4: { rules: 2, maxConditions: 1, effects: 4, peakAtk: 3, stat: 1.5, reduction: 20, fixedFollowUp: 3000, percentFollowUp: 1, percentFollowUpCap: 10000, moveTime: 1, enemyCooldown: 1, allyCooldown: 0, ignoreDefense: true },
+  5: { rules: 2, maxConditions: 2, effects: 5, peakAtk: 4, stat: 1.5, reduction: 30, fixedFollowUp: 8000, percentFollowUp: 2, percentFollowUpCap: 30000, moveTime: 1, enemyCooldown: 1, allyCooldown: 0, ignoreDefense: true },
+  6: { rules: 3, maxConditions: 2, effects: 6, peakAtk: 6, stat: 2, reduction: 40, fixedFollowUp: 15000, percentFollowUp: 3, percentFollowUpCap: 60000, moveTime: 2, enemyCooldown: 1, allyCooldown: 1, ignoreDefense: true },
 };
 
 /** 檢查隊長技有沒有超出該星數的上限；3★ 以下用 3★ 的上限 */
@@ -343,6 +365,9 @@ export function checkLeaderTier(def: LeaderSkillDef, rarity: number): string[] {
   over('回復倍率', p.rcv, tier.stat);
   over('減傷', p.reduction, tier.reduction);
   over('固定追打', p.fixedFollowUp, tier.fixedFollowUp);
+  over('百分比追打 %', p.percentFollowUp, tier.percentFollowUp);
+  if (p.percentFollowUp > 0 && !Number.isFinite(p.percentFollowUpCap)) issues.push('百分比追打沒有上限 cap');
+  else over('百分比追打上限', p.percentFollowUpCap, tier.percentFollowUpCap);
   over('轉珠時間', p.moveTime, tier.moveTime);
   over('敵人 CD', p.enemyCooldown, tier.enemyCooldown);
   over('技能冷卻加速', p.allyCooldown, tier.allyCooldown);
@@ -357,7 +382,7 @@ export function checkLeaderEvolution(before: LeaderSkillDef, after: LeaderSkillD
   const issues: string[] = [];
   for (const t of a.conditionTypes) if (!b.conditionTypes.has(t)) issues.push(`進化後少了條件 ${t}`);
   for (const t of a.effectTypes) if (!b.effectTypes.has(t)) issues.push(`進化後少了效果 ${t}`);
-  for (const k of ['peakAtk', 'hp', 'rcv', 'reduction', 'fixedFollowUp', 'moveTime'] as const) {
+  for (const k of ['peakAtk', 'hp', 'rcv', 'reduction', 'fixedFollowUp', 'percentFollowUp', 'moveTime'] as const) {
     if (b[k] < a[k] - 1e-9) issues.push(`進化後 ${k} 變弱（${a[k]} → ${b[k]}）`);
   }
   if (JSON.stringify(before.rules) === JSON.stringify(after.rules)) issues.push('進化前後隊長技完全相同');

@@ -72,9 +72,14 @@ export type SkillEffect =
   | {
       type: 'damage';
       target: 'single' | 'all';
-      /** mode=multiplier 時 value 為自身攻擊倍率；mode=fixed 時為固定數值 */
-      mode: 'multiplier' | 'fixed';
+      /**
+       * mode=multiplier 時 value 為自身攻擊倍率；mode=fixed 時為固定數值；
+       * mode=percentMaxHp 時 value 為目標最大生命的 %（視同固定傷害、無視防禦），一定要填 cap
+       */
+      mode: 'multiplier' | 'fixed' | 'percentMaxHp';
       value: number;
+      /** mode=percentMaxHp：每個目標最多造成的傷害 */
+      cap?: number;
       attribute?: Attribute;
       ignoreDefense?: boolean;
       ignoreShield?: boolean;
@@ -129,7 +134,11 @@ export type LeaderEffect =
   | { type: 'rcvMultiplier'; target?: UnitFilter; value: number }
   | { type: 'damageReduction'; percent: number }
   | { type: 'extendMoveTime'; seconds: number }
-  | { type: 'followUpDamage'; mode: 'multiplier' | 'fixed'; value: number }
+  /**
+   * 追打：multiplier = 全隊攻擊力 × value；fixed = 固定 value 點；
+   * percentMaxHp = 目標最大生命的 value %，每次最多 cap 點（規則見 GDD 2.1「百分比傷害」）
+   */
+  | { type: 'followUpDamage'; mode: 'multiplier' | 'fixed' | 'percentMaxHp'; value: number; cap?: number }
   | { type: 'ignoreDefense' }
   | { type: 'enemyCooldownPlus'; turns: number }
   | { type: 'skillCooldownStart'; charged: boolean }
