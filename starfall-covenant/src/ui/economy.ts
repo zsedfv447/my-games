@@ -12,8 +12,9 @@ import type { ShopFail } from '../progression/shop';
 export const loginRewards = loginRewardsJson as LoginRewardDef[];
 
 /** 活動代幣的顯示名稱 */
-export const TOKEN_NAMES: Record<string, string> = { 'token-beast': '獸王代幣' };
-export const tokenName = (id: string) => TOKEN_NAMES[id] ?? id;
+const TOKEN_NAMES = new Map(gameData.events.flatMap((e) => (e.token && e.tokenName ? [[e.token, e.tokenName] as const] : [])));
+/** 代幣名稱來自 data/events.json 的 tokenName */
+export const tokenName = (id: string) => TOKEN_NAMES.get(id) ?? id;
 
 const stageKind = new Map(gameData.stages.map((s) => [s.id, s.kind]));
 export const questDerived = (save: SaveData): DerivedCounters => derivedCounters(save, (id) => stageKind.get(id));

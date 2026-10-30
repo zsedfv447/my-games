@@ -156,6 +156,29 @@ export function validateGameData(d: GameData): string[] {
       err(`events/${e.id}`, 'repeatDays 比一檔活動還短');
     }
   }
+  // 活動限購要靠代幣找到所屬活動，才能依檔期重置
+  for (const item of d.shop) {
+    const tokens = Object.keys(item.price.tokens ?? {});
+    if (item.limit?.per === 'event' && !d.events.some((e) => e.token && tokens.includes(e.token))) {
+      err(`shop/${item.id}`, '活動限購的商品要用某個活動的代幣標價');
+    }
+  }
+
+  // 每種用到的代幣都要有活動資料提供名稱
+  const tokenNames = new Map(d.events.flatMap((e) => (e.token ? [[e.token, e.tokenName] as const] : [])));
+  const usedTokens = new Map<string, string>();
+  const useTokens = (where: string, tokens: Record<string, number> | undefined) => {
+    for (const t of Object.keys(tokens ?? {})) if (!usedTokens.has(t)) usedTokens.set(t, where);
+  };
+  for (const item of d.shop) {
+    useTokens(`shop/${item.id}`, item.price.tokens);
+    if (!('type' in item.reward)) useTokens(`shop/${item.id}`, item.reward.tokens);
+  }
+  for (const q of d.quests) useTokens(`quests/${q.id}`, q.reward.tokens);
+  for (const s of d.stages) useTokens(`stages/${s.id}`, s.rewards.firstClear?.tokens);
+  for (const c of d.chapters) useTokens(`chapters/${c.chapter}`, c.starReward.tokens);
+  for (const [t, where] of usedTokens) if (!tokenNames.get(t)) err(where, `代幣 ${t} 沒有名稱（請在 events.json 填 token 與 tokenName）`);
+
   for (const s of d.stages) if (s.kind === 'event' && (!s.event || !eventIds.has(s.event))) err(`stages/${s.id}`, `活動 ${s.event} 不在 events.json`);
 
   for (const item of d.shop) {
