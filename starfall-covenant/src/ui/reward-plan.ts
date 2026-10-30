@@ -12,7 +12,23 @@ export type RevealItem =
   /** 金幣、經驗、星晶等數量，從 0 滾到 amount */
   | { kind: 'count'; icon: ResourceIcon | 'exp'; label: string; amount: number; tag?: string; special?: boolean }
   | { kind: 'card'; cardId: string; count: number }
-  | { kind: 'star'; text: string; got: boolean; isNew: boolean };
+  | { kind: 'star'; text: string; got: boolean; isNew: boolean }
+  /** 隊員經驗：每位隊員各得 amount，列出升級的隊員 */
+  | { kind: 'team'; amount: number; members: TeamExpMember[] };
+
+export interface TeamExpMember {
+  cardId: string;
+  from: number;
+  to: number;
+}
+
+/** 結算額外要顯示的內容（由發放的模組算好傳進來，這裡只負責顯示） */
+export interface ClearExtras {
+  /** 出戰隊員的經驗結果（growth 的 grantBattleExp） */
+  team?: TeamExpMember[];
+  /** 同時領到的章節星章獎勵 */
+  chapterReward?: Reward;
+}
 
 /** 一份 Reward 拆成演出項目（登入、任務、星章等領獎共用）。星晶放最後壓軸 */
 export function rewardItems(reward: Reward, tag?: string): RevealItem[] {
@@ -25,11 +41,12 @@ export function rewardItems(reward: Reward, tag?: string): RevealItem[] {
   return out;
 }
 
-/** 關卡結算的演出順序：戰績 → 金幣 → 經驗 → 首通獎勵（星晶壓軸）→ 掉落卡 → 星章 */
+/** 關卡結算的演出順序：戰績 → 金幣 → 經驗 → 隊員經驗 → 首通獎勵（星晶壓軸）→ 章節獎勵 → 掉落卡 → 星章 */
 export function clearItems(
   battle: { turns: number; maxCombo: number },
   clear: StageClearResult | null,
   starTexts: string[] = [],
+  extras: ClearExtras = {},
 ): RevealItem[] {
   const out: RevealItem[] = [
     { kind: 'stat', label: '回合數', value: `${battle.turns}` },
@@ -38,8 +55,10 @@ export function clearItems(
   if (!clear) return out;
   if (clear.coin) out.push({ kind: 'count', icon: 'coin', label: '金幣', amount: clear.coin });
   if (clear.playerExp) out.push({ kind: 'count', icon: 'exp', label: '玩家經驗', amount: clear.playerExp });
-  if (clear.cardExp) out.push({ kind: 'count', icon: 'exp', label: '隊員經驗', amount: clear.cardExp });
+  // 隊員經驗只在真的有發給隊員時顯示（借用隊伍、全員滿級時不顯示）
+  if (clear.cardExp && extras.team?.length) out.push({ kind: 'team', amount: clear.cardExp, members: extras.team });
   if (clear.firstClear) out.push(...rewardItems(clear.firstClear, '首通'));
+  if (extras.chapterReward) out.push(...rewardItems(extras.chapterReward, '章節'));
   // 同一張卡掉兩次也分開翻，每張都是一次驚喜
   for (const d of clear.drops) out.push({ kind: 'card', cardId: d.cardId, count: 1 });
   starTexts.forEach((text, i) => out.push({ kind: 'star', text, got: !!clear.stars[i], isNew: !!clear.newStars[i] }));
@@ -67,6 +86,7 @@ export function itemDuration(item: RevealItem): number {
     case 'count': return (item.special ? 520 : 260) + countDuration(item.amount);
     case 'card': return 480;
     case 'star': return item.got ? 360 : 200;
+    case 'team': return 360 + countDuration(item.amount) + (item.members.some((m) => m.to > m.from) ? 300 : 0);
   }
 }
 
@@ -89,6 +109,7 @@ export function revealSfx(item: RevealItem): SfxName | null {
     case 'count': return item.special ? 'gem' : 'reward';
     case 'card': return 'reward';
     case 'star': return item.got ? 'star' : null;
+    case 'team': return 'reward';
   }
 }
 

@@ -1,0 +1,21 @@
+/* 關卡流程：章節星章獎勵、戰鬥回合與星章 HUD、勝利後的下一關 */
+.chapter-reward { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.chapter-reward.claimable { animation: chapter-reward-glow 1.6s ease-in-out infinite; border-radius: 6px; }
+@keyframes chapter-reward-glow { 50% { box-shadow: 0 0 0 2px #e8c46a88, 0 0 14px #e8c46a66; } }
+.chapter-card { position: relative; }
+.quest-banner .badge.dot, .chapter-card .badge.dot { top: 6px; right: 6px; }
+
+/* 戰鬥頂部：回合數與星章 */
+.battle-hud { display: flex; align-items: center; gap: 6px; font-size: 12px; white-space: nowrap; }
+.battle-hud .turn-count { font-weight: 700; letter-spacing: 1px; }
+.battle-hud .hud-stars { display: flex; gap: 2px; }
+.battle-hud .hud-star { border: 0; background: none; padding: 0 1px; font-size: 14px; line-height: 1; color: #f0cf6e; opacity: 0.55; cursor: pointer; }
+.battle-hud .hud-star.done { opacity: 1; text-shadow: 0 0 6px #f6d77a; }
+.battle-hud .hud-star.failed { color: #777; opacity: 0.45; text-decoration: line-through; }
+.battle-hud .hud-star.pop { animation: hud-star-pop 0.6s ease-out; }
+@keyframes hud-star-pop { 40% { transform: scale(1.8); } }
+
+/* 勝利視窗：解鎖提示 */
+.unlock-note { padding: 6px 8px; border-radius: 4px; background: #e8c46a22; border: 1px solid #e8c46a66; text-align: center; }
+.list-item.just-unlocked { animation: just-unlocked 1.2s ease-out 2; }
+@keyframes just-unlocked { 30% { transform: translateY(-3px); box-shadow: 0 0 0 2px #e8c46a, 0 0 16px #e8c46aaa; } }

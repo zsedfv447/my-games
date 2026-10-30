@@ -14,14 +14,20 @@ const clear: StageClearResult = {
 
 describe('結算演出項目', () => {
   it('依序：戰績 → 金幣 → 經驗 → 首通星晶 → 掉落卡 → 星章', () => {
-    const items = clearItems({ turns: 4, maxCombo: 7 }, clear, ['a', 'b', 'c']);
-    expect(items.map((i) => i.kind)).toEqual(['stat', 'stat', 'count', 'count', 'count', 'count', 'card', 'card', 'star', 'star', 'star']);
+    const items = clearItems({ turns: 4, maxCombo: 7 }, clear, ['a', 'b', 'c'], { team: [{ cardId: 'c101', from: 3, to: 4 }] });
+    expect(items.map((i) => i.kind)).toEqual(['stat', 'stat', 'count', 'count', 'team', 'count', 'card', 'card', 'star', 'star', 'star']);
+    expect(items[4]).toEqual({ kind: 'team', amount: 60, members: [{ cardId: 'c101', from: 3, to: 4 }] });
     expect(items[5]).toMatchObject({ icon: 'gem', label: '星晶', amount: 1, tag: '首通', special: true });
     expect(items.slice(8)).toEqual([
       { kind: 'star', text: 'a', got: true, isNew: true },
       { kind: 'star', text: 'b', got: false, isNew: false },
       { kind: 'star', text: 'c', got: true, isNew: false },
     ]);
+  });
+  it('隊員經驗沒有發給任何人時不顯示；章節獎勵接在首通後面', () => {
+    const items = clearItems({ turns: 4, maxCombo: 7 }, clear, [], { team: [], chapterReward: { gems: 5 } });
+    expect(items.some((i) => i.kind === 'team')).toBe(false);
+    expect(items.filter((i) => i.kind === 'count' && i.icon === 'gem').map((i) => i.kind === 'count' && i.tag)).toEqual(['首通', '章節']);
   });
   it('練習關沒有結算資料時只顯示戰績；數量為 0 的項目不顯示', () => {
     expect(clearItems({ turns: 3, maxCombo: 2 }, null)).toHaveLength(2);

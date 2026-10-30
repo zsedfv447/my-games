@@ -1,6 +1,6 @@
 // 關卡：解鎖、進場（扣體力）、星章判定、掉落、結算發獎
 import type {
-  Attribute, CardDef, DropDef, GameConfig, Race, Reward, SaveData, StageDef, StarCondition, TeamRule, UnitFilter,
+  Attribute, CardDef, ChapterDef, DropDef, GameConfig, Race, Reward, SaveData, StageDef, StarCondition, TeamRule, UnitFilter,
 } from '../core/types';
 import type { Rng } from '../core/rng';
 import { addPlayerExp, type LevelUpInfo } from './player';
@@ -89,6 +89,36 @@ export function checkStar(cond: StarCondition, s: BattleSummary): boolean {
   }
 }
 
+export type LiveStarStatus = 'done' | 'failed' | 'pending';
+
+/**
+ * 戰鬥中的星章狀態（給頂部 HUD 用）：已確定拿到、已確定失敗、還要看結果。
+ * s.turns 是已經打完的回合數；won 表示戰鬥已勝利（此時與 checkStar 結果一致）。
+ */
+export function liveStarStatus(cond: StarCondition, s: BattleSummary, won: boolean): LiveStarStatus {
+  if (won) return checkStar(cond, s) ? 'done' : 'failed';
+  switch (cond.type) {
+    // 打完第 N 回合還沒贏，就不可能在 N 回合內通關
+    case 'clearWithinTurns': return s.turns >= cond.turns ? 'failed' : 'pending';
+    case 'noActiveSkill': return s.usedActiveSkill ? 'failed' : 'pending';
+    case 'noContinue': return s.continues > 0 ? 'failed' : 'pending';
+    case 'maxCombo': return s.maxCombo >= cond.combo ? 'done' : 'pending';
+    // 隊伍條件出戰時就決定了
+    case 'teamAll': return checkStar(cond, s) ? 'done' : 'failed';
+  }
+}
+
+/** 通過 stageId 後會開放的關卡（依資料順序） */
+export function stagesUnlockedBy(stageId: string, stages: StageDef[]): StageDef[] {
+  return stages.filter((s) => s.unlockAfter === stageId);
+}
+
+/** 勝利視窗「下一關」：優先同類型的下一關（主線、塔），沒有就取第一個被它開放的關卡 */
+export function nextStageAfter(stage: StageDef, stages: StageDef[]): StageDef | undefined {
+  const opened = stagesUnlockedBy(stage.id, stages);
+  return opened.find((s) => s.kind === stage.kind) ?? opened[0];
+}
+
 /** 掉落：每個掉落項獨立判定 */
 export function rollDrops(stage: StageDef, rng: Rng): DropDef[] {
   return stage.drops.filter((d) => rng.next() < d.rate);
@@ -173,6 +203,34 @@ export function chapterStars(save: SaveData, chapter: number, stages: StageDef[]
     got += (save.progress.stars[st.id] ?? []).filter(Boolean).length;
   }
   return { got, total };
+}
+
+export type ChapterRewardStatus = 'claimable' | 'claimed' | 'incomplete';
+
+/** 章節星章獎勵狀態：全部星章到手才能領，一章只能領一次；沒有星章的章節永遠不能領 */
+export function chapterRewardStatus(save: SaveData, chapter: number, stages: StageDef[]): ChapterRewardStatus {
+  if ((save.progress.chapterRewardsClaimed ?? []).includes(chapter)) return 'claimed';
+  const { got, total } = chapterStars(save, chapter, stages);
+  return total > 0 && got >= total ? 'claimable' : 'incomplete';
+}
+
+/** 目前可以領取星章獎勵的章節 */
+export function claimableChapterRewards(save: SaveData, chapters: ChapterDef[], stages: StageDef[]): number[] {
+  return chapters.filter((c) => chapterRewardStatus(save, c.chapter, stages) === 'claimable').map((c) => c.chapter);
+}
+
+/** 領取章節星章獎勵 */
+export function claimChapterStarReward(
+  save: SaveData, chapter: number, chapters: ChapterDef[], stages: StageDef[], config: GameConfig, now: number,
+): SaveResult<'unknownChapter' | 'alreadyClaimed' | 'notComplete'> & { reward?: Reward } {
+  const def = chapters.find((c) => c.chapter === chapter);
+  if (!def) return fail('unknownChapter');
+  const status = chapterRewardStatus(save, chapter, stages);
+  if (status === 'claimed') return fail('alreadyClaimed');
+  if (status === 'incomplete') return fail('notComplete');
+  const granted = grantReward(save, def.starReward, config, now).save;
+  const claimed = [...(save.progress.chapterRewardsClaimed ?? []), chapter];
+  return { ...ok({ ...granted, progress: { ...granted.progress, chapterRewardsClaimed: claimed } }), reward: def.starReward };
 }
 
 /** 依卡片資料把隊伍 uid 轉成星章判定需要的屬性與種族 */

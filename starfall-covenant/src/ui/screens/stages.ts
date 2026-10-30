@@ -2,16 +2,20 @@
 import { h } from '../dom';
 import { gameData } from '../../data/load';
 import type { StageDef } from '../../core/types';
-import { chapterStars } from '../../progression/stages';
-import { badge, emptyState, icon, listItem, panel } from '../components/basic';
+import { chapterRewardStatus, chapterStars, claimChapterStarReward } from '../../progression/stages';
+import { badge, bar, button, emptyState, icon, listItem, panel } from '../components/basic';
+import { rewardChips } from '../components/rewards';
+import { audio } from '../audio';
 import { toast } from '../components/overlay';
-import { isPlayable, LOCK_TEXT, stageContext, stageRow, weekdayText, type StageRow } from '../stage-nav';
-import { getSave } from '../state';
+import { isPlayable, LOCK_TEXT, stageContext, takeJustUnlocked, stageRow, weekdayText, type StageRow } from '../stage-nav';
+import { commit, getSave } from '../state';
+import { rewardParts } from '../economy';
+import type { ChapterDef } from '../../core/types';
 import type { Navigator, ScreenDef } from '../router';
 import type { IconName } from '../art/icons';
 import { firstClearChip } from '../components/reward-reveal';
 
-function row(r: StageRow, nav: Navigator, leading: IconName): HTMLElement {
+function row(r: StageRow, nav: Navigator, leading: IconName, fresh = new Set<string>()): HTMLElement {
   const s = r.stage;
   const playable = isPlayable(r.status);
   const sub: string[] = [];
@@ -32,7 +36,32 @@ function row(r: StageRow, nav: Navigator, leading: IconName): HTMLElement {
     onClick: () => (playable ? nav.go('prepare', [s.id]) : toast(LOCK_TEXT[r.status as keyof typeof LOCK_TEXT])),
   });
   if (!playable) item.classList.add('dimmed');
+  if (fresh.has(s.id)) item.classList.add('just-unlocked');
   return item;
+}
+
+/** 章節星章進度與獎勵；領取後原地重畫 */
+function chapterReward(info: ChapterDef): HTMLElement {
+  const save = getSave();
+  const stars = chapterStars(save, info.chapter, gameData.stages);
+  const status = chapterRewardStatus(save, info.chapter, gameData.stages);
+  const el: HTMLElement = h('div', { class: ['chapter-reward', status] },
+    h('div', { class: 'chapter-reward-bar' }, bar({ value: stars.got, max: stars.total, variant: 'gold', label: `星章 ${stars.got}/${stars.total}` })),
+    h('div', { class: 'row between' },
+      rewardChips(info.starReward),
+      status === 'claimable'
+        ? button('領取', { small: true, variant: 'primary', sound: false, onClick: () => claim() })
+        : badge(status === 'claimed' ? '已領取' : '集滿可領', status === 'claimed' ? undefined : 'gold')),
+  );
+  const claim = () => {
+    const r = claimChapterStarReward(getSave(), info.chapter, gameData.chapters, gameData.stages, gameData.config, Date.now());
+    if (!r.ok) return toast(r.reason === 'alreadyClaimed' ? '已經領過了' : '星章還沒集滿');
+    commit(r.save);
+    audio.play('confirm');
+    toast(`獲得章節獎勵：${rewardParts(r.reward!).map((p) => p.label).join('、')}`, 2600);
+    el.replaceWith(chapterReward(info));
+  };
+  return el;
 }
 
 const GROUPS: Record<string, { title: string; kind: StageDef['kind']; icon: IconName }> = {
@@ -63,28 +92,29 @@ export const stagesScreen: ScreenDef = {
         rows = rows.slice(0, shown).reverse();
         list = list.slice(0, shown);
       }
+      const fresh = takeJustUnlocked(rows.map((r) => r.stage.id));
       return h(
         'div',
         null,
         h('h2', { class: 'section-title' }, group.title),
         group.kind === 'tower' && panel(null, h('p', { class: 'small-text dim' }, `目前到達第 ${save.progress.towerFloor} 層，共 ${gameData.stages.filter((s) => s.kind === 'tower').length} 層。每 10 層有星晶獎勵。`)),
-        rows.length ? h('div', { class: 'list' }, rows.map((r) => row(r, nav, group.icon))) : emptyState(group.icon, '目前沒有關卡'),
+        rows.length ? h('div', { class: 'list' }, rows.map((r) => row(r, nav, group.icon, fresh))) : emptyState(group.icon, '目前沒有關卡'),
       );
     }
 
     const chapter = Number(key);
     const info = gameData.chapters.find((c) => c.chapter === chapter);
     const rows = gameData.stages.filter((s) => s.kind === 'main' && s.chapter === chapter).map((s) => stageRow(save, s, ctx, now));
-    const stars = chapterStars(save, chapter, gameData.stages);
+    const fresh = takeJustUnlocked(rows.map((r) => r.stage.id));
     return h(
       'div',
       null,
       panel(
         { gold: true },
         h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, `第 ${chapter} 章・${info?.name ?? ''}`), info && badge(info.constellation, 'gold')),
-        h('p', { class: 'small-text dim', style: { marginTop: '6px' } }, `星章 ${stars.got}/${stars.total}・集滿可得章節獎勵`),
+        info && chapterReward(info),
       ),
-      h('div', { class: 'list' }, rows.map((r) => row(r, nav, 'adventure'))),
+      h('div', { class: 'list' }, rows.map((r) => row(r, nav, 'adventure', fresh))),
     );
   },
 };

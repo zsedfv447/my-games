@@ -1,13 +1,13 @@
 // 獎勵逐一跳出演出（關卡結算、登入、任務、星章等領獎共用）與玩家升級卡
 // 項目順序與時間表在 ../reward-plan.ts（純邏輯），這裡只負責畫面、動畫與音效
-import type { Reward } from '../../core/types';
+import type { Reward, StageDef } from '../../core/types';
 import { gameData } from '../../data/load';
 import { h } from '../dom';
 import { audio } from '../audio';
 import {
   countDuration, countValue, firstClearPreview, revealSchedule, revealSfx, rewardItems, tickInterval, type LevelUpView, type RevealItem,
 } from '../reward-plan';
-import { badge, button, resourceIcon } from './basic';
+import { badge, button, panel, resourceIcon } from './basic';
 import { cardThumb } from './card-thumb';
 import { overlayRoot } from './overlay';
 import '../reward-reveal.css';
@@ -58,6 +58,20 @@ function build(item: RevealItem): Built {
         el: h('div', { class: ['rv-item rv-star', item.got && 'got'] },
           h('span', { class: 'rv-star-icon' }, '★'), h('span', null, item.text), item.isNew && badge('NEW', 'gold')),
       };
+    case 'team': {
+      const num = h('strong', { class: 'rv-num' }, '+0');
+      const el = h('div', { class: 'rv-item rv-team' },
+        h('div', { class: 'rv-count' }, h('span', { class: 'rv-icon' }, countIcon('exp')), h('span', { class: 'rv-label' }, '隊員經驗', h('em', { class: 'rv-tag' }, '各')), num),
+        h('div', { class: 'rv-team-row' }, item.members.map((m) => {
+          const def = cardById.get(m.cardId);
+          const up = m.to > m.from;
+          return h('div', { class: ['rv-member', up && 'up'] },
+            def ? cardThumb(def, { size: 40 }) : m.cardId,
+            h('span', { class: 'rv-member-lv' }, up ? `Lv.${m.from}→${m.to}` : `Lv.${m.to}`),
+            up && h('span', { class: 'rv-member-up' }, 'LEVEL UP'));
+        })));
+      return { el, num };
+    }
   }
 }
 
@@ -90,7 +104,7 @@ export function playReveal(host: HTMLElement, items: RevealItem[], speed = 1): R
   const finalize = (i: number) => {
     const item = items[i];
     built[i].el.classList.add('shown');
-    if (item.kind === 'count') built[i].num!.textContent = `+${item.amount.toLocaleString()}`;
+    if (item.kind === 'count' || item.kind === 'team') built[i].num!.textContent = `+${item.amount.toLocaleString()}`;
   };
   const show = (i: number) => {
     if (finished) return;
@@ -99,7 +113,10 @@ export function playReveal(host: HTMLElement, items: RevealItem[], speed = 1): R
     b.el.classList.add('shown');
     const sfx = revealSfx(item);
     if (sfx) audio.play(sfx);
-    if (item.kind !== 'count') return;
+    if (item.kind === 'team' && item.members.some((m) => m.to > m.from)) {
+      window.setTimeout(() => { if (!finished) audio.play('levelup'); }, (countDuration(item.amount) + 120) / Math.max(0.25, speed));
+    }
+    if (item.kind !== 'count' && item.kind !== 'team') return;
     const dur = countDuration(item.amount) / Math.max(0.25, speed);
     if (dur <= 0) return finalize(i);
     const t0 = performance.now();
@@ -158,6 +175,57 @@ export function openRewardReveal(title: string, items: RevealItem[], opts: { sub
   });
 }
 
+/** 結算頂部的提示（例如「第 2 章開放！」）；big 為大橫幅 */
+export interface ResultNote {
+  text: string;
+  big?: boolean;
+}
+
+export interface ClearResultOptions {
+  stageName: string;
+  items: RevealItem[];
+  /** 戰鬥速度倍率 */
+  speed?: number;
+  /** 有升級時，項目播完後跳升級卡 */
+  levelUp?: LevelUpView;
+  /** 演出最後出現的開放提示 */
+  notes?: ResultNote[];
+  /** 底部按鈕，由呼叫端決定（再戰、返回、下一關…）；false／null 會略過 */
+  actions: (HTMLElement | false | null | undefined)[];
+}
+
+/** 契約結算全螢幕層：標題落下 → 項目逐一跳出 → 升級卡 → 開放提示 → 按鈕。點畫面可快轉 */
+export function openClearResult(host: HTMLElement, opts: ClearResultOptions): { close(): void } {
+  const reveal = h('div', { class: 'result-reveal' });
+  const notes = h('div', { class: 'result-notes' });
+  const actions = h('div', { class: 'result-actions' });
+  const hint = h('p', { class: 'rv-hint' }, '點擊畫面快轉');
+  const layer = h('div', { class: 'result-layer', role: 'dialog', 'aria-label': '契約結算' },
+    h('div', { class: 'rv-rays' }),
+    h('div', { class: 'result-title' }, '契約結算'),
+    h('div', { class: 'result-stage' }, opts.stageName),
+    notes, reveal, actions, hint);
+  const close = () => {
+    layer.classList.add('closing');
+    setTimeout(() => layer.remove(), 140);
+  };
+  host.appendChild(layer);
+  void (async () => {
+    await new Promise((r) => setTimeout(r, 450));
+    const play = playReveal(reveal, opts.items, opts.speed);
+    layer.addEventListener('click', () => play.skip());
+    await play.done;
+    hint.remove();
+    if (!layer.isConnected) return;
+    if (opts.levelUp) await showLevelUp(opts.levelUp);
+    if (!layer.isConnected) return;
+    for (const n of opts.notes ?? []) notes.appendChild(h('div', { class: ['result-note', n.big && 'big'] }, n.text));
+    if (opts.notes?.length) audio.play(opts.notes.some((n) => n.big) ? 'levelup' : 'star');
+    actions.appendChild(h('div', { class: 'row' }, opts.actions.filter((b): b is HTMLElement => !!b)));
+  })();
+  return { close };
+}
+
 /** 一份 Reward 的領獎演出（登入、任務、星章、圖鑑） */
 export function revealReward(title: string, reward: Reward, sub?: string): Promise<void> {
   return openRewardReveal(title, rewardItems(reward), { sub });
@@ -203,4 +271,23 @@ export function firstClearChip(reward: Reward | undefined, cleared: boolean): HT
   if (!p) return null;
   return h('span', { class: ['first-clear-chip', p.claimed && 'claimed'], title: p.claimed ? '首通獎勵已領取' : '第一次通關可得' },
     p.icon !== 'card' && resourceIcon(p.icon), p.text);
+}
+
+/** 出戰確認頁的「關卡獎勵」區塊：首通獎勵（已領變灰）＋可能掉落的卡 */
+export function stageRewardPanel(stage: StageDef, cleared: boolean): HTMLElement | null {
+  const first = stage.rewards.firstClear;
+  const firstParts = first ? rewardItems(first) : [];
+  if (!firstParts.length && !stage.drops.length) return null;
+  return panel({ title: '關卡獎勵' },
+    firstParts.length > 0 && h('div', { class: ['stage-first-clear', cleared && 'claimed'] },
+      h('span', { class: 'small-text' }, cleared ? '首通獎勵（已領取）' : '首通獎勵'),
+      h('div', { class: 'row wrap' }, firstParts.map((p) => p.kind === 'count'
+        ? h('span', { class: 'reward-chip' }, p.icon !== 'exp' && resourceIcon(p.icon), `${p.label} ×${p.amount.toLocaleString()}`)
+        : p.kind === 'card' && cardById.get(p.cardId) ? cardThumb(cardById.get(p.cardId)!, { size: 36 }) : null))),
+    stage.drops.length > 0 && h('div', { class: 'stage-drops' },
+      h('span', { class: 'small-text' }, '機率掉落'),
+      h('div', { class: 'row wrap' }, stage.drops.map((d) => {
+        const def = cardById.get(d.card);
+        return def && h('div', { class: 'stage-drop' }, cardThumb(def, { size: 40 }), h('span', null, `${Math.round(d.rate * 100)}%`));
+      }))));
 }

@@ -66,3 +66,15 @@ export function chapterProgress(save: SaveData, chapter: number, ctx: StageConte
 export function nextMainStage(save: SaveData, ctx: StageContext, now: number): StageDef | undefined {
   return ctx.stages.find((s) => s.kind === 'main' && stageRow(save, s, ctx, now).status === 'open');
 }
+
+// 勝利後剛開放的關卡：關卡列表顯示一次跳動提示後就清掉（只記在記憶體）
+const justUnlocked = new Set<string>();
+export function markJustUnlocked(ids: string[]): void {
+  ids.forEach((id) => justUnlocked.add(id));
+}
+/** 取出並清掉提示；回傳這次要閃的關卡 id */
+export function takeJustUnlocked(ids: string[]): Set<string> {
+  const hit = new Set(ids.filter((id) => justUnlocked.has(id)));
+  hit.forEach((id) => justUnlocked.delete(id));
+  return hit;
+}

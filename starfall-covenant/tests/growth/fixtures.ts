@@ -98,7 +98,7 @@ export function makeSave(cards: OwnedCard[] = [], player: Partial<SaveData['play
     inventory: { capacity: 50, cards },
     teams: [{ name: '隊伍1', members: [null, null, null, null, null] }],
     activeTeam: 0,
-    progress: { clearedStages: [], stars: {}, towerFloor: 0, tutorialDone: false, storySeen: [] },
+    progress: { clearedStages: [], stars: {}, towerFloor: 0, tutorialDone: false, storySeen: [], chapterRewardsClaimed: [] },
     gacha: { pityCounter: {}, history: [] },
     collection: { seen: [], owned: cards.map((c) => c.cardId), claimed: [] },
     quests: { counters: {}, claimed: [], dailyResetAt: '', weeklyResetAt: '' },
