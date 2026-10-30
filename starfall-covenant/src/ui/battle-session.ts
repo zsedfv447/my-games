@@ -8,7 +8,7 @@ import {
   abandonActiveBattle, activeBattleFor, beginActiveBattle, clearActiveBattle, dropSeed, recordBattleSnapshot,
 } from '../progression/active-battle';
 import { planDrops, planMatches, type DropPlan } from '../progression/drops';
-import { confirmDialog } from './components/overlay';
+import { confirmDialog, confirmOnScreen } from './components/overlay';
 import type { Navigator } from './router';
 import { buildSortieTeam } from './sortie';
 import { commit, getSave, growth } from './state';
@@ -90,7 +90,9 @@ export function maybeOfferResume(nav: Navigator): boolean {
   const active = getSave().activeBattle;
   const stage = active && gameData.stages.find((s) => s.id === active.stageId);
   if (!active || !stage) return false;
-  void confirmDialog('有未完成的戰鬥', `要繼續「${stage.name}」嗎？放棄會視為失敗，已消耗的體力不會退還。`, '繼續', '放棄').then((go) => {
+  // 還沒選就換了畫面：不繼續也不放棄，下次回主城再問
+  void confirmOnScreen('有未完成的戰鬥', `要繼續「${stage.name}」嗎？放棄會視為失敗，已消耗的體力不會退還。`, '繼續', '放棄').then((go) => {
+    if (go === null) return;
     if (go) return nav.go('battle', [stage.id]);
     abandonBattle();
   });
