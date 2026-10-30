@@ -5,14 +5,22 @@ import { chapterStarMask, chapterStarSlots, constellationLayout, constellationSv
 import { audio } from '../audio';
 import { h, svg } from '../dom';
 import { getSave } from '../state';
+import constellationsJson from '../../../data/constellations.json';
 import '../constellation.css';
 
 /** 本次遊玩中，每章上次畫出來時點亮了哪些星（只為了播放「新點亮」動畫，不存檔） */
 const lastShown = new Map<number, boolean[]>();
 
+type ConstellationData = { chapter: number; width: number; height: number; stars: number[][]; edges: number[][] };
+
+/** 星座座標以 data/constellations.json 為準；星數對不上（例如新增關卡）時改用產生器 */
 export function chapterLayout(chapter: number): { layout: ConstellationLayout; slots: ReturnType<typeof chapterStarSlots> } {
   const slots = chapterStarSlots(gameData.stages, chapter);
-  return { layout: constellationLayout(String(chapter), slots.length), slots };
+  const d = (constellationsJson as ConstellationData[]).find((c) => c.chapter === chapter);
+  const layout: ConstellationLayout = d && d.stars.length === slots.length
+    ? { width: d.width, height: d.height, stars: d.stars.map(([x, y, r]) => ({ x, y, r })), edges: d.edges.map(([a, b]) => [a, b] as [number, number]) }
+    : constellationLayout(String(chapter), slots.length);
+  return { layout, slots };
 }
 
 /** 章節頁的星座：跟上次看到時相比新點亮的星會依序點亮；claimable 時整個星座脈動提示領獎 */

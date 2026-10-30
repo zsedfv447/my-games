@@ -102,3 +102,16 @@ describe('契約回憶分享圖', () => {
     expect(memberSlots([], 0)).toEqual([]);
   });
 });
+
+import constellations from '../data/constellations.json';
+describe('星座資料', () => {
+  it('每章都有資料、星數等於該章星章數、連線是 n-1 條且索引有效', () => {
+    for (const c of gameData.chapters) {
+      const d = (constellations as { chapter: number; stars: number[][]; edges: number[][] }[]).find((x) => x.chapter === c.chapter)!;
+      const n = chapterStarSlots(gameData.stages, c.chapter).length;
+      expect(d.stars).toHaveLength(n);
+      expect(d.edges).toHaveLength(n - 1);
+      for (const [a, b] of d.edges) { expect(a).toBeLessThan(n); expect(b).toBeLessThan(n); }
+    }
+  });
+});
