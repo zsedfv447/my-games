@@ -5,6 +5,9 @@ import { applyHits, computeAttacks, computeHeal, incomingDamage, type BattleMemb
 import {
   evaluateLeaderStatic,
   evaluateLeaderTurn,
+  checkLeaderEvolution,
+  checkLeaderTier,
+  leaderSkillProfile,
   lintLeaderSkill,
   type LeaderTurnContext,
 } from '../src/battle/leader';
@@ -222,5 +225,56 @@ describe('整合：轉珠 → 隊長技 → 傷害', () => {
     expect(hits.length).toBeGreaterThan(0);
     hits.forEach((h, i) => expect(h.amount).toBeCloseTo(noLeader[i].amount * 2));
     expect(computeHeal({ team, groups, combo, config, rcvMultipliers: turn.rcvMultipliers })).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe('星數分級', () => {
+  const chain = (value: number, extra: LeaderSkillDef['rules'][number]['effects'] = []) =>
+    leader([{ conditions: [{ type: 'orbsInOneMatch', count: 6 }], effects: [{ type: 'atkMultiplier', value }, ...extra] }]);
+
+  it('強度攤平：攻擊倍率取上限並跨 rule 相乘，減傷合併計算', () => {
+    const p = leaderSkillProfile(leader([
+      { conditions: [{ type: 'hpBelow', percent: 50 }], effects: [{ type: 'atkMultiplier', value: 2 }, { type: 'damageReduction', percent: 20 }] },
+      { conditions: [{ type: 'comboAtLeast', combo: 5 }], effects: [{ type: 'atkMultiplier', value: 2, perStep: 0.5, maxValue: 3 }, { type: 'damageReduction', percent: 20 }] },
+    ]));
+    expect(p.peakAtk).toBe(6);
+    expect(p.reduction).toBe(36);
+    expect([...p.conditionTypes]).toEqual(['hpBelow', 'comboAtLeast']);
+  });
+
+  it('3★ 只能單一條件小加成，4★ 起才能更強', () => {
+    expect(checkLeaderTier(chain(2), 3)).toEqual([]);
+    expect(checkLeaderTier(chain(2.5), 3)).toEqual(['攻擊倍率 2.5 超過 3★ 上限 2']);
+    expect(checkLeaderTier(chain(2.5), 4)).toEqual([]);
+    expect(checkLeaderTier(chain(2, [{ type: 'ignoreDefense' }]), 3)).toEqual(['3★ 不能無視防禦']);
+    const combined = leader([{ conditions: [{ type: 'skillUsedThisTurn' }, { type: 'comboAtLeast', combo: 5 }], effects: [{ type: 'atkMultiplier', value: 3 }] }]);
+    expect(checkLeaderTier(combined, 4)).toContain('單條件數 2 超過 4★ 上限 1');
+    expect(checkLeaderTier(combined, 5)).toEqual([]);
+  });
+
+  it('always 不算條件數', () => {
+    const ls = leader([{ conditions: [{ type: 'always' }, { type: 'hpBelow', percent: 50 }], effects: [{ type: 'atkMultiplier', value: 2 }] }]);
+    expect(leaderSkillProfile(ls).maxConditions).toBe(1);
+    expect(checkLeaderTier(ls, 3)).toEqual([]);
+  });
+
+  it('進化比較有浮點容差：乘積相等不算變弱', () => {
+    const atk = (rules: number[][]) => leader(rules.map((vs) => ({
+      conditions: [{ type: 'always' as const }],
+      effects: vs.map((value) => ({ type: 'atkMultiplier' as const, value })),
+    })));
+    // 0.1×0.2×3 與 0.3×0.2 在浮點下差一點點
+    const before = atk([[0.1 * 3], [0.2]]);
+    const after = atk([[0.3], [0.2]]);
+    expect(leaderSkillProfile(after).peakAtk).toBeLessThan(leaderSkillProfile(before).peakAtk);
+    expect(checkLeaderEvolution(before, after)).toEqual([]);
+  });
+
+  it('進化後要保留主題並變強', () => {
+    expect(checkLeaderEvolution(chain(2), chain(2.5, [{ type: 'ignoreDefense' }]))).toEqual([]);
+    expect(checkLeaderEvolution(chain(2), chain(2))).toEqual(['進化前後隊長技完全相同']);
+    expect(checkLeaderEvolution(chain(2.5), chain(2))).toContain('進化後 peakAtk 變弱（2.5 → 2）');
+    const other = leader([{ conditions: [{ type: 'comboAtLeast', combo: 5 }], effects: [{ type: 'atkMultiplier', value: 3 }] }]);
+    expect(checkLeaderEvolution(chain(2), other)).toEqual(['進化後少了條件 orbsInOneMatch']);
   });
 });

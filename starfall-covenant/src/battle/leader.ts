@@ -249,3 +249,117 @@ export function lintLeaderSkill(def: LeaderSkillDef): string[] {
   });
   return issues;
 }
+
+// ---------- 星數分級 ----------
+// 隊長技強度依卡片星數分級（規則寫在 docs/card-matrix.md）：數值是上限，資料驗證會檢查。
+
+/** 把隊長技攤平成可比較的強度數字（條件全部成立時的上限） */
+export interface LeaderSkillProfile {
+  rules: number;
+  /** 單條 rule 最多幾個條件（always 不算） */
+  maxConditions: number;
+  effects: number;
+  /** 所有攻擊倍率（取 maxValue）相乘 */
+  peakAtk: number;
+  hp: number;
+  rcv: number;
+  /** 合併後的減傷百分比 */
+  reduction: number;
+  fixedFollowUp: number;
+  moveTime: number;
+  enemyCooldown: number;
+  allyCooldown: number;
+  ignoreDefense: boolean;
+  /** 出現過的條件／效果種類，用來比對進化前後是否同主題 */
+  conditionTypes: Set<LeaderCondition['type']>;
+  effectTypes: Set<LeaderEffect['type']>;
+}
+
+export function leaderSkillProfile(def: LeaderSkillDef): LeaderSkillProfile {
+  const p: LeaderSkillProfile = {
+    rules: def.rules.length, maxConditions: 0, effects: 0, peakAtk: 1, hp: 1, rcv: 1, reduction: 0,
+    fixedFollowUp: 0, moveTime: 0, enemyCooldown: 0, allyCooldown: 0, ignoreDefense: false,
+    conditionTypes: new Set(), effectTypes: new Set(),
+  };
+  let taken = 1;
+  for (const rule of def.rules) {
+    p.maxConditions = Math.max(p.maxConditions, rule.conditions.filter((c) => c.type !== 'always').length);
+    for (const c of rule.conditions) if (c.type !== 'always') p.conditionTypes.add(c.type);
+    for (const e of rule.effects) {
+      p.effects++;
+      p.effectTypes.add(e.type);
+      switch (e.type) {
+        case 'atkMultiplier': p.peakAtk *= e.maxValue ?? e.value; break;
+        case 'hpMultiplier': p.hp *= e.value; break;
+        case 'rcvMultiplier': p.rcv *= e.value; break;
+        case 'damageReduction': taken *= 1 - e.percent / 100; break;
+        case 'followUpDamage': if (e.mode === 'fixed') p.fixedFollowUp += e.value; break;
+        case 'extendMoveTime': p.moveTime += e.seconds; break;
+        case 'enemyCooldownPlus': p.enemyCooldown += e.turns; break;
+        case 'allyCooldownPerTurn': p.allyCooldown += e.turns; break;
+        case 'ignoreDefense': p.ignoreDefense = true; break;
+      }
+    }
+  }
+  p.reduction = Math.round((1 - taken) * 100);
+  return p;
+}
+
+export interface LeaderTier {
+  rules: number;
+  maxConditions: number;
+  effects: number;
+  peakAtk: number;
+  /** 生命、回復倍率各自的上限 */
+  stat: number;
+  reduction: number;
+  fixedFollowUp: number;
+  moveTime: number;
+  enemyCooldown: number;
+  allyCooldown: number;
+  ignoreDefense: boolean;
+}
+
+export const LEADER_TIERS: Record<3 | 4 | 5 | 6, LeaderTier> = {
+  3: { rules: 1, maxConditions: 1, effects: 2, peakAtk: 2, stat: 1.2, reduction: 0, fixedFollowUp: 0, moveTime: 0, enemyCooldown: 1, allyCooldown: 0, ignoreDefense: false },
+  4: { rules: 2, maxConditions: 1, effects: 4, peakAtk: 3, stat: 1.5, reduction: 20, fixedFollowUp: 3000, moveTime: 1, enemyCooldown: 1, allyCooldown: 0, ignoreDefense: true },
+  5: { rules: 2, maxConditions: 2, effects: 5, peakAtk: 4, stat: 1.5, reduction: 30, fixedFollowUp: 8000, moveTime: 1, enemyCooldown: 1, allyCooldown: 0, ignoreDefense: true },
+  6: { rules: 3, maxConditions: 2, effects: 6, peakAtk: 6, stat: 2, reduction: 40, fixedFollowUp: 15000, moveTime: 2, enemyCooldown: 1, allyCooldown: 1, ignoreDefense: true },
+};
+
+/** 檢查隊長技有沒有超出該星數的上限；3★ 以下用 3★ 的上限 */
+export function checkLeaderTier(def: LeaderSkillDef, rarity: number): string[] {
+  const tier = LEADER_TIERS[Math.min(6, Math.max(3, rarity)) as 3 | 4 | 5 | 6];
+  const p = leaderSkillProfile(def);
+  const issues: string[] = [];
+  const over = (label: string, value: number, max: number) => {
+    if (value > max + 1e-9) issues.push(`${label} ${value} 超過 ${rarity}★ 上限 ${max}`);
+  };
+  over('rule 數', p.rules, tier.rules);
+  over('單條件數', p.maxConditions, tier.maxConditions);
+  over('效果數', p.effects, tier.effects);
+  over('攻擊倍率', Number(p.peakAtk.toFixed(3)), tier.peakAtk);
+  over('生命倍率', p.hp, tier.stat);
+  over('回復倍率', p.rcv, tier.stat);
+  over('減傷', p.reduction, tier.reduction);
+  over('固定追打', p.fixedFollowUp, tier.fixedFollowUp);
+  over('轉珠時間', p.moveTime, tier.moveTime);
+  over('敵人 CD', p.enemyCooldown, tier.enemyCooldown);
+  over('技能冷卻加速', p.allyCooldown, tier.allyCooldown);
+  if (p.ignoreDefense && !tier.ignoreDefense) issues.push(`${rarity}★ 不能無視防禦`);
+  return issues;
+}
+
+/** 進化後的隊長技要是同主題加強版：保留進化前的條件與效果種類，攻擊、生命、回復都不能變弱 */
+export function checkLeaderEvolution(before: LeaderSkillDef, after: LeaderSkillDef): string[] {
+  const a = leaderSkillProfile(before);
+  const b = leaderSkillProfile(after);
+  const issues: string[] = [];
+  for (const t of a.conditionTypes) if (!b.conditionTypes.has(t)) issues.push(`進化後少了條件 ${t}`);
+  for (const t of a.effectTypes) if (!b.effectTypes.has(t)) issues.push(`進化後少了效果 ${t}`);
+  for (const k of ['peakAtk', 'hp', 'rcv', 'reduction', 'fixedFollowUp', 'moveTime'] as const) {
+    if (b[k] < a[k] - 1e-9) issues.push(`進化後 ${k} 變弱（${a[k]} → ${b[k]}）`);
+  }
+  if (JSON.stringify(before.rules) === JSON.stringify(after.rules)) issues.push('進化前後隊長技完全相同');
+  return issues;
+}

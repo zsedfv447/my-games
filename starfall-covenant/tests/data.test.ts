@@ -21,6 +21,17 @@ describe('遊戲資料', () => {
     expect(errors.some((e) => e.includes('prologue'))).toBe(false);
   });
 
+  it('戰鬥卡隊長技超出星數分級會被擋下', () => {
+    const broken = structuredClone(gameData);
+    const weak = broken.leaderSkills.find((l) => l.id === 'l509')!;
+    weak.rules[0].effects = [{ type: 'atkMultiplier', value: 3 }];
+    delete broken.cards.find((c) => c.id === 'c511')!.leaderSkill;
+    const errors = validateGameData(broken);
+    expect(errors).toContain('cards/c509: 隊長技 l509：攻擊倍率 3 超過 3★ 上限 2');
+    expect(errors).toContain('cards/c509: 進化到 c510：進化後 peakAtk 變弱（3 → 2.5）');
+    expect(errors).toContain('cards/c511: 戰鬥卡要有隊長技');
+  });
+
   it('提案 003 的劇情都已寫入', () => {
     const ids = ['prologue', 'ch4-stars', 'tower-30', 'ev-beast-end'];
     for (let ch = 1; ch <= 5; ch++) for (const part of ['open', 'mid', 'boss', 'end']) ids.push(`ch${ch}-${part}`);

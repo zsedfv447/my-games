@@ -4,6 +4,7 @@ import {
   type ActiveSkillDef, type ArchetypeDef, type CardDef, type ChapterDef, type EnemyDef, type GachaPoolDef,
   type GameConfig, type LeaderSkillDef, type QuestDef, type ShopItemDef, type StageDef, type StoryData,
 } from '../core/types';
+import { checkLeaderEvolution, checkLeaderTier, lintLeaderSkill } from '../battle/leader';
 
 export interface GameData {
   config: GameConfig;
@@ -55,12 +56,26 @@ export function validateGameData(d: GameData): string[] {
     if (c.rarity < 1 || c.rarity > 6) err(w, `稀有度 ${c.rarity} 超出範圍`);
     if (c.activeSkill && !skillIds.has(c.activeSkill)) err(w, `找不到主動技 ${c.activeSkill}`);
     if (c.leaderSkill && !leaderIds.has(c.leaderSkill)) err(w, `找不到隊長技 ${c.leaderSkill}`);
+    if (c.race !== 'material' && !c.leaderSkill) err(w, '戰鬥卡要有隊長技');
     if (c.evolution) {
       if (!cardIds.has(c.evolution.to)) err(w, `進化目標 ${c.evolution.to} 不存在`);
       for (const m of c.evolution.materials) if (!cardIds.has(m)) err(w, `進化素材 ${m} 不存在`);
     }
     for (const a of c.archetypes) if (!archetypeIds.has(a.id)) err(w, `未知流派 ${a.id}`);
     if (c.race !== 'material' && c.archetypes.length === 0) err(w, '戰鬥卡至少要屬於一個流派');
+  }
+
+  // 隊長技：寫了不會生效的組合、超出星數分級、進化後不是同主題加強版
+  const leaderById = new Map(d.leaderSkills.map((l) => [l.id, l]));
+  for (const l of d.leaderSkills) for (const issue of lintLeaderSkill(l)) err(`leader-skills/${l.id}`, issue);
+  const cardById = new Map(d.cards.map((c) => [c.id, c]));
+  for (const c of d.cards) {
+    const leader = c.leaderSkill ? leaderById.get(c.leaderSkill) : undefined;
+    if (!leader) continue;
+    for (const issue of checkLeaderTier(leader, c.rarity)) err(`cards/${c.id}`, `隊長技 ${leader.id}：${issue}`);
+    const evolved = c.evolution ? cardById.get(c.evolution.to) : undefined;
+    const next = evolved?.leaderSkill ? leaderById.get(evolved.leaderSkill) : undefined;
+    if (next) for (const issue of checkLeaderEvolution(leader, next)) err(`cards/${c.id}`, `進化到 ${evolved!.id}：${issue}`);
   }
 
   for (const s of d.skills) {
