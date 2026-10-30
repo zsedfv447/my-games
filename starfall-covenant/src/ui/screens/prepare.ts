@@ -6,6 +6,7 @@ import { enterStage } from '../../progression/stages';
 import { badge, button, emptyState, panel } from '../components/basic';
 import { cardThumb, emptySlot } from '../components/card-thumb';
 import { toast } from '../components/overlay';
+import { stageContext } from '../stage-nav';
 import { buildSortieTeam, describeTeamRule, sortieProblem, VIOLATION_TEXT } from '../sortie';
 import { commit, getSave, growth } from '../state';
 import { armBattle } from './battle';
@@ -53,7 +54,7 @@ export const prepareScreen: ScreenDef = {
 
     const start = () => {
       const now = Date.now();
-      const entered = enterStage(getSave(), stage, { stages: gameData.stages }, gameData.config, now,
+      const entered = enterStage(getSave(), stage, stageContext(gameData.stages), gameData.config, now,
         team.borrowed ? undefined : { members: team.cards, helper: team.helperCard });
       if (!entered.ok) return toast(ENTER_ERRORS[entered.reason] ?? entered.reason);
       commit(entered.save);

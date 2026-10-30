@@ -6,7 +6,7 @@ import { createGrowthContext, type GrowthContext } from '../growth';
 import { maxStamina } from '../progression/player';
 import { msUntilNextStamina, regenStamina } from '../progression/stamina';
 import {
-  exportSaveCode, importSaveCode, loadSave, resetSave, writeSave, type LoadResult, type SaveStorage,
+  createNewSave, exportSaveCode, importSaveCode, loadSave, resetSave, writeSave, type LoadResult, type SaveStorage,
 } from '../save/save';
 import { audio } from './audio';
 
@@ -52,12 +52,22 @@ let loadProblem: Exclude<LoadResult, { ok: true }>['reason'] | null = null;
 {
   const loaded = loadSave(storage, config, Date.now());
   if (loaded.ok) {
-    save = loaded.save;
+    save = withStarterCards(loaded.save);
   } else {
     loadProblem = loaded.reason;
     // 不覆蓋壞掉的存檔，先用新存檔在記憶體裡玩，等玩家決定
     save = resetSaveInMemory();
   }
+}
+
+/**
+ * 開發早期（還沒有卡片資料時）建立的存檔沒有起始卡，正式關卡無法出戰。
+ * 背包是空的、也還沒通過任何關卡時，補發新玩家起始卡並編入隊伍 1。
+ */
+function withStarterCards(s: SaveData): SaveData {
+  if (s.inventory.cards.length || s.progress.clearedStages.length || !config.newPlayer.starterCards.length) return s;
+  const fresh = createNewSave(config, Date.now());
+  return { ...s, inventory: fresh.inventory, teams: fresh.teams, collection: fresh.collection };
 }
 
 function resetSaveInMemory(): SaveData {

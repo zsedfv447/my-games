@@ -1,6 +1,6 @@
 // 盤面繪製與拖曳轉珠（Canvas 2D＋Pointer Events，觸控與滑鼠共用）
 // 規則都在 board.ts：拖曳時用 swapOrbs 即時顯示，放手後把路徑交給 Battle.submitMove。
-import { swapOrbs, toIndex, type Board, type MatchGroup, type Orb, type Pos } from '../board';
+import { swapOrbs, toIndex, type Board, type MatchGroup, type Orb, type Pos, type ResolveStep } from '../board';
 import { orbDataUrl, type OrbKind } from '../../ui/art/orbs';
 import { cellAt, remainingMs, stepsBetween } from './drag';
 
@@ -39,6 +39,9 @@ export class BoardView {
   // 動畫狀態
   private fading = new Map<number, number>();
   private dropOffset = 0;
+  /** 逐段落下時：格子索引 → 起始列（負數代表從盤面上方掉進來） */
+  private drops = new Map<number, number>();
+  private dropT = 1;
   private raf = 0;
 
   constructor(private opts: BoardViewOptions) {
@@ -96,6 +99,51 @@ export class BoardView {
       this.loop();
       await wait(stepMs);
     }
+  }
+
+  /**
+   * 逐段播放結算：每一段先閃爍消除的組，再讓珠子從原本的列落到新位置（新珠從盤面上方掉進來）。
+   * onCombo 每消一組呼叫一次，傳入累計 Combo 數。
+   */
+  async playSteps(steps: ResolveStep[], onCombo: (combo: number, group: MatchGroup) => void, speed = 1): Promise<void> {
+    let combo = 0;
+    for (const step of steps) {
+      this.board = step.before;
+      this.drops.clear();
+      this.dropT = 1;
+      const t0 = performance.now();
+      for (const g of step.groups) for (const c of g.cells) this.fading.set(c, t0);
+      for (const g of step.groups) {
+        combo++;
+        onCombo(combo, g);
+        await wait(90 / speed);
+      }
+      this.loop();
+      await wait(300 / speed);
+      this.fading.clear();
+      await this.animateDrops(step, speed);
+    }
+  }
+
+  private animateDrops(step: ResolveStep, speed: number): Promise<void> {
+    this.board = step.after;
+    for (const d of step.drops) this.drops.set(d.to * step.after.cols + d.col, d.from);
+    const maxFall = Math.max(1, ...step.drops.map((d) => d.to - d.from));
+    const duration = (120 + 45 * maxFall) / speed;
+    const t0 = performance.now();
+    return new Promise<void>((resolve) => {
+      const tick = () => {
+        this.dropT = Math.min(1, (performance.now() - t0) / duration);
+        this.draw();
+        if (this.dropT < 1) requestAnimationFrame(tick);
+        else {
+          this.drops.clear();
+          this.draw();
+          resolve();
+        }
+      };
+      requestAnimationFrame(tick);
+    });
   }
 
   /** 換上結算後的盤面：新盤面由上往下落入 */
@@ -283,7 +331,9 @@ export class BoardView {
       const img = this.image(orb);
       if (!img) return;
       const col = i % board.cols;
-      const row = Math.floor(i / board.cols);
+      const fromRow = this.drops.get(i);
+      const row = fromRow === undefined ? Math.floor(i / board.cols) : fromRow + (Math.floor(i / board.cols) - fromRow) * easeOutBounce(this.dropT);
+      if (row < -0.95) return;
       let alpha = i === heldIndex ? 0.25 : 1;
       let grow = 0;
       const fadeStart = this.fading.get(i);
@@ -320,3 +370,5 @@ export class BoardView {
 
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
+/** 落地時輕輕彈一下 */
+const easeOutBounce = (t: number) => (t < 0.8 ? (t / 0.8) ** 2 : 1 - 0.06 * Math.sin(((t - 0.8) / 0.2) * Math.PI));

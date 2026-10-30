@@ -778,3 +778,30 @@ input[type='range'] { flex: 1.4; accent-color: var(--gold); }
   letter-spacing: 0.1em;
   text-shadow: 0 2px 6px #000;
 }
+
+/* ---------- 冒險地圖 ---------- */
+.chapter-card {
+  width: 100%;
+  padding: 12px;
+  text-align: left;
+  border-radius: var(--radius);
+  border: 1px solid var(--gold-deep);
+  background: linear-gradient(120deg, rgba(42, 58, 133, 0.95), rgba(22, 32, 74, 0.95));
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+.chapter-card:active { filter: brightness(1.15); }
+.chapter-card.locked { border-color: var(--line); opacity: 0.55; cursor: default; }
+.chapter-no { font-size: 11px; color: var(--gold-soft); letter-spacing: 0.1em; }
+.chapter-name { font-family: var(--font-title); font-size: 19px; font-weight: 700; }
+.list-item.dimmed { opacity: 0.55; }
+
+/* ---------- 隊伍、背包 ---------- */
+.team-slots { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; justify-items: center; }
+.team-slot { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.card-thumb.misfit { outline: 2px solid var(--danger); outline-offset: 1px; border-radius: 10px; }
+.card-grid, .picker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; justify-items: center; }
+.picker-grid { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); max-height: 46vh; overflow-y: auto; margin-top: 8px; touch-action: pan-y; }
+.stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; text-align: center; }
+.stat-row > div { display: flex; flex-direction: column; font-size: 12px; padding: 6px 0; border-radius: var(--radius-s); background: rgba(6, 10, 31, 0.5); }
+.stat-row strong { font-size: 14px; }
