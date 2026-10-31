@@ -757,6 +757,16 @@
     }
   },
   {
+    "id": "a-mainCleared-63",
+    "kind": "achievement",
+    "name": "七曜之心：通過第 7 章",
+    "counter": "mainCleared",
+    "target": 63,
+    "reward": {
+      "gems": 10
+    }
+  },
+  {
     "id": "a-cardsOwned-80",
     "kind": "achievement",
     "name": "收藏家：持有 80 種卡片",

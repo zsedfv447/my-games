@@ -36,7 +36,7 @@ import { stageStoryToPlay } from '../../progression/stage-story';
 import { openClearResult, type ResultNote } from '../components/reward-reveal';
 import { grantLorePage, loreNotes } from '../../progression/lore';
 import { clearItems, levelUpView } from '../reward-plan';
-import { resultConstellation, shareClear } from '../clear-extras';
+import { extraBossLines, resultConstellation, shareClear } from '../clear-extras';
 import { showDefeatGuide } from '../components/defeat-guide';
 import { trackBattleRecords, type BattleRecordTracker } from '../battle-records';
 import { leaderLineOf } from '../victory-line';
@@ -587,7 +587,7 @@ class BattleView {
     const save = getSave();
     const id = this.s.practice ? undefined : stageStoryToPlay(this.s.stage, 'beforeBoss', gameData.story, save.progress.storySeen, !save.progress.clearedStages.includes(this.s.stage.id));
     if (!id || !this.s.stage.waves[this.state.wave]?.boss) return false;
-    const lines = gameData.story[id];
+    const lines = [...gameData.story[id], ...extraBossLines(id, this.s.memberUids ?? [], this.state.team)];
     this.boardView.setEnabled(false);
     await wait(900);
     await new Promise<void>((resolve) => {

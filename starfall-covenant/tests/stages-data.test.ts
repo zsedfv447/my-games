@@ -6,9 +6,9 @@ const { stages, chapters } = gameData;
 const byKind = (kind: string) => stages.filter((s) => s.kind === kind);
 
 describe('關卡資料（docs/stage-plan.md）', () => {
-  it('數量：主線第 1～6 章各 9 關、第 7 章先上 3 關（預定 9 關）、每日 21、活動 10（獸王 5＋齒輪 5）、流派克星週 18（6 主題×3）、塔 30、試煉 12', () => {
+  it('數量：主線第 1～7 章各 9 關、每日 21、活動 10（獸王 5＋齒輪 5）、流派克星週 18（6 主題×3）、塔 30、試煉 12', () => {
     expect(chapters.map((c) => c.chapter)).toEqual([1, 2, 3, 4, 5, 6, 7]);
-    for (const c of chapters) expect(byKind('main').filter((s) => s.chapter === c.chapter)).toHaveLength(c.chapter === 7 ? 3 : 9);
+    for (const c of chapters) expect(byKind('main').filter((s) => s.chapter === c.chapter)).toHaveLength(9);
     expect(chapters[5].stageCount).toBe(9);
     expect(chapters[6].stageCount).toBe(9);
     expect(byKind('daily')).toHaveLength(21);
@@ -80,17 +80,28 @@ describe('關卡資料（docs/stage-plan.md）', () => {
   it('第 7 章回聲迴廊：接在 6-9 之後、開場劇情、前章 Boss 的回聲沿用原圖、至少一關有七曜環', () => {
     const enemy = new Map(gameData.enemies.map((e) => [e.id, e]));
     const ch7 = byKind('main').filter((s) => s.chapter === 7);
-    expect(ch7.map((s) => s.id)).toEqual(['st-7-1', 'st-7-2', 'st-7-3']);
+    expect(ch7.map((s) => s.id)).toEqual(Array.from({ length: 9 }, (_, i) => `st-7-${i + 1}`));
+    expect(ch7[3].story?.beforeBoss).toBe('ch7-mid');
+    expect(ch7[7].story?.after).toBe('ch7-mid2');
+    expect(ch7[8].story).toEqual({ beforeBoss: 'ch7-boss', after: 'ch7-end' });
+    for (const id of ['ch7-mid', 'ch7-mid2', 'ch7-boss', 'ch7-end']) expect(gameData.story[id]?.length).toBeGreaterThan(5);
+    expect(ch7.filter((s) => s.waves.some((w) => w.boss)).map((s) => s.id)).toEqual(['st-7-1', 'st-7-2', 'st-7-3', 'st-7-4', 'st-7-9']);
     expect(ch7[0].unlockAfter).toBe('st-6-9');
     expect(ch7[0].story?.before).toBe('ch7-open');
     expect(gameData.story['ch7-open']?.length).toBeGreaterThan(5);
     const ids = ch7.flatMap((s) => s.waves.flatMap((w) => w.enemies));
-    // 新敵人從 e0057 開始編；回聲沿用前章 Boss 的圖
+    // 新敵人從 e0057 開始編；沿用的圖都指向已有的敵人圖（e0056 以前），回聲用前章 Boss 的圖
     for (const id of ids.filter((x) => Number(x.slice(1)) >= 57)) {
       const sprite = enemy.get(id)!.art.sprite;
-      if (sprite) expect(sprite, id).toMatch(/^assets\/user\/enemies\/e00(3[0-9]|40)\.webp$/);
+      if (sprite) expect(Number(/e(\d{4})\.webp$/.exec(sprite)?.[1]), id).toBeLessThan(57);
     }
-    expect(ch7.filter((s) => s.waves.some((w) => w.enemies.some((id) => enemy.get(id)!.abilities.some((a) => a.status === 'ringShield')))).length).toBeGreaterThanOrEqual(1);
+    for (const id of ['e0057', 'e0058', 'e0059', 'e0060', 'e0061', 'e0062']) expect(enemy.get(id)!.art.sprite, id).toMatch(/^assets\/user\/enemies\/e00(3[0-9]|40)\.webp$/);
+    const withRing = ch7.filter((s) => s.waves.some((w) => w.enemies.some((id) => enemy.get(id)!.abilities.some((a) => a.status === 'ringShield'))));
+    expect(withRing.length).toBeGreaterThanOrEqual(3);
+    // 終 Boss 瑟隆本身帶七曜環
+    const finalBoss = enemy.get(ch7[8].waves.at(-1)!.enemies[0])!;
+    expect(finalBoss.name).toContain('瑟隆');
+    expect(finalBoss.abilities.map((a) => a.status)).toContain('ringShield');
   });
 
   it('第 6 章後半用到新機制：隱藏珠與星紋封印至少各 2 關，Boss 兩種都有', () => {
