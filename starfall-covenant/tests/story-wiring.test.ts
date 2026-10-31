@@ -80,12 +80,13 @@ describe('冒險頁章節卡的進度', () => {
   const save = createNewSave(gameData.config, now);
 
   it('分批上線的章節用 ChapterDef.stageCount 算總關數與星章總數', () => {
-    const ch6 = gameData.chapters.find((c) => c.chapter === 6)!;
+    // 第 6 章已全部上線，改用「第 6 章預定 12 關」模擬分批上線的情況
+    const planned = 12;
     const live = gameData.stages.filter((s) => s.kind === 'main' && s.chapter === 6);
-    expect(ch6.stageCount).toBeGreaterThan(live.length);
-    const p = chapterProgress(save, 6, ctx, now, ch6.stageCount);
-    expect(p.total).toBe(ch6.stageCount);
-    expect(p.maxStars).toBe(live.reduce((n, s) => n + (s.stars?.length ?? 0), 0) + (ch6.stageCount! - live.length) * 3);
+    expect(planned).toBeGreaterThan(live.length);
+    const p = chapterProgress(save, 6, ctx, now, planned);
+    expect(p.total).toBe(planned);
+    expect(p.maxStars).toBe(live.reduce((n, s) => n + (s.stars?.length ?? 0), 0) + (planned - live.length) * 3);
     // 不傳 stageCount 時維持原本的算法
     expect(chapterProgress(save, 6, ctx, now).total).toBe(live.length);
   });

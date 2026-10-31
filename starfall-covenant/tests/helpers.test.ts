@@ -3,7 +3,7 @@ import { ARCHETYPE_IDS, type SaveData, type StageDef } from '../src/core/types';
 import { gameData } from '../src/data/load';
 import { createNewSave } from '../src/save/save';
 import {
-  dailyOffset, HELPER_NPCS, helperCardId, helperLevel, helperProblem, helperRoster, helperSkillLevel, stageAllowsHelper,
+  dailyOffset, HELPER_LEVEL, HELPER_NPCS, helperCardId, helperLevel, helperProblem, helperRoster, helperSkillLevel, stageAllowsHelper,
 } from '../src/progression/helpers';
 import { buildSortieTeam, chooseHelper, sortieProblem } from '../src/ui/sortie';
 
@@ -60,9 +60,47 @@ describe('助戰名單', () => {
     expect(helperCardId(withCleared(main.length), npc)).toBe('c303');
     const card = cardById('c106')!;
     expect(helperLevel(card, 0)).toBe(10);
-    expect(helperLevel(card, 5)).toBe(20);
     expect(helperLevel(card, 45)).toBe(card.maxLevel);
     expect(helperSkillLevel(0)).toBe(1);
+    expect(helperSkillLevel(45)).toBe(5);
+  });
+});
+
+describe('助戰等級曲線', () => {
+  const big = { ...cardById('c101')!, maxLevel: 99 };
+  // sim --progress（卡片經驗曲線改版後）各關的玩家隊員平均等級；索引是進入該關時已通關的主線數
+  const PLAYER: [number, number][] = [[0, 1], [4, 7], [8, 12], [9, 14.8], [13, 24.2], [17, 33.2], [18, 35.8], [22, 44.2], [26, 44.7], [27, 46.6], [31, 60.4], [35, 67.7], [36, 69.5], [44, 65.3]];
+
+  it('st-5-9 是第 45 關主線，通關後才拉到滿級', () => {
+    expect(main.findIndex((s) => s.id === 'st-5-9') + 1).toBe(HELPER_LEVEL.fullAt);
+  });
+
+  it('只增不減，第 5 章通關前不超過 Lv75', () => {
+    let prev = 0;
+    for (let n = 0; n < HELPER_LEVEL.fullAt; n++) {
+      const lv = helperLevel(big, n);
+      expect(lv, `${n}`).toBeGreaterThanOrEqual(prev);
+      expect(lv, `${n}`).toBeLessThanOrEqual(75);
+      prev = lv;
+    }
+    expect(helperLevel(big, HELPER_LEVEL.fullAt)).toBe(99);
+  });
+
+  it('比同進度的玩家隊員高，但不超過 10 級太多（第 5 章進化重練的低谷除外）', () => {
+    for (const [n, player] of PLAYER) {
+      const diff = helperLevel(big, n) - player;
+      expect(diff, `${n}`).toBeGreaterThanOrEqual(1);
+      if (n < 37) expect(diff, `${n}`).toBeLessThanOrEqual(10);
+      else expect(diff, `${n}`).toBeLessThanOrEqual(14);
+    }
+  });
+
+  it('卡片滿級較低時以卡片為準', () => {
+    expect(helperLevel({ ...big, maxLevel: 50 }, 40)).toBe(50);
+  });
+
+  it('技能等級：通關前最多 3，通關後 5', () => {
+    expect([0, 14, 15, 29, 30, 44].map(helperSkillLevel)).toEqual([1, 1, 2, 2, 3, 3]);
     expect(helperSkillLevel(45)).toBe(5);
   });
 
