@@ -29,6 +29,7 @@ export function icon(name: IconName): SVGSVGElement {
 }
 
 export function resourceIcon(name: ResourceIcon): SVGSVGElement {
+  if (name === 'stamina') return svg(RESOURCE_ICONS.stamina);
   return assetIcon(`pack-resource-${name}`, RESOURCE_ICONS[name]);
 }
 
