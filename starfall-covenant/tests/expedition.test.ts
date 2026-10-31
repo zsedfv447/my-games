@@ -97,6 +97,16 @@ describe('星靈遠行：時間與收穫', () => {
     for (const c of a.cards ?? []) expect(allowed.has(c.card), c.card).toBe(true);
   });
 
+  it('4 小時以上至少帶回 1 顆微光，2 小時沒有保底', () => {
+    const one = [card('c406')!];
+    for (let i = 0; i < 50; i++) {
+      const long = expeditionReward({ id: 'x', chapter: 1, uids: ['a'], hours: 4, startedAt: NOW + i }, one, 'beast');
+      expect(long.cards?.find((c) => c.card === 'c910')?.count ?? 0).toBeGreaterThanOrEqual(1);
+    }
+    const shortRuns = Array.from({ length: 50 }, (_, i) => expeditionReward({ id: 'x', chapter: 1, uids: ['a'], hours: 2, startedAt: NOW + i }, one, 'beast'));
+    expect(shortRuns.some((r) => !r.cards?.some((c) => c.card === 'c910'))).toBe(true);
+  });
+
   it('一天的收穫約等於一次每日關卡：3 隊 × 3 張 × 8 小時 × 2 輪，不加種族', () => {
     let coin = 0;
     let exp = 0;
