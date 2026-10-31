@@ -969,7 +969,7 @@
   {
     "id": "a-collection-25",
     "kind": "achievement",
-    "name": "圖鑑完成度 25%",
+    "name": "取得進度里程碑 25%",
     "counter": "collectionPercent",
     "target": 25,
     "reward": {
@@ -980,7 +980,7 @@
   {
     "id": "a-collection-50",
     "kind": "achievement",
-    "name": "圖鑑完成度 50%",
+    "name": "取得進度里程碑 50%",
     "counter": "collectionPercent",
     "target": 50,
     "reward": {
@@ -996,7 +996,7 @@
   {
     "id": "a-collection-75",
     "kind": "achievement",
-    "name": "圖鑑完成度 75%",
+    "name": "取得進度里程碑 75%",
     "counter": "collectionPercent",
     "target": 75,
     "reward": {
@@ -1016,7 +1016,7 @@
   {
     "id": "a-collection-100",
     "kind": "achievement",
-    "name": "圖鑑全收：圖鑑完成度 100%",
+    "name": "取得進度里程碑 100%",
     "counter": "collectionPercent",
     "target": 100,
     "reward": {

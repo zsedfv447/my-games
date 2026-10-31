@@ -196,7 +196,7 @@ export const cardScreen: ScreenDef = {
         h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, def.name), stars(def.rarity)),
         h('div', { class: 'row wrap', style: { gap: '4px', margin: '6px 0' } },
           badge(`${ATTRIBUTE_NAMES[def.attribute]}屬性`, `attr-${def.attribute}`), badge(RACE_NAMES[def.race]), badge(`Cost ${def.cost}`),
-          def.archetypes.map((a) => badge(`${gameData.archetypes.find((x) => x.id === a.id)?.name ?? a.id}・${ROLE_LABEL[a.role]}`, 'gold'))),
+          def.archetypes.map((a) => button(`${gameData.archetypes.find((x) => x.id === a.id)?.name ?? a.id}・${ROLE_LABEL[a.role]}`, { small: true, variant: 'ghost', onClick: () => nav.go('archetypes', [a.id]) }))),
         isMaterial
           ? h('p', { class: 'material-exp' }, starCore
             ? `星紋覺醒素材：${ATTRIBUTE_NAMES[def.attribute]}屬性角色解鎖星紋時使用`

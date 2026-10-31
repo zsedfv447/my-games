@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { collectionCardScreen, collectionScreen } from '../src/ui/screens/collection';
 import { archetypesScreen } from '../src/ui/screens/archetypes';
 import { gameData } from '../src/data/load';
@@ -8,6 +8,7 @@ import { createNewSave } from '../src/save/save';
 import { claimCollectionReward, collectionReward, markOwned, markSeen } from '../src/growth';
 import { passiveText } from '../src/ui/screens/growth-view';
 import type { ScreenDef } from '../src/ui/router';
+import { closeRouteScoped } from '../src/ui/route-scope';
 import codexCss from '../src/ui/collection-helper.css?raw';
 
 const nav = { go: vi.fn(), replace: vi.fn(), back: vi.fn(), backTo: vi.fn() };
@@ -16,7 +17,9 @@ function render(screen: ScreenDef, id?: string) {
   document.body.replaceChildren(el);
   return el;
 }
+afterEach(() => closeRouteScoped());
 beforeEach(() => {
+  closeRouteScoped();
   vi.clearAllMocks();
   commit(createNewSave({ ...gameData.config, newPlayer: { ...gameData.config.newPlayer, starterCards: [] } }, Date.now()));
 });
@@ -87,9 +90,10 @@ describe('圖鑑全開只開放資訊，不授予卡片', () => {
     }
     for (const thumb of root.querySelectorAll<HTMLButtonElement>('.card-thumb')) {
       thumb.click();
-      expect(nav.go.mock.lastCall?.[0]).toBe('collection-card');
-      const card = growth.card(String(nav.go.mock.lastCall?.[1]?.[0]));
-      expect(card).toBeDefined();
+      const dialog = document.querySelector('[data-card-quickview]');
+      expect(dialog).not.toBeNull();
+      expect(dialog!.textContent).toContain(thumb.getAttribute('aria-label'));
+      expect(nav.go).not.toHaveBeenCalled();
     }
   });
 

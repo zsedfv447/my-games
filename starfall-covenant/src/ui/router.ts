@@ -1,4 +1,5 @@
 // 畫面路由：以網址 hash 表示目前畫面（#/stage-list/1?from=map），方便返回鍵與重新整理後回到原畫面
+import { dismissQuickView, hasQuickView, leaveQuickView, deferWhileQuickViewClosing } from './quick-view-history';
 import { closeRouteScoped } from './route-scope';
 
 export interface Route {
@@ -42,6 +43,8 @@ export type TabId = (typeof TABS)[number];
 export type Chrome = 'full' | 'sub' | 'bare';
 
 export interface Navigator {
+  /** Preserve the current source position for a read-only preview journey. */
+  rememberPosition?(): void;
   go(name: string, args?: (string | number)[], query?: Record<string, string | number>): void;
   replace(name: string, args?: (string | number)[], query?: Record<string, string | number>): void;
   back(): void;
@@ -57,6 +60,8 @@ export interface ScreenContext {
 }
 
 export interface ScreenDef {
+  /** Opt-in codex context preservation; battle/confirmation screens are unchanged. */
+  preserveScroll?: boolean;
   name: string;
   title: string;
   chrome: Chrome;
@@ -79,6 +84,14 @@ export class Router implements Navigator {
   /** 站內瀏覽紀錄，用來判斷 history.back() 會不會離開遊戲 */
   private stack: string[] = [];
   private current?: ScreenDef;
+  private currentElement?: HTMLElement;
+  private currentHash?: string;
+  private onHashChange = () => this.render();
+  private positions = new Map<string, number>();
+
+  rememberPosition(): void {
+    if (this.currentElement) this.positions.set(this.currentHash ?? location.hash, this.currentElement.scrollTop);
+  }
 
   constructor(
     private mount: (screen: ScreenDef, el: HTMLElement, route: Route) => void,
@@ -95,11 +108,26 @@ export class Router implements Navigator {
   }
 
   start(): void {
-    window.addEventListener('hashchange', () => this.render());
+    window.addEventListener('hashchange', this.onHashChange);
     this.render();
   }
 
+  stop(): void {
+    window.removeEventListener('hashchange', this.onHashChange);
+    this.leaveFns.splice(0).forEach(fn => fn());
+  }
+
   go(name: string, args: (string | number)[] = [], query: Record<string, string | number> = {}): void {
+    if (deferWhileQuickViewClosing(() => this.go(name, args, query))) return;
+    if (hasQuickView()) {
+      this.rememberPosition();
+      leaveQuickView();
+      this.stack.push(location.hash);
+      // Replace the preview entry, not push another duplicate source entry.
+      this.replace(name, args, query);
+      return;
+    }
+    if (this.current?.preserveScroll) this.rememberPosition();
     const hash = buildHash(name, args, query);
     if (hash === location.hash) return;
     this.stack.push(location.hash);
@@ -107,11 +135,16 @@ export class Router implements Navigator {
   }
 
   replace(name: string, args: (string | number)[] = [], query: Record<string, string | number> = {}): void {
+    if (deferWhileQuickViewClosing(() => this.replace(name, args, query))) return;
+    if (this.current?.preserveScroll) this.rememberPosition();
+    leaveQuickView();
     history.replaceState(null, '', buildHash(name, args, query));
     this.render();
   }
 
   back(): void {
+    if (dismissQuickView()) return;
+    if (this.current?.preserveScroll) this.rememberPosition();
     const target = backTarget(this.current, this.stack.length);
     if (target === 'history') {
       history.back();
@@ -132,6 +165,7 @@ export class Router implements Navigator {
   }
 
   private render(): void {
+    if (this.current?.preserveScroll) this.rememberPosition();
     // 使用者按瀏覽器／手機返回鍵時，同步站內紀錄
     if (this.stack.length && this.stack[this.stack.length - 1] === location.hash) this.stack.pop();
     const route = parseHash(location.hash);
@@ -141,6 +175,10 @@ export class Router implements Navigator {
     closeRouteScoped();
     this.current = screen;
     const el = screen.render({ route, nav: this, onLeave: (fn) => this.leaveFns.push(fn) });
+    this.currentHash = location.hash;
+    this.currentElement = el;
     this.mount(screen, el, route);
+    const savedPosition = this.positions.get(location.hash);
+    if (savedPosition !== undefined) { el.scrollTop = savedPosition; el.dataset.restoredScroll = 'true'; }
   }
 }

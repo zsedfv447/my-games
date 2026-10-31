@@ -1,3 +1,4 @@
+import { openCardQuickView } from '../components/card-quickview';
 // 隊伍編成：5 組隊伍切換、換人、Cost 上限、流派提示（growth/archetype.ts 的 analyzeTeam）
 import { h } from '../dom';
 import { gameData } from '../../data/load';
@@ -127,7 +128,7 @@ export const teamScreen: ScreenDef = {
   chrome: 'full',
   tab: 'team',
   parent: 'home',
-  render() {
+  render({ nav }) {
     const host = h('div', { style: { display: 'contents' } });
     const draw = () => {
       const save = getSave();
@@ -213,7 +214,7 @@ export const teamScreen: ScreenDef = {
             h('p', { class: 'small-text', style: { margin: '8px 0 4px' } }, '背包裡適合換上的卡'),
             h('div', { class: 'row wrap', style: { gap: '6px' } }, report.suggestions.map((uid) => {
               const c = save.inventory.cards.find((x) => x.uid === uid)!;
-              return cardThumb(growth.card(c.cardId)!, { level: c.level, size: 48 });
+              return cardThumb(growth.card(c.cardId)!, { level: c.level, size: 48, onClick: () => openCardQuickView(c.cardId, nav) });
             }))),
         ),
       );

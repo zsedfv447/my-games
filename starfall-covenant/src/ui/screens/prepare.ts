@@ -1,3 +1,4 @@
+import { openCardQuickView } from '../components/card-quickview';
 // 出戰確認：關卡情報、推薦流派、隊伍限制或借用隊伍、星章條件，確認後扣體力進入戰鬥
 import { battleDataFor, findStage } from '../stage-lookup';
 import { h, svg } from '../dom';
@@ -165,10 +166,10 @@ export const prepareScreen: ScreenDef = {
           [0, 1, 2, 3, 4].map((i) => {
             const m = team.members[i];
             const def = m && growth.card(m.cardId);
-            return def ? cardThumb(def, { level: m.level, size: 52 }) : emptySlot(team.borrowed ? undefined : () => nav.go('team'), 52);
+            return def ? cardThumb(def, { level: m.level, size: 52, onClick: () => openCardQuickView(def.id, nav) }) : emptySlot(team.borrowed ? undefined : () => nav.go('team'), 52);
           }),
           team.helperCard
-            ? cardThumb(team.helperCard, { level: team.helper!.level, size: 52, onClick: helperAllowed ? pickHelper : undefined })
+            ? cardThumb(team.helperCard, { level: team.helper!.level, size: 52, onClick: helperAllowed ? pickHelper : () => openCardQuickView(team.helperCard!.id, nav) })
             : h('button', { type: 'button', class: 'card-thumb empty', style: { '--thumb': '52px' }, 'aria-label': '選擇助戰', disabled: !helperAllowed, onClick: helperAllowed ? pickHelper : undefined }, '助'),
         ),
         !team.borrowed && button('編成隊伍', { small: true, icon: 'team', onClick: () => nav.go('team') }),

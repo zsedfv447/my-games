@@ -1,4 +1,6 @@
 // 流派圖鑑（GDD 2.0）：流派說明、收集進度、免抽入門、流派試煉入口
+import { openCardQuickView } from '../components/card-quickview';
+import { codexSwitch } from '../components/codex-tabs';
 import { h } from '../dom';
 import { gameData } from '../../data/load';
 import { archetypeCodex, ROLE_LABEL, type CodexEntry } from '../../growth';
@@ -15,7 +17,7 @@ function codexCards(entry: CodexEntry, nav: Navigator): HTMLElement | null {
     entry.cards.map((c) => {
       const def = growth.card(c.cardId);
       if (!def) return null;
-      const el = cardThumb(def, { size: 48, onClick: () => nav.go('collection-card', [def.id]) });
+      const el = cardThumb(def, { size: 48, onClick: () => openCardQuickView(def.id, nav) });
       el.title = `${def.name}・${ROLE_LABEL[c.role]}${c.free ? '・免抽' : ''}`;
       if (!c.owned) el.classList.add('unowned');
       return el;
@@ -43,18 +45,20 @@ function trialButtons(archetype: string, nav: Navigator): HTMLElement | null {
 
 export const archetypesScreen: ScreenDef = {
   name: 'archetypes',
-  title: '流派圖鑑',
+  title: '圖鑑與流派',
+  preserveScroll: true,
   chrome: 'sub',
   parent: 'home',
-  render({ nav }) {
+  render({ nav, route }) {
     const codex = new Map(archetypeCodex(getSave(), growth).map((e) => [e.id, e]));
-    return h(
+    const root = h(
       'div',
       null,
+      codexSwitch('archetypes', nav),
       h('p', { class: 'dim small-text', style: { margin: '0 2px' } }, '同一盤珠，不同隊伍會用完全不同的轉法。用「流派試煉」借一支現成隊伍先玩玩看。'),
       gameData.archetypes.map((a, i) => {
         const entry = codex.get(a.id);
-        return panel(
+        const section = panel(
           entry?.playable ? { gold: true } : null,
           h(
             'div',
@@ -70,19 +74,24 @@ export const archetypesScreen: ScreenDef = {
           h('p', { class: 'small-text dim' }, h('strong', null, '弱點：'), a.weakness),
           h('p', { class: 'small-text dim' }, h('strong', null, '入門：'), a.starterPath),
           entry && entry.total > 0 && h('div', null,
-            bar({ value: entry.owned, max: entry.total, variant: 'gold', label: `收集 ${entry.owned} / ${entry.total}` }),
+            bar({ value: entry.owned, max: entry.total, variant: 'gold', label: `目前持有 ${entry.owned} / ${entry.total}` }),
             codexCards(entry, nav),
           ),
           ['norse', 'greek', 'classicbeast'].includes(a.id) && h('div', { class: 'classic-archetype' },
             h('p', { class: 'small-text' }, h('strong', null, '推薦入門隊：'),
-              gameData.stages.find(stage => stage.archetype === a.id && stage.fixedTeam)?.fixedTeam?.members.map(m => growth.card(m.card)?.name ?? m.card).join('、')),
+              gameData.stages.find(stage => stage.archetype === a.id && stage.fixedTeam)?.fixedTeam?.members.map(m => { const card = growth.card(m.card); if (!card) return null; const link = button(card.name, { small: true, variant: 'ghost', onClick: () => openCardQuickView(card.id, nav) }); link.setAttribute('data-recommended-card', card.id); return link; })),
             h('p', { class: 'small-text dim' }, '點角色頭像可查看技能與取得途徑。可先借隊試玩，首通送隊長；全系列也能用金幣各兌換一次。'),
             h('div', { class: 'row wrap' },
               button('經典封印', { small: true, onClick: () => nav.go('summon', ['classic-seal']) }),
               button('金幣兌換', { small: true, onClick: () => nav.go('shop', ['coin']) }))),
           trialButtons(a.id, nav),
         );
+        section.id = `archetype-${a.id}`;
+        section.setAttribute('data-archetype-section', a.id);
+        return section;
       }),
     );
+    if (route.args[0]) requestAnimationFrame(() => { if (root.isConnected && !root.dataset.restoredScroll) root.querySelector<HTMLElement>(`[data-archetype-section="${route.args[0].replace(/[^a-z]/g, '')}"]`)?.scrollIntoView?.({ block: 'start' }); });
+    return root;
   },
 };

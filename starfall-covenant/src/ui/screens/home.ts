@@ -27,8 +27,7 @@ const BADGE_OF: Record<string, keyof HomeBadges> = { 'login-bonus': 'login', que
 const SHORTCUTS: { label: string; icon: IconName; to: string; args?: string[] }[] = [
   { label: '任務', icon: 'quest', to: 'quests' },
   { label: '成就', icon: 'trophy', to: 'achievements' },
-  { label: '圖鑑', icon: 'book', to: 'collection' },
-  { label: '流派圖鑑', icon: 'constellation', to: 'archetypes' },
+  { label: '圖鑑與流派', icon: 'book', to: 'collection' },
   { label: '每日登入', icon: 'gift', to: 'login-bonus' },
   { label: '活動', icon: 'event', to: 'stages', args: ['event'] },
   { label: '挑戰之塔', icon: 'tower', to: 'stages', args: ['tower'] },

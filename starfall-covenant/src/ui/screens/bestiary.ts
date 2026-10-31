@@ -6,17 +6,13 @@ import { bestiaryEntries, type BestiaryEntry } from '../../progression/bestiary'
 import { ATTRIBUTE_NAMES } from '../art/palette';
 import { enemySvg } from '../art/enemy';
 import { enemyArtUrl } from '../art/enemy-art';
-import { badge, bar, emptyState, listItem, panel, tabs } from '../components/basic';
+import { badge, bar, emptyState, listItem, panel } from '../components/basic';
 import { getSave } from '../state';
 import { statusDetail, statusName } from '../status-labels';
-import type { Navigator, ScreenDef } from '../router';
+import type { ScreenDef } from '../router';
 import '../bestiary.css';
-
-/** 圖鑑頁上方的「卡片／敵人」切換 */
-export function codexSwitch(active: 'cards' | 'enemies', nav: Navigator): HTMLElement {
-  return tabs<'cards' | 'enemies'>([{ id: 'cards', label: '卡片' }, { id: 'enemies', label: '敵人・星骸觀測錄' }], active,
-    (id) => { if (id !== active) nav.replace(id === 'cards' ? 'collection' : 'bestiary'); });
-}
+import { codexSwitch } from '../components/codex-tabs';
+export { codexSwitch } from '../components/codex-tabs';
 
 const entries = () => bestiaryEntries(getSave(), gameData.enemies, gameData.stages);
 const isBoss = (e: BestiaryEntry) => e.boss;
@@ -51,7 +47,8 @@ export function abilityLines(e: EnemyDef): { title: string; detail: string }[] {
 
 export const bestiaryScreen: ScreenDef = {
   name: 'bestiary',
-  title: '圖鑑',
+  title: '圖鑑與流派',
+  preserveScroll: true,
   chrome: 'sub',
   parent: 'home',
   render({ nav }) {
