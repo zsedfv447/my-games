@@ -71,3 +71,4 @@
 @media(prefers-reduced-motion:reduce){.real-clamp *{animation:none!important;transition:none!important}}
 
 .dragon-clamp-card.returning>img{transition:opacity .5s ease-in-out}
+.seal-banner-copy .seal-banner-facts{margin-top:3px;font-size:10px;color:#d9b77d;letter-spacing:1px}

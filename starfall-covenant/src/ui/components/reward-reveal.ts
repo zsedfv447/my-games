@@ -333,7 +333,7 @@ export function firstClearChip(reward: Reward | undefined, cleared: boolean, lab
   // 星晶、代幣都用圖示＋數字（◆+1 ⚙+20），超過兩種才用「…」；循環活動顯示「本週首通」
   return h('span', { class: 'first-clear-chip', title, 'aria-label': p.full },
     h('span', { class: 'fc-label' }, label),
-    p.parts.map((part) => h('span', { class: 'fc-part' }, part.icon === 'card' ? h('span', { class: 'fc-card' }, '卡') : resourceIcon(part.icon), `+${part.amount.toLocaleString()}`)),
+    p.parts.map((part) => h('span', { class: 'fc-part' }, part.icon === 'card' ? h('span', { class: 'fc-card' }, part.name ?? '卡') : resourceIcon(part.icon), `+${part.amount.toLocaleString()}`)),
     p.more && h('span', { class: 'fc-more' }, '…'));
 }
 
