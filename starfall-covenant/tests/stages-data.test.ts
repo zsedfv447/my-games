@@ -6,10 +6,11 @@ const { stages, chapters } = gameData;
 const byKind = (kind: string) => stages.filter((s) => s.kind === kind);
 
 describe('關卡資料（docs/stage-plan.md）', () => {
-  it('數量：主線第 1～6 章各 9 關、每日 21、活動 10（獸王 5＋齒輪 5）、流派克星週 18（6 主題×3）、塔 30、試煉 12', () => {
-    expect(chapters.map((c) => c.chapter)).toEqual([1, 2, 3, 4, 5, 6]);
-    for (const c of chapters) expect(byKind('main').filter((s) => s.chapter === c.chapter)).toHaveLength(9);
+  it('數量：主線第 1～6 章各 9 關、第 7 章先上 3 關（預定 9 關）、每日 21、活動 10（獸王 5＋齒輪 5）、流派克星週 18（6 主題×3）、塔 30、試煉 12', () => {
+    expect(chapters.map((c) => c.chapter)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+    for (const c of chapters) expect(byKind('main').filter((s) => s.chapter === c.chapter)).toHaveLength(c.chapter === 7 ? 3 : 9);
     expect(chapters[5].stageCount).toBe(9);
+    expect(chapters[6].stageCount).toBe(9);
     expect(byKind('daily')).toHaveLength(21);
     const nemesis = new Set(gameData.events.filter((e) => e.series === 'nemesis').map((e) => e.id));
     expect(byKind('event').filter((s) => !nemesis.has(s.event!))).toHaveLength(10);
@@ -74,6 +75,22 @@ describe('關卡資料（docs/stage-plan.md）', () => {
     }
     // 雜兵攻擊力比第 5 章雜兵最高值再高一點
     expect(Math.max(...ch6.flatMap((s) => s.waves.flatMap((w) => w.enemies)).map((id) => enemy.get(id)!.atk))).toBeGreaterThan(ch5Max);
+  });
+
+  it('第 7 章回聲迴廊：接在 6-9 之後、開場劇情、前章 Boss 的回聲沿用原圖、至少一關有七曜環', () => {
+    const enemy = new Map(gameData.enemies.map((e) => [e.id, e]));
+    const ch7 = byKind('main').filter((s) => s.chapter === 7);
+    expect(ch7.map((s) => s.id)).toEqual(['st-7-1', 'st-7-2', 'st-7-3']);
+    expect(ch7[0].unlockAfter).toBe('st-6-9');
+    expect(ch7[0].story?.before).toBe('ch7-open');
+    expect(gameData.story['ch7-open']?.length).toBeGreaterThan(5);
+    const ids = ch7.flatMap((s) => s.waves.flatMap((w) => w.enemies));
+    // 新敵人從 e0057 開始編；回聲沿用前章 Boss 的圖
+    for (const id of ids.filter((x) => Number(x.slice(1)) >= 57)) {
+      const sprite = enemy.get(id)!.art.sprite;
+      if (sprite) expect(sprite, id).toMatch(/^assets\/user\/enemies\/e00(3[0-9]|40)\.webp$/);
+    }
+    expect(ch7.filter((s) => s.waves.some((w) => w.enemies.some((id) => enemy.get(id)!.abilities.some((a) => a.status === 'ringShield')))).length).toBeGreaterThanOrEqual(1);
   });
 
   it('第 6 章後半用到新機制：隱藏珠與星紋封印至少各 2 關，Boss 兩種都有', () => {

@@ -63,5 +63,15 @@
       ]
     },
     "stageCount": 9
+  },
+  {
+    "chapter": 7,
+    "name": "七曜之心",
+    "constellation": "七曜環",
+    "race": "human",
+    "starReward": {
+      "gems": 5
+    },
+    "stageCount": 9
   }
 ]
