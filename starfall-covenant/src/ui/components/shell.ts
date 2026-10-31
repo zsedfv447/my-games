@@ -10,8 +10,8 @@ import { button } from './basic';
 import { openDialog } from './overlay';
 import '../convenience.css';
 import { audio } from '../audio';
-import { icon, iconButton, resource } from './basic';
-import type { IconName } from '../art/icons';
+import { iconButton, resource } from './basic';
+import { ICONS, type IconName } from '../art/icons';
 import { setOverlayHost } from './overlay';
 import { LABEL } from '../wording';
 
@@ -136,7 +136,7 @@ export class Shell {
             // 分頁之間切換用 replace，返回鍵才不會在分頁間來回跳
             onClick: () => { if (tab !== screen.tab) { audio.play('tap'); this.nav.replace(tab); } },
           },
-          icon(info.icon),
+          svg(ICONS[info.icon]),
           info.label,
         ),
       );
