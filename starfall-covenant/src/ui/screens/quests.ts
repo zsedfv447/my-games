@@ -3,7 +3,7 @@ import type { QuestDef } from '../../core/types';
 import { gameData } from '../../data/load';
 import { claimAllQuests, claimableQuests, claimQuest, questProgress, resetQuestsIfNeeded } from '../../progression/quests';
 import { mergeRewards } from '../../progression/rewards';
-import { badge, bar, button, emptyState, tabs } from '../components/basic';
+import { badge, bar, button, emptyState, icon, listItem, tabs } from '../components/basic';
 import { toast } from '../components/overlay';
 import { rewardChips, screenBanner } from '../components/rewards';
 import { revealReward } from '../components/reward-reveal';
@@ -12,14 +12,35 @@ import { questDerived, sortQuests } from '../economy';
 import type { Navigator, ScreenDef } from '../router';
 import { questDestination } from '../quest-goto';
 import { commit, getSave } from '../state';
+import type { IconName } from '../art/icons';
+import { weeklyChecklist, type ChecklistId } from '../weekly-checklist';
 
-type QuestTab = 'starter' | 'daily' | 'weekly';
+/** contract：本週契約（各系統本週進度的總覽，不是任務） */
+type QuestTab = 'starter' | 'daily' | 'weekly' | 'contract';
 let questTab: QuestTab | null = null;
 
 const BANNER_SUB: Record<QuestTab, string> = {
   starter: '一步步熟悉契約的每個角落，完成可領星晶（只能領一次）',
   daily: '每日任務於午夜 00:00 重置',
   weekly: '每週任務於週一 00:00 重置',
+  contract: '克星週、星淵、遠行、誓約碑、謎題的本週進度，點一下前往',
+};
+
+/** 本週契約清單：每一列點了前往該畫面 */
+function contractList(nav: Navigator): HTMLElement[] {
+  const rows = weeklyChecklist(getSave(), Date.now(), gameData);
+  return rows.map((r) => listItem({
+    leading: icon(CONTRACT_ICON[r.id]),
+    title: h('span', { class: 'row between' }, h('span', null, r.title), h('strong', { class: ['contract-progress', r.done && 'done'] }, r.open ? r.progress : '未開放')),
+    sub: r.hint,
+    locked: !r.open,
+    trailing: r.done ? badge('完成', 'gold') : undefined,
+    onClick: () => nav.go(r.to[0], r.to[1]),
+  }));
+}
+
+const CONTRACT_ICON: Record<ChecklistId, IconName> = {
+  nemesis: 'trophy', abyss: 'tower', expedition: 'adventure', oath: 'scroll', puzzle: 'puzzle',
 };
 
 /** 新手契約還有沒領完的（全部領完後分頁隱藏） */
@@ -89,7 +110,8 @@ export const questsScreen: ScreenDef = {
   title: '任務',
   chrome: 'sub',
   parent: 'home',
-  render({ nav }) {
+  render({ nav, route }) {
+    if (route.args[0] === 'contract') questTab = 'contract';
     const banner = h('div');
     const tabBar = h('div');
     const body = h('div', { class: 'quest-list' });
@@ -107,7 +129,12 @@ export const questsScreen: ScreenDef = {
         ...(starter ? [{ id: 'starter' as const, label: '新手契約' }] : []),
         { id: 'daily' as const, label: '每日任務' },
         { id: 'weekly' as const, label: '每週任務' },
+        { id: 'contract' as const, label: '本週' },
       ], tab, (id) => { questTab = id; refresh(); }));
+      if (tab === 'contract') {
+        body.append(...contractList(nav));
+        return;
+      }
       body.append(...questList([tab], refresh, nav));
       footer.append(claimAllButton([tab], refresh));
     };
