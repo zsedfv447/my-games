@@ -310,7 +310,7 @@ export interface ShopItemDef {
   name: string;
   price: { gems?: number; coin?: number; tokens?: Record<string, number> };
   reward: Reward | { type: 'refillStamina' } | { type: 'expandInventory'; amount: number };
-  limit?: { count: number; per: 'day' | 'week' | 'forever' | 'event' };
+  limit?: { count: number; per: 'day' | 'week' | 'month' | 'forever' | 'event' };
 }
 
 export interface QuestDef {

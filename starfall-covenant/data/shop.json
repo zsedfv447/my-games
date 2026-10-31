@@ -820,5 +820,24 @@
       "count": 5,
       "per": "event"
     }
+  },
+  {
+    "id": "coin-starlight-crystal",
+    "name": "星輝結晶",
+    "price": {
+      "coin": 10000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c921",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 4,
+      "per": "month"
+    }
   }
 ]

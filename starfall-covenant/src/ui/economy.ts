@@ -58,7 +58,7 @@ export function shopPrice(item: ShopItemDef): { icon: ResourceIcon; amount: numb
   return { icon: 'token', amount, token };
 }
 
-const PER_TEXT = { day: '每日', week: '每週', forever: '限購', event: '活動限購' } as const;
+const PER_TEXT = { day: '每日', week: '每週', month: '每月', forever: '限購', event: '活動限購' } as const;
 
 export function limitText(item: ShopItemDef, remaining: number): string {
   if (!item.limit) return '不限次數';
