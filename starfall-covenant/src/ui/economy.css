@@ -78,3 +78,11 @@
 
 /* 還沒開放的冒險入口（例如克星週在第 3 章前）：變灰，副標寫開放條件 */
 .adv-tile.locked { opacity: 0.55; filter: grayscale(0.6); }
+
+/* 養成之路：任務頁上方的進化路線 */
+.journey-path { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.journey-card { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.journey-card small { font-size: 11px; color: #e6d6ad; }
+.journey-card.pending { opacity: 0.55; }
+.journey-arrow { font-size: 22px; color: var(--gold-soft); }
+.journey-needs { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; margin-top: 8px; color: #d9cba6; }
