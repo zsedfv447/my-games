@@ -13,11 +13,26 @@ export function buzz(ms: number): void {
 }
 
 /** 重播一次 CSS 動畫 class，ms 後移除 */
+const flashTimers = new WeakMap<HTMLElement, Map<string, number>>();
+
+/**
+ * 重播一次 CSS 動畫 class，ms 後移除。
+ * 不讀 offsetWidth 強制重排（低階手機上每次命中都會卡）：class 還在時先拿掉，下一幀再加回去重播。
+ */
 export function flashClass(el: HTMLElement, cls: string, ms: number): void {
-  el.classList.remove(cls);
-  void el.offsetWidth;
-  el.classList.add(cls);
-  setTimeout(() => el.classList.remove(cls), ms);
+  const timers = flashTimers.get(el) ?? new Map<string, number>();
+  flashTimers.set(el, timers);
+  clearTimeout(timers.get(cls));
+  const arm = () => {
+    el.classList.add(cls);
+    timers.set(cls, window.setTimeout(() => el.classList.remove(cls), ms));
+  };
+  if (el.classList.contains(cls)) {
+    el.classList.remove(cls);
+    requestAnimationFrame(arm);
+  } else {
+    arm();
+  }
 }
 
 /** 飄字（和 battle.ts 的 floatText 同一套樣式） */
@@ -37,16 +52,34 @@ export function damageText(host: HTMLElement, damage: number, attribute: string 
   ], `dmg attr-${attribute ?? 'none'} ${mu}`);
 }
 
-/** 屬性光點從 from 飛到 to（畫面有 CSS 縮放，位移要換回 root 的設計座標） */
-export function fly(root: HTMLElement, from: HTMLElement, to: HTMLElement, attribute: string | undefined, ms: number): Promise<void> {
+export interface Point { x: number; y: number }
+
+/**
+ * 一次量好多個元素的中心點（root 的設計座標，已扣掉舞台的 CSS 縮放）。
+ * 光點動畫一連發好幾顆時先整批量好，之後只寫不讀，避免每顆都強制重排（低階手機上會卡成長任務）。
+ */
+export function measureCenters(root: HTMLElement, els: readonly (Element | null | undefined)[]): Map<Element, Point> {
   const box = root.getBoundingClientRect();
   const scale = box.width / (root.offsetWidth || box.width || 1) || 1;
-  const a = from.getBoundingClientRect();
-  const b = to.getBoundingClientRect();
-  const x0 = (a.left + a.width / 2 - box.left) / scale;
-  const y0 = (a.top + a.height / 2 - box.top) / scale;
-  const x1 = (b.left + b.width / 2 - box.left) / scale;
-  const y1 = (b.top + b.height / 2 - box.top) / scale;
+  const out = new Map<Element, Point>();
+  for (const el of els) {
+    if (!el || out.has(el)) continue;
+    const r = el.getBoundingClientRect();
+    out.set(el, { x: (r.left + r.width / 2 - box.left) / scale, y: (r.top + r.height / 2 - box.top) / scale });
+  }
+  return out;
+}
+
+/** 屬性光點從 from 飛到 to（畫面有 CSS 縮放，位移要換回 root 的設計座標） */
+export function fly(root: HTMLElement, from: HTMLElement, to: HTMLElement, attribute: string | undefined, ms: number): Promise<void> {
+  const c = measureCenters(root, [from, to]);
+  return flyBetween(root, c.get(from)!, c.get(to)!, attribute, ms);
+}
+
+/** 用量好的點發射光點（不讀版面） */
+export function flyBetween(root: HTMLElement, p0: Point, p1: Point, attribute: string | undefined, ms: number): Promise<void> {
+  const { x: x0, y: y0 } = p0;
+  const { x: x1, y: y1 } = p1;
   const orb = h('div', { class: `strike-orb attr-${attribute ?? 'none'}` });
   root.appendChild(orb);
   if (!orb.animate) {

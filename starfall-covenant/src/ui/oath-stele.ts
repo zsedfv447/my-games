@@ -34,6 +34,17 @@ function rewardPreview(stage: StageDef, oaths: OathId[]): string {
   return `通關（不續戰）可得：${parts.join('、')}。本週星晶 ${record.gems}/${WEEKLY_GEM_CAP}。`;
 }
 
+/** 固定出發列上的小標籤（提案 126）：「誓約 N 條」或「刻下誓約」，點了直接開誓約碑 */
+export function oathSortieChip(stage: StageDef, onChange: () => void): HTMLElement {
+  const oaths = chosenOaths(stage.id);
+  return h('button', {
+    type: 'button',
+    class: ['oath-sortie-chip', oaths.length > 0 && 'on'],
+    'aria-label': oaths.length ? `已刻下 ${oaths.length} 條誓約，共 ${oathPoints(oaths)} 點，點擊修改` : '刻下誓約',
+    onClick: () => openOathPicker(stage, onChange),
+  }, oaths.length ? `誓約 ${oaths.length} 條・${oathPoints(oaths)} 點` : '刻下誓約');
+}
+
 /** 出戰確認上的誓約碑區塊；選完會呼叫 onChange 重畫出戰確認（隊伍可能因誓約改變） */
 export function oathStelePanel(stage: StageDef, onChange: () => void): HTMLElement {
   const oaths = chosenOaths(stage.id);
@@ -47,7 +58,7 @@ export function oathStelePanel(stage: StageDef, onChange: () => void): HTMLEleme
   );
 }
 
-function openOathPicker(stage: StageDef, onChange: () => void): void {
+export function openOathPicker(stage: StageDef, onChange: () => void): void {
   let picked = chosenOaths(stage.id);
   const summary = h('p', { class: 'small-text', style: { margin: '6px 0 0' } });
   const list = h('div', { class: 'list oath-list' });
