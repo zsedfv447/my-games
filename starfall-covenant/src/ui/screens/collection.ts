@@ -13,6 +13,9 @@ import { toast } from '../components/overlay';
 import { revealReward } from '../components/reward-reveal';
 import { commit, getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
+import { claimQuest, questProgress } from '../../progression/quests';
+import { questDerived } from '../economy';
+import { rewardChips } from '../components/rewards';
 import '../collection-helper.css';
 
 const STATUS_LABEL: Record<CollectionStatus, string> = { owned: '已取得', seen: '見過', unseen: '未發現' };
@@ -37,6 +40,31 @@ function claimAll(after: () => void): void {
   after();
 }
 
+/** 圖鑑完成度里程碑（quests.json 裡 counter 為 collectionPercent 的成就）：25%、50%、75%、100% 各領一次 */
+const MILESTONES = gameData.quests.filter((q) => q.counter === 'collectionPercent').sort((a, b) => a.target - b.target);
+
+function milestones(after: () => void): HTMLElement | null {
+  if (!MILESTONES.length) return null;
+  const save = getSave();
+  const derived = questDerived(save);
+  return h('div', { class: 'codex-milestones' }, MILESTONES.map((q) => {
+    const p = questProgress(save, q, derived);
+    const claim = () => {
+      const r = claimQuest(getSave(), q, gameData.quests, gameData.config, Date.now(), questDerived(getSave()));
+      if (!r.ok) return toast(r.reason === 'alreadyClaimed' ? '已經領過了' : '完成度還不夠');
+      commit(r.save);
+      void revealReward('圖鑑里程碑', q.reward, q.name);
+      after();
+    };
+    return h('div', { class: ['codex-milestone', p.done && !p.claimed && 'ready', p.claimed && 'claimed'] },
+      h('strong', null, `${q.target}%`),
+      rewardChips(q.reward),
+      p.claimed
+        ? badge('已領取')
+        : button(p.done ? '領取' : `${derived.collectionPercent ?? 0}%`, { small: true, variant: p.done ? 'primary' : 'ghost', disabled: !p.done, sound: false, onClick: claim }));
+  }));
+}
+
 export const collectionScreen: ScreenDef = {
   name: 'collection',
   title: '圖鑑',
@@ -56,6 +84,7 @@ export const collectionScreen: ScreenDef = {
         { gold: true },
         h('div', { class: 'row between' }, h('strong', null, `收集 ${sum.owned} / ${sum.total}`), h('span', { class: 'small-text dim' }, `見過 ${sum.seen}`)),
         bar({ value: sum.owned, max: sum.total, variant: 'gold' }),
+        milestones(draw),
         h('div', { class: 'row wrap codex-rarity' },
           Object.entries(sum.byRarity).map(([r, b]) => h('span', { class: 'small-text' }, h('span', { class: 'stars' }, `${r}★`), ` ${b.owned}/${b.total}`)),
           h('span', { class: 'small-text' }, `素材 ${sum.materials.owned}/${sum.materials.total}`)),

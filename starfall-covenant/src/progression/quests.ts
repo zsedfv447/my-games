@@ -5,6 +5,8 @@ import { fail, ok, type SaveResult } from './result';
 import { grantReward } from './rewards';
 import { dateKey, weekKey } from './time';
 import { puzzleOf } from './puzzle';
+import { cardBondLevel } from './card-bond';
+import { bondLevel } from './helper-bond';
 
 /**
  * 計數器名稱（QuestDef.counter 只能用這些）：
@@ -23,6 +25,9 @@ import { puzzleOf } from './puzzle';
  *   puzzleSolved（解過的每日謎題天數）、chapterRewards（領過的章節星章獎勵數）、
  *   summoned（召喚紀錄筆數）、evolvedOwned（圖鑑裡擁有過的進化後型態張數）、
  *   maxCardLevel（持有卡片的最高等級）、starsEarned（已點亮的星章總數）
+ * - 成就另外可用的推算數值：awakenedCards（覺醒過的持有卡張數）、cardBondScenes（已解鎖的角色羈絆小劇場數）、
+ *   helperBondTiers（已達成的同行情誼門檻數）、lorePages（收集到的殘頁數）、nemesisCleared（通過的流派克星週關卡數）、
+ *   puzzleBestStreak（每日謎題最長連續天數）、collectionPercent（圖鑑完成度百分比，無條件捨去）
  * 新手契約（kind starter）跟成就一樣用終身計數、不重置；推算數值讓老玩家讀檔時就能直接算達成
  */
 export const COMBO_THRESHOLDS = [5, 8, 10] as const;
@@ -41,15 +46,26 @@ export const DERIVED_COUNTERS = [
   'playerLevel', 'cardsOwned', 'towerFloor', 'mainCleared', 'trialCleared',
   'teamEdited', 'helperClears', 'puzzleSolved', 'chapterRewards', 'summoned', 'evolvedOwned',
   'maxCardLevel', 'starsEarned',
+  'awakenedCards', 'cardBondScenes', 'helperBondTiers', 'lorePages', 'nemesisCleared', 'puzzleBestStreak', 'collectionPercent',
 ] as const;
 export type DerivedCounters = Partial<Record<(typeof DERIVED_COUNTERS)[number], number>>;
 
-/** evolvedForms：所有「進化後型態」的卡號（由呼叫端依卡片資料提供；沒給時 evolvedOwned 為 0） */
+/** 推算需要的資料（由呼叫端依遊戲資料提供；沒給時對應的數值為 0） */
+export interface DerivedData {
+  /** 所有「進化後型態」的卡號 */
+  evolvedForms?: ReadonlySet<string>;
+  /** 流派克星週的關卡 id */
+  nemesisStages?: ReadonlySet<string>;
+  /** 圖鑑總張數 */
+  cardTotal?: number;
+}
+
 export function derivedCounters(
   save: SaveData,
   stageKindOf: (stageId: string) => string | undefined,
-  evolvedForms: ReadonlySet<string> = new Set(),
+  data: DerivedData = {},
 ): DerivedCounters {
+  const { evolvedForms = new Set<string>(), nemesisStages = new Set<string>(), cardTotal = 0 } = data;
   const cleared = (kind: string) => save.progress.clearedStages.filter((id) => stageKindOf(id) === kind).length;
   return {
     playerLevel: save.player.level,
@@ -65,7 +81,29 @@ export function derivedCounters(
     evolvedOwned: save.collection.owned.filter((id) => evolvedForms.has(id)).length,
     maxCardLevel: save.inventory.cards.reduce((m, c) => Math.max(m, c.level), 0),
     starsEarned: Object.values(save.progress.stars).reduce((n, st) => n + st.filter(Boolean).length, 0),
+    awakenedCards: save.inventory.cards.filter((c) => c.awakened > 0).length,
+    cardBondScenes: Object.values(save.cardBond ?? {}).reduce((n, p) => n + cardBondLevel(p), 0),
+    helperBondTiers: Object.values(save.helperBond ?? {}).reduce((n, p) => n + bondLevel(p), 0),
+    lorePages: new Set(save.lorePages ?? []).size,
+    nemesisCleared: save.progress.clearedStages.filter((id) => nemesisStages.has(id)).length,
+    puzzleBestStreak: bestStreak(puzzleOf(save)),
+    collectionPercent: cardTotal > 0 ? Math.floor((save.collection.owned.length * 100) / cardTotal) : 0,
   };
+}
+
+/** 每日謎題最長連續天數：目前連續天數，與保留下來的解題日期中最長的一段，取大的 */
+function bestStreak(record: { streak: number; solvedDays: string[] }): number {
+  const days = [...new Set(record.solvedDays)].map((d) => {
+    const [y, m, dd] = d.split('-').map(Number);
+    return Math.round(Date.UTC(y, m - 1, dd) / 86_400_000);
+  }).sort((a, b) => a - b);
+  let best = 0;
+  let run = 0;
+  days.forEach((d, i) => {
+    run = i > 0 && d === days[i - 1] + 1 ? run + 1 : 1;
+    best = Math.max(best, run);
+  });
+  return Math.max(best, record.streak);
 }
 
 /** 編過隊：有卡片不在開新存檔時的位置（第一隊第 j 格是 u{j+1}，其他隊伍全空） */

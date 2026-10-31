@@ -745,5 +745,304 @@
       "gems": 5,
       "coin": 3000
     }
+  },
+  {
+    "id": "a-mainCleared-54",
+    "kind": "achievement",
+    "name": "穹頂外環的盡頭：通過第 6 章",
+    "counter": "mainCleared",
+    "target": 54,
+    "reward": {
+      "gems": 10
+    }
+  },
+  {
+    "id": "a-cardsOwned-80",
+    "kind": "achievement",
+    "name": "收藏家：持有 80 種卡片",
+    "counter": "cardsOwned",
+    "target": 80,
+    "reward": {
+      "gems": 10
+    }
+  },
+  {
+    "id": "a-cardsOwned-96",
+    "kind": "achievement",
+    "name": "圖鑑全收：持有全部 96 種卡片",
+    "counter": "cardsOwned",
+    "target": 96,
+    "reward": {
+      "gems": 15
+    }
+  },
+  {
+    "id": "a-awakenedCards-1",
+    "kind": "achievement",
+    "name": "星紋初醒：讓 1 張卡覺醒",
+    "counter": "awakenedCards",
+    "target": 1,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-awakenedCards-5",
+    "kind": "achievement",
+    "name": "星紋共鳴：讓 5 張卡覺醒",
+    "counter": "awakenedCards",
+    "target": 5,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-awakenedCards-10",
+    "kind": "achievement",
+    "name": "星紋滿盈：讓 10 張卡覺醒",
+    "counter": "awakenedCards",
+    "target": 10,
+    "reward": {
+      "gems": 8,
+      "cards": [
+        {
+          "card": "c916",
+          "count": 1
+        },
+        {
+          "card": "c917",
+          "count": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "a-cardBondScenes-1",
+    "kind": "achievement",
+    "name": "第一段小劇場：解鎖 1 段角色羈絆",
+    "counter": "cardBondScenes",
+    "target": 1,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "a-cardBondScenes-10",
+    "kind": "achievement",
+    "name": "形影不離：解鎖 10 段角色羈絆",
+    "counter": "cardBondScenes",
+    "target": 10,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-cardBondScenes-30",
+    "kind": "achievement",
+    "name": "羈絆之書：解鎖 30 段角色羈絆",
+    "counter": "cardBondScenes",
+    "target": 30,
+    "reward": {
+      "gems": 8
+    }
+  },
+  {
+    "id": "a-helperBondTiers-1",
+    "kind": "achievement",
+    "name": "同行之誼：與流浪契印師解鎖 1 段回憶",
+    "counter": "helperBondTiers",
+    "target": 1,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "a-helperBondTiers-12",
+    "kind": "achievement",
+    "name": "四海之友：與流浪契印師解鎖 12 段回憶",
+    "counter": "helperBondTiers",
+    "target": 12,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-helperBondTiers-36",
+    "kind": "achievement",
+    "name": "所有燈火都認得你：解鎖全部 36 段同行回憶",
+    "counter": "helperBondTiers",
+    "target": 36,
+    "reward": {
+      "gems": 8
+    }
+  },
+  {
+    "id": "a-lorePages-3",
+    "kind": "achievement",
+    "name": "拾起第一卷：收集 3 張星骸殘頁",
+    "counter": "lorePages",
+    "target": 3,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-lorePages-9",
+    "kind": "achievement",
+    "name": "殘頁全數歸位：收集全部 9 張星骸殘頁",
+    "counter": "lorePages",
+    "target": 9,
+    "reward": {
+      "gems": 8
+    }
+  },
+  {
+    "id": "a-nemesisCleared-1",
+    "kind": "achievement",
+    "name": "克星初陣：通過 1 關流派克星週",
+    "counter": "nemesisCleared",
+    "target": 1,
+    "reward": {
+      "gems": 2
+    }
+  },
+  {
+    "id": "a-nemesisCleared-9",
+    "kind": "achievement",
+    "name": "克星獵人：通過 9 關流派克星週",
+    "counter": "nemesisCleared",
+    "target": 9,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-nemesisCleared-18",
+    "kind": "achievement",
+    "name": "萬流皆通：通過全部 18 關流派克星週",
+    "counter": "nemesisCleared",
+    "target": 18,
+    "reward": {
+      "gems": 8,
+      "cards": [
+        {
+          "card": "c918",
+          "count": 1
+        },
+        {
+          "card": "c919",
+          "count": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "a-puzzleBestStreak-3",
+    "kind": "achievement",
+    "name": "解謎習慣：每日謎題連續 3 天",
+    "counter": "puzzleBestStreak",
+    "target": 3,
+    "reward": {
+      "coin": 3000
+    }
+  },
+  {
+    "id": "a-puzzleBestStreak-7",
+    "kind": "achievement",
+    "name": "星紋日課：每日謎題連續 7 天",
+    "counter": "puzzleBestStreak",
+    "target": 7,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "a-puzzleBestStreak-30",
+    "kind": "achievement",
+    "name": "一個月的星紋：每日謎題連續 30 天",
+    "counter": "puzzleBestStreak",
+    "target": 30,
+    "reward": {
+      "gems": 5
+    }
+  },
+  {
+    "id": "a-collection-25",
+    "kind": "achievement",
+    "name": "圖鑑完成度 25%",
+    "counter": "collectionPercent",
+    "target": 25,
+    "reward": {
+      "gems": 3,
+      "coin": 5000
+    }
+  },
+  {
+    "id": "a-collection-50",
+    "kind": "achievement",
+    "name": "圖鑑完成度 50%",
+    "counter": "collectionPercent",
+    "target": 50,
+    "reward": {
+      "gems": 5,
+      "cards": [
+        {
+          "card": "c920",
+          "count": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "a-collection-75",
+    "kind": "achievement",
+    "name": "圖鑑完成度 75%",
+    "counter": "collectionPercent",
+    "target": 75,
+    "reward": {
+      "gems": 5,
+      "cards": [
+        {
+          "card": "c916",
+          "count": 1
+        },
+        {
+          "card": "c917",
+          "count": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "a-collection-100",
+    "kind": "achievement",
+    "name": "圖鑑完成度 100%",
+    "counter": "collectionPercent",
+    "target": 100,
+    "reward": {
+      "gems": 10,
+      "cards": [
+        {
+          "card": "c916",
+          "count": 1
+        },
+        {
+          "card": "c917",
+          "count": 1
+        },
+        {
+          "card": "c918",
+          "count": 1
+        },
+        {
+          "card": "c919",
+          "count": 1
+        },
+        {
+          "card": "c920",
+          "count": 1
+        }
+      ]
+    }
   }
 ]

@@ -19,7 +19,13 @@ export const tokenName = (id: string) => TOKEN_NAMES.get(id) ?? id;
 
 const stageKind = new Map(gameData.stages.map((s) => [s.id, s.kind]));
 const evolvedForms = new Set(gameData.cards.flatMap((c) => (c.evolution ? [c.evolution.to] : [])));
-export const questDerived = (save: SaveData): DerivedCounters => derivedCounters(save, (id) => stageKind.get(id), evolvedForms);
+const nemesisEvents = new Set(gameData.events.filter((e) => e.series === 'nemesis').map((e) => e.id));
+const derivedData = {
+  evolvedForms,
+  nemesisStages: new Set(gameData.stages.filter((s) => s.event && nemesisEvents.has(s.event)).map((s) => s.id)),
+  cardTotal: gameData.cards.length,
+};
+export const questDerived = (save: SaveData): DerivedCounters => derivedCounters(save, (id) => stageKind.get(id), derivedData);
 
 // ---------- 獎勵 ----------
 export interface RewardPart {

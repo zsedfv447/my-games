@@ -128,3 +128,15 @@
 @keyframes bond-frame-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .npc-avatar.bond-frame::after { animation: none; } }
 .bond-story-layer { z-index: 60; }
+
+/* ---------- 圖鑑完成度里程碑 ---------- */
+.codex-milestones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 8px 0; }
+.codex-milestone {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 6px 4px; border: 1px solid var(--line); border-radius: 10px; background: rgba(6, 10, 31, 0.35);
+  font-size: 11px; text-align: center; min-width: 0;
+}
+.codex-milestone strong { font-size: 14px; color: var(--gold-soft); }
+.codex-milestone.ready { border-color: var(--gold); box-shadow: 0 0 10px rgba(242, 196, 90, 0.35); }
+.codex-milestone.claimed { opacity: 0.55; }
+.codex-milestone .reward-chips, .codex-milestone > div { justify-content: center; flex-wrap: wrap; }
