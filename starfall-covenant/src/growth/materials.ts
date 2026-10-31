@@ -2,7 +2,7 @@
 import type { CardDef, OwnedCard, SaveData } from '../core/types';
 import type { GrowthContext } from './context';
 import { nextAwakening } from './awaken';
-import { teamUids } from './save-ops';
+import { expeditionUids, teamUids } from './save-ops';
 import { isSkillMaterial } from './skill';
 
 export type MaterialUse = 'enhance' | 'skill' | 'limitBreak' | 'awaken' | 'evolve';
@@ -25,10 +25,11 @@ export function isMaterialFor(
   }
 }
 
-/** 可以被吃掉或賣掉的卡：不是 exceptUid、沒上鎖、不在任何隊伍裡 */
+/** 可以被吃掉或賣掉的卡：不是 exceptUid、沒上鎖、不在任何隊伍裡、不在星靈遠行中 */
 export function freeCards(save: SaveData, exceptUid?: string): OwnedCard[] {
   const inTeam = teamUids(save);
-  return save.inventory.cards.filter((c) => c.uid !== exceptUid && !c.locked && !inTeam.has(c.uid));
+  const away = expeditionUids(save);
+  return save.inventory.cards.filter((c) => c.uid !== exceptUid && !c.locked && !inTeam.has(c.uid) && !away.has(c.uid));
 }
 
 /**

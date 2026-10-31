@@ -17,9 +17,11 @@ import '../flow-polish.css';
 import { maybeOfferResume } from '../battle-session';
 import { equippedTitle } from '../../progression/titles';
 import { titleContext } from '../title-context';
+import { maybeShowWeeklyReport } from '../weekly-popup';
+import { LABEL } from '../wording';
 
 /** 捷徑上的紅點：有可領的登入、任務、成就或圖鑑收集獎勵 */
-const BADGE_OF: Record<string, keyof HomeBadges> = { 'login-bonus': 'login', quests: 'quests', achievements: 'achievements', collection: 'collection' };
+const BADGE_OF: Record<string, keyof HomeBadges> = { 'login-bonus': 'login', quests: 'quests', achievements: 'achievements', collection: 'collection', notebook: 'titles' };
 
 const SHORTCUTS: { label: string; icon: IconName; to: string; args?: string[] }[] = [
   { label: '任務', icon: 'quest', to: 'quests' },
@@ -42,7 +44,10 @@ export const homeScreen: ScreenDef = {
     audio.playBgm('home');
     // 每天第一次回到主城自動跳出登入獎勵（等畫面掛上後再開）
     // 有沒打完的戰鬥時先問要不要繼續，這次就不跳登入獎勵
-    const popup = maybeOfferResume(nav) ? undefined : setTimeout(() => maybeShowLoginPopup(() => root.querySelectorAll('[data-badge="login"]').forEach((el) => el.remove())), 350);
+    // 登入獎勵這次沒跳出時，接著看要不要跳上週的契約週報（每週一次）
+    const popup = maybeOfferResume(nav) ? undefined : setTimeout(() => {
+      if (!maybeShowLoginPopup(() => root.querySelectorAll('[data-badge="login"]').forEach((el) => el.remove()))) maybeShowWeeklyReport();
+    }, 350);
     onLeave(() => clearTimeout(popup));
     const bg = userAsset('backgrounds', 'home');
     const save = getSave();
@@ -90,7 +95,7 @@ export const homeScreen: ScreenDef = {
         { class: 'home-tiles' },
         SHORTCUTS.slice(3).map((s) => h('button', { type: 'button', class: 'tile', onClick: () => { audio.play('tap'); nav.go(s.to, s.args); } }, icon(s.icon), s.label, dot(s.to))),
       ),
-      button('練習轉珠', { variant: 'ghost', block: true, onClick: () => nav.go('battle', ['practice']) }),
+      button(LABEL.practice, { variant: 'ghost', block: true, onClick: () => nav.go('battle', ['practice']) }),
     );
     return root;
   },

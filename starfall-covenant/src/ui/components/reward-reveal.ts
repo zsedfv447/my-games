@@ -14,6 +14,7 @@ import { endOnRouteChange } from '../route-scope';
 import { playBondStory } from '../bond-story';
 import type { LeaderLine } from '../victory-line';
 import '../reward-reveal.css';
+import { LABEL } from '../wording';
 
 const cardById = new Map(gameData.cards.map((c) => [c.id, c]));
 
@@ -178,7 +179,7 @@ export function openRewardReveal(title: string, items: RevealItem[], opts: { sub
     });
     void reveal.done.then(() => {
       if (!layer.isConnected || layer.classList.contains('closing')) return;
-      actions.appendChild(button(opts.okLabel ?? '收下', {
+      actions.appendChild(button(opts.okLabel ?? LABEL.accept, {
         variant: 'primary', block: true, onClick: (e) => {
           e.stopPropagation();
           end();

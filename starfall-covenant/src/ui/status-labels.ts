@@ -53,6 +53,11 @@ const STATUS_DETAILS: Record<StatusId, string> = {
   ringShield: '環還在時受到的傷害大幅減少；用各屬性的攻擊點掉對應格子、消除心珠點掉心格，全部點掉後環碎裂、受到的屬性攻擊加倍（固定與百分比傷害不能破環）',
 };
 
+/** 狀態的完整說明（敵人圖鑑等畫面用） */
+export function statusDetail(id: StatusId): string {
+  return STATUS_DETAILS[id] ?? '';
+}
+
 /** 狀態名稱；星紋封印帶上被封印的屬性（「星紋封印・焰」「星紋封印・隊長屬性」） */
 export function statusName(id: StatusId, params?: Record<string, number | string>): string {
   const base = STATUS_NAMES[id] ?? id;

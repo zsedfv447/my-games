@@ -11,6 +11,7 @@ import { statusName } from '../status-labels';
 import { floatLabel } from './effects';
 import { ringSummary } from './ring';
 import { isMemberSealed } from '../../battle/skills/status';
+import { LABEL } from '../wording';
 
 // ---------- 屬性剋制 ----------
 
@@ -108,7 +109,7 @@ function showEnemyInfo(state: BattleState, i: number, config: BattleConfig): voi
     list.length
       ? list.map((a) => h('div', { class: ['row between small-text', a.done && 'dim'] }, h('span', null, TRIGGER_TEXT[a.trigger](a)), h('span', null, `${abilityText(a)}${a.done ? '（已觸發）' : ''}`)))
       : h('p', { class: 'small-text dim' }, '沒有特殊技能'),
-  ), [button('關閉', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() })]);
+  ), [button(LABEL.close, { variant: 'ghost', sound: 'back', onClick: () => dlg.close() })]);
 }
 
 // ---------- Combo ----------

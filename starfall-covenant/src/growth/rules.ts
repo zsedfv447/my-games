@@ -58,7 +58,8 @@ export const GROWTH_RULES: GrowthRules = {
   limitBreakStatBonus: 0.04,
   // 分段解鎖：第 1 個覺醒不需突破，只有一張也能先體驗流派特色
   awakenLimitBreakGate: [0, 3, 5],
-  awakenCoin: [20000, 50000, 100000],
+  // 依 sim --progress 校正：第 5 章 5★→6★ 進化（5 萬金幣）後，第 6 章前段仍付得起 1～2 個覺醒
+  awakenCoin: [8000, 15000, 30000],
   awakenMaterialCount: [1, 2, 3],
   // 星核卡號依創意顧問提案 001
   awakenMaterialByAttribute: { fire: 'c916', water: 'c917', wood: 'c918', light: 'c919', dark: 'c920' },

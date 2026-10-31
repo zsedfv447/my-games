@@ -1,4 +1,5 @@
 // 選擇助戰（GDD 2.5 關卡列表 → 選助戰 → 戰鬥前確認）：NPC「流浪契印師」名單，顯示助戰卡的隊長技
+import { findStage } from '../stage-lookup';
 import { h } from '../dom';
 import { gameData } from '../../data/load';
 import type { StageDef } from '../../core/types';
@@ -98,7 +99,7 @@ export const helperScreen: ScreenDef = {
   chrome: 'sub',
   parent: 'adventure',
   render({ route, nav, onLeave }) {
-    const stage = gameData.stages.find((s) => s.id === route.args[0]);
+    const stage = findStage(route.args[0] ?? '');
     if (!stage) return h('div', null, emptyState('team', '找不到這一關'), button('回到冒險', { block: true, onClick: () => nav.replace('adventure') }));
     if (!stageAllowsHelper(stage)) {
       return h('div', null,

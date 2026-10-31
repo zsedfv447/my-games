@@ -1,6 +1,7 @@
 // 關卡導覽：把關卡資料與存檔整理成冒險地圖、關卡列表要顯示的狀態（純函式，方便測試）
 import type { SaveData, StageDef } from '../core/types';
 import { openEventIds, type EventDef } from '../progression/events';
+import { isEclipseId } from '../progression/eclipse';
 import { STARS_PER_STAGE, stageLockReason, type StageContext, type StageLockReason } from '../progression/stages';
 
 /** 依 data/events.json 的檔期決定哪些活動開放；沒給活動資料時視為全部開放（測試用） */
@@ -107,7 +108,7 @@ export function takeJustUnlocked(ids: string[]): Set<string> {
 
 /** 關卡所屬的關卡列表（hash 路徑）：主線回到那一章、活動／每日／塔回到各自列表、流派試煉回到流派頁 */
 export function stageListPath(stage: StageDef, events: EventDef[] = []): string {
-  if (stage.kind === 'main') return `stages/${stage.chapter ?? 1}`;
+  if (stage.kind === 'main') return `stages/${stage.chapter ?? 1}${isEclipseId(stage.id) ? '/eclipse' : ''}`;
   // 系列活動（流派克星週）有自己的列表：#/stages/nemesis
   const series = stage.event ? events.find((e) => e.id === stage.event)?.series : undefined;
   if (series) return `stages/${series}`;

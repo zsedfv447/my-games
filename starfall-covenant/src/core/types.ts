@@ -280,6 +280,8 @@ export interface ActiveBattle {
   drops: DropPlan;
   /** 還沒開打（例如還在看開場劇情）時為 null */
   snapshot: BattleSnapshot | null;
+  /** 這場刻下的誓約（誓約碑，選填；舊存檔沒有就是沒有） */
+  oaths?: string[];
 }
 
 // ---------- 經濟 ----------
@@ -394,16 +396,26 @@ export interface SaveData {
   settings: { bgm: number; sfx: number; battleSpeed: 1 | 2 };
   /** 契印師手札的個人戰績（可選；讀取一律經過 progression/records.ts 的 recordsOf 補預設值） */
   records?: import('../progression/records').PlayerRecords;
+  /** 已經看過的「第一次遇到某機制」提示 id（可選；讀取經過 ui/tutorial/mechanic-hints.ts 的 hintsSeenOf 補預設值） */
+  hintsSeen?: string[];
   /** 星紋謎題每日一題的紀錄（可選；讀取一律經過 progression/puzzle.ts 的 puzzleOf 補預設值） */
   puzzle?: import('../progression/puzzle').PuzzleRecord;
+  /** 誓約碑的每週紀錄（可選；讀取一律經過 progression/oaths.ts 的 oathsOf 補預設值） */
+  oaths?: import('../progression/oaths').OathRecord;
   /** 已收集的星骸殘頁 id（可選；讀取一律經過 progression/lore.ts 的 collectedLorePages 補預設值） */
   lorePages?: string[];
+  /** 星骸觀測錄：開戰時遇過的敵人 id（可選；讀取一律經過 progression/bestiary.ts 的 seenEnemyIds，會補上已通關關卡的敵人） */
+  seenEnemies?: string[];
   /** 流浪契印師的同行情誼：NPC id → 點數（可選；讀取一律經過 progression/helper-bond.ts 的 bondPoints 補預設值） */
   helperBond?: Record<string, number>;
   /** 角色羈絆：進化鏈的家族 id（最初型態的卡號）→ 出戰通關場數（可選；讀取一律經過 progression/card-bond.ts 補預設值） */
   cardBond?: Record<string, number>;
+  /** 星靈遠行中的隊伍（可選；讀取一律經過 progression/expedition.ts 的 expeditionsOf 補預設值） */
+  expeditions?: import('../progression/expedition').Expedition[];
   /** 契印師稱號：正在使用的稱號與看過的稱號（可選；讀取一律經過 progression/titles.ts 的 titleStateOf 補預設值） */
   titles?: import('../progression/titles').TitleState;
   /** 星淵回廊本週進度（選填，讀取時用 progression/abyss.ts 的 abyssProgress 補預設值，換週重置） */
-  abyss?: { week: string; best: number; claimed: number[] };
+  abyss?: { week: string; best: number; claimed: number[]; /** 歷來最高層（含無盡層，不隨換週重置） */ allTimeBest?: number };
+  /** 星蝕難度的紀錄（可選；讀取一律經過 progression/eclipse.ts 的 eclipseOf 補預設值） */
+  eclipse?: { cleared: string[]; stars: Record<string, boolean[]>; chapterRewardsClaimed?: number[] };
 }

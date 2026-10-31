@@ -8,19 +8,28 @@ import {
   abandonActiveBattle, activeBattleFor, beginActiveBattle, clearActiveBattle, dropSeed, recordBattleSnapshot,
 } from '../progression/active-battle';
 import { planDrops, planMatches, type DropPlan } from '../progression/drops';
+import { applyOathTeam, isOathId, oathModifiers, type OathId } from '../progression/oaths';
+import { codexEnemies, markEnemiesSeen } from '../progression/bestiary';
+import { gameData } from '../data/load';
 import { confirmDialog, confirmOnScreen } from './components/overlay';
 import type { Navigator } from './router';
 import { buildSortieTeam } from './sortie';
 import { commit, getSave, growth } from './state';
 
-/** 出戰確認扣過體力後呼叫：把隊伍、亂數種子與骰好的掉落寫進存檔，當作這一關的入場券 */
-export function armBattle(stageId: string, drops?: DropPlan): void {
+let codexIds: Set<string> | undefined;
+const codexEnemyIds = () => (codexIds ??= new Set(codexEnemies(gameData.enemies, gameData.stages).map((e) => e.id)));
+
+/** 出戰確認扣過體力後呼叫：把隊伍、亂數種子、骰好的掉落與刻下的誓約寫進存檔，當作這一關的入場券 */
+export function armBattle(stageId: string, drops?: DropPlan, oaths: readonly OathId[] = []): void {
   const stage = findStage(stageId);
   if (!stage) return;
-  const team = buildSortieTeam(stage, getSave(), growth.card);
+  // 誓約碑：不帶助戰、只帶 4 人在這裡套用
+  const team = applyOathTeam(buildSortieTeam(stage, getSave(), growth.card), oaths);
   const seed = Math.floor(Math.random() * 2 ** 32);
   const plan = drops && planMatches(drops, stage) ? drops : planDrops(stage, createRng(dropSeed({ seed })));
-  commit(beginActiveBattle(getSave(), { stageId, seed, members: team.members, helper: team.helper, drops: plan }, Date.now()));
+  const armed = beginActiveBattle(getSave(), { stageId, seed, members: team.members, helper: team.helper, drops: plan, oaths: [...oaths] }, Date.now());
+  // 星骸觀測錄：開戰就記下這一關的敵人
+  commit(markEnemiesSeen(armed, stage, codexEnemyIds()));
 }
 
 export interface StageBattle {
@@ -33,6 +42,8 @@ export interface StageBattle {
   drops: DropPlan;
   /** 從中斷的戰鬥還原 */
   resumed: boolean;
+  /** 刻下的誓約（誓約碑） */
+  oaths: OathId[];
 }
 
 /** 開打或還原這一關的戰鬥；沒有入場券或快照壞掉時回傳錯誤訊息 */
@@ -40,12 +51,14 @@ export function openStageBattle(stage: StageDef): StageBattle | string {
   const active = activeBattleFor(getSave(), stage.id);
   if (!active) return '戰鬥已中斷，請重新出發';
   try {
+    const oaths = (active.oaths ?? []).filter(isOathId);
+    // 續戰快照自己帶著誓約的狀態；新開的戰鬥照入場券上的誓約加上
     const battle = active.snapshot
       ? resumeBattle(stage, active.snapshot, battleDataFor(stage))
-      : startBattle(stage, active.members, active.helper, createRng(active.seed), battleDataFor(stage));
+      : startBattle(stage, active.members, active.helper, createRng(active.seed), battleDataFor(stage), undefined, oathModifiers(oaths));
     if (!active.snapshot) saveBattle(battle);
     const drops = planMatches(active.drops, stage) ? active.drops : { stageId: stage.id, drops: [] };
-    return { battle, memberUids: active.members.flatMap((m) => (m.uid ? [m.uid] : [])), dropSeed: dropSeed(active), drops, resumed: !!active.snapshot };
+    return { battle, memberUids: active.members.flatMap((m) => (m.uid ? [m.uid] : [])), dropSeed: dropSeed(active), drops, resumed: !!active.snapshot, oaths };
   } catch {
     commit(clearActiveBattle(getSave()));
     return '遊戲資料已更新，無法繼續這場戰鬥';

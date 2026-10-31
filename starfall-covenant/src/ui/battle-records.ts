@@ -24,7 +24,7 @@ export function trackBattleRecords(battle: Battle, stageId: string, memberUids: 
     if (done) return;
     done = true;
     const result = battle.getResult();
-    const entry = { stageId, won, turns: result?.turns ?? battle.getState().turns, maxCombo: result?.maxCombo ?? battle.getState().maxCombo, maxTurnDamage, leaderCardId, archetype };
+    const entry = { stageId, won, turns: result?.turns ?? battle.getState().turns, maxCombo: result?.maxCombo ?? battle.getState().maxCombo, maxTurnDamage, leaderCardId, archetype, at: Date.now() };
     const applied = applyBattleRecord(getSave(), entry);
     commit(applied.save);
     texts = applied.newRecords.map((k) => recordText(k, entry));

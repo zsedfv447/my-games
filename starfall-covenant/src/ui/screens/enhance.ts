@@ -17,6 +17,7 @@ import {
   passiveText, statLines, type GrowthMode, type StatLine,
 } from './growth-view';
 import '../growth.css';
+import { LABEL } from '../wording';
 
 export function growthBackdrop(): Record<string, string> | undefined {
   const bg = userAsset('backgrounds', 'growth');
@@ -45,7 +46,7 @@ export function celebrate(def: CardDef, headline: string, detail: Child, sound: 
     cardPortrait(def),
     h('div', { class: 'headline' }, headline),
     h('div', { class: 'detail' }, detail),
-  ), [button('確定', { variant: 'primary', block: true, onClick: () => dlg.close() })], { onClose });
+  ), [button(LABEL.ok, { variant: 'primary', block: true, onClick: () => dlg.close() })], { onClose });
 }
 
 interface Celebration { headline: string; detail: Child; sound?: CelebrateSound }
@@ -76,7 +77,7 @@ export const enhanceScreen: ScreenDef = {
   render({ route, nav }) {
     const uid = route.args[0];
     let mode: GrowthMode = parseMode(route.query.mode);
-    // 從素材卡詳情「拿去強化…」過來時，先放好那張素材
+    // 從素材卡詳情「去強化」過來時，先放好那張素材
     let selected: string[] = route.query.mat ? [route.query.mat] : [];
     // 防連點：確認框開著、或演出還沒關時不再執行
     let busy = false;

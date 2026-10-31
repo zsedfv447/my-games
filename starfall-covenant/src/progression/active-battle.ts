@@ -6,10 +6,11 @@ import { applyBattleRecord } from './records';
 
 export function beginActiveBattle(
   save: SaveData,
-  battle: { stageId: string; seed: number; members: TeamMemberInput[]; helper: TeamMemberInput | null; drops: DropPlan },
+  battle: { stageId: string; seed: number; members: TeamMemberInput[]; helper: TeamMemberInput | null; drops: DropPlan; oaths?: string[] },
   now: number,
 ): SaveData {
-  const active: ActiveBattle = { ...battle, seed: battle.seed >>> 0, startedAt: now, snapshot: null };
+  const { oaths, ...rest } = battle;
+  const active: ActiveBattle = { ...rest, seed: battle.seed >>> 0, startedAt: now, snapshot: null, ...(oaths?.length ? { oaths: [...oaths] } : {}) };
   return { ...save, activeBattle: active };
 }
 

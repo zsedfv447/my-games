@@ -5,9 +5,10 @@ import { BoardView } from '../../battle/view/board-view';
 import { createRng } from '../../core/rng';
 import { gameData } from '../../data/load';
 import {
-  claimPuzzle, currentStreak, dailyPuzzle, daySeed, judgePuzzle, puzzleReward, solvedToday, type Puzzle, type PuzzleGoal,
+  claimPuzzle, currentStreak, dailyPuzzle, daySeed, judgePuzzle, puzzleOf, puzzleReward, solvedToday, type Puzzle, type PuzzleGoal,
 } from '../../progression/puzzle';
 import { dateKey } from '../../progression/time';
+import type { SaveData } from '../../core/types';
 import { ORB_NAMES } from '../art/palette';
 import { audio } from '../audio';
 import { button, panel } from '../components/basic';
@@ -16,7 +17,7 @@ import { revealReward } from '../components/reward-reveal';
 import { h } from '../dom';
 import type { ScreenDef } from '../router';
 import { commit, getSave, getSettings } from '../state';
-import { nextPuzzleBonus } from '../../progression/milestones';
+import { LAMP_EVERY, LAMP_MAX, nextPuzzleBonus, streakWithLamps } from '../../progression/milestones';
 
 const CELL = 58;
 
@@ -45,6 +46,15 @@ export function puzzleEntrySub(now = Date.now()): string {
   const streak = currentStreak(save, now);
   if (solvedToday(save, now)) return `今天已解開・連續 ${streak} 天`;
   return `每天一題・不耗體力${streak ? `・連續 ${streak} 天` : ''}`;
+}
+
+/** 星燈守夜（milestones.ts）：持有幾盞；昨天以前漏掉的天數會在今天解開時消耗 */
+function lampText(save: SaveData, now: number): string {
+  const r = puzzleOf(save);
+  const lamps = r.lamps ?? 0;
+  const used = streakWithLamps(r, dateKey(now)).lampsUsed;
+  if (used > 0 && !solvedToday(save, now)) return `\n星燈守夜 ${'🏮'.repeat(lamps)}：漏掉 ${used} 天，今天解開會用掉 ${used} 盞保住連續天數`;
+  return `\n星燈守夜 ${lamps}/${LAMP_MAX} 盞${lamps ? ' 🏮'.repeat(lamps) : ''}（每連續 ${LAMP_EVERY} 天得 1 盞，漏一天自動保住）`;
 }
 
 export const puzzleScreen: ScreenDef = {
@@ -100,13 +110,13 @@ class PuzzleView {
     const now = Date.now();
     const save = getSave();
     if (solvedToday(save, now)) {
-      this.rewardEl.textContent = `今天的獎勵已領取・連續 ${currentStreak(save, now)} 天。可以繼續練習。`;
+      this.rewardEl.textContent = `今天的獎勵已領取・連續 ${currentStreak(save, now)} 天。可以繼續練習。${lampText(save, now)}`;
       return;
     }
     const { reward, streak } = puzzleReward(save, now);
     // 下一個加送星晶的天數（里程碑 7、14、30、60 天，其餘每 7 天）：progression/milestones.ts
     const next = nextPuzzleBonus(streak);
-    this.rewardEl.textContent = `解開獎勵：金幣 ${reward.coin}${reward.gems ? `＋星晶 ${reward.gems}（連續 ${streak} 天）` : `・再連續 ${next.days - streak} 天加送星晶 ${next.gems}${next.milestone ? '（里程碑）' : ''}`}`;
+    this.rewardEl.textContent = `解開獎勵：金幣 ${reward.coin}${reward.gems ? `＋星晶 ${reward.gems}（連續 ${streak} 天）` : `・再連續 ${next.days - streak} 天加送星晶 ${next.gems}${next.milestone ? '（里程碑）' : ''}`}${lampText(save, now)}`;
   }
 
   private renderSteps(): void {

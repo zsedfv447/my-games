@@ -17,6 +17,11 @@ import type { Navigator, ScreenDef } from '../router';
 import type { IconName } from '../art/icons';
 import { firstClearChip, revealReward } from '../components/reward-reveal';
 import { chapterConstellation } from '../components/constellation-view';
+import {
+  claimEclipseChapterReward, eclipseChapterReward, eclipseChapterStages, eclipseChapterStars, eclipseLockReason, eclipseOf,
+  eclipseRewardStatus, eclipseUnlocked,
+} from '../../progression/eclipse';
+import '../eclipse.css';
 
 function row(r: StageRow, nav: Navigator, leading: IconName, fresh = new Set<string>()): HTMLElement {
   const s = r.stage;
@@ -80,6 +85,65 @@ const cardName = (id: string) => gameData.cards.find((c) => c.id === id)?.name ?
 const isRareMaterial = (id: string) => { const c = gameData.cards.find((x) => x.id === id); return c?.race === 'material' && c.rarity >= 5; };
 const archetypeName = (id: string) => gameData.archetypes.find((a) => a.id === id)?.name ?? id;
 
+// ---------- 星蝕難度 ----------
+
+/** 章節頁上方的「一般／星蝕」切換；章節還沒滿星時顯示開放條件 */
+function eclipseToggle(chapter: number, active: boolean, nav: Navigator): HTMLElement {
+  if (!eclipseUnlocked(getSave(), chapter, gameData.stages, gameData.chapters)) {
+    return h('p', { class: 'small-text dim eclipse-hint' }, '集滿本章全部星章後，開放高難度的「星蝕」版本。');
+  }
+  const tab = (label: string, on: boolean, path: string[]) =>
+    h('button', { type: 'button', class: ['eclipse-tab', on && 'on'], 'aria-pressed': String(on), onClick: () => !on && nav.replace('stages', path) }, label);
+  return h('div', { class: 'eclipse-toggle', role: 'group', 'aria-label': '難度' },
+    tab('一般', !active, [String(chapter)]),
+    tab('星蝕', active, [String(chapter), 'eclipse']));
+}
+
+function eclipseRow(stage: StageDef, nav: Navigator): HTMLElement {
+  const save = getSave();
+  const lock = eclipseLockReason(save, stage, gameData.stages, gameData.chapters);
+  const record = eclipseOf(save);
+  const base = stage.id.replace(/@eclipse$/, '');
+  const cleared = record.cleared.includes(base);
+  const stars = (stage.stars ?? []).map((_, i) => !!record.stars[base]?.[i]);
+  const item = listItem({
+    leading: icon(stage.waves.some((w) => w.boss) ? 'trophy' : 'constellation'),
+    title: stage.name,
+    sub: [`體力 ${stage.stamina}`, lock && '通過前一關後開放'].filter(Boolean).join('・'),
+    trailing: h('div', { class: 'row', style: { gap: '4px' } },
+      firstClearChip(stage.rewards.firstClear, cleared),
+      stars.length > 0 && h('span', { class: 'stars small-text' }, stars.map((g) => h('span', { style: { opacity: g ? '1' : '0.25' } }, '★'))),
+      cleared ? badge('通過', 'eclipse') : lock ? icon('lock') : badge('星蝕', 'eclipse')),
+    onClick: () => (lock ? toast('通過前一關後開放') : nav.go('prepare', [stage.id])),
+  });
+  item.classList.add('eclipse-row');
+  if (lock) item.classList.add('dimmed');
+  return item;
+}
+
+/** 星蝕版的星章進度與獎勵 */
+function eclipseReward(chapter: number): HTMLElement {
+  const save = getSave();
+  const stars = eclipseChapterStars(save, chapter, gameData.stages);
+  const status = eclipseRewardStatus(save, chapter, gameData.stages);
+  const el: HTMLElement = h('div', { class: ['chapter-reward', status] },
+    h('div', { class: 'chapter-reward-bar' }, bar({ value: stars.got, max: stars.total, variant: 'gold', label: `星蝕星章 ${stars.got}/${stars.total}` })),
+    h('div', { class: 'row between' },
+      rewardChips(eclipseChapterReward()),
+      status === 'claimable'
+        ? button('領取', { small: true, variant: 'primary', sound: false, onClick: () => claim() })
+        : badge(status === 'claimed' ? '已領取' : '集滿可領', status === 'claimed' ? undefined : 'gold')),
+  );
+  const claim = () => {
+    const r = claimEclipseChapterReward(getSave(), chapter, gameData.stages, gameData.config, Date.now());
+    if (!r.ok) return toast(r.reason === 'alreadyClaimed' ? '已經領過了' : '星蝕星章還沒集滿');
+    commit(r.save);
+    void revealReward('星蝕星章獎勵', r.reward!, `第 ${chapter} 章・星蝕`);
+    el.replaceWith(eclipseReward(chapter));
+  };
+  return el;
+}
+
 const GROUPS: Record<string, { title: string; kind: StageDef['kind']; icon: IconName }> = {
   daily: { title: '每日關卡', kind: 'daily', icon: 'history' },
   event: { title: '限時活動', kind: 'event', icon: 'event' },
@@ -136,6 +200,19 @@ export const stagesScreen: ScreenDef = {
 
     const chapter = Number(key);
     const info = gameData.chapters.find((c) => c.chapter === chapter);
+    // #/stages/<章節>/eclipse：星蝕版（章節還沒滿星時退回一般版）
+    if (route.args[1] === 'eclipse' && eclipseUnlocked(save, chapter, gameData.stages, gameData.chapters)) {
+      return h('div', { class: 'eclipse-mode' },
+        panel(
+          { gold: true },
+          h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, `第 ${chapter} 章・${info?.name ?? ''}`), badge('星蝕', 'eclipse')),
+          eclipseToggle(chapter, true, nav),
+          h('p', { class: 'small-text dim', style: { margin: '6px 0' } }, '星蝕侵蝕了這一章：敵人更強，Boss 生命低時會狂暴。星蝕版有自己的星章與首通獎勵，不掉落卡片。'),
+          eclipseReward(chapter),
+        ),
+        h('div', { class: 'list' }, eclipseChapterStages(chapter, gameData).map((st) => eclipseRow(st, nav))),
+      );
+    }
     const rows = gameData.stages.filter((s) => s.kind === 'main' && s.chapter === chapter).map((s) => stageRow(save, s, ctx, now));
     const fresh = takeJustUnlocked(rows.map((r) => r.stage.id));
     // 章節分批上線時，列出還沒上線的關卡範圍；全部上線後自動不顯示
@@ -148,6 +225,7 @@ export const stagesScreen: ScreenDef = {
         h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, `第 ${chapter} 章・${info?.name ?? ''}`), info && badge(info.constellation, 'gold')),
         info && chapterConstellation(info, { claimable: chapterRewardStatus(save, info.chapter, gameData.stages, gameData.chapters) === 'claimable' }),
         info && chapterReward(info, nav),
+        eclipseToggle(chapter, false, nav),
       ),
       h('div', { class: 'list' },
         rows.map((r) => row(r, nav, 'adventure', fresh)),

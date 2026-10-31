@@ -6,6 +6,7 @@ import { autoDelayMs, storyLog } from '../story-auto';
 import { button } from './basic';
 import { openDialog } from './overlay';
 import '../convenience.css';
+import { LABEL } from '../wording';
 
 export type { StoryLine };
 
@@ -88,7 +89,7 @@ export function storyBox(lines: StoryLine[], onDone: () => void): HTMLElement {
       l.speaker && h('div', { class: 'story-log-speaker' }, l.speaker),
       h('p', null, l.text))));
     const dlg = openDialog('對話紀錄', list, [
-      button('關閉', { variant: 'primary', onClick: () => { dlg.close(); paused = false; scheduleAuto(); } }),
+      button(LABEL.close, { variant: 'primary', onClick: () => { dlg.close(); paused = false; scheduleAuto(); } }),
     ], { dismissible: false });
     requestAnimationFrame(() => { list.scrollTop = list.scrollHeight; });
   });
