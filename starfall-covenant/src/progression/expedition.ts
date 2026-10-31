@@ -22,7 +22,9 @@ export const EXPEDITION = {
   /** 種族對上星座的比例 × 50% */
   raceBonus: 0.5,
   /** 每「單位」（小時 × 人數加成 × 種族加成）的收穫期望值 */
-  perUnit: { coin: 35, dust: 0.03, glow: 0.01, flare: 0.002, core: 0.004 },
+  perUnit: { coin: 35, dust: 0.03, glow: 0.005, flare: 0.0006, core: 0.004 },
+  /** 這個時數以上的遠行，至少帶回 1 顆微光（燭光、烈光的機率已經下修，讓一般玩法每天的總量不變） */
+  dustFloorHours: 4,
 } as const;
 
 const HOUR = 3_600_000;
@@ -127,7 +129,7 @@ export function expeditionReward(e: Expedition, members: CardDef[], chapterRace:
   const mat = MATERIALS[members[0].attribute];
   const p = EXPEDITION.perUnit;
   const counts: [string, number][] = [
-    [mat.dust, roll(units * p.dust, next)],
+    [mat.dust, Math.max(e.hours >= EXPEDITION.dustFloorHours ? 1 : 0, roll(units * p.dust, next))],
     [mat.glow, roll(units * p.glow, next)],
     [mat.flare, roll(units * p.flare, next)],
     [mat.core, roll(units * p.core, next)],
