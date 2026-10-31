@@ -15,5 +15,16 @@ export function findStage(id: string): StageDef | undefined {
 export function battleDataFor(stage: StageDef): GameData {
   const abyss = stage.kind === 'abyss' ? parseAbyssId(stage.id) : null;
   if (!abyss) return gameData;
-  return { ...gameData, enemies: [...gameData.enemies, ...abyssFloor(abyss.week, abyss.floor, gameData.enemies).enemies] };
+  const enemies = abyssFloor(abyss.week, abyss.floor, gameData.enemies).enemies;
+  return { ...gameData, enemies: [...gameData.enemies, ...(abyssDebugWeak() ? enemies.map((e) => ({ ...e, hp: 1, abilities: [] })) : enemies)] };
+}
+
+/** 開發模式除錯：localStorage「debug.abyssWeak」=1 時星淵敵人生命變 1，用來實測發獎與進度（正式版不生效） */
+function abyssDebugWeak(): boolean {
+  if (!import.meta.env?.DEV) return false;
+  try {
+    return localStorage.getItem('debug.abyssWeak') === '1';
+  } catch {
+    return false;
+  }
 }

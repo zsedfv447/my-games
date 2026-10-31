@@ -18,6 +18,8 @@ export interface GrowthRules {
   /** 可用來升技能的指定素材卡號（吞同名卡之外的途徑） */
   skillMaterialIds: string[];
   maxLimitBreak: number;
+  /** 通用突破素材：可以代替 1 張同名卡（星輝結晶） */
+  limitBreakMaterialIds: string[];
   /** 每階突破提升的基礎數值比例 */
   limitBreakStatBonus: number;
   /** 第 i 個星紋覺醒需要的突破階數 */
@@ -52,6 +54,7 @@ export const GROWTH_RULES: GrowthRules = {
   maxMaterialsPerEnhance: 10,
   skillMaterialIds: [],
   maxLimitBreak: 5,
+  limitBreakMaterialIds: ['c921'],
   limitBreakStatBonus: 0.04,
   // 分段解鎖：第 1 個覺醒不需突破，只有一張也能先體驗流派特色
   awakenLimitBreakGate: [0, 3, 5],

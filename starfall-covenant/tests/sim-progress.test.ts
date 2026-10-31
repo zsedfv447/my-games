@@ -13,7 +13,7 @@ const order = mainOrder(stages);
 const est = (id: string) => estimateProgress(order.find((s) => s.id === id)!, stages, ctx, 'fire');
 const zeroCores = { fire: 0, water: 0, wood: 0, light: 0, dark: 0 };
 const fake = (over: Partial<ProgressEstimate>): ProgressEstimate => ({
-  stageId: 'x', mainCleared: 0, chapter: 1, playerLevel: 1, teamCostLimit: 33, coin: 0, dailyRuns: 0, cardExpPerMember: 0, cores: zeroCores, ...over,
+  stageId: 'x', mainCleared: 0, chapter: 1, playerLevel: 1, teamCostLimit: 33, coin: 0, dailyRuns: 0, cardExpPerMember: 0, cores: zeroCores, crystals: 0, ...over,
 });
 
 describe('sim --progress：進度估算', () => {
@@ -47,6 +47,34 @@ describe('sim --progress：進度估算', () => {
     expect(fiveStarCount(1)).toBe(1);
     expect(fiveStarCount(3)).toBe(2);
     expect(fiveStarCount(5, { ...PROGRESS_ASSUMPTIONS, fiveStarsByChapter: [] })).toBe(0);
+  });
+});
+
+describe('sim --progress：一次性獎勵', () => {
+  // 正式資料目前首通沒有星核，用改過的資料驗證
+  const stagesWithRewards = stages.map((s) => (s.id === 'st-2-9'
+    ? { ...s, rewards: { ...s.rewards, firstClear: { ...s.rewards.firstClear, coin: 1000, cards: [{ card: 'c916', count: 2 }, { card: 'c921', count: 1 }, { card: 'c901', count: 3 }] } } }
+    : s));
+  const chapters = [{ ...gameData.chapters.find((c) => c.chapter === 2)!, starReward: { cards: [{ card: 'c917', count: 1 }] } }];
+  const at = (id: string, st = stagesWithRewards, ch = chapters) => estimateProgress(order.find((s) => s.id === id)!, st, ctx, 'fire', PROGRESS_ASSUMPTIONS, ch);
+
+  it('首通獎勵的星核、結晶、經驗素材、金幣都算進去（打完那關之後才有）', () => {
+    const base = at('st-3-1', stages, []);
+    const p = at('st-3-1', stagesWithRewards, []);
+    expect(p.cores.fire - base.cores.fire).toBeCloseTo(2);
+    expect(p.crystals - base.crystals).toBeCloseTo(1);
+    expect(p.coin - base.coin).toBe(1000);
+    expect(p.cardExpPerMember - base.cardExpPerMember).toBe(Math.floor(3 * ctx.card('c901')!.expValue / 5));
+    expect(at('st-2-9', stagesWithRewards, []).cores.fire).toBe(at('st-2-9', stages, []).cores.fire);
+  });
+
+  it('章節星章獎勵在打完該章最後一關後才算', () => {
+    expect(at('st-2-9').cores.water).toBe(at('st-2-9', stagesWithRewards, []).cores.water);
+    expect(at('st-3-1').cores.water - at('st-3-1', stagesWithRewards, []).cores.water).toBeCloseTo(1);
+  });
+
+  it('獎勵給的結晶不扣商店金幣', () => {
+    expect(at('st-3-5').coin - at('st-3-5', stages, []).coin).toBe(1000);
   });
 });
 
@@ -93,6 +121,27 @@ describe('sim --progress：組隊', () => {
     const rich = fake({ cardExpPerMember: 0, coin: 1_000_000, cores: { ...zeroCores, fire: 1 }, teamCostLimit: 200 });
     expect(buildProgressTeam('berserk', leaderWithAwaken, [], rich, ctx).members[0].awakened).toBe(1);
     expect(buildProgressTeam('berserk', leaderWithAwaken, [], { ...rich, coin: 0 }, ctx).members[0].awakened).toBe(0);
+  });
+
+  it('星輝結晶：突破有覺醒的隊員，突破夠了就依序解鎖覺醒 2、3', () => {
+    const team = ['c102', 'c107', 'c111', 'c109', 'c108'];
+    const rich = fake({ coin: 10_000_000, cores: { ...zeroCores, fire: 20 }, teamCostLimit: 200 });
+    const none = buildProgressTeam('berserk', team, [], rich, ctx).members[0];
+    expect(none).toMatchObject({ limitBreak: 0, awakened: 1 });
+    const five = buildProgressTeam('berserk', team, [], { ...rich, crystals: 5 }, ctx).members[0];
+    expect(five).toMatchObject({ limitBreak: 5, awakened: 3 });
+    const three = buildProgressTeam('berserk', team, [], { ...rich, crystals: 3.2 }, ctx).members[0];
+    expect(three).toMatchObject({ limitBreak: 3, awakened: 2 });
+    // 金幣不夠就停在前一個覺醒
+    expect(buildProgressTeam('berserk', team, [], { ...rich, coin: 20_000, crystals: 5 }, ctx).members[0].awakened).toBe(1);
+  });
+
+  it('結晶從克星週開放後才開始累積，並扣掉商店購買的金幣', () => {
+    expect(est('st-3-1').crystals).toBe(0);
+    expect(est('st-3-5').crystals).toBeCloseTo(PROGRESS_ASSUMPTIONS.crystalsPerMainStage * 3);
+    const noCrystal = estimateProgress(order.find((s) => s.id === 'st-4-1')!, stages, ctx, 'fire', { ...PROGRESS_ASSUMPTIONS, crystalsPerMainStage: 0 });
+    const p = est('st-4-1');
+    expect(noCrystal.coin - p.coin).toBe(Math.round(p.crystals * PROGRESS_ASSUMPTIONS.crystalShopShare * PROGRESS_ASSUMPTIONS.crystalCoin));
   });
 
   it('助戰和出擊準備一樣取第一位可用的 NPC', () => {

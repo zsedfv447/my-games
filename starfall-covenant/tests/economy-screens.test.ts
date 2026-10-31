@@ -19,11 +19,11 @@ const shopItem = (id: string) => gameData.shop.find((i) => i.id === id)!;
 const quest = (id: string) => gameData.quests.find((q) => q.id === id)!;
 
 describe('商店與任務資料', () => {
-  it('每日、每週任務與 50 項成就', () => {
+  it('每日、每週任務與 73 項成就', () => {
     const count = (k: string) => gameData.quests.filter((q) => q.kind === k).length;
     expect(count('daily')).toBeGreaterThanOrEqual(5);
     expect(count('weekly')).toBeGreaterThanOrEqual(5);
-    expect(count('achievement')).toBe(50);
+    expect(count('achievement')).toBe(73);
   });
 
   it('星晶產出跟抽卡價格平衡：每日＋每週任務每週約 2–4 次單抽', () => {
@@ -34,10 +34,10 @@ describe('商店與任務資料', () => {
     expect(perWeek / single).toBeLessThanOrEqual(4);
   });
 
-  it('商店有星晶、金幣、活動兌換三類，素材每日／每週限購', () => {
+  it('商店有星晶、金幣、活動兌換三類，素材每日／每週／每月限購', () => {
     const tabs = new Set(gameData.shop.map(shopTab));
     expect([...tabs].sort()).toEqual(['coin', 'event', 'gems']);
-    for (const item of gameData.shop.filter((i) => shopTab(i) === 'coin')) expect(['day', 'week']).toContain(item.limit?.per);
+    for (const item of gameData.shop.filter((i) => shopTab(i) === 'coin')) expect(['day', 'week', 'month']).toContain(item.limit?.per);
   });
 
   it('活動兌換照關卡規劃：c601 要 200 代幣、限 1', () => {

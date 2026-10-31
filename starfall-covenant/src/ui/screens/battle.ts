@@ -18,6 +18,8 @@ import { buzz, flashClass, skillCutin } from '../battle-fx/effects';
 import { openPauseMenu, type PauseHandle } from '../battle-fx/pause';
 import { clearCombo, finishCombo, flashReadySkills, markMatchups, markSeals, renderCombo, renderIntent, weakHint } from '../battle-fx/readability';
 import { playStrikes } from '../battle-fx/strikes';
+import { ringBadge } from '../battle-fx/ring';
+import { ringOf } from '../../battle/skills/ring';
 import { userAsset } from '../assets';
 import { audio } from '../audio';
 import { badge, bar, button, emptyState, iconButton } from '../components/basic';
@@ -277,6 +279,7 @@ class BattleView {
         h('div', { class: 'enemy-art' }, enemyArt(e, boss)),
         h('div', { class: 'enemy-name' }, badge(ATTRIBUTE_NAMES[e.def.attribute], `attr-${e.def.attribute}`), e.def.name),
         weakHint(e, this.s.data.config.battle),
+        h('div', { class: 'ring-host', dataset: { broken: (ringOf(e)?.broken ?? []).join(',') } }, ringBadge(e)),
         chipRow(enemyChips(e), 'enemy-chips'),
         bar({ value: e.hp, max: e.maxHp, variant: 'hp' }),
       );
@@ -301,6 +304,14 @@ class BattleView {
     el.classList.toggle('dead', e.hp <= 0);
     el.classList.toggle('targeted', i === this.state.target);
     el.querySelector('.enemy-chips')!.replaceWith(chipRow(enemyChips(e), 'enemy-chips'));
+    // 七曜環：比對上次畫的已破格子，新點掉的那幾格播一下破裂
+    const ringHost = el.querySelector<HTMLElement>('.ring-host');
+    if (ringHost) {
+      const broken = ringOf(e)?.broken ?? [];
+      const was = (ringHost.dataset.broken ?? '').split(',').filter(Boolean);
+      ringHost.replaceChildren(...[ringBadge(e, broken.filter((o) => !was.includes(o)))].filter((x): x is HTMLElement => !!x));
+      ringHost.dataset.broken = broken.join(',');
+    }
     // 減傷狀態會變（護盾到期、輪替），弱點跟著更新
     el.querySelector('.weak-hint')?.replaceWith(weakHint(e, this.s.data.config.battle));
   }

@@ -32,6 +32,7 @@ export function questDestination(quest: QuestDef, save: SaveData, stages: StageD
     case 'cardEvolve':
     case 'evolvedOwned':
     case 'maxCardLevel':
+    case 'awakenedCards':
       return { name: 'cards', args: [] };
     case 'shopPurchase':
       return { name: 'shop', args: [] };
@@ -40,7 +41,14 @@ export function questDestination(quest: QuestDef, save: SaveData, stages: StageD
     case 'teamEdited':
       return { name: 'team', args: [] };
     case 'puzzleSolved':
+    case 'puzzleBestStreak':
       return { name: 'puzzle', args: [] };
+    case 'collectionPercent':
+      return { name: 'collection', args: [] };
+    case 'lorePages':
+      return { name: 'stories', args: [] };
+    case 'nemesisCleared':
+      return { name: 'adventure', args: [] };
     case 'chapterRewards':
       return { name: 'adventure', args: [] };
     case 'stageClear':
@@ -49,6 +57,8 @@ export function questDestination(quest: QuestDef, save: SaveData, stages: StageD
     case 'mainCleared':
     case 'playerLevel':
     case 'helperClears':
+    case 'helperBondTiers':
+    case 'cardBondScenes':
     case 'stageFail':
     case 'orbsCleared':
     case 'comboBest':

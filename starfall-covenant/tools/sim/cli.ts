@@ -39,6 +39,15 @@ const teams = (teamSet === 'veteran' ? veteranTeams() : starterTeams()).filter((
 
 const started = Date.now();
 let results: CellResult[];
+if (args.includes('--cores')) {
+  // 星核供需：npm run sim -- --cores（見 core-supply.ts）
+  const { coreSupplyReport } = await import('./core-supply');
+  const { createGrowthContext } = await import('../../src/growth');
+  const lines = coreSupplyReport(gameData.stages, gameData.events, createGrowthContext(gameData), ['st-3-9', 'st-4-9', 'st-5-1', 'st-5-3']);
+  console.log(lines.join('\n'));
+  process.exit(0);
+}
+
 if (args.includes('--progress')) {
   // 依關卡位置估算玩家當時的養成程度，每個流派組出放得下隊伍空間的隊伍
   if (set !== 'main') throw new Error('--progress 只支援 --set main');

@@ -10,6 +10,7 @@ import { createRng, type Rng } from '../core/rng';
 import { grantReward } from './rewards';
 import { fail, ok, type SaveResult } from './result';
 import { dateKey } from './time';
+import { puzzleStreakGems } from './milestones';
 
 export type PuzzleGoal =
   /** 一次轉珠做出 N Combo */
@@ -165,7 +166,7 @@ export interface PuzzleRecord {
 }
 
 export const PUZZLE_COIN = 300;
-/** 連續解開滿 STREAK_DAYS 天（7、14、21…）送 STREAK_GEMS 星晶 */
+/** 連續解開滿 STREAK_DAYS 天（7、14、21…）至少送 STREAK_GEMS 星晶；7、14、30、60 天另有里程碑（milestones.ts） */
 export const STREAK_DAYS = 7;
 export const STREAK_GEMS = 1;
 const SOLVED_KEEP = 60;
@@ -199,7 +200,9 @@ export function solvedToday(save: Pick<SaveData, 'puzzle'>, now: number): boolea
 export function puzzleReward(save: Pick<SaveData, 'puzzle'>, now: number): { reward: Reward; streak: number } {
   const streak = currentStreak(save, now) + 1;
   const reward: Reward = { coin: PUZZLE_COIN };
-  if (streak % STREAK_DAYS === 0) reward.gems = STREAK_GEMS;
+  // 星晶依連續天數：里程碑（7、14、30、60 天）送較多，其餘每滿 7 天 1 顆（progression/milestones.ts）
+  const gems = puzzleStreakGems(streak);
+  if (gems) reward.gems = gems;
   return { reward, streak };
 }
 

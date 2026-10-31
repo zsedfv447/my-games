@@ -168,7 +168,7 @@ export type PassiveEffect =
 export const STATUS_IDS = [
   'poison', 'skillSeal', 'orbLock', 'moveTimeDown', 'shield', 'attributeShield',
   'comboShield', 'heartSeal', 'darkOrbs', 'poisonOrbs', 'lockedOrbs',
-  'damageAbsorb', 'enrage', 'delayImmune', 'multiHit', 'attributeSeal',
+  'damageAbsorb', 'enrage', 'delayImmune', 'multiHit', 'attributeSeal', 'ringShield',
 ] as const;
 export type StatusId = (typeof STATUS_IDS)[number];
 
@@ -310,7 +310,7 @@ export interface ShopItemDef {
   name: string;
   price: { gems?: number; coin?: number; tokens?: Record<string, number> };
   reward: Reward | { type: 'refillStamina' } | { type: 'expandInventory'; amount: number };
-  limit?: { count: number; per: 'day' | 'week' | 'forever' | 'event' };
+  limit?: { count: number; per: 'day' | 'week' | 'month' | 'forever' | 'event' };
 }
 
 export interface QuestDef {
@@ -402,6 +402,8 @@ export interface SaveData {
   helperBond?: Record<string, number>;
   /** 角色羈絆：進化鏈的家族 id（最初型態的卡號）→ 出戰通關場數（可選；讀取一律經過 progression/card-bond.ts 補預設值） */
   cardBond?: Record<string, number>;
+  /** 契印師稱號：正在使用的稱號與看過的稱號（可選；讀取一律經過 progression/titles.ts 的 titleStateOf 補預設值） */
+  titles?: import('../progression/titles').TitleState;
   /** 星淵回廊本週進度（選填，讀取時用 progression/abyss.ts 的 abyssProgress 補預設值，換週重置） */
   abyss?: { week: string; best: number; claimed: number[] };
 }
