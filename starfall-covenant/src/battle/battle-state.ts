@@ -41,6 +41,7 @@ import {
   tickBuffs,
 } from './skills/buffs';
 import {
+  addStatus,
   abilitiesToTrigger,
   applyEnemyAbility,
   attributeSealMultipliers,
@@ -183,8 +184,21 @@ export type StoredBattleState = Omit<BattleState, 'team' | 'enemies'> & {
   enemies: (Omit<EnemyState, 'def'> & { defId: string })[];
 };
 
+/**
+ * 開戰時額外加上的狀態（誓約碑等）：teamStatuses 開場就在我方身上（續戰後也會重新加上），
+ * enemyStatuses 每一波敵人出場時就有。只用既有的狀態積木。
+ */
+export interface BattleModifiers {
+  teamStatuses?: StatusInstance[];
+  enemyStatuses?: StatusInstance[];
+  /** 給畫面顯示用（誓約 id） */
+  oaths?: string[];
+}
+
 export interface BattleSnapshot {
   v: number;
+  /** 開戰時的額外狀態（選填；舊快照沒有就是沒有） */
+  modifiers?: BattleModifiers;
   stageId: string;
   team: TeamMemberInput[];
   helper: TeamMemberInput | null;
@@ -200,7 +214,7 @@ export interface BattleSnapshot {
 export function resumeBattle(stage: StageDef, snap: BattleSnapshot, data: BattleData = gameData): Battle {
   if (snap.v !== BATTLE_SNAPSHOT_VERSION) throw new Error(`不支援的戰鬥快照版本 ${snap.v}`);
   if (snap.stageId !== stage.id) throw new Error(`快照是關卡 ${snap.stageId}，不是 ${stage.id}`);
-  return startBattle(stage, snap.team, snap.helper, createRng(snap.rng), data, snap);
+  return startBattle(stage, snap.team, snap.helper, createRng(snap.rng), data, snap, snap.modifiers);
 }
 
 /** 毒珠每顆扣最大生命的百分比（之後可移到 config） */
@@ -222,6 +236,7 @@ export function startBattle(
   rng: Rng,
   data: BattleData = gameData,
   restore?: BattleSnapshot,
+  modifiers: BattleModifiers = restore?.modifiers ?? {},
 ): Battle {
   const config: GameConfig = data.config;
   const byId = <T extends { id: string }>(list: T[], id: string, kind: string): T => {
@@ -305,7 +320,8 @@ export function startBattle(
     usedActiveSkill: false,
     continues: 0,
     buffs: [],
-    teamStatuses: [],
+    // 開戰的額外狀態（誓約碑）開場就在我方身上
+    teamStatuses: structuredClone(modifiers.teamStatuses ?? []),
   };
 
   const events = new EventBus<BattleEvents>();
@@ -357,6 +373,8 @@ export function startBattle(
   const spawnWave = (wave: number) => {
     state.wave = wave;
     state.enemies = createEnemies(wave);
+    // 開戰的額外狀態（誓約碑）：每一波敵人出場就帶著
+    for (const e of state.enemies) for (const s of modifiers.enemyStatuses ?? []) e.statuses = addStatus(e.statuses, structuredClone(s));
     state.target = 0;
     takenThisTurn = state.enemies.map(() => 0);
     state.enemies.forEach((_, i) => triggerAbilities(i, 'onStart'));
@@ -467,6 +485,7 @@ export function startBattle(
       const s = structuredClone(state);
       return {
         v: BATTLE_SNAPSHOT_VERSION,
+        ...(modifiers.teamStatuses?.length || modifiers.enemyStatuses?.length || modifiers.oaths?.length ? { modifiers: structuredClone(modifiers) } : {}),
         stageId: stage.id,
         team: structuredClone(team),
         helper: helper ? structuredClone(helper) : null,
@@ -621,7 +640,8 @@ export function startBattle(
       state.phase = 'player';
       state.hp = state.maxHp;
       for (const s of state.teamStatuses) state.board = releaseBoardStatus(state.board, s);
-      state.teamStatuses = [];
+      // 續戰清掉異常狀態，但開戰時的額外狀態（誓約）照樣保留
+      state.teamStatuses = structuredClone(modifiers.teamStatuses ?? []);
       state.continues++;
       result = null;
       updateMoveTime();

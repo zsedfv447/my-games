@@ -51,6 +51,10 @@ import { skipTutorialNow } from '../tutorial/skip';
 import { BattleHud, liveSummary } from '../components/battle-hud';
 import { canAct, reenableAfterCancel } from '../battle-guard';
 import { battlePolicy, type BattlePolicy } from '../battle-policy';
+import { oathCoreCard, oathDef, settleOath, type OathId } from '../../progression/oaths';
+import { grantReward } from '../../progression/rewards';
+import { rewardParts } from '../economy';
+import type { SaveData } from '../../core/types';
 import { grantClearExp, nextStageButton, unlockNotice } from '../stage-clear';
 import { endBattle, openStageBattle, saveBattle } from '../battle-session';
 import { battleDataFor, findStage } from '../stage-lookup';
@@ -100,6 +104,8 @@ interface Setup {
   resumed?: boolean;
   /** 練習場目前的模式 */
   practiceMode?: PracticeMode;
+  /** 刻下的誓約（誓約碑，只有正式主線關卡） */
+  oaths?: OathId[];
   /** 新手教學戰鬥的引導層 */
   guide?: BattleGuide;
   /** 進場時骰好的掉落；練習與教學沒有 */
@@ -182,6 +188,8 @@ class BattleView {
 
   /** 練習場與新手教學不扣體力、不給獎勵、不寫手札與任務（battle-policy.ts） */
   private readonly policy: BattlePolicy;
+  /** 戰鬥中頂部顯示啟用中的誓約；續戰後變灰（誓約破除） */
+  private oathHud = h('span', { class: 'oath-hud' });
 
   constructor(private s: Setup, private nav: Navigator) {
     this.policy = battlePolicy({ practice: s.practice, tutorial: !!s.guide });
@@ -202,7 +210,7 @@ class BattleView {
       { class: 'battle' },
       h('div', { class: 'battle-top safe-top' },
         h('div', null, this.waveLabel, this.hud.element),
-        h('div', { class: 'stage-name' }, s.stage.name),
+        h('div', { class: 'stage-name' }, s.stage.name, this.oathHud),
         iconButton('pause', '暫停', () => this.openPause())),
       this.enemyZone,
       this.comboEl,
@@ -337,6 +345,7 @@ class BattleView {
   }
 
   private renderHp(previous?: number): void {
+    this.renderOathHud();
     this.teamChipsHost.replaceChildren(chipRow(teamChips(this.state), 'team-chips'));
     clear(this.hpHost);
     this.hpHost.appendChild(bar({ value: this.state.hp, max: this.state.maxHp, variant: 'hp', label: true, previous }));
@@ -628,6 +637,32 @@ class BattleView {
     setTimeout(() => el.remove(), 1400);
   }
 
+  private renderOathHud(): void {
+    const oaths = this.s.oaths ?? [];
+    this.oathHud.replaceChildren(...oaths.map((id) => h('span', { class: 'oath-chip', title: oathDef(id).description }, oathDef(id).name)));
+    this.oathHud.classList.toggle('broken', this.state.continues > 0);
+    this.oathHud.title = this.state.continues > 0 ? '用了續戰，誓約已破除，這場不會有誓約獎勵' : oaths.map((id) => `${oathDef(id).name}：${oathDef(id).description}`).join('\n');
+  }
+
+  /** 誓約碑結算：回傳發完獎的存檔、結算提示與拿到的卡（星核） */
+  private settleOaths(save: SaveData, continues: number): { save: SaveData; note: ResultNote | null; cards: { cardId: string; uid: string }[] } {
+    const oaths = this.s.oaths ?? [];
+    if (!oaths.length) return { save, note: null, cards: [] };
+    const now = Date.now();
+    const r = settleOath(save, this.s.stage, oaths, { won: true, continues }, oathCoreCard(this.s.stage, gameData.enemies, gameData.cards), now);
+    if (!r.ok) {
+      const text = r.reason === 'broken' ? '用了續戰，誓約已破除，這次沒有誓約獎勵' : r.reason === 'notBetter' ? '本週這一關已經拿過同點數以上的誓約獎勵' : '';
+      return { save: r.save, note: text ? { text, chip: '🗿 誓約' } : null, cards: [] };
+    }
+    const granted = grantReward(r.save, r.reward, gameData.config, now);
+    const list = rewardParts(r.reward).map((p) => p.label).join('、');
+    return {
+      save: granted.save,
+      note: { text: `誓約碑 ${r.points} 點：${list}${r.newHighest ? '（新的最高誓約）' : ''}`, chip: `🗿 誓約 ${r.points}`, big: r.newHighest },
+      cards: granted.cards.map((c) => ({ cardId: c.cardId, uid: c.uid })),
+    };
+  }
+
   // ---------- 結算 ----------
 
   /** 最後一擊：畫面放慢、敵人碎成星屑、「淨化完成」字樣，再進結算 */
@@ -673,6 +708,7 @@ class BattleView {
     let loreGained: ResultNote[] = [];
     // 結算前的圖鑑：掉落卡是不是第一次獲得（NEW）
     const ownedBefore = [...getSave().collection.owned];
+    let oathNote: ResultNote | null = null;
     if (this.policy.grantsRewards) {
       const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
       const ctx = stageContext(gameData.stages, gameData.events);
@@ -688,8 +724,12 @@ class BattleView {
       // 星骸殘頁：首次通關有殘頁的關卡（progression/lore.ts）
       const lore = grantLorePage(exp.save, this.s.stage.id, firstClear, gameData.lore!);
       loreGained = loreNotes(lore);
+      // 誓約碑：沒續戰才給、本週同關要更高點數才補差額（progression/oaths.ts）
+      const oath = this.settleOaths(lore.save, result.continues);
+      oathNote = oath.note;
       // 發獎與清掉進行中的戰鬥同一次寫入，重新整理不會重複領或重骰掉落
-      commit({ ...lore.save, activeBattle: null });
+      commit({ ...oath.save, activeBattle: null });
+      for (const c of oath.cards) bus.emit('cardObtained', { cardId: c.cardId, uid: c.uid, source: 'reward' });
       clear = done.result;
       bus.emit('stageCleared', { stageId: this.s.stage.id, turns: result.turns, stars: clear.stars });
       for (const d of clear.drops) bus.emit('cardObtained', { cardId: d.cardId, uid: d.uid, source: 'drop' });
@@ -700,6 +740,7 @@ class BattleView {
       const notice = unlockNotice(this.s.stage);
       if (notice.note) notes.push(notice.note);
     }
+    if (oathNote) notes.push(oathNote);
     const records = this.records?.newRecordTexts() ?? [];
     if (records.length) notes.push({ text: records.join('、'), chip: records.length > 1 ? `🏆 新紀錄 ×${records.length}` : '🏆 新紀錄' });
     notes.push(...loreGained);

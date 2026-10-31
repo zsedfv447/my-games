@@ -13,6 +13,8 @@ import { stageContext } from '../stage-nav';
 import { buildSortieTeam, chosenHelper, describeTeamRule, ensureHelper, sortieProblem, VIOLATION_TEXT } from '../sortie';
 import { commit, getSave, growth } from '../state';
 import { armBattle } from './battle';
+import { applyOathTeam, oathEligible, oathTeamProblem } from '../../progression/oaths';
+import { chosenOaths, oathStelePanel } from '../oath-stele';
 import { confirmNewBattle } from '../battle-session';
 import { npcAvatar, rosterFor } from './helper';
 import { HELPER_NPCS, stageAllowsHelper } from '../../progression/helpers';
@@ -101,11 +103,17 @@ export const prepareScreen: ScreenDef = {
     const save = getSave();
     const helperAllowed = stageAllowsHelper(stage);
     if (helperAllowed) ensureHelper(stage.id, rosterFor(stage));
-    const team = buildSortieTeam(stage, save, growth.card);
+    // 誓約碑（已通關的主線關卡）：不帶助戰、只帶 4 人會改變出戰隊伍
+    const oaths = oathEligible(stage, save) ? chosenOaths(stage.id) : [];
+    const baseTeam = buildSortieTeam(stage, save, growth.card);
+    const sortie = applyOathTeam(baseTeam, oaths);
+    const sortieCards = applyOathTeam({ members: baseTeam.cards, helper: baseTeam.helperCard ?? null }, oaths);
+    const team = { ...baseTeam, ...sortie, cards: sortieCards.members, helperCard: sortieCards.helper ?? undefined };
     const pickHelper = () => nav.go('helper', [stage.id], { from: 'prepare' });
     const npc = !team.borrowed && team.helperCard ? HELPER_NPCS.find((n) => n.id === chosenHelper(stage.id)?.npcId) : undefined;
     const helperLeader = team.helperCard?.leaderSkill ? growth.leaderSkill(team.helperCard.leaderSkill) : undefined;
     const problem = sortieProblem(stage, team);
+    const oathProblem = oathTeamProblem(oaths, team.cards, team.helperCard ?? null);
     const rules = describeTeamRule(stage.teamRule, archetypeName, cardName);
     const gotStars = stageStars(save, stage);
     const fastest = recordsOf(save).fastestTurns[stage.id];
@@ -123,7 +131,7 @@ export const prepareScreen: ScreenDef = {
         : enterStage(getSave(), stage, ctx, gameData.config, now, sortie);
       if (!entered.ok) return toast(ENTER_ERRORS[entered.reason] ?? entered.reason);
       commit(entered.save);
-      armBattle(stage.id);
+      armBattle(stage.id, undefined, oaths);
       // 第一次挑戰時先播關卡開場劇情（progression/stage-story.ts），播完直接進戰鬥
       const saved = getSave();
       const before = stageStoryToPlay(stage, 'before', gameData.story, saved.progress.storySeen, !stageCleared(saved, stage));
@@ -184,14 +192,16 @@ export const prepareScreen: ScreenDef = {
         { title: '星章挑戰' },
         h('div', { class: 'list' }, stage.stars!.map((c, i) => h('div', { class: 'row small-text' }, h('span', { class: 'stars', style: { opacity: gotStars[i] ? '1' : '0.3' } }, '★'), starText(c)))),
       ),
+      oathEligible(stage, save) && oathStelePanel(stage, () => nav.replace('prepare', [stage.id])),
       stageRewardPanel(stage, stage.rewards.periodFirstClear
         ? periodFirstClearClaimed(save, stage, gameData.events, Date.now())
         : stageCleared(save, stage)),
       // 出發列固定在畫面底部（375×812 不用捲到最下面才能出發），上面的內容照常捲動
       h('div', { class: 'sortie-bar' },
         problem && h('p', { class: 'small-text sortie-problem' }, VIOLATION_TEXT[problem]),
+        oathProblem && h('p', { class: 'small-text sortie-problem' }, oathProblem),
         // data-tut：新手教學用來指向出發鈕
-        h('div', { 'data-tut': 'sortie' }, button('出發', { variant: 'primary', block: true, icon: 'sword', disabled: !!problem, cost: { kind: 'stamina', amount: stage.stamina }, onClick: start }))),
+        h('div', { 'data-tut': 'sortie' }, button('出發', { variant: 'primary', block: true, icon: 'sword', disabled: !!problem || !!oathProblem, cost: { kind: 'stamina', amount: stage.stamina }, onClick: start }))),
     );
   },
 };
