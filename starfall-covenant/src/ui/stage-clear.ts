@@ -8,7 +8,7 @@ import { button } from './components/basic';
 import { markJustUnlocked, stageContext, stageListPath } from './stage-nav';
 import type { ResultNote } from './components/reward-reveal';
 import { growth } from './state';
-import { ABYSS_FLOORS, abyssLock, abyssStageId, parseAbyssId } from '../progression/abyss';
+import { abyssLock, abyssStageId, parseAbyssId } from '../progression/abyss';
 import { armBattle } from './battle-session';
 import { findStage } from './stage-lookup';
 import { baseIdOf, eclipseIdOf, eclipseLockReason, isEclipseId } from '../progression/eclipse';
@@ -60,7 +60,8 @@ export function nextStageButton(stage: StageDef, save: SaveData, go: (path: stri
   if (abyss) {
     const now = Date.now();
     const floor = abyss.floor + 1;
-    if (floor > ABYSS_FLOORS || abyssLock(save, abyss.week, floor, now)) return null;
+    // 第 30 層之後是無盡層，可以一直往上
+    if (abyssLock(save, abyss.week, floor, now)) return null;
     const nextId = abyssStageId(abyss.week, floor);
     return button('下一層', { variant: 'primary', onClick: () => { armBattle(nextId); go(`battle/${nextId}`); } });
   }

@@ -10,7 +10,10 @@ import { completeStage, type BattleSummary, type StageClearResult, type StageCon
 import { grantReward } from './rewards';
 import { weekKey } from './time';
 
+/** 有獎勵的層數；之後是「無盡層」，強度照公式繼續上升、不給獎勵，只記最高層 */
 export const ABYSS_FLOORS = 30;
+/** 關卡 id 接受的最高層（防呆用，實際上爬不到） */
+const MAX_FLOOR = 999;
 /** 開放條件：主線通關 */
 export const ABYSS_UNLOCK_STAGE = 'st-5-9';
 /** 第 30 層的星輝結晶（growth 的進化素材）：每月取得量有上限，所以每週只給 1 顆 */
@@ -25,7 +28,7 @@ export function parseAbyssId(id: string): { week: string; floor: number } | null
   const m = /^abyss_(\d{4}-\d{2}-\d{2})_(\d+)$/.exec(id);
   if (!m) return null;
   const floor = Number(m[2]);
-  return floor >= 1 && floor <= ABYSS_FLOORS ? { week: m[1], floor } : null;
+  return floor >= 1 && floor <= MAX_FLOOR ? { week: m[1], floor } : null;
 }
 
 /** 週種子：週鍵（例如 2026-10-26）的 FNV 雜湊 */
@@ -155,6 +158,8 @@ export function abyssFloor(week: string, floor: number, base: EnemyDef[]): Abyss
  * 一週最多：星晶 10、星核 6、星輝結晶 1。
  */
 export function abyssFloorReward(week: string, floor: number, _cards: Pick<CardDef, 'id'>[] = []): Reward | undefined {
+  // 無盡層（第 30 層之後）不給獎勵
+  if (floor > ABYSS_FLOORS) return undefined;
   const reward: Reward = {};
   const cardList: { card: string; count: number }[] = [];
   const core = STAR_CORES[abyssCoreAttribute(week)];
@@ -187,13 +192,24 @@ export interface AbyssProgress {
   best: number;
   /** 本週已領首通獎勵的層 */
   claimed: number[];
+  /** 歷來最高層（不隨換週重置，含無盡層） */
+  allTimeBest: number;
 }
 
-/** 目前這週的進度；存檔沒有或是上週的，就從 0 開始 */
+/** 目前這週的進度；存檔沒有或是上週的，本週從 0 開始，歷來最高層保留 */
 export function abyssProgress(save: SaveData, now: number): AbyssProgress {
   const week = weekKey(now);
   const a = save.abyss;
-  return a && a.week === week ? { week, best: a.best, claimed: [...a.claimed] } : { week, best: 0, claimed: [] };
+  const allTimeBest = Math.max(a?.allTimeBest ?? 0, a?.best ?? 0);
+  return a && a.week === week
+    ? { week, best: a.best, claimed: [...a.claimed], allTimeBest }
+    : { week, best: 0, claimed: [], allTimeBest };
+}
+
+/** 本週獎勵進度：已領的有獎勵層數／有獎勵的層數（無盡層不算） */
+export function abyssRewardProgress(week: string, claimed: number[]): { got: number; total: number } {
+  const rewardFloors = Array.from({ length: ABYSS_FLOORS }, (_, i) => i + 1).filter((f) => abyssFloorReward(week, f));
+  return { got: rewardFloors.filter((f) => claimed.includes(f)).length, total: rewardFloors.length };
 }
 
 export const isAbyssOpen = (save: SaveData) => save.progress.clearedStages.includes(ABYSS_UNLOCK_STAGE);
@@ -219,11 +235,15 @@ export function completeAbyssFloor(
   const done = completeStage(save, stage, summary, ctx, config, createRng(0), now, []);
   let s: SaveData = { ...done.save, progress: { ...done.save.progress, clearedStages: save.progress.clearedStages } };
   const p = abyssProgress(save, now);
-  // 週一跨過去才結算：獎勵照發，但不算進新一週的進度
-  if (parsed.week !== p.week) return { save: s, result: done.result };
+  // 週一跨過去才結算：獎勵照發，不算進新一週的進度，但歷來最高層照記
+  if (parsed.week !== p.week) {
+    const allTimeBest = Math.max(p.allTimeBest, parsed.floor);
+    return { save: { ...s, abyss: { ...(save.abyss ?? { week: p.week, best: 0, claimed: [] }), allTimeBest } }, result: done.result };
+  }
   const first = !p.claimed.includes(parsed.floor);
   const reward = first ? abyssFloorReward(parsed.week, parsed.floor, cards) : undefined;
   if (reward) s = grantReward(s, reward, config, now).save;
-  s = { ...s, abyss: { week: p.week, best: Math.max(p.best, parsed.floor), claimed: first ? [...p.claimed, parsed.floor] : p.claimed } };
+  const best = Math.max(p.best, parsed.floor);
+  s = { ...s, abyss: { week: p.week, best, claimed: first ? [...p.claimed, parsed.floor] : p.claimed, allTimeBest: Math.max(p.allTimeBest, best) } };
   return { save: s, result: { ...done.result, ...(reward ? { periodFirstClear: reward } : {}) } };
 }

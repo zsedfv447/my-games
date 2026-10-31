@@ -3,7 +3,7 @@ import { gameData } from '../src/data/load';
 import { createNewSave } from '../src/save/save';
 import {
   ABYSS_FLOORS, ABYSS_UNLOCK_STAGE, abyssFloor, abyssFloorReward, abyssLock, abyssOmen, abyssProgress, abyssStageId, abyssStrength,
-  abyssWeeklyTotal, completeAbyssFloor, parseAbyssId,
+  abyssRewardProgress, abyssWeeklyTotal, completeAbyssFloor, parseAbyssId,
 } from '../src/progression/abyss';
 import { weekKey } from '../src/progression/time';
 import { stageContext } from '../src/ui/stage-nav';
@@ -50,7 +50,9 @@ describe('星淵回廊產生器', () => {
       expect(f.stage.kind).toBe('abyss');
     }
     expect(parseAbyssId('st-1-1')).toBeNull();
-    expect(parseAbyssId(abyssStageId(WEEK, 31))).toBeNull();
+    // 第 30 層之後是無盡層，id 一樣能讀回
+    expect(parseAbyssId(abyssStageId(WEEK, 31))).toEqual({ week: WEEK, floor: 31 });
+    expect(parseAbyssId(abyssStageId(WEEK, 0))).toBeNull();
   });
 
   it('每週一個星象，同一週固定', () => {
@@ -82,7 +84,7 @@ describe('星淵回廊獎勵與進度', () => {
     expect(abyssLock(s, WEEK, 2, NOW)).toBe('previous');
     const cleared = { ...s, abyss: { week: WEEK, best: 7, claimed: [1, 2, 3, 4, 5, 6, 7] } };
     expect(abyssLock(cleared, WEEK, 8, NOW)).toBeNull();
-    expect(abyssProgress(cleared, NEXT_WEEK)).toEqual({ week: weekKey(NEXT_WEEK), best: 0, claimed: [] });
+    expect(abyssProgress(cleared, NEXT_WEEK)).toEqual({ week: weekKey(NEXT_WEEK), best: 0, claimed: [], allTimeBest: 7 });
     expect(abyssLock(cleared, WEEK, 1, NEXT_WEEK)).toBe('wrongWeek');
   });
 
@@ -96,7 +98,7 @@ describe('星淵回廊獎勵與進度', () => {
     const claimedBefore = completeAbyssFloor({ ...s, abyss: { week: WEEK, best: 10, claimed: [10] } }, stage, summary, ctx, config, NOW, gameData.cards);
     expect(first.save.player.gems).toBe(claimedBefore.save.player.gems + 3);
     expect(first.save.player.coin).toBe(s.player.coin + stage.rewards.coin);
-    expect(first.save.abyss).toEqual({ week: WEEK, best: 10, claimed: [10] });
+    expect(first.save.abyss).toEqual({ week: WEEK, best: 10, claimed: [10], allTimeBest: 10 });
     expect(first.save.progress.clearedStages).toEqual(s.progress.clearedStages);
     const again = completeAbyssFloor(first.save, stage, summary, ctx, config, NOW, gameData.cards);
     expect(again.result.periodFirstClear).toBeUndefined();
@@ -120,5 +122,36 @@ describe('星淵回廊的戰鬥與中途續戰', () => {
     // 重新整理後：重新產生同一層、用快照還原
     const again = resumeBattle(findStage(id)!, JSON.parse(JSON.stringify(battle.snapshot())), battleDataFor(findStage(id)!));
     expect(again.getState()).toEqual(battle.getState());
+  });
+});
+
+describe('無盡層（#116）', () => {
+  const ctx = stageContext(gameData.stages, gameData.events);
+
+  it('第 30 層之後可以繼續往上，強度照公式上升，沒有任何獎勵', () => {
+    const f31 = abyssFloor(WEEK, 31, base);
+    const f40 = abyssFloor(WEEK, 40, base);
+    expect(abyssStrength(f40.stage, f40.enemies)).toBeGreaterThan(abyssStrength(abyssFloor(WEEK, 30, base).stage, abyssFloor(WEEK, 30, base).enemies));
+    expect(abyssStrength(f31.stage, f31.enemies)).toBeGreaterThan(abyssStrength(abyssFloor(WEEK, 29, base).stage, abyssFloor(WEEK, 29, base).enemies));
+    for (const f of [31, 35, 40, 50]) expect(abyssFloorReward(WEEK, f, gameData.cards)).toBeUndefined();
+    const s = { ...opened(), abyss: { week: WEEK, best: 30, claimed: [] } };
+    expect(abyssLock(s, WEEK, 31, NOW)).toBeNull();
+    expect(abyssLock(s, WEEK, 32, NOW)).toBe('previous');
+  });
+
+  it('無盡層通關只記最高層；歷來最高層跨週保留，本週從 0 開始', () => {
+    const s = { ...opened(), abyss: { week: WEEK, best: 33, claimed: [30], allTimeBest: 33 } };
+    const r = completeAbyssFloor(s, abyssFloor(WEEK, 34, base).stage, summary, ctx, config, NOW, gameData.cards);
+    expect(r.result.periodFirstClear).toBeUndefined();
+    expect(r.save.abyss).toEqual({ week: WEEK, best: 34, claimed: [30, 34], allTimeBest: 34 });
+    const next = abyssProgress(r.save, NEXT_WEEK);
+    expect(next).toMatchObject({ best: 0, claimed: [], allTimeBest: 34 });
+    // 舊存檔沒有 allTimeBest：用那一週的 best 補上
+    expect(abyssProgress({ ...opened(), abyss: { week: WEEK, best: 12, claimed: [] } }, NEXT_WEEK).allTimeBest).toBe(12);
+  });
+
+  it('本週獎勵進度只算有獎勵的層', () => {
+    expect(abyssRewardProgress(WEEK, [])).toEqual({ got: 0, total: 6 });
+    expect(abyssRewardProgress(WEEK, [1, 5, 10, 31])).toEqual({ got: 2, total: 6 });
   });
 });

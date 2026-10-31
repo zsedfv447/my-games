@@ -1,4 +1,5 @@
 // 契印師手札：稱號與個人戰績（progression/records.ts）——出戰與勝率、最高 Combo、單回合最高傷害、最常用的隊長、各流派通關次數
+import { abyssProgress } from '../../progression/abyss';
 import { h } from '../dom';
 import { gameData } from '../../data/load';
 import { archetypeCounts, favoriteLeader, leaderRanking, recordsOf, starCount, winRate } from '../../progression/records';
@@ -30,6 +31,7 @@ export const notebookScreen: ScreenDef = {
     const title = equippedTitle(save, tctx);
     const unlocked = unlockedTitles(save, tctx).length;
     const freshTitles = newTitles(save, tctx).length;
+    const abyss = abyssProgress(save, Date.now());
     const stat = (label: string, value: string) => h('div', { class: 'note-stat' }, h('small', null, label), h('strong', null, value));
 
     return h(
@@ -49,7 +51,9 @@ export const notebookScreen: ScreenDef = {
           stat('勝率', r.battles ? `${Math.round(winRate(r) * 100)}%` : '—'),
           stat('最高 Combo', r.maxCombo ? fmt(r.maxCombo) : '—'),
           stat('單回合最高傷害', r.maxTurnDamage ? fmt(r.maxTurnDamage) : '—'),
-          stat('通關／星章', `${save.progress.clearedStages.length} 關・${starCount(save)} ★`)),
+          stat('通關／星章', `${save.progress.clearedStages.length} 關・${starCount(save)} ★`),
+          // 星淵回廊：本週最高與歷來最高（含第 30 層之後的無盡層）
+          abyss.allTimeBest > 0 && stat('星淵回廊', `本週 ${abyss.best} 層・歷來 ${abyss.allTimeBest} 層`)),
       ),
       panel(
         { title: '最常並肩的隊長' },

@@ -2,10 +2,10 @@
 import { h } from '../dom';
 import { gameData } from '../../data/load';
 import {
-  ABYSS_FLOORS, ABYSS_UNLOCK_STAGE, abyssFloor, abyssFloorReward, abyssLock, abyssOmen, abyssProgress, abyssWeeklyTotal, isAbyssOpen,
+  ABYSS_FLOORS, ABYSS_UNLOCK_STAGE, abyssFloor, abyssFloorReward, abyssOmen, abyssProgress, abyssRewardProgress, abyssWeeklyTotal, isAbyssOpen,
 } from '../../progression/abyss';
 import { formatCountdown } from '../../progression/events';
-import { badge, button, emptyState, icon, listItem, panel } from '../components/basic';
+import { badge, bar, button, emptyState, icon, listItem, panel } from '../components/basic';
 import { firstClearChip } from '../components/reward-reveal';
 import { toast } from '../components/overlay';
 import { armBattle, confirmNewBattle } from '../battle-session';
@@ -39,35 +39,55 @@ export const abyssScreen: ScreenDef = {
     const total = abyssWeeklyTotal(p.week, gameData.cards);
     const cardName = (id: string) => gameData.cards.find((c) => c.id === id)?.name ?? id;
     const totalText = [`星晶 ${total.gems}`, ...Object.entries(total.cards).map(([id, n]) => `${cardName(id)} ×${n}`)].join('、');
-    const rows = Array.from({ length: ABYSS_FLOORS }, (_, i) => i + 1).reverse().map((floor) => {
-      const { stage } = abyssFloor(p.week, floor, gameData.enemies);
-      const lock = abyssLock(save, p.week, floor, now);
-      const cleared = floor <= p.best;
+    const next = p.best + 1;
+    const endless = next > ABYSS_FLOORS;
+    const rewards = abyssRewardProgress(p.week, p.claimed);
+    /** 一層的列：已通過可以再挑戰；next 是目前要挑戰的層 */
+    const floorRow = (floor: number) => {
       const boss = floor % 5 === 0;
       const reward = abyssFloorReward(p.week, floor, gameData.cards);
-      const item = listItem({
+      const cleared = floor <= p.best;
+      return listItem({
         leading: icon(boss ? 'trophy' : 'tower'),
-        title: `第 ${floor} 層${boss ? '・Boss' : ''}`,
-        sub: lock ? '先通過下一層' : cleared ? '本週已通過・可以再挑戰' : '不耗體力',
+        title: `第 ${floor} 層${boss ? '・Boss' : ''}${floor > ABYSS_FLOORS ? '・無盡' : ''}`,
+        sub: cleared ? '本週已通過・可以再挑戰' : floor > ABYSS_FLOORS ? '無盡層：不給獎勵，只記最高層' : '不耗體力',
         trailing: h('div', { class: 'row', style: { gap: '4px' } },
           reward && firstClearChip(reward, p.claimed.includes(floor), '本週首通'),
-          cleared ? badge('通過', 'gold') : !lock ? badge('挑戰') : icon('lock')),
-        onClick: () => (lock ? toast('先通過下一層') : void challenge(stage.id, nav)),
+          cleared ? badge('通過', 'gold') : badge('挑戰')),
+        onClick: () => void challenge(abyssFloor(p.week, floor, gameData.enemies).stage.id, nav),
       });
-      if (lock) item.classList.add('dimmed');
-      return item;
+    };
+    // 未開放的層收成一列（「第 N+1～30 層」），鎖定提示是「先通過第 N 層」
+    const lockedRow = !endless && next < ABYSS_FLOORS && listItem({
+      leading: icon('lock'),
+      title: `第 ${next + 1}～${ABYSS_FLOORS} 層`,
+      sub: `先通過第 ${next} 層・之後還有無盡層`,
+      trailing: icon('lock'),
+      onClick: () => toast(`先通過第 ${next} 層`),
+    });
+    if (lockedRow) lockedRow.classList.add('dimmed');
+    // 已通過的層也收合，點了才展開（由高到低）
+    const clearedList = h('div', { class: 'list', hidden: true });
+    const clearedRow = p.best > 0 && listItem({
+      leading: icon('history'),
+      title: `已通過 第 1～${p.best} 層`,
+      sub: '點一下展開，可以再挑戰',
+      onClick: () => {
+        clearedList.hidden = !clearedList.hidden;
+        if (!clearedList.childElementCount) clearedList.append(...Array.from({ length: p.best }, (_, i) => floorRow(p.best - i)));
+      },
     });
     return h('div', null,
       panel({ gold: true },
-        h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, '星淵回廊'), badge(`最高 ${p.best} 層`, 'gold')),
-        h('p', { class: 'small-text dim' }, `每週一 00:00 重置・剩 ${formatCountdown(Math.max(0, resetsAt(p.week) - now))}`),
-        h('p', { class: 'small-text' }, h('strong', null, `本週星象「${omen.name}」`), `：${omen.text}`),
-        h('p', { class: 'small-text dim' }, `每層第一次通過有獎勵，一週最多：${totalText}。不耗體力，不帶助戰。`),
-        // 樓層由高到低排，下一層在最下面；這裡直接給「挑戰下一層」
-        p.best < ABYSS_FLOORS
-          ? button(`挑戰第 ${p.best + 1} 層`, { variant: 'primary', block: true, icon: 'sword', onClick: () => void challenge(abyssFloor(p.week, p.best + 1, gameData.enemies).stage.id, nav) })
-          : h('p', { class: 'gold-text' }, '本週已登頂！下週一重新開始。')),
-      h('div', { class: 'list' }, rows),
+        h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, '星淵回廊'),
+          badge(endless ? `本週 ${ABYSS_FLOORS}/${ABYSS_FLOORS}・無盡 ${p.best} 層` : `本週 ${p.best}/${ABYSS_FLOORS} 層`, 'gold')),
+        h('div', { style: { margin: '8px 0 4px' } }, bar({ value: rewards.got, max: rewards.total, variant: 'gold', label: `本週獎勵 ${rewards.got}/${rewards.total}` })),
+        h('p', { class: 'small-text dim' }, `歷來最高 ${p.allTimeBest} 層・每週一 00:00 重置（剩 ${formatCountdown(Math.max(0, resetsAt(p.week) - now))}）`),
+        button(endless ? `挑戰第 ${next} 層（無盡）` : `挑戰第 ${next} 層`, { variant: 'primary', block: true, icon: 'sword', onClick: () => void challenge(abyssFloor(p.week, next, gameData.enemies).stage.id, nav) }),
+        h('p', { class: 'small-text', style: { marginTop: '8px' } }, h('strong', null, `本週星象「${omen.name}」`), `：${omen.text}`),
+        h('p', { class: 'small-text dim' }, `第 1～${ABYSS_FLOORS} 層第一次通過有獎勵，一週最多：${totalText}。第 ${ABYSS_FLOORS} 層之後是無盡層，不給獎勵，只記最高層。不耗體力，不帶助戰。`)),
+      h('div', { class: 'list' }, floorRow(next), lockedRow, clearedRow),
+      clearedList,
     );
   },
 };

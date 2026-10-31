@@ -125,7 +125,8 @@ function abyssTile(save: SaveData, now: number): AdventureTile {
     return { icon: 'tower', title: '星淵回廊', sub: `通過「${name}」後開放`, to: ['abyss', []], locked: true };
   }
   const p = abyssProgress(save, now);
-  return { icon: 'tower', title: '星淵回廊', sub: `每週重置・本週 ${p.best}/${ABYSS_FLOORS} 層`, to: ['abyss', []], dot: p.best < ABYSS_FLOORS };
+  const sub = p.best > ABYSS_FLOORS ? `本週已登頂・無盡 ${p.best} 層` : `每週重置・本週 ${p.best}/${ABYSS_FLOORS} 層`;
+  return { icon: 'tower', title: '星淵回廊', sub, to: ['abyss', []], dot: p.best < ABYSS_FLOORS };
 }
 
 /** 「其他」區的流派克星週小卡：本週主題、剩餘時間、推薦流派；還沒開放時寫開放條件並變灰 */
