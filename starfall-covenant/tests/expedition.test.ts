@@ -97,14 +97,27 @@ describe('星靈遠行：時間與收穫', () => {
     for (const c of a.cards ?? []) expect(allowed.has(c.card), c.card).toBe(true);
   });
 
-  it('4 小時以上至少帶回 1 顆微光，2 小時沒有保底', () => {
+  it('8 小時的遠行至少帶回 1 顆微光，4 小時以下沒有保底', () => {
     const one = [card('c406')!];
     for (let i = 0; i < 50; i++) {
-      const long = expeditionReward({ id: 'x', chapter: 1, uids: ['a'], hours: 4, startedAt: NOW + i }, one, 'beast');
+      const long = expeditionReward({ id: 'x', chapter: 1, uids: ['a'], hours: 8, startedAt: NOW + i }, one, 'beast');
       expect(long.cards?.find((c) => c.card === 'c910')?.count ?? 0).toBeGreaterThanOrEqual(1);
     }
-    const shortRuns = Array.from({ length: 50 }, (_, i) => expeditionReward({ id: 'x', chapter: 1, uids: ['a'], hours: 2, startedAt: NOW + i }, one, 'beast'));
-    expect(shortRuns.some((r) => !r.cards?.some((c) => c.card === 'c910'))).toBe(true);
+    for (const hours of [2, 4]) {
+      const runs = Array.from({ length: 50 }, (_, i) => expeditionReward({ id: 'x', chapter: 1, uids: ['a'], hours, startedAt: NOW + i }, one, 'beast'));
+      expect(runs.some((r) => !r.cards?.some((c) => c.card === 'c910')), `${hours}`).toBe(true);
+    }
+  });
+
+  it('極限玩法（8 小時不停派、3 張、種族全對）每天的經驗約 1.4 萬以內', () => {
+    let exp = 0;
+    const members = ['c109', 'c206', 'c306'].map((id) => card(id)!);
+    // 每天 3 隊 × 3 趟 = 9 趟，所以每天 = 平均每趟 × 9
+    for (let i = 0; i < 300; i++) {
+      const r = expeditionReward({ id: 'x', chapter: 1, uids: ['a', 'b', 'c'], hours: 8, startedAt: NOW + i * 7919 }, members, 'beast');
+      for (const c of r.cards ?? []) exp += (card(c.card)!.expValue ?? 0) * c.count;
+    }
+    expect((exp / 300) * 9).toBeLessThan(15000);
   });
 
   it('一天的收穫約等於一次每日關卡：3 隊 × 3 張 × 8 小時 × 2 輪，不加種族', () => {

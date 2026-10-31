@@ -22,9 +22,9 @@ export const EXPEDITION = {
   /** 種族對上星座的比例 × 50% */
   raceBonus: 0.5,
   /** 每「單位」（小時 × 人數加成 × 種族加成）的收穫期望值 */
-  perUnit: { coin: 35, dust: 0.03, glow: 0.005, flare: 0.0006, core: 0.004 },
-  /** 這個時數以上的遠行，至少帶回 1 顆微光（燭光、烈光的機率已經下修，讓一般玩法每天的總量不變） */
-  dustFloorHours: 4,
+  perUnit: { coin: 35, dust: 0.03, glow: 0.004, flare: 0.0005, core: 0.004 },
+  /** 這個時數以上的遠行，至少帶回 1 顆微光（燭光、烈光的機率已經下修：一般玩法每天約 8,200 經驗，極限約 1.4 萬） */
+  dustFloorHours: 8,
 } as const;
 
 const HOUR = 3_600_000;
