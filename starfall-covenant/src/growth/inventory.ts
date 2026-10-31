@@ -229,7 +229,7 @@ export function sortCards(
   stats?: (c: OwnedCard, def: CardDef) => { hp: number; atk: number; rcv: number },
 ): OwnedCard[] {
   const attrOrder = ['fire', 'water', 'wood', 'light', 'dark'];
-  const raceOrder = ['beast', 'dragon', 'machina', 'sylph', 'nether', 'human', 'material'];
+  const raceOrder = ['beast', 'dragon', 'machina', 'sylph', 'nether', 'human', 'god', 'material'];
   const value = (c: OwnedCard): number | string => {
     const def = ctx.card(c.cardId);
     if (!def) return 0;

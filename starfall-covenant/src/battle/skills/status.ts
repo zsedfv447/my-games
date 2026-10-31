@@ -58,6 +58,7 @@ export const STATUS_INFO: Record<StatusId, { name: string; side: StatusSide }> =
   delayImmune: { name: '不受延遲', side: 'enemy' },
   multiHit: { name: '連擊', side: 'enemy' },
   ringShield: { name: '七曜環', side: 'enemy' },
+  defenseDown: { name: '防禦降低', side: 'enemy' },
   attributeSeal: { name: '星紋封印', side: 'team' },
 };
 
@@ -106,6 +107,9 @@ export function defenseProfile(enemy: EnemyState): DefenseProfile {
   const profile: DefenseProfile = { attribute: enemy.def.attribute, def: enemy.def.def, ...ringDefense(enemy) };
   for (const s of enemy.statuses) {
     switch (s.id) {
+      case 'defenseDown':
+        profile.def = Math.floor(enemy.def.def * (100-Math.min(100,Math.max(0,s.value??0)))/100);
+        break;
       case 'shield':
         profile.shieldPercent = s.value ?? 100;
         break;

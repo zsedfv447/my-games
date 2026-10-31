@@ -1,4 +1,5 @@
 export const ASSISTANT_GOALS = [
+  {id:'norse',label:'流派：北歐強化爆發'}, {id:'greek',label:'流派：希臘同色連鎖'}, {id:'classicbeast',label:'流派：經典獸隊'},
   { id: 'puzzle', label: '本題目標' }, { id: 'clearcolor', label: '清空指定色' }, { id: 'ring', label: '七曜環破格' }, { id: 'absorb', label: '避免傷害吸收' },
   { id: 'auto', label: '智慧判斷' }, { id: 'damage', label: '最高傷害' }, { id: 'target', label: '擊倒指定敵人' },
   { id: 'survive', label: '優先生存' }, { id: 'heal', label: '優先補血' }, { id: 'maxcombo', label: '最多 Combo' },

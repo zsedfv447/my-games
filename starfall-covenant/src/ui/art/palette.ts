@@ -16,7 +16,7 @@ export const ATTRIBUTE_NAMES: Record<Attribute, string> = {
 export const ORB_NAMES: Record<OrbType, string> = { ...ATTRIBUTE_NAMES, heart: '心' };
 
 export const RACE_NAMES: Record<Race, string> = {
-  beast: '獸裔', dragon: '龍嗣', machina: '機構', sylph: '靈仙', nether: '冥裔', human: '人傑', material: '素材',
+  beast: '獸裔', dragon: '龍嗣', machina: '機構', sylph: '靈仙', nether: '冥裔', human: '人傑', god: '神族', material: '素材',
 };
 
 export const RARITY_FRAMES: Record<Rarity, { stops: string[]; glow?: string }> = {

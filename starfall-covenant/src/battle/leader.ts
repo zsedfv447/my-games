@@ -11,14 +11,14 @@
 // - 開場就決定的效果（生命、回復、轉珠時間、盤面大小、敵人 CD、技能初始冷卻）
 //   與每回合技能冷卻加速、強化珠天降）只看 always／teamAll 條件；帶其他條件的 rule 不會套用這些效果（lintLeaderSkill 會提醒）。
 
-import { ATTRIBUTES, type LeaderCondition, type OrbType, type LeaderEffect, type LeaderSkillDef, type UnitFilter } from '../core/types';
+import { ATTRIBUTES, type MatchedOrbSkyfall, type LeaderCondition, type OrbType, type LeaderEffect, type LeaderSkillDef, type UnitFilter } from '../core/types';
 import type { MatchGroup } from './board';
 import type { BattleMember, Hit } from './damage';
 
 const STATIC_CONDITIONS = new Set<LeaderCondition['type']>(['always', 'teamAll']);
 const STATIC_EFFECTS = new Set<LeaderEffect['type']>([
   'hpMultiplier', 'extendMoveTime', 'boardSize', 'enemyCooldownPlus', 'skillCooldownStart', 'allyCooldownPerTurn',
-  'enhancedSkyfall',
+  'enhancedSkyfall', 'matchedOrbSkyfall',
 ]);
 
 const asArray = <T>(v: T | T[] | undefined): T[] | undefined => (v === undefined ? undefined : Array.isArray(v) ? v : [v]);
@@ -49,6 +49,8 @@ export interface LeaderStaticResult {
   allyCooldownPerTurn: number;
   /** 天降強化珠機率（0–1），多個取最高 */
   enhancedSkyfall: number;
+  /** 同色消除生成強化珠；同色雙隊長在各段補珠時取最多顆，不相加。 */
+  matchedOrbSkyfall: MatchedOrbSkyfall[];
 }
 
 /** team 為全隊（含助戰）；leaders 依序為隊長、助戰的隊長技，可為 undefined */
@@ -61,6 +63,7 @@ export function evaluateLeaderStatic(leaders: (LeaderSkillDef | undefined)[], te
     skillsStartCharged: false,
     allyCooldownPerTurn: 0,
     enhancedSkyfall: 0,
+    matchedOrbSkyfall: [],
   };
   const ctx = { team } as LeaderTurnContext;
   for (const leader of leaders) {
@@ -91,6 +94,9 @@ export function evaluateLeaderStatic(leaders: (LeaderSkillDef | undefined)[], te
             break;
           case 'allyCooldownPerTurn':
             result.allyCooldownPerTurn += e.turns;
+            break;
+          case 'matchedOrbSkyfall':
+            result.matchedOrbSkyfall.push({orb:e.orb,count:e.count,spawn:e.spawn});
             break;
           case 'enhancedSkyfall':
             result.enhancedSkyfall = Math.max(result.enhancedSkyfall, e.rate);
@@ -374,8 +380,11 @@ export function checkLeaderTier(def: LeaderSkillDef, rarity: number): string[] {
   over('單條件數', p.maxConditions, tier.maxConditions);
   over('效果數', p.effects, tier.effects);
   over('攻擊倍率', Number(p.peakAtk.toFixed(3)), tier.peakAtk);
-  over('生命倍率', p.hp, tier.stat);
-  over('回復倍率', p.rcv, tier.stat);
+  // 經典 5★ 的純生命／純回復隊長以單一能力換取 2.5 倍；混合型仍走原上限。
+  const pureHp = rarity === 5 && p.effectTypes.size === 1 && p.effectTypes.has('hpMultiplier');
+  const pureRcv = rarity === 5 && p.effectTypes.size === 1 && p.effectTypes.has('rcvMultiplier');
+  over('生命倍率', p.hp, pureHp ? 2.5 : tier.stat);
+  over('回復倍率', p.rcv, pureRcv ? 2.5 : tier.stat);
   over('減傷', p.reduction, tier.reduction);
   over('固定追打', p.fixedFollowUp, tier.fixedFollowUp);
   over('百分比追打 %', p.percentFollowUp, tier.percentFollowUp);

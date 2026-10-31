@@ -8,7 +8,7 @@ import { findCard } from './save-ops';
 
 export const ATTRIBUTE_LABEL: Record<Attribute, string> = { fire: '焰', water: '潮', wood: '森', light: '輝', dark: '蝕' };
 export const RACE_LABEL: Record<Race, string> = {
-  beast: '獸裔', dragon: '龍嗣', machina: '機構', sylph: '靈仙', nether: '冥裔', human: '人傑', material: '素材',
+  beast: '獸裔', dragon: '龍嗣', machina: '機構', sylph: '靈仙', nether: '冥裔', human: '人傑', god: '神族', material: '素材',
 };
 export const ROLE_LABEL: Record<ArchetypeRole, string> = { leader: '隊長', core: '核心', support: '輔助' };
 

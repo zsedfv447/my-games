@@ -14,6 +14,7 @@ export interface StatusChip {
 }
 
 export const STATUS_NAMES: Record<StatusId, string> = {
+  defenseDown: '防禦降低',
   poison: '中毒',
   skillSeal: '技能封印',
   orbLock: '珠鎖',
@@ -34,6 +35,7 @@ export const STATUS_NAMES: Record<StatusId, string> = {
 };
 
 const STATUS_DETAILS: Record<StatusId, string> = {
+  defenseDown: '防禦力依比例降低，不會解除護盾',
   poison: '每回合損失生命',
   skillSeal: '無法施放主動技',
   orbLock: '部分珠子無法移動',
@@ -73,6 +75,7 @@ const turnsText = (t: number | null | undefined) => (t === null || t === undefin
 export function statusChip(s: StatusInstance, tone: ChipTone): StatusChip {
   let name = STATUS_NAMES[s.id] ?? s.id;
   const attr = s.params?.attribute;
+  if (s.id === 'defenseDown') name = `防禦−${s.value ?? 0}%`;
   if (s.id === 'comboShield' && s.value) name = `Combo≥${s.value}`;
   if (s.id === 'attributeShield' && typeof attr === 'string' && attr in ATTRIBUTE_NAMES) name = `${ATTRIBUTE_NAMES[attr as keyof typeof ATTRIBUTE_NAMES]}減傷`;
   if (s.id === 'attributeSeal') name = statusName(s.id, s.params);
@@ -94,6 +97,7 @@ export function enemyChips(e: EnemyState): StatusChip[] {
 export function buffChip(b: Buff): StatusChip {
   const left = `（剩 ${b.turns} 回合）`;
   switch (b.kind) {
+    case 'markAttack': return { text: `${ATTRIBUTE_NAMES[b.attribute]}印記×${b.multiplier.toFixed(1)}`, tone: 'buff', detail: `該屬性攻擊 ${b.multiplier.toFixed(1)} 倍；回合內造成有效同屬傷害後增加 ${b.step} 倍，最多 ${b.maxMultiplier} 倍，沒有造成有效同屬傷害則消失。` };
     case 'attack': return { text: `攻擊×${b.multiplier} ${b.turns}`, tone: 'buff', detail: `攻擊力 ${b.multiplier} 倍${left}` };
     case 'rcvToAtk': return { text: `回復轉攻 ${b.turns}`, tone: 'buff', detail: `回復力的 ${b.ratio} 倍加到攻擊力${left}` };
     case 'reduceDamage': return { text: `減傷${b.percent}% ${b.turns}`, tone: 'buff', detail: `受到的傷害減少 ${b.percent}%${left}` };

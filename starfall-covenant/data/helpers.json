@@ -153,5 +153,47 @@
       { "card": "c503", "after": "st-5-9" }
     ],
     "quote": "再硬的殼，燈火一樣照得進去。"
+  },
+  {
+    "id": "npc-norse",
+    "name": "霜港・艾凜",
+    "title": "守候潮汐的北境旅人",
+    "archetype": "norse",
+    "unlockAfter": "st-5-9",
+    "tiers": [
+      {
+        "card": "c801",
+        "after": null
+      }
+    ],
+    "quote": "把力量留在最亮的那一刻，我會替你守住後方。"
+  },
+  {
+    "id": "npc-greek",
+    "name": "潮紋・伊歐",
+    "title": "追尋海神印記的航海士",
+    "archetype": "greek",
+    "unlockAfter": "st-5-9",
+    "tiers": [
+      {
+        "card": "c806",
+        "after": null
+      }
+    ],
+    "quote": "先聚起眼前的潮水，下一道浪會自己找到岸。"
+  },
+  {
+    "id": "npc-classicbeast",
+    "name": "暮影・阿墨",
+    "title": "與古獸同行的巡林人",
+    "archetype": "classicbeast",
+    "unlockAfter": "st-1-3",
+    "tiers": [
+      {
+        "card": "c811",
+        "after": null
+      }
+    ],
+    "quote": "別急著衝出去，大家站穩了再一起上。"
   }
 ]

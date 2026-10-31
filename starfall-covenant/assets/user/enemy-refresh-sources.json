@@ -196,14 +196,27 @@
     {
       "enemyId": "e0053",
       "asset": "assets/user/enemies/e0053-refresh.webp",
-      "sourceCardId": 210,
-      "sourceName": "黃昏號角洛基",
-      "reason": "暗屬披甲武將",
-      "sourcePackPath": "03-community-repositories/islu__TOS/image/monster/210n.png",
-      "sourceUrl": "https://raw.githubusercontent.com/islu/TOS/main/image/monster/210n.png",
+      "sourceCardId": 690,
+      "sourceName": "邪譽承傳 ‧ 暗影劍豪",
+      "reason": "暗色披甲持劍武將，作為原創敵人配圖；不宣稱同一角色。原210洛基圖移作c805本體，避免同圖重複。",
+      "sourcePackPath": "03-community-repositories/islu__TOS/image/monster/690n.png",
+      "sourceUrl": "https://raw.githubusercontent.com/islu/TOS/main/image/monster/690n.png",
       "sourcePage": "https://github.com/islu/TOS",
-      "sourceSha256": "f2f1a74ca2635def9d6b8e88e73a8a24739b6ab4068ae10b06faedf4543848ec",
-      "outputSha256": "e69cc95cfa36d005155dda38dbfcea68a1c002259591d80130d5570da22a1e0a"
+      "sourceSha256": "be71b089f746eb4daeac53186edb42257e4abece7b678ea056b6bf41a06aa3f5",
+      "outputSha256": "4019fee18af6e5fd8067d429c7bdc28e0fc645a24d138b22b1773efb196eb01d",
+      "transformation": "Pillow WebP quality=90 method=6 exact=True; no crop/resize",
+      "supersededSource": {
+        "enemyId": "e0053",
+        "asset": "assets/user/enemies/e0053-refresh.webp",
+        "sourceCardId": 210,
+        "sourceName": "黃昏號角洛基",
+        "reason": "暗屬披甲武將",
+        "sourcePackPath": "03-community-repositories/islu__TOS/image/monster/210n.png",
+        "sourceUrl": "https://raw.githubusercontent.com/islu/TOS/main/image/monster/210n.png",
+        "sourcePage": "https://github.com/islu/TOS",
+        "sourceSha256": "f2f1a74ca2635def9d6b8e88e73a8a24739b6ab4068ae10b06faedf4543848ec",
+        "outputSha256": "e69cc95cfa36d005155dda38dbfcea68a1c002259591d80130d5570da22a1e0a"
+      }
     },
     {
       "enemyId": "e0054",
@@ -384,6 +397,19 @@
       "sourcePage": "https://github.com/islu/TOS",
       "sourceSha256": "7d2b75bc842b85c9b0ec0b594a5dd9e31bcf2ea83a4734237e4c06a0cb6ba45a",
       "outputSha256": "a0b413f84845a5ec81bcda0ed1b744c02ea0956dc472189e6e36a1fa74168190"
+    },
+    {
+      "enemyId": "e0039",
+      "asset": "assets/user/enemies/e0039-refresh.webp",
+      "sourceCardId": 815,
+      "sourceName": "冥府守門者 ‧ 涅蒂",
+      "reason": "暗色冥府守門者、多人物造型，作為原創敵人配圖；不宣稱同一角色。覆蓋舊190魔羊圖以免與c812重複。",
+      "sourcePackPath": "03-community-repositories/islu__TOS/image/monster/815n.png",
+      "sourceUrl": "https://raw.githubusercontent.com/islu/TOS/main/image/monster/815n.png",
+      "sourcePage": "https://github.com/islu/TOS",
+      "sourceSha256": "6abd8983df1609aa85eba8df8b0468c8f4fe20d488f390b08077b7624f12287d",
+      "outputSha256": "100632759976aa74576b265a12c753259715fef6c55c0bdd4932c377bbe7ebdd",
+      "transformation": "Pillow WebP quality=90 method=6 exact=True; no crop/resize"
     }
   ]
 }

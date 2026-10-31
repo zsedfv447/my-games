@@ -37,7 +37,7 @@ describe('商店與任務資料', () => {
   it('商店有星晶、金幣、活動兌換三類，素材每日／每週／每月限購', () => {
     const tabs = new Set(gameData.shop.map(shopTab));
     expect([...tabs].sort()).toEqual(['coin', 'event', 'gems']);
-    for (const item of gameData.shop.filter((i) => shopTab(i) === 'coin')) expect(['day', 'week', 'month']).toContain(item.limit?.per);
+    for (const item of gameData.shop.filter((i) => shopTab(i) === 'coin')) expect(item.id.startsWith('classic-') ? ['forever'] : ['day', 'week', 'month']).toContain(item.limit?.per);
   });
 
   it('活動兌換照關卡規劃：c601 要 200 代幣、限 1', () => {

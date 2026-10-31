@@ -93,4 +93,14 @@ describe('轉珠助手：純規劃及首消預測',()=>{
     expect(p.forecast.constraintsMet).toBe(true);expect(p.forecast.combo).toBe(2);
   });
 
+  it('北歐要求主屬強化，希臘優先主屬，經典獸依獸員實際屬性與生存',()=>{
+    const a=input();a.state.team[0].attribute='fire';a.request={goal:'norse'};
+    expect(evaluateAssistantBoard(a.state.board,a).goalAchieved).toBe(false);
+    a.state.board.cells[0].enhanced=true;expect(evaluateAssistantBoard(a.state.board,a).goalAchieved).toBe(true);
+    a.request={goal:'greek'};expect(evaluateAssistantBoard(a.state.board,a).goalAchieved).toBe(true);
+    a.state.team[0].race='beast';a.state.enemies=[];a.request={goal:'classicbeast'};
+    expect(evaluateAssistantBoard(a.state.board,a).goalAchieved).toBe(true);
+    a.state.team[0].race='god';expect(evaluateAssistantBoard(a.state.board,a).goalAchieved).toBe(false);
+  });
+
 });

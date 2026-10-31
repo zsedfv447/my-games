@@ -1486,5 +1486,250 @@
       }
     ],
     "description": "人傑攻擊 1.5 倍、受到傷害減少 20%（2 回合）。"
+  },
+  {
+    "id": "s801",
+    "name": "符石強化 ‧ 水",
+    "cooldown": {
+      "max": 19,
+      "min": 8
+    },
+    "effects": [
+      {
+        "type": "enhanceOrbs",
+        "orbs": "water"
+      }
+    ],
+    "description": "將盤面上的水珠全部轉為水強化珠。"
+  },
+  {
+    "id": "s802",
+    "name": "符石強化 ‧ 火",
+    "cooldown": {
+      "max": 19,
+      "min": 8
+    },
+    "effects": [
+      {
+        "type": "enhanceOrbs",
+        "orbs": "fire"
+      }
+    ],
+    "description": "將盤面上的火珠全部轉為火強化珠。"
+  },
+  {
+    "id": "s803",
+    "name": "符石強化 ‧ 木",
+    "cooldown": {
+      "max": 19,
+      "min": 8
+    },
+    "effects": [
+      {
+        "type": "enhanceOrbs",
+        "orbs": "wood"
+      }
+    ],
+    "description": "將盤面上的木珠全部轉為木強化珠。"
+  },
+  {
+    "id": "s804",
+    "name": "符石強化 ‧ 光",
+    "cooldown": {
+      "max": 19,
+      "min": 8
+    },
+    "effects": [
+      {
+        "type": "enhanceOrbs",
+        "orbs": "light"
+      }
+    ],
+    "description": "將盤面上的光珠全部轉為光強化珠。"
+  },
+  {
+    "id": "s805",
+    "name": "符石強化 ‧ 暗",
+    "cooldown": {
+      "max": 19,
+      "min": 8
+    },
+    "effects": [
+      {
+        "type": "enhanceOrbs",
+        "orbs": "dark"
+      }
+    ],
+    "description": "將盤面上的暗珠全部轉為暗強化珠。"
+  },
+  {
+    "id": "s806",
+    "name": "水屬印記",
+    "cooldown": {
+      "max": 19,
+      "min": 10
+    },
+    "effects": [
+      {
+        "type": "markAttack",
+        "attribute": "water",
+        "initialMultiplier": 1.4,
+        "step": 0.2,
+        "maxMultiplier": 2.2
+      }
+    ],
+    "description": "水屬性攻擊力先提升至 1.4 倍；每回合有造成水屬性傷害，下一回合再增加 0.2 倍，最高 2.2 倍。若該回合沒有造成水屬性傷害，印記消失。"
+  },
+  {
+    "id": "s807",
+    "name": "火屬印記",
+    "cooldown": {
+      "max": 19,
+      "min": 10
+    },
+    "effects": [
+      {
+        "type": "markAttack",
+        "attribute": "fire",
+        "initialMultiplier": 1.4,
+        "step": 0.2,
+        "maxMultiplier": 2.2
+      }
+    ],
+    "description": "火屬性攻擊力先提升至 1.4 倍；每回合有造成火屬性傷害，下一回合再增加 0.2 倍，最高 2.2 倍。若該回合沒有造成火屬性傷害，印記消失。"
+  },
+  {
+    "id": "s808",
+    "name": "木屬印記",
+    "cooldown": {
+      "max": 19,
+      "min": 10
+    },
+    "effects": [
+      {
+        "type": "markAttack",
+        "attribute": "wood",
+        "initialMultiplier": 1.4,
+        "step": 0.2,
+        "maxMultiplier": 2.2
+      }
+    ],
+    "description": "木屬性攻擊力先提升至 1.4 倍；每回合有造成木屬性傷害，下一回合再增加 0.2 倍，最高 2.2 倍。若該回合沒有造成木屬性傷害，印記消失。"
+  },
+  {
+    "id": "s809",
+    "name": "光屬印記",
+    "cooldown": {
+      "max": 19,
+      "min": 10
+    },
+    "effects": [
+      {
+        "type": "markAttack",
+        "attribute": "light",
+        "initialMultiplier": 1.4,
+        "step": 0.2,
+        "maxMultiplier": 2.2
+      }
+    ],
+    "description": "光屬性攻擊力先提升至 1.4 倍；每回合有造成光屬性傷害，下一回合再增加 0.2 倍，最高 2.2 倍。若該回合沒有造成光屬性傷害，印記消失。"
+  },
+  {
+    "id": "s810",
+    "name": "暗屬印記",
+    "cooldown": {
+      "max": 19,
+      "min": 10
+    },
+    "effects": [
+      {
+        "type": "markAttack",
+        "attribute": "dark",
+        "initialMultiplier": 1.4,
+        "step": 0.2,
+        "maxMultiplier": 2.2
+      }
+    ],
+    "description": "暗屬性攻擊力先提升至 1.4 倍；每回合有造成暗屬性傷害，下一回合再增加 0.2 倍，最高 2.2 倍。若該回合沒有造成暗屬性傷害，印記消失。"
+  },
+  {
+    "id": "s811",
+    "name": "防禦姿勢 ‧ 暗",
+    "cooldown": {
+      "max": 14,
+      "min": 5
+    },
+    "effects": [
+      {
+        "type": "convertOrbs",
+        "from": "light",
+        "to": "heart"
+      }
+    ],
+    "description": "將光珠轉為心珠。"
+  },
+  {
+    "id": "s812",
+    "name": "攻擊姿勢 ‧ 暗",
+    "cooldown": {
+      "max": 14,
+      "min": 5
+    },
+    "effects": [
+      {
+        "type": "convertOrbs",
+        "from": "heart",
+        "to": "dark"
+      }
+    ],
+    "description": "將心珠轉為暗珠。"
+  },
+  {
+    "id": "s813",
+    "name": "防禦姿勢 ‧ 火",
+    "cooldown": {
+      "max": 14,
+      "min": 5
+    },
+    "effects": [
+      {
+        "type": "convertOrbs",
+        "from": "wood",
+        "to": "heart"
+      }
+    ],
+    "description": "將木珠轉為心珠。"
+  },
+  {
+    "id": "s814",
+    "name": "防禦壁",
+    "cooldown": {
+      "max": 24,
+      "min": 15
+    },
+    "effects": [
+      {
+        "type": "reduceDamage",
+        "percent": 50,
+        "turns": 3
+      }
+    ],
+    "description": "3 回合內，受到的傷害減少 50%。"
+  },
+  {
+    "id": "s815",
+    "name": "護牆崩壞",
+    "cooldown": {
+      "max": 19,
+      "min": 10
+    },
+    "effects": [
+      {
+        "type": "reduceEnemyDefense",
+        "percent": 90,
+        "turns": 3
+      }
+    ],
+    "description": "3 回合內，全體敵人的防禦力減少 90%。"
   }
 ]

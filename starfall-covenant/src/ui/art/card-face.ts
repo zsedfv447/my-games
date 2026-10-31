@@ -8,7 +8,7 @@ import { escapeXml, rngFor } from './seed';
 export type CardFaceInput = Pick<CardDef, 'id' | 'name' | 'attribute' | 'race' | 'rarity'>;
 
 const RACE_GLYPHS: Record<Race, string> = {
-  beast: '獸', dragon: '龍', machina: '機', sylph: '靈', nether: '冥', human: '人', material: '材',
+  beast: '獸', dragon: '龍', machina: '機', sylph: '靈', nether: '冥', human: '人', god: '神', material: '材',
 };
 
 function frameGradient(id: string, rarity: Rarity): string {

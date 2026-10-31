@@ -6,7 +6,7 @@ const { stages, chapters } = gameData;
 const byKind = (kind: string) => stages.filter((s) => s.kind === kind);
 
 describe('關卡資料（docs/stage-plan.md）', () => {
-  it('數量：主線第 1～7 章各 9 關、每日 21、活動 10（獸王 5＋齒輪 5）、流派克星週 18（6 主題×3）、塔 30、試煉 12', () => {
+  it('數量：主線第 1～7 章各 9 關、每日 21、活動 10（獸王 5＋齒輪 5）、流派克星週 18（6 主題×3）、塔 30、試煉 15', () => {
     expect(chapters.map((c) => c.chapter)).toEqual([1, 2, 3, 4, 5, 6, 7]);
     for (const c of chapters) expect(byKind('main').filter((s) => s.chapter === c.chapter)).toHaveLength(9);
     expect(chapters[5].stageCount).toBe(9);
@@ -16,7 +16,7 @@ describe('關卡資料（docs/stage-plan.md）', () => {
     expect(byKind('event').filter((s) => !nemesis.has(s.event!))).toHaveLength(10);
     expect(byKind('event').filter((s) => nemesis.has(s.event!))).toHaveLength(18);
     expect(byKind('tower')).toHaveLength(30);
-    expect(byKind('trial')).toHaveLength(12);
+    expect(byKind('trial')).toHaveLength(15);
   });
 
   it('主線依序解鎖，每關都有推薦流派與 3 個星章', () => {
@@ -34,7 +34,7 @@ describe('關卡資料（docs/stage-plan.md）', () => {
     expect(Object.entries(count).filter(([, n]) => n < 3)).toEqual([]);
   });
 
-  it('12 個流派各有一關試煉，借用隊伍 5 人＋助戰，首通送隊長卡', () => {
+  it('15 個流派各有一關試煉，借用隊伍 5 人＋助戰，首通送隊長卡', () => {
     const trials = byKind('trial');
     expect(trials.map((s) => s.archetype).sort()).toEqual([...ARCHETYPE_IDS].sort());
     for (const t of trials) {

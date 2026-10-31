@@ -23,7 +23,7 @@ import type { Hit } from '../damage';
 import type { BattleState } from '../runtime';
 import { buffsOf, skyfallOptions } from './buffs';
 import { rowToOrb, twoColorBoard } from './board-ops';
-import { isDelayImmune } from './status';
+import { addStatus, isDelayImmune } from './status';
 
 export interface SkillOutcome {
   /** 要打到敵人身上的傷害（含技能連鎖追加） */
@@ -132,6 +132,13 @@ export function applyActiveSkill(state: BattleState, caster: number, skill: Acti
       }
       case 'surviveOnce':
         state.buffs.push({ kind: 'surviveOnce', turns: e.turns });
+        break;
+      case 'markAttack':
+        state.buffs = state.buffs.filter(b=>b.kind!=='markAttack'||b.attribute!==e.attribute);
+        state.buffs.push({kind:'markAttack',attribute:e.attribute,multiplier:Math.min(e.maxMultiplier,e.initialMultiplier??1+e.step),step:e.step,maxMultiplier:e.maxMultiplier,dealtDamage:false,turns:1});
+        break;
+      case 'reduceEnemyDefense':
+        state.enemies.forEach(enemy=>{if(enemy.hp>0)enemy.statuses=addStatus(enemy.statuses,{id:'defenseDown',value:e.percent,turns:e.turns});});
         break;
       case 'buffAttack':
         state.buffs.push({ kind: 'attack', target: e.target, multiplier: e.multiplier, turns: e.turns });

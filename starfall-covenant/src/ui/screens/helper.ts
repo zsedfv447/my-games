@@ -26,7 +26,8 @@ export function rosterFor(stage: StageDef): HelperOffer[] {
 }
 
 export function npcAvatar(npc: HelperNpcDef, size = 64): HTMLElement {
-  const url = userAsset('ui', npc.id);
+  const classicCard: Record<string,string> = {'npc-norse':'c801','npc-greek':'c806','npc-classicbeast':'c811'};
+  const url = classicCard[npc.id] ? userAsset('cards',classicCard[npc.id]) : userAsset('ui', npc.id);
   // 情誼滿 20 點的星契頭像框（純 CSS）
   return h('div', { class: ['npc-avatar', hasBondFrame(bondPoints(getSave(), npc.id)) && 'bond-frame'], style: { '--avatar': `${size}px` } },
     url ? h('img', { src: url, alt: npc.name, draggable: 'false', loading: 'lazy' }) : h('span', null, npc.name.split('・').pop()!.slice(0, 1)));

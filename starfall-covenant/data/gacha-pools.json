@@ -231,5 +231,48 @@
       ]
     },
     "period": null
+  },
+  {
+    "id": "classic-seal",
+    "name": "經典封印",
+    "cost": {
+      "gems": 5
+    },
+    "tenPullCost": {
+      "gems": 50
+    },
+    "rates": {
+      "6": 0.1,
+      "5": 0.9
+    },
+    "pity": {
+      "rarity": 6,
+      "after": 19
+    },
+    "tenPullGuarantee": {
+      "minRarity": 6
+    },
+    "cards": {
+      "6": [
+        "c801",
+        "c802",
+        "c803",
+        "c804",
+        "c805",
+        "c806",
+        "c807",
+        "c808",
+        "c809",
+        "c810"
+      ],
+      "5": [
+        "c811",
+        "c812",
+        "c813",
+        "c814",
+        "c815"
+      ]
+    },
+    "period": null
   }
 ]

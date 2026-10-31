@@ -23,7 +23,7 @@ const CATEGORIES: { label: string; goals: AssistantGoalId[] }[] = [
   { label: '智慧判斷', goals: ['auto'] },
   { label: '攻擊與生存', goals: ['damage', 'target', 'survive', 'heal', 'allattack', 'poison', 'stall', 'ring', 'absorb'] },
   { label: '盤面與連擊', goals: ['maxcombo', 'exactcombo', 'color', 'avoidcolor', 'rainbow', 'dual', 'chain', 'enhance', 'heartgroups', 'clearcolor'] },
-  { label: '隊伍流派', goals: ['mono', 'rainbow', 'combo', 'chain', 'heart', 'race', 'enhance', 'control', 'berserk', 'dual', 'skillcycle', 'fixed'] },
+  { label: '隊伍流派', goals: ['mono', 'rainbow', 'combo', 'chain', 'heart', 'race', 'enhance', 'control', 'berserk', 'dual', 'skillcycle', 'fixed', 'norse', 'greek', 'classicbeast'] },
   { label: '關卡星章', goals: ['star'] },
 ];
 function starLabel(star: StarCondition): string {

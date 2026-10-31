@@ -55,6 +55,7 @@ export function evaluateAssistantBoard(board: Board, input: AssistantInput): Ass
   if(['damage','auto','maxcombo','combo','heal','chain','enhance','heartgroups'].includes(request.goal))warnings.push('這是搜尋範圍內找到的最佳方案，未保證全域最優。');
   if(board.cells.some(o=>o.hidden)) warnings.push('盤面有隱藏珠，實際顏色不可見；建議先解除隱藏再規劃。');
   if(enemies.some(e=>e.def.abilities.some(a=>a.trigger==='onAttack'||a.trigger==='hpBelow'||a.trigger==='everyNTurns'))) warnings.push('敵人觸發技可能改變傷害或狀態；生存估算不含尚未觸發的技能。');
+  if(input.leaders.some(l=>l?.rules.some(r=>r.effects.some(e=>e.type==='matchedOrbSkyfall'))))warnings.push('同色消除生成的額外強化天降珠不計入首消預測；實際連鎖可能增加傷害與 Combo。');
   const heartGroups = groups.filter(g=>g.orb==='heart').length;
   const enhanced = groups.reduce((n,g)=>n+g.enhancedCount,0);
   const colorCount = c.minColorOrbs ? groups.filter(g=>g.orb===c.minColorOrbs!.color).reduce((n,g)=>n+g.cells.length,0) : 0;
@@ -72,7 +73,8 @@ export function evaluateAssistantBoard(board: Board, input: AssistantInput): Ass
     else if(star.type==='clearWithinTurns'&&s.turns+1>star.turns)warnings.push('已超過星章回合限制，轉珠無法補救。');
     else if(!(s.wave===s.waveCount-1&&f.enemyHp.length>0&&f.enemyHp.every(h=>h<=0)&&f.hpAfter>0))warnings.push('星章須待整場通關才會正式判定；這裡僅評估目前條件。');
   }
-  if(['race','control','skillcycle','fixed'].includes(request.goal))warnings.push('流派效果依目前隊伍、隊長技與狀態結算；轉珠本身不會改變種族、施放技能或賦予追打。');
+  if(['race','control','skillcycle','fixed','classicbeast'].includes(request.goal))warnings.push('流派效果依目前隊伍、隊長技與狀態結算；轉珠本身不會改變種族、施放技能或賦予追打。');
+  if(request.goal==='greek')warnings.push('希臘策略只最佳化首消主屬珠；後續同色強化天降與連鎖不作保證。');
   if(request.goal==='exactcombo'&&c.exactCombo===undefined)warnings.push('請先設定指定 Combo 數。');
   if(!f.goalAchieved) warnings.push('這條路徑尚未達成所有目標；不代表其他路徑一定不可行。');
   if(enemies.some(e=>ringOf(e)?.shattered)) warnings.push('已按攻擊批次後破環，再計算持續傷害。');
@@ -88,6 +90,9 @@ function goalProgress(f:AssistantForecast,input:AssistantInput): {value:number;a
   const damageRatio=f.damage*100/Math.max(1,s.enemies.reduce((n,e)=>n+e.hp,0));
   const stageCleared=s.wave===s.waveCount-1&&f.enemyHp.length>0&&f.enemyHp.every(h=>h<=0)&&f.hpAfter>0;
   switch(r.goal){
+    case 'norse': {const enhanced=f.groups.filter(g=>g.orb===main).reduce((n,g)=>n+g.enhancedCount,0);return result(count(main)*5+enhanced*20,count(main)>0&&enhanced>0);}
+    case 'greek': return result(f.groups.filter(g=>g.orb===main).length*30+count(main)*6,count(main)>=3);
+    case 'classicbeast': {const beastAttrs=[...new Set(s.team.filter(m=>m.race==='beast').map(m=>m.attribute))];return result(beastAttrs.filter(a=>f.colors.includes(a)).length*30+f.hpAfter*100/Math.max(1,s.maxHp),beastAttrs.length>0&&beastAttrs.every(a=>f.colors.includes(a))&&f.hpAfter>0);}
     case 'puzzle': { const g=input.puzzle?.goal; if(!g)return result(-1000,false);
       if(g.kind==='combo')return result(f.combo*20,f.combo>=g.combo);
       if(g.kind==='rainbow')return result(f.colors.length*30,f.colors.length>=g.colors);
