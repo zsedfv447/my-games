@@ -109,3 +109,12 @@ describe('關卡資料（docs/stage-plan.md）', () => {
     expect(gameData.config.newPlayer.starterCards).toEqual(['c106', 'c108', 'c208', 'c308', 'c408']);
   });
 });
+
+describe('星章條件', () => {
+  it('Combo 星章不超過盤面理論上限（一次轉珠最多「格數 ÷ 3」組，不靠天降）', () => {
+    const { cols, rows } = gameData.config.board;
+    const maxCombo = Math.floor((cols * rows) / 3);
+    const over = stages.flatMap((s) => (s.stars ?? []).filter((c) => c.type === 'maxCombo' && c.combo > maxCombo).map(() => s.id));
+    expect(over).toEqual([]);
+  });
+});
