@@ -76,7 +76,8 @@ describe('練習與教學不影響存檔', () => {
 
 describe('練習模式', () => {
   it('每種模式都有說明', () => {
-    expect(PRACTICE_MODES.map((m) => m.id)).toEqual(['normal', 'darkOrbs', 'attributeSeal', 'percentFollowUp', 'ringShield']);
+    // 機制示範在前，後面接戰術課（tests/drills.test.ts）
+    expect(PRACTICE_MODES.map((m) => m.id).slice(0, 5)).toEqual(['normal', 'darkOrbs', 'attributeSeal', 'percentFollowUp', 'ringShield']);
     for (const m of PRACTICE_MODES) expect(m.description.length).toBeGreaterThan(8);
   });
 
