@@ -10,6 +10,7 @@ import { userAsset } from '../assets';
 import { eventStatusText } from '../../progression/events';
 import { nemesisView } from '../nemesis';
 import { puzzleEntrySub } from './puzzle';
+import { openPracticePicker } from '../practice-picker';
 import type { Navigator, ScreenDef } from '../router';
 import type { IconName } from '../art/icons';
 import { audio } from '../audio';
@@ -27,10 +28,12 @@ export interface AdventureTile {
   badge?: string;
   /** 右上角紅點（今天還沒做、限時活動開放中） */
   dot?: boolean;
+  /** 點了不直接換頁、改做別的事（例如練習場先選模式） */
+  onClick?: (nav: Navigator) => void;
 }
 
 export function adventureTile(t: AdventureTile, nav: Navigator): HTMLElement {
-  return h('button', { type: 'button', class: 'adv-tile', onClick: () => { audio.play('tap'); nav.go(t.to[0], t.to[1]); } },
+  return h('button', { type: 'button', class: 'adv-tile', onClick: () => { audio.play('tap'); if (t.onClick) t.onClick(nav); else nav.go(t.to[0], t.to[1]); } },
     h('span', { class: 'adv-tile-icon' }, icon(t.icon)),
     h('strong', null, t.title),
     h('span', { class: 'adv-tile-sub' }, t.sub),
@@ -69,7 +72,8 @@ export const adventureScreen: ScreenDef = {
         to: ['stages', ['side']], badge: side.open && side.cleared < side.total ? 'NEW' : undefined,
       },
       { icon: 'constellation', title: '流派試煉', sub: `借現成隊伍體驗流派・已開放 ${trialsOpen} 關`, to: ['archetypes', []] },
-      { icon: 'sword', title: '練習場', sub: '示範隊伍練轉珠，不耗體力', to: ['battle', ['practice']] },
+      // 先選模式（一般／隱藏珠／星紋封印／百分比追打），每種附一句說明
+      { icon: 'sword', title: '練習場', sub: '練轉珠與敵人機制，不耗體力', to: ['battle', ['practice']], onClick: openPracticePicker },
     ];
 
     return h(
