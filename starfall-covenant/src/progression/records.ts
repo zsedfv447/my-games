@@ -21,6 +21,8 @@ export interface PlayerRecords {
   weeks?: Record<string, WeekStats>;
   /** 已經自動跳出過週報的那一週（週一日期）（選填） */
   reportShownFor?: string;
+  /** 星靈遠行累計領回次數（選填；稱號用） */
+  expeditionsReturned?: number;
 }
 
 /** 一週的戰績 */
@@ -84,9 +86,20 @@ export function emptyRecords(): PlayerRecords {
   return { battles: 0, wins: 0, maxCombo: 0, maxTurnDamage: 0, fastestTurns: {}, leaderClears: {}, archetypeClears: {} };
 }
 
-/** 讀存檔的戰績；舊存檔沒有這個欄位或缺欄位時補預設值 */
-export function recordsOf(save: Pick<SaveData, 'records'>): PlayerRecords {
-  return { ...emptyRecords(), ...save.records };
+/**
+ * 讀存檔的戰績；舊存檔沒有這個欄位或缺欄位時補預設值。
+ * 手札開始記錄前的存檔：勝場至少等於已通關的關卡數、出戰至少等於勝場（取最大值，不覆寫已有的紀錄，也不寫回存檔）。
+ */
+export function recordsOf(save: Pick<SaveData, 'records'> & { progress?: Pick<SaveData['progress'], 'clearedStages'> }): PlayerRecords {
+  const r = { ...emptyRecords(), ...save.records };
+  const cleared = save.progress?.clearedStages.length ?? 0;
+  const wins = Math.max(r.wins, cleared);
+  return { ...r, wins, battles: Math.max(r.battles, wins) };
+}
+
+/** 手札的勝場是不是用通關數估算的（舊存檔） */
+export function recordsEstimated(save: Pick<SaveData, 'records' | 'progress'>): boolean {
+  return (save.records?.wins ?? 0) < save.progress.clearedStages.length;
 }
 
 /**
@@ -160,4 +173,10 @@ export function archetypeCounts(r: PlayerRecords, ids: string[]): { id: string; 
 /** 存檔裡已拿到的星章總數 */
 export function starCount(save: Pick<SaveData, 'progress'>): number {
   return Object.values(save.progress.stars).reduce((sum, s) => sum + s.filter(Boolean).length, 0);
+}
+
+/** 星靈遠行領回一次（progression/expedition.ts 的 claimExpedition 呼叫） */
+export function addExpeditionReturn(save: SaveData): SaveData {
+  const r = { ...emptyRecords(), ...save.records };
+  return { ...save, records: { ...r, expeditionsReturned: (r.expeditionsReturned ?? 0) + 1 } };
 }

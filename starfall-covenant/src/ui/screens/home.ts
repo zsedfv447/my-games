@@ -11,6 +11,7 @@ import { cardPortraitUrl, cardThumb, emptySlot } from '../components/card-thumb'
 import { chapterProgress, nextMainStage, stageContext } from '../stage-nav';
 import { homeBadges, type HomeBadges } from '../economy';
 import { maybeShowLoginPopup } from './login-bonus';
+import { checklistSummary, weeklyChecklist } from '../weekly-checklist';
 import { openLimitedEvents } from '../event-order';
 import { eventStatusText } from '../../progression/events';
 import '../flow-polish.css';
@@ -60,6 +61,7 @@ export const homeScreen: ScreenDef = {
     const progress = chapter && chapterProgress(save, chapter.chapter, ctx, Date.now(), chapter.stageCount);
     const badges = homeBadges(save, Date.now());
     const title = equippedTitle(save, titleContext(save));
+    const contract = checklistSummary(weeklyChecklist(save, Date.now(), gameData));
     const dot = (to: string) => BADGE_OF[to] && badges[BADGE_OF[to]] && h('span', { class: 'badge dot', dataset: { badge: BADGE_OF[to] }, 'aria-label': '有可領取的獎勵' });
     const root = h(
       'div',
@@ -69,6 +71,9 @@ export const homeScreen: ScreenDef = {
         { class: 'home-hero' },
         bg ? h('img', { src: bg, alt: '' }) : svg(harborSvg()),
         h('div', { class: 'home-heading' }, h('span', null, 'STARFALL COVENANT'), h('h1', null, '星骸契約')),
+        // 本週契約（weekly-checklist.ts）：疊在主圖右上角，不佔版面高度；點了進任務頁「本週」分頁
+        contract && h('button', { type: 'button', class: ['home-contract', contract.done === contract.total && 'done'], onClick: () => { audio.play('tap'); nav.go('quests', ['contract']); } },
+          h('span', null, contract.text), h('span', { class: 'quest-arrow' }, '›')),
         portrait && h('button', { class: 'home-leader', type: 'button', 'aria-label': `查看隊長 ${leader!.name}`, onClick: () => nav.go('team') }, h('img', { src: portrait, alt: leader!.name, draggable: 'false' })),
         h('div', { class: 'home-side-links' }, SHORTCUTS.slice(0, 3).map((s) => h('button', { type: 'button', onClick: () => { audio.play('tap'); nav.go(s.to, s.args); } }, icon(s.icon), h('span', null, s.label), dot(s.to)))),
         h('div', { class: 'caption' }, h('div', { class: 'place' }, '契約之門'), h('div', { class: 'small-text dim' }, leader?.name ?? '見習契印師的起點'),

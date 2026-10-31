@@ -33,7 +33,8 @@ export function chapterConstellation(info: ChapterDef, opts: { claimable?: boole
   lastShown.set(info.chapter, lit);
   const n = fresh.filter(Boolean).length;
   if (n) window.setTimeout(() => audio.play('star'), 300);
-  return h('div', { class: ['constellation-box', opts.claimable && 'claimable'] }, svg(constellationSvg(layout, lit, { fresh, name: info.constellation })));
+  // 章節頁標題旁已有星座名徽章，圖上不再重複標示（結算與分享圖沒有標題，仍保留圖上的名字）
+  return h('div', { class: ['constellation-box', opts.claimable && 'claimable'] }, svg(constellationSvg(layout, lit, { fresh })));
 }
 
 /** 結算用的小星座：只點亮這一關這次新拿到的星章，並記為已看過（回到章節頁不重播） */
