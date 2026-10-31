@@ -24,3 +24,6 @@
 .bag-sell-bar .row .btn { flex: 1; }
 .material-exp { margin: 8px 0 0; font-size: 15px; color: var(--gold-soft); }
 .bag-cell .team-mark.expedition-mark { left: auto; right: 2px; color: #9fd8ff; border-color: #3d6f9a; }
+.bag-body { display: flex; flex-direction: column; gap: var(--gap); }
+.bag-search { width: 100%; box-sizing: border-box; min-height: 36px; padding: 0 12px; border-radius: 18px; border: 1px solid rgba(154, 164, 214, 0.35); background: rgba(6, 10, 31, 0.6); color: var(--text); font: inherit; font-size: 14px; }
+.bag-search::placeholder { color: var(--text-faint); }

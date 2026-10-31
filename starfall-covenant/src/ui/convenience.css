@@ -103,3 +103,11 @@
 /* ---------- 契約週報 ---------- */
 .weekly-report { text-align: left; }
 .weekly-leader { gap: 10px; align-items: flex-start; margin-top: 10px; }
+
+/* 選隊員時的比較 */
+.picker-preview { margin-bottom: 8px; padding: 8px; border-radius: var(--radius-s); background: rgba(6, 10, 31, 0.6); border: 1px solid rgba(242, 196, 90, 0.35); min-height: 32px; }
+.swap-preview .team-stats { margin-top: 6px; }
+.swap-delta { font-size: 11px; color: var(--text-dim); }
+.swap-delta.up { color: #7ff0b2; }
+.swap-delta.down { color: var(--danger); }
+.swap-preview .badge.danger { background: rgba(255, 93, 108, 0.16); border-color: var(--danger); color: #ffc4ca; }
