@@ -1,5 +1,6 @@
 // 任務「前往」：依任務的 counter 決定要帶玩家去哪個畫面（純函式，方便測試）
-import type { QuestDef, SaveData, StageDef } from '../core/types';
+import type { CardDef, QuestDef, SaveData, StageDef } from '../core/types';
+import { nurtureTarget } from '../progression/nurture';
 import { nextMainStage, stageContext } from './stage-nav';
 
 export interface QuestDestination {
@@ -14,8 +15,19 @@ function nextBattle(save: SaveData, stages: StageDef[], now: number): QuestDesti
 }
 
 /** 沒有對應畫面時回傳 null（按鈕維持「進行中」） */
-export function questDestination(quest: QuestDef, save: SaveData, stages: StageDef[], now: number): QuestDestination | null {
+export function questDestination(quest: QuestDef, save: SaveData, stages: StageDef[], now: number, cards: CardDef[] = []): QuestDestination | null {
   switch (quest.counter) {
+    // 養成之路：直接到目標卡的強化／進化畫面；還沒有這張卡時，先去拿得到它的關卡
+    case 'journeyEnhanced':
+    case 'journeyMaxLevel':
+    case 'journeyEvolved': {
+      const line = nurtureTarget(save, cards, stages);
+      if (line?.owned) return { name: quest.counter === 'journeyEvolved' ? 'evolve' : 'enhance', args: [line.owned.uid] };
+      if (line?.source) return { name: 'prepare', args: [line.source] };
+      return { name: 'cards', args: [] };
+    }
+    case 'journeyMaterials':
+      return { name: 'stages', args: ['daily'] };
     case 'stageClear:daily':
       return { name: 'stages', args: ['daily'] };
     case 'stageClear:event':

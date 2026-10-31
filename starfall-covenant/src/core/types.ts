@@ -324,7 +324,8 @@ export interface ShopItemDef {
 export interface QuestDef {
   id: string;
   /** starter：新手契約，一次性、不重置（存檔結構與成就相同） */
-  kind: 'daily' | 'weekly' | 'achievement' | 'starter';
+  /** journey：養成之路（接在新手契約之後的一次性引導，progression/nurture.ts） */
+  kind: 'daily' | 'weekly' | 'achievement' | 'starter' | 'journey';
   name: string;
   /** 由 progression 模組定義的計數器名稱，例如 'combo10'、'stageClear' */
   counter: string;

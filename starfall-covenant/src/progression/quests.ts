@@ -1,5 +1,6 @@
 // 任務與成就：把 bus 事件累加成計數器，每日／每週自動重置，達標後領獎
-import type { GameConfig, QuestDef, SaveData } from '../core/types';
+import type { CardDef, GameConfig, QuestDef, SaveData, StageDef } from '../core/types';
+import { nurtureSteps, nurtureTarget } from './nurture';
 import type { EventBus, GameEvents } from '../core/events';
 import { fail, ok, type SaveResult } from './result';
 import { grantReward } from './rewards';
@@ -29,6 +30,7 @@ import { bondLevel } from './helper-bond';
  *   helperBondTiers（已達成的同行情誼門檻數）、lorePages（收集到的殘頁數）、nemesisCleared（通過的流派克星週關卡數）、
  *   puzzleBestStreak（每日謎題最長連續天數）、collectionPercent（圖鑑完成度百分比，無條件捨去）
  * 新手契約（kind starter）跟成就一樣用終身計數、不重置；推算數值讓老玩家讀檔時就能直接算達成
+ * - 養成之路（kind journey）：journeyEnhanced／journeyMaxLevel／journeyMaterials／journeyEvolved，各為 0 或 1（nurture.ts）
  */
 export const COMBO_THRESHOLDS = [5, 8, 10] as const;
 const MAX_COUNTERS = new Set(['comboBest']);
@@ -47,6 +49,7 @@ export const DERIVED_COUNTERS = [
   'teamEdited', 'helperClears', 'puzzleSolved', 'chapterRewards', 'summoned', 'evolvedOwned',
   'maxCardLevel', 'starsEarned',
   'awakenedCards', 'cardBondScenes', 'helperBondTiers', 'lorePages', 'nemesisCleared', 'puzzleBestStreak', 'collectionPercent',
+  'journeyEnhanced', 'journeyMaxLevel', 'journeyMaterials', 'journeyEvolved',
 ] as const;
 export type DerivedCounters = Partial<Record<(typeof DERIVED_COUNTERS)[number], number>>;
 
@@ -58,6 +61,9 @@ export interface DerivedData {
   nemesisStages?: ReadonlySet<string>;
   /** 圖鑑總張數 */
   cardTotal?: number;
+  /** 養成之路挑目標卡用（沒給時養成之路的數值為 0） */
+  cards?: CardDef[];
+  stages?: StageDef[];
 }
 
 export function derivedCounters(
@@ -67,7 +73,14 @@ export function derivedCounters(
 ): DerivedCounters {
   const { evolvedForms = new Set<string>(), nemesisStages = new Set<string>(), cardTotal = 0 } = data;
   const cleared = (kind: string) => save.progress.clearedStages.filter((id) => stageKindOf(id) === kind).length;
+  const line = data.cards ? nurtureTarget(save, data.cards, data.stages ?? []) : null;
+  const steps = line ? nurtureSteps(save, line) : null;
+  const flag = (b: boolean | undefined) => (b ? 1 : 0);
   return {
+    journeyEnhanced: flag(steps?.enhanced),
+    journeyMaxLevel: flag(steps?.maxLevel),
+    journeyMaterials: flag(steps?.materials),
+    journeyEvolved: flag(steps?.evolved),
     playerLevel: save.player.level,
     cardsOwned: save.collection.owned.length,
     towerFloor: save.progress.towerFloor,
@@ -112,7 +125,7 @@ function teamEdited(save: SaveData): boolean {
 }
 
 /** 不重置、用終身計數的任務種類 */
-const LIFETIME_KINDS: QuestDef['kind'][] = ['achievement', 'starter'];
+const LIFETIME_KINDS: QuestDef['kind'][] = ['achievement', 'starter', 'journey'];
 
 /** quests.json 的 counter 只能用上面列出的名稱 */
 export const isKnownCounter = (name: string, kind: QuestDef['kind'] = 'achievement') =>

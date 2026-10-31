@@ -1044,5 +1044,53 @@
         }
       ]
     }
+  },
+  {
+    "id": "nj-enhance",
+    "kind": "journey",
+    "name": "養成之路一：強化你的夥伴",
+    "counter": "journeyEnhanced",
+    "target": 1,
+    "reward": {
+      "gems": 2,
+      "cards": [
+        {
+          "card": "c902",
+          "count": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "nj-max-level",
+    "kind": "journey",
+    "name": "養成之路二：把夥伴培養到滿級",
+    "counter": "journeyMaxLevel",
+    "target": 1,
+    "reward": {
+      "gems": 4,
+      "coin": 5000
+    }
+  },
+  {
+    "id": "nj-materials",
+    "kind": "journey",
+    "name": "養成之路三：收集進化素材",
+    "counter": "journeyMaterials",
+    "target": 1,
+    "reward": {
+      "gems": 3
+    }
+  },
+  {
+    "id": "nj-evolve",
+    "kind": "journey",
+    "name": "養成之路四：完成進化",
+    "counter": "journeyEvolved",
+    "target": 1,
+    "reward": {
+      "gems": 6,
+      "coin": 5000
+    }
   }
 ]

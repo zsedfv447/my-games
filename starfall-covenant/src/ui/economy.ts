@@ -29,6 +29,8 @@ const derivedData = {
   evolvedForms,
   nemesisStages: new Set(gameData.stages.filter((s) => s.event && nemesisEvents.has(s.event)).map((s) => s.id)),
   cardTotal: gameData.cards.length,
+  cards: gameData.cards,
+  stages: gameData.stages,
 };
 export const questDerived = (save: SaveData): DerivedCounters => derivedCounters(save, (id) => stageKind.get(id), derivedData);
 
