@@ -13,6 +13,7 @@ import { audio } from '../audio';
 import { icon, iconButton, resource } from './basic';
 import type { IconName } from '../art/icons';
 import { setOverlayHost } from './overlay';
+import { LABEL } from '../wording';
 
 const TAB_INFO: Record<TabId, { label: string; icon: IconName }> = {
   home: { label: '主城', icon: 'home' },
@@ -62,7 +63,7 @@ export class Shell {
       next && h('div', { class: 'row between' }, h('span', null, '下一點'), h('strong', null, next.replace('+1 ', ''))),
       h('div', { class: 'row between' }, h('span', null, staminaFullText(full))),
       h('p', { class: 'small-text dim', style: { margin: '0' } }, `每 ${gameData.config.stamina.regenMinutes} 分鐘回復 1 點，離線也會回復。`)), [
-      button('關閉', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
+      button(LABEL.close, { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
       button('去商店補充', { variant: 'primary', icon: 'shop', onClick: () => { dlg.close(); this.nav.go('shop'); } }),
     ]);
   }

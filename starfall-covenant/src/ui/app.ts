@@ -16,6 +16,7 @@ import { bus } from '../core/events';
 import { gameData } from '../data/load';
 import { subscribeQuestCounters } from '../progression/quests';
 import { installTutorial, type TutorialController } from './tutorial/controller';
+import { LABEL } from './wording';
 
 export function startApp(stage: HTMLElement): Router {
   installStageScaling(stage);
@@ -44,7 +45,7 @@ function warnBrokenSave(): void {
   const problem = getLoadProblem();
   if (!problem) return;
   const dlg = openDialog('存檔讀取失敗', `${loadErrorText(problem)}。目前的遊玩進度不會存檔，你可以重置存檔，或到設定匯入存檔碼。`, [
-    button('稍後再說', { variant: 'ghost', onClick: () => dlg.close() }),
+    button(LABEL.later, { variant: 'ghost', onClick: () => dlg.close() }),
     button('重置存檔', { variant: 'danger', onClick: () => { resetAll(); dlg.close(); } }),
   ], { dismissible: false });
 }

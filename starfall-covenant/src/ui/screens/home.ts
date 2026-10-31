@@ -17,6 +17,7 @@ import '../flow-polish.css';
 import { maybeOfferResume } from '../battle-session';
 import { equippedTitle } from '../../progression/titles';
 import { titleContext } from '../title-context';
+import { LABEL } from '../wording';
 
 /** 捷徑上的紅點：有可領的登入、任務、成就或圖鑑收集獎勵 */
 const BADGE_OF: Record<string, keyof HomeBadges> = { 'login-bonus': 'login', quests: 'quests', achievements: 'achievements', collection: 'collection', notebook: 'titles' };
@@ -90,7 +91,7 @@ export const homeScreen: ScreenDef = {
         { class: 'home-tiles' },
         SHORTCUTS.slice(3).map((s) => h('button', { type: 'button', class: 'tile', onClick: () => { audio.play('tap'); nav.go(s.to, s.args); } }, icon(s.icon), s.label, dot(s.to))),
       ),
-      button('練習轉珠', { variant: 'ghost', block: true, onClick: () => nav.go('battle', ['practice']) }),
+      button(LABEL.practice, { variant: 'ghost', block: true, onClick: () => nav.go('battle', ['practice']) }),
     );
     return root;
   },

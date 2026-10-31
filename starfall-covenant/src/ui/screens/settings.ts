@@ -7,6 +7,7 @@ import { commit, exportCode, getSave, getSettings, importCode, resetAll, updateS
 import { isTutorialActive, restartTutorial } from '../tutorial/flow';
 import { skipTutorialNow } from '../tutorial/skip';
 import type { ScreenDef } from '../router';
+import { LABEL } from '../wording';
 
 function showExport(): void {
   const code = exportCode();
@@ -19,7 +20,7 @@ function showExport(): void {
         void navigator.clipboard?.writeText(code).then(() => toast('已複製'), () => toast('請長按文字手動複製'));
       },
     }),
-    button('關閉', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
+    button(LABEL.close, { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
   ]);
 }
 

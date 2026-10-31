@@ -14,6 +14,7 @@ import { commit, getSave } from '../state';
 import { tutorialFirstPull } from '../tutorial/flow';
 import '../summon.css';
 import { bannerCopy } from '../summon-copy';
+import { LABEL } from '../wording';
 
 /** 新手教學的第一抽：限定和隊長合得來的夥伴（見 tutorial/flow.ts） */
 function firstPullOptions(save: SaveData, pool: GachaPoolDef): { firstFrom?: string[] } {
@@ -123,7 +124,7 @@ export const summonScreen: ScreenDef = {
       const pool = selected;
       const cost = pullCost(pool, count);
       const cancel = () => { confirming = false; dialog?.close(); dialog = undefined; };
-      const confirm = button('開啟封印', { variant: 'primary', onClick: () => {
+      const confirm = button(LABEL.summon, { variant: 'primary', onClick: () => {
         if (left || confirm.disabled) return;
         confirm.disabled = true;
         cancel();
@@ -133,7 +134,7 @@ export const summonScreen: ScreenDef = {
         setPending({ pool, count, results: result.results });
         ctx.nav.go('summon-ritual');
       } });
-      dialog = openDialog(count === 10 ? '十連封印' : '單次封印',
+      dialog = openDialog(count === 10 ? LABEL.summonTen : LABEL.summonOnce,
         h('div', null, h('p', null, `消耗 ${cost} 星晶，從「${pool.name}」召喚 ${count} 張卡片。`),
           h('p', { class: 'small-text dim' }, `目前持有 ${getSave().player.gems} 星晶。${count === 10 ? `至少獲得一張 ${pool.tenPullGuarantee.minRarity}★ 以上角色。` : ''}`)),
         [button('取消', { variant: 'ghost', sound: 'back', onClick: cancel }), confirm], { dismissible: false });
@@ -158,8 +159,8 @@ export const summonScreen: ScreenDef = {
         h('div', { class: 'seal-pity-strip' }, h('span', null, `十連必得 ${selected.tenPullGuarantee.minRarity}★ 以上`),
           h('strong', null, `再 ${pullsUntilPity(save, selected)} 抽必得 ${selected.pity.rarity}★`)),
         h('div', { class: 'seal-pull-actions' },
-          button(h('span', null, h('strong', null, '單次封印'), h('small', null, 'SUMMON × 1')), { variant: 'primary', disabled: !open, cost: { kind: 'gem', amount: pullCost(selected, 1) }, onClick: () => askPull(1) }),
-          button(h('span', null, h('strong', null, '十連封印'), h('small', null, 'SUMMON × 10')), { variant: 'primary', disabled: !open, cost: { kind: 'gem', amount: pullCost(selected, 10) }, onClick: () => askPull(10) })),
+          button(h('span', null, h('strong', null, LABEL.summonOnce), h('small', null, 'SUMMON × 1')), { variant: 'primary', disabled: !open, cost: { kind: 'gem', amount: pullCost(selected, 1) }, onClick: () => askPull(1) }),
+          button(h('span', null, h('strong', null, LABEL.summonTen), h('small', null, 'SUMMON × 10')), { variant: 'primary', disabled: !open, cost: { kind: 'gem', amount: pullCost(selected, 10) }, onClick: () => askPull(10) })),
         h('div', { class: 'seal-inventory' }, `卡片空位 ${Math.max(0, save.inventory.capacity - save.inventory.cards.length)} / ${save.inventory.capacity}`,
           h('span', null, '使用遊戲內星晶召喚')),
         h('p', { class: 'seal-disclaimer' }, `各封印保底分開計算，獲得 ${selected.pity.rarity}★ 以上即重置。召喚前可於「機率」查看本作卡池規則。`));
@@ -196,7 +197,7 @@ export const summonHistoryScreen: ScreenDef = {
   name: 'summon-history', title: '召喚紀錄', chrome: 'sub', parent: 'summon',
   render() {
     const history = getSave().gacha.history.slice().reverse();
-    if (!history.length) return emptyState('history', '尚無召喚紀錄', '開啟封印後，獲得的角色會記錄在這裡。');
+    if (!history.length) return emptyState('history', '尚無召喚紀錄', '召喚後，獲得的角色會記錄在這裡。');
     const root = h('div', { class: 'summon-info-screen' }, h('p', { class: 'small-text dim' }, `共 ${history.length} 筆，最多保存最近 1,000 筆。`));
     const list = h('div', { class: 'seal-history-list' });
     let shown = 0;

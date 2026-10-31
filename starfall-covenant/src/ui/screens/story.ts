@@ -10,6 +10,7 @@ import '../lore.css';
 import { storyBox } from '../components/story';
 import { commit, getSave } from '../state';
 import { type Navigator, type ScreenDef } from '../router';
+import { LABEL } from '../wording';
 
 export function markStorySeen(id: string): void {
   const save = getSave();
@@ -60,7 +61,7 @@ function player(id: string, next: string | undefined, nav: Navigator): HTMLEleme
     { style: { background: 'radial-gradient(80% 50% at 50% 35%, #2a3a85, #060a1f)' } },
     bg ? h('img', { src: bg, alt: '', style: { position: 'absolute', inset: '0', width: '100%', height: '100%', objectFit: 'cover' } }) : svg(starfieldSvg()),
     h('div', { class: 'story-chapter' }, storyTitle(id)),
-    h('button', { type: 'button', class: 'btn small ghost', style: { position: 'absolute', right: '12px', top: 'calc(12px + var(--safe-top, 0px))' }, onClick: done }, '略過'),
+    h('button', { type: 'button', class: 'btn small ghost', style: { position: 'absolute', right: '12px', top: 'calc(12px + var(--safe-top, 0px))' }, onClick: done }, LABEL.skip),
     storyBox(lines, done),
   );
 }
@@ -86,7 +87,7 @@ function pageHint(page: LorePage): string {
 
 function readPage(page: LorePage): void {
   const dlg = openDialog(page.title, h('div', { class: 'lore-text' }, page.text.map((t) => h('p', null, t))), [
-    button('闔上', { variant: 'primary', sound: 'back', onClick: () => dlg.close() }),
+    button(LABEL.close, { variant: 'primary', sound: 'back', onClick: () => dlg.close() }),
   ]);
 }
 

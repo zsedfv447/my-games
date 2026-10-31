@@ -18,6 +18,7 @@ import {
 import '../bag.css';
 import { cardBondPanel } from '../card-bond-view';
 import { closeBondStories } from '../bond-story';
+import { LABEL } from '../wording';
 
 let sortKey: SortKey = 'obtainedAt';
 // 篩選條件跨畫面保留（從卡片詳情返回時不會被清掉）
@@ -200,7 +201,7 @@ export const cardScreen: ScreenDef = {
       def.flavor && panel(null, h('p', { class: 'small-text dim' }, def.flavor)),
       !isMaterial && cardBondPanel(def),
       isMaterial
-        ? h('div', { class: 'row' }, lockBtn, !starCore && button('拿去強化…', { small: true, variant: 'primary', onClick: feed }))
+        ? h('div', { class: 'row' }, lockBtn, !starCore && button(LABEL.toEnhance, { small: true, variant: 'primary', onClick: feed }))
         : h('div', { class: 'row' }, lockBtn, button('強化', { small: true, onClick: () => nav.go('enhance', [owned.uid]) }), def.evolution && button('進化', { small: true, onClick: () => nav.go('evolve', [owned.uid]) })),
     );
   },
