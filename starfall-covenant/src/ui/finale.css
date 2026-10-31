@@ -1,0 +1,15 @@
+/* 穹頂篇片尾卡 */
+.finale { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; background: radial-gradient(80% 50% at 50% 35%, #2a3a85, #060a1f); }
+.finale > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.finale-card { position: relative; width: 84%; text-align: center; display: flex; flex-direction: column; gap: 14px; }
+.finale-title {
+  margin: 0; font-family: var(--font-title); font-size: 34px; letter-spacing: 0.3em; color: var(--gold-soft);
+  text-shadow: 0 0 18px rgba(242, 196, 90, 0.6); animation: finale-in 1200ms ease-out both;
+}
+.finale-lines { display: flex; flex-direction: column; gap: 8px; }
+.finale-lines p, .finale-closing, .finale-actions { margin: 0; opacity: 0; animation: finale-in 900ms ease-out both; }
+.finale-lines p { color: var(--text); font-size: 14px; }
+.finale-closing { margin-top: 10px; color: var(--text-dim); font-size: 13px; letter-spacing: 0.12em; }
+.finale-actions .btn { min-width: 140px; }
+@keyframes finale-in { from { opacity: 0; transform: translateY(8px); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
+@media (prefers-reduced-motion: reduce) { .finale-title, .finale-lines p, .finale-closing, .finale-actions { animation-duration: 1ms; animation-delay: 0ms !important; } }

@@ -8,7 +8,7 @@ import { getSave, growth } from './state';
 import { cardBondPoints } from '../progression/card-bond';
 import { bondPoints, npcForHelperCard } from '../progression/helper-bond';
 import { HELPER_NPCS } from '../progression/helpers';
-import { OATH_STORY_ID, oathLines } from './oath';
+import { COMPANION_LIGHT_STORY_ID, companionLightLines } from './companion-light';
 import { equippedTitle } from '../progression/titles';
 import { titleContext } from './economy';
 import type { ShareMember } from './share-plan';
@@ -57,13 +57,13 @@ export function shareClear(
   }, info?.chapter);
 }
 
-/** Boss 前劇情要額外加的句子（目前只有第 7 章終 Boss 的同伴之誓）；team 是戰鬥中的隊員（含助戰） */
+/** Boss 前劇情要額外加的句子（目前只有第 7 章終 Boss 的並肩之光）；team 是戰鬥中的隊員（含助戰） */
 export function extraBossLines(storyId: string, memberUids: string[], team: { cardId: string; isHelper: boolean }[]): StoryLine[] {
-  if (storyId !== OATH_STORY_ID) return [];
+  if (storyId !== COMPANION_LIGHT_STORY_ID) return [];
   const save = getSave();
   const owned = save.inventory.cards.filter((c) => memberUids.includes(c.uid));
   const members = owned.map((c) => ({ name: growth.card(c.cardId)?.name ?? c.cardId, bond: cardBondPoints(save, growth.family(c.cardId)) }));
   const helperCard = team.find((m) => m.isHelper);
   const npc = helperCard ? npcForHelperCard(helperCard.cardId, HELPER_NPCS) : undefined;
-  return oathLines({ members, helper: npc ? { name: npc.name, bond: bondPoints(save, npc.id) } : undefined });
+  return companionLightLines({ members, helper: npc ? { name: npc.name, bond: bondPoints(save, npc.id) } : undefined });
 }

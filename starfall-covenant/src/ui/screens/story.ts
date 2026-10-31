@@ -11,6 +11,7 @@ import { storyBox } from '../components/story';
 import { commit, getSave } from '../state';
 import { type Navigator, type ScreenDef } from '../router';
 import { LABEL } from '../wording';
+import { FINALE_ID, shouldPlayFinale } from '../finale-plan';
 
 export function markStorySeen(id: string): void {
   const save = getSave();
@@ -49,7 +50,10 @@ function player(id: string, next: string | undefined, nav: Navigator): HTMLEleme
   const lines = gameData.story[id] ?? loreSecretById(lore, id)?.secret.lines ?? [];
   const bg = userAsset('backgrounds', `story-${id}`) ?? userAsset('backgrounds', 'story') ?? userAsset('backgrounds', 'title');
   const done = () => {
+    // 第 7 章結尾劇情第一次播完時接穹頂篇片尾卡，之後再照原本的 next 走
+    const playFinale = shouldPlayFinale(id, getSave().progress.storySeen);
     markStorySeen(id);
+    if (playFinale) return nav.replace('finale', [], next ? { next } : {});
     goNext(nav, next);
   };
   if (!lines.length) {
@@ -128,7 +132,9 @@ export const storiesScreen: ScreenDef = {
     const show = (tab: StoriesTab) => body.replaceChildren(tab === 'lore'
       ? lorePanel(nav)
       : ids.length
-        ? h('div', { class: 'list' }, ids.map((k) => listItem({ leading: icon('scroll'), title: storyTitle(k), sub: gameData.story[k][0]?.text, onClick: () => nav.go('story', [k]) })))
+        ? h('div', { class: 'list' },
+          ids.map((k) => listItem({ leading: icon('scroll'), title: storyTitle(k), sub: gameData.story[k][0]?.text, onClick: () => nav.go('story', [k]) })),
+          seen.has(FINALE_ID) && listItem({ leading: icon('constellation'), title: '穹頂篇・片尾', sub: '回顧這一路的旅程', onClick: () => nav.go('finale') }))
         : emptyState('scroll', '還沒有看過的劇情'));
     const initial: StoriesTab = route.args[0] === 'lore' ? 'lore' : 'story';
     show(initial);
