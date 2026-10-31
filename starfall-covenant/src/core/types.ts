@@ -402,4 +402,6 @@ export interface SaveData {
   helperBond?: Record<string, number>;
   /** 角色羈絆：進化鏈的家族 id（最初型態的卡號）→ 出戰通關場數（可選；讀取一律經過 progression/card-bond.ts 補預設值） */
   cardBond?: Record<string, number>;
+  /** 契印師稱號：正在使用的稱號與看過的稱號（可選；讀取一律經過 progression/titles.ts 的 titleStateOf 補預設值） */
+  titles?: import('../progression/titles').TitleState;
 }

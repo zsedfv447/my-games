@@ -1,8 +1,10 @@
-// 契印師手札：個人戰績（progression/records.ts）——出戰與勝率、最高 Combo、單回合最高傷害、最常用的隊長、各流派通關次數
+// 契印師手札：稱號與個人戰績（progression/records.ts）——出戰與勝率、最高 Combo、單回合最高傷害、最常用的隊長、各流派通關次數
 import { h } from '../dom';
 import { gameData } from '../../data/load';
 import { archetypeCounts, favoriteLeader, leaderRanking, recordsOf, starCount, winRate } from '../../progression/records';
-import { bar, emptyState, panel } from '../components/basic';
+import { badge, bar, emptyState, panel } from '../components/basic';
+import { equippedTitle, newTitles, TITLES, unlockedTitles } from '../../progression/titles';
+import { titleContext } from '../title-context';
 import { cardThumb } from '../components/card-thumb';
 import { getSave, growth } from '../state';
 import { victoryLine } from '../victory-line';
@@ -24,6 +26,10 @@ export const notebookScreen: ScreenDef = {
     const ranking = leaderRanking(r, 5);
     const archetypes = archetypeCounts(r, gameData.archetypes.map((a) => a.id));
     const topArch = Math.max(1, ...archetypes.map((a) => a.clears));
+    const tctx = titleContext(save);
+    const title = equippedTitle(save, tctx);
+    const unlocked = unlockedTitles(save, tctx).length;
+    const freshTitles = newTitles(save, tctx).length;
     const stat = (label: string, value: string) => h('div', { class: 'note-stat' }, h('small', null, label), h('strong', null, value));
 
     return h(
@@ -32,6 +38,11 @@ export const notebookScreen: ScreenDef = {
       panel(
         { gold: true },
         h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, save.player.name || '契印師'), h('span', { class: 'small-text dim' }, `Lv.${save.player.level}`)),
+        // 稱號：點了到稱號列表換一個；有新解鎖的稱號時標 NEW
+        h('button', { type: 'button', class: 'note-title', onClick: () => nav.go('titles') },
+          title ? h('span', { class: 'gold-text' }, `「${title.name}」`) : h('span', { class: 'dim' }, '尚未選擇稱號'),
+          h('span', { class: 'small-text dim' }, `稱號 ${unlocked}/${TITLES.length} ›`),
+          freshTitles > 0 && badge('NEW', 'gold')),
         h('div', { class: 'note-stats' },
           stat('出戰', `${fmt(r.battles)} 場`),
           stat('勝利', `${fmt(r.wins)} 場`),
