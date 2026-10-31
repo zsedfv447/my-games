@@ -150,7 +150,7 @@ describe('任務與成就', () => {
 
   it('主城紅點：可領登入、任務、成就時亮起', () => {
     const s = fresh();
-    expect(homeBadges(s, MON)).toEqual({ login: true, quests: false, achievements: false, chapters: false, collection: false });
+    expect(homeBadges(s, MON)).toEqual({ login: true, quests: false, achievements: false, chapters: false, collection: false, titles: false });
     const busy = addQuestCounters(s, { stageClear: 3, gachaPull: 1 }, gameData.quests, MON);
     expect(homeBadges(busy, MON)).toMatchObject({ quests: true, achievements: true });
   });

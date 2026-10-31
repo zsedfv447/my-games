@@ -92,7 +92,7 @@ describe('獎勵與連續天數', () => {
     expect(claimPuzzle(s0, old, old.solution, config, now)).toEqual({ ok: false, reason: 'wrongDay' });
   });
 
-  it('連續 7 天送 3 星晶、第 14 天送 5（里程碑）；中斷後重新計算', () => {
+  it('連續 7 天送 3 星晶、第 14 天送 5（里程碑）；星燈保住一次中斷，沒燈後重新計算', () => {
     let s = createNewSave(config, at(2026, 11, 1));
     const gems0 = s.player.gems;
     const gemDays: number[] = [];
@@ -104,9 +104,16 @@ describe('獎勵與連續天數', () => {
     }
     expect(gemDays).toEqual([7, 14]);
     expect(s.player.gems).toBe(gems0 + 3 + 5);
-    // 跳過 11/15，11/16 重新從 1 開始
-    expect(currentStreak(s, at(2026, 11, 16))).toBe(0);
-    expect(solve(s, at(2026, 11, 16)).streak).toBe(1);
+    // 第 14 天得到 1 盞星燈：跳過 11/15 時燈保住連續，11/16 接著算第 15 天並用掉那盞燈
+    expect(puzzleOf(s).lamps).toBe(1);
+    expect(currentStreak(s, at(2026, 11, 16))).toBe(14);
+    const kept = solve(s, at(2026, 11, 16));
+    expect(kept.streak).toBe(15);
+    expect(puzzleOf(kept.save).lamps).toBe(0);
+    expect(puzzleOf(kept.save).bestStreak).toBe(15);
+    // 沒有燈之後再漏一天（11/17），11/18 重新從 1 開始
+    expect(currentStreak(kept.save, at(2026, 11, 18))).toBe(0);
+    expect(solve(kept.save, at(2026, 11, 18)).streak).toBe(1);
   });
 
   it('舊存檔沒有 puzzle 欄位時補預設值；跨月也算連續', () => {

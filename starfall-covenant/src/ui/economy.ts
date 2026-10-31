@@ -5,7 +5,9 @@ import { ATTRIBUTE_NAMES, RACE_NAMES } from './art/palette';
 import { gameData } from '../data/load';
 import loginRewardsJson from '../../data/login-rewards.json';
 import { canClaimLogin, type LoginRewardDef } from '../progression/login';
-import { claimableQuests, derivedCounters, type DerivedCounters } from '../progression/quests';
+import { claimableQuests, derivedCounters, questProgress, type DerivedCounters } from '../progression/quests';
+import { allLorePages, collectedLorePages, type LoreData } from '../progression/lore';
+import { newTitles, type TitleContext } from '../progression/titles';
 import { claimableChapterRewards } from '../progression/stages';
 import { claimableCollection, createGrowthContext, type GrowthContext } from '../growth';
 import type { ShopFail } from '../progression/shop';
@@ -113,6 +115,8 @@ export interface HomeBadges {
   chapters: boolean;
   /** 圖鑑有已擁有、還沒領的收集獎勵 */
   collection: boolean;
+  /** 有解鎖了但還沒在稱號列表看過的契印師稱號 */
+  titles: boolean;
 }
 
 let growthCtx: GrowthContext | undefined;
@@ -126,6 +130,20 @@ export function homeBadges(save: SaveData, now: number, quests: QuestDef[] = gam
     achievements: ready.some((q) => q.kind === 'achievement'),
     chapters: claimableChapterRewards(save, gameData.chapters, gameData.stages).length > 0,
     collection: claimableCollection(save, growthCtx).length > 0,
+    titles: newTitles(save, titleContext(save)).length > 0,
+  };
+}
+
+/** 稱號推算需要的外部資料：成就進度（任務模組）與殘頁張數（殘頁模組） */
+export function titleContext(save: SaveData): TitleContext {
+  const derived = questDerived(save);
+  const lore: LoreData = gameData.lore ?? { volumes: [] };
+  return {
+    achievementDone: (id) => {
+      const q = gameData.quests.find((x) => x.id === id);
+      return !!q && questProgress(save, q, derived).done;
+    },
+    lorePages: { collected: collectedLorePages(save, lore).length, total: allLorePages(lore).length },
   };
 }
 

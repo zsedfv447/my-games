@@ -19,7 +19,7 @@ export type TitleCondition =
   | { type: 'helperBond'; atLeast: number }
   /** 收集的殘頁張數；all＝全部 */
   | { type: 'lorePages'; atLeast: number | 'all' }
-  /** 星紋謎題最長連續解開天數（從保留的解題日期推算，最多 60 天） */
+  /** 星紋謎題歷來最長的連續解開天數（puzzle.bestStreak，舊存檔從保留的解題日期推算） */
   | { type: 'puzzleStreak'; atLeast: number };
 
 export interface TitleDef {
@@ -103,7 +103,8 @@ export function titleProgress(save: SaveData, def: TitleDef, ctx: TitleContext):
       target = c.atLeast === 'all' ? ctx.lorePages.total : c.atLeast;
       break;
     case 'puzzleStreak':
-      value = longestStreak(puzzleOf(save).solvedDays);
+      // 記錄過的最長連續（含星燈保住的天數）；舊存檔沒有時從保留的解題日期推算
+      value = Math.max(puzzleOf(save).bestStreak ?? 0, longestStreak(puzzleOf(save).solvedDays));
       target = c.atLeast;
       break;
   }
@@ -151,4 +152,10 @@ export function nextBondTitle(kind: 'cardBond' | 'helperBond', points: number, d
   return defs
     .flatMap((d) => (d.condition.type === kind && d.condition.atLeast > points ? [{ title: d, atLeast: d.condition.atLeast }] : []))
     .sort((a, b) => a.atLeast - b.atLeast)[0];
+}
+
+/** 這段期間新解鎖的稱號：before 是開始時已解鎖的稱號 id */
+export function titlesGained(before: string[], save: SaveData, ctx: TitleContext, defs: TitleDef[] = TITLES): TitleDef[] {
+  const had = new Set(before);
+  return unlockedTitles(save, ctx, defs).filter((d) => !had.has(d.id));
 }

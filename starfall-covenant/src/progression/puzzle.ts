@@ -10,7 +10,7 @@ import { createRng, type Rng } from '../core/rng';
 import { grantReward } from './rewards';
 import { fail, ok, type SaveResult } from './result';
 import { dateKey } from './time';
-import { puzzleStreakGems } from './milestones';
+import { lampsAfterSolve, puzzleStreakGems, streakWithLamps } from './milestones';
 
 export type PuzzleGoal =
   /** 一次轉珠做出 N Combo */
@@ -163,6 +163,10 @@ export interface PuzzleRecord {
   streak: number;
   /** 最近解開的日期（最多保留 SOLVED_KEEP 天） */
   solvedDays: string[];
+  /** 星燈守夜：持有的燈數（選填，0～2；規則在 milestones.ts） */
+  lamps?: number;
+  /** 歷來最長的連續天數（選填；稱號用，連續中斷後也不會變少） */
+  bestStreak?: number;
 }
 
 export const PUZZLE_COIN = 300;
@@ -188,8 +192,8 @@ export function previousDay(now: number): string {
 
 /** 目前的連續天數：昨天或今天有解才算還連著 */
 export function currentStreak(save: Pick<SaveData, 'puzzle'>, now: number): number {
-  const r = puzzleOf(save);
-  return r.lastDay === dateKey(now) || r.lastDay === previousDay(now) ? r.streak : 0;
+  // 昨天或今天有解才算還連著；中間漏掉的天數由星燈守夜補上（milestones.ts）
+  return streakWithLamps(puzzleOf(save), dateKey(now)).streak;
 }
 
 export function solvedToday(save: Pick<SaveData, 'puzzle'>, now: number): boolean {
@@ -225,7 +229,13 @@ export function claimPuzzle(
   const granted = grantReward(save, reward, config, now).save;
   const next: SaveData = {
     ...granted,
-    puzzle: { lastDay: today, streak, solvedDays: [...record.solvedDays, today].slice(-SOLVED_KEEP) },
+    puzzle: {
+      lastDay: today,
+      streak,
+      solvedDays: [...record.solvedDays, today].slice(-SOLVED_KEEP),
+      lamps: lampsAfterSolve(record.lamps ?? 0, streakWithLamps(record, today).lampsUsed, streak),
+      bestStreak: Math.max(record.bestStreak ?? 0, streak),
+    },
   };
   return { ...ok(next), reward, streak };
 }
