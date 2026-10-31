@@ -12,6 +12,7 @@ import type { ScreenDef } from '../router';
 import { overCostText, suggestSwapOut } from '../team-cost-hint';
 import { cleanTeamName, leaderHighlights, TEAM_NAME_MAX, teamTotals } from '../team-summary';
 import '../convenience.css';
+import { CAPABILITIES, CAPABILITY_HINT, CAPABILITY_LABEL, teamCapabilities } from '../team-capabilities';
 import { LABEL } from '../wording';
 
 const archetypeName = (id: string | null) => (id ? gameData.archetypes.find((a) => a.id === id)?.name ?? id : '未定');
@@ -72,6 +73,22 @@ function statsPanel(uids: (string | null)[]): HTMLElement {
         : h('p', { class: 'small-text dim', style: { margin: '0' } }, '隊長沒有隊長技。'),
       h('p', { class: 'small-text dim', style: { margin: '6px 0 0' } }, '攻擊依隊長技條件在戰鬥中另外加乘；出戰時助戰的隊長技也會一起生效。')),
   );
+}
+
+function capabilityRow(uids: (string | null)[]): HTMLElement {
+  const save = getSave();
+  const cards = uids.flatMap((uid) => {
+    const c = uid ? save.inventory.cards.find((x) => x.uid === uid) : undefined;
+    const def = c && growth.card(c.cardId);
+    return def ? [def] : [];
+  });
+  const r = teamCapabilities(cards, (id) => growth.skill(id), (id) => growth.leaderSkill(id));
+  return h('div', { class: 'team-caps' },
+    h('div', { class: 'row wrap', style: { gap: '4px' } }, CAPABILITIES.map((c) => h('span', {
+      class: ['cap-chip', r.sources[c].length ? 'have' : 'missing'],
+      title: r.sources[c].length ? r.sources[c].join('、') : '沒有',
+    }, `${r.sources[c].length ? '✓' : '—'} ${CAPABILITY_LABEL[c]}`))),
+    r.missing.map((c) => h('p', { class: 'small-text dim', style: { margin: '4px 0 0' } }, CAPABILITY_HINT[c])));
 }
 
 export const teamScreen: ScreenDef = {
@@ -159,6 +176,8 @@ export const teamScreen: ScreenDef = {
             report.secondary && badge(`混搭：${archetypeName(report.secondary)}`),
             badge(`契合度 ${Math.round(report.completion * 100)}%`)),
           report.missingRoles.length > 0 && h('p', { class: 'small-text', style: { marginTop: '8px' } }, `還缺：${report.missingRoles.map((r) => ROLE_LABEL[r]).join('、')}卡`),
+          // 能力檢查（team-capabilities.ts）：有哪幾類能力、缺的給一行提醒；只提醒，不限制混搭
+          capabilityRow(team.members),
           report.members.filter((m) => !m.fits).map((m) => h('p', { class: 'small-text dim' }, `${growth.card(m.cardId)?.name}：${m.reasons.join('；')}`)),
           report.suggestions.length > 0 && h('div', null,
             h('p', { class: 'small-text', style: { margin: '8px 0 4px' } }, '背包裡適合換上的卡'),

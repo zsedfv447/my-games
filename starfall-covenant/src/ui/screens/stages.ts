@@ -17,6 +17,8 @@ import type { Navigator, ScreenDef } from '../router';
 import type { IconName } from '../art/icons';
 import { firstClearChip, revealReward } from '../components/reward-reveal';
 import { chapterConstellation } from '../components/constellation-view';
+import { chapterPreview } from '../../progression/chapter-preview';
+import { cardThumb } from '../components/card-thumb';
 import {
   claimEclipseChapterReward, eclipseChapterReward, eclipseChapterStages, eclipseChapterStars, eclipseLockReason, eclipseOf,
   eclipseRewardStatus, eclipseUnlocked,
@@ -51,6 +53,20 @@ function row(r: StageRow, nav: Navigator, leading: IconName, fresh = new Set<str
 }
 
 /** 章節星章進度與獎勵；領取後原地重畫 */
+/** 章節先展示獎勵（progression/chapter-preview.ts）：首通給的卡、通過後開放的關卡與系統 */
+function chapterPreviewPanel(chapter: number): HTMLElement | null {
+  const p = chapterPreview(chapter, gameData.stages, gameData.chapters);
+  if (!p.cards.length && !p.unlocks.length) return null;
+  const owned = new Set(getSave().collection.owned);
+  return panel({ title: '本章可以得到' },
+    p.cards.length > 0 && h('div', { class: 'row wrap preview-cards' }, p.cards.map((c) => {
+      const def = gameData.cards.find((x) => x.id === c.cardId);
+      return def ? h('div', { class: 'preview-card' }, cardThumb(def, { size: 44 }), h('small', { class: 'dim' }, `${c.stageName}首通`), owned.has(def.id) ? badge('已擁有') : null) : null;
+    })),
+    p.unlocks.length > 0 && h('ul', { class: 'small-text preview-unlocks' }, p.unlocks.map((u) => h('li', null, u))),
+  );
+}
+
 function chapterReward(info: ChapterDef, nav: Navigator): HTMLElement {
   const save = getSave();
   const stars = chapterStars(save, info.chapter, gameData.stages, gameData.chapters);
@@ -227,6 +243,7 @@ export const stagesScreen: ScreenDef = {
         info && chapterReward(info, nav),
         eclipseToggle(chapter, false, nav),
       ),
+      chapterPreviewPanel(chapter),
       h('div', { class: 'list' },
         rows.map((r) => row(r, nav, 'adventure', fresh)),
         upcoming && listItem({
