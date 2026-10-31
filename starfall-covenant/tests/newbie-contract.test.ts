@@ -14,14 +14,15 @@ const fresh = () => createNewSave(gameData.config, NOW);
 /** 什麼都做過的老玩家（新手契約上線前的存檔） */
 function veteran(): SaveData {
   const s = fresh();
-  // 強化沿用終身計數器；召喚與進化由召喚紀錄、圖鑑推算（計數器上線前的老存檔也算）
+  // 強化沿用終身計數器；召喚、培養等級、星章都由存檔推算（計數器上線前的老存檔也算）
   const counted = addQuestCounters(s, { cardEnhance: 12 }, gameData.quests, NOW);
+  const stars = Object.fromEntries(main.slice(0, 9).map((st) => [st.id, [true, false, false]]));
   return {
     ...counted,
     gacha: { ...counted.gacha, history: [{ pool: 'standard', card: 'c206', at: 0 }] },
-    collection: { ...counted.collection, owned: [...counted.collection.owned, 'c109', 'c110'] },
+    inventory: { ...counted.inventory, cards: counted.inventory.cards.map((c, i) => (i === 0 ? { ...c, level: 30 } : c)) },
     teams: counted.teams.map((t, i) => (i === 0 ? { ...t, members: ['u2', 'u1', 'u3', 'u4', 'u5'] } : t)),
-    progress: { ...counted.progress, clearedStages: main.slice(0, 20).map((st) => st.id), chapterRewardsClaimed: [1] },
+    progress: { ...counted.progress, clearedStages: main.slice(0, 20).map((st) => st.id), stars },
     helperBond: { 'npc-mono': 4 },
     puzzle: { lastDay: '2026-10-01', streak: 1, solvedDays: ['2026-10-01'] },
   };
@@ -74,13 +75,37 @@ describe('新手契約進度', () => {
     expect(prog({ ...s, puzzle: { lastDay: '2026-11-02', streak: 1, solvedDays: ['2026-11-02'] } }, 'st-puzzle')).toBe(true);
   });
 
-  it('召喚看召喚紀錄、進化看圖鑑有沒有進化後的型態', () => {
+  it('召喚看召喚紀錄；第七項看卡片最高等級、第八項看星章總數', () => {
     const s = fresh();
     const prog = (save: SaveData, id: string) => questProgress(save, starter.find((q) => q.id === id)!, questDerived(save)).done;
     expect(prog(s, 'st-summon')).toBe(false);
     expect(prog({ ...s, gacha: { ...s.gacha, history: [{ pool: 'standard', card: 'c206', at: 0 }] } }, 'st-summon')).toBe(true);
-    expect(prog({ ...s, collection: { ...s.collection, owned: [...s.collection.owned, 'c109'] } }, 'st-evolve')).toBe(false);
-    expect(prog({ ...s, collection: { ...s.collection, owned: [...s.collection.owned, 'c110'] } }, 'st-evolve')).toBe(true);
+    const leveled = (lv: number) => ({ ...s, inventory: { ...s.inventory, cards: s.inventory.cards.map((c, i) => (i === 0 ? { ...c, level: lv } : c)) } });
+    expect(prog(leveled(9), 'st-evolve')).toBe(false);
+    expect(prog(leveled(10), 'st-evolve')).toBe(true);
+    const withStars = (n: number) => ({ ...s, progress: { ...s.progress, stars: Object.fromEntries(main.slice(0, n).map((st) => [st.id, [true]])) } });
+    expect(prog(withStars(8), 'st-chapter-reward')).toBe(false);
+    expect(prog(withStars(9), 'st-chapter-reward')).toBe(true);
+  });
+
+  it('新版第七、八項沿用舊 id：已領過舊版的存檔不能再領，也不會被收回', () => {
+    const s = veteran();
+    const old = { ...s, player: { ...s.player, gems: 100 }, quests: { ...s.quests, claimed: ['st-evolve', 'st-chapter-reward'] } };
+    const ready = claimableQuests(old, starter, NOW, questDerived(old)).map((q) => q.id);
+    expect(ready).not.toContain('st-evolve');
+    expect(ready).not.toContain('st-chapter-reward');
+    const r = claimAllQuests(old, ['starter'], gameData.quests, gameData.config, NOW, questDerived);
+    const others = starter.filter((q) => q.id !== 'st-evolve' && q.id !== 'st-chapter-reward');
+    expect(r.claimed.map((q) => q.id)).toEqual(others.map((q) => q.id));
+    expect(r.save.player.gems).toBe(100 + others.reduce((n, q) => n + (q.reward.gems ?? 0), 0));
+    expect(r.save.quests.claimed).toEqual(expect.arrayContaining(['st-evolve', 'st-chapter-reward']));
+  });
+
+  it('前 1 小時做得到：不需要進化或滿星', () => {
+    const q7 = starter.find((q) => q.id === 'st-evolve')!;
+    const q8 = starter.find((q) => q.id === 'st-chapter-reward')!;
+    expect([q7.counter, q7.target]).toEqual(['maxCardLevel', 10]);
+    expect([q8.counter, q8.target]).toEqual(['starsEarned', 9]);
   });
 
   it('主城紅點會算進可領的新手契約', () => {

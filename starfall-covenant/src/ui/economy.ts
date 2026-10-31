@@ -7,6 +7,7 @@ import loginRewardsJson from '../../data/login-rewards.json';
 import { canClaimLogin, type LoginRewardDef } from '../progression/login';
 import { claimableQuests, derivedCounters, type DerivedCounters } from '../progression/quests';
 import { claimableChapterRewards } from '../progression/stages';
+import { claimableCollection, createGrowthContext, type GrowthContext } from '../growth';
 import type { ShopFail } from '../progression/shop';
 
 export const loginRewards = loginRewardsJson as LoginRewardDef[];
@@ -104,15 +105,21 @@ export interface HomeBadges {
   achievements: boolean;
   /** 有章節星章集滿、還沒領獎 */
   chapters: boolean;
+  /** 圖鑑有已擁有、還沒領的收集獎勵 */
+  collection: boolean;
 }
+
+let growthCtx: GrowthContext | undefined;
 
 export function homeBadges(save: SaveData, now: number, quests: QuestDef[] = gameData.quests): HomeBadges {
   const ready = claimableQuests(save, quests, now, questDerived(save));
+  growthCtx ??= createGrowthContext(gameData);
   return {
     login: canClaimLogin(save, now),
     quests: ready.some((q) => q.kind !== 'achievement'),
     achievements: ready.some((q) => q.kind === 'achievement'),
     chapters: claimableChapterRewards(save, gameData.chapters, gameData.stages).length > 0,
+    collection: claimableCollection(save, growthCtx).length > 0,
   };
 }
 

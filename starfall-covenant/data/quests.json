@@ -718,9 +718,9 @@
   {
     "id": "st-evolve",
     "kind": "starter",
-    "name": "新手契約七：讓一張卡片進化",
-    "counter": "evolvedOwned",
-    "target": 1,
+    "name": "新手契約七：把一張卡片培養到 Lv10",
+    "counter": "maxCardLevel",
+    "target": 10,
     "reward": {
       "gems": 4
     }
@@ -728,9 +728,9 @@
   {
     "id": "st-chapter-reward",
     "kind": "starter",
-    "name": "新手契約八：領取一次章節星章獎勵",
-    "counter": "chapterRewards",
-    "target": 1,
+    "name": "新手契約八：累積點亮 9 顆星章",
+    "counter": "starsEarned",
+    "target": 9,
     "reward": {
       "gems": 3
     }
