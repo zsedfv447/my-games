@@ -51,7 +51,7 @@ export class GuideLayer {
     this.bubble?.close();
     const { lines, placement = 'bottom', actions = [], onSkip, onLine } = opts;
     let i = 0;
-    const portrait = userAsset('cards', 'c401');
+    const portrait = userAsset('ui', 'tutorial-guide');
     const text = h('p', { class: 'tut-text' });
     const more = h('span', { class: 'tut-more', 'aria-hidden': 'true' }, '▼');
     const actionRow = h('div', { class: 'tut-actions' });
