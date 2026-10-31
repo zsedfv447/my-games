@@ -19,11 +19,11 @@ const shopItem = (id: string) => gameData.shop.find((i) => i.id === id)!;
 const quest = (id: string) => gameData.quests.find((q) => q.id === id)!;
 
 describe('商店與任務資料', () => {
-  it('每日、每週任務與 74 項成就', () => {
+  it('每日、每週任務與 75 項成就（含圖鑑開放紀念）', () => {
     const count = (k: string) => gameData.quests.filter((q) => q.kind === k).length;
     expect(count('daily')).toBeGreaterThanOrEqual(5);
     expect(count('weekly')).toBeGreaterThanOrEqual(5);
-    expect(count('achievement')).toBe(74);
+    expect(count('achievement')).toBe(75);
   });
 
   it('星晶產出跟抽卡價格平衡：每日＋每週任務每週約 2–4 次單抽', () => {
@@ -144,13 +144,15 @@ describe('任務與成就', () => {
   it('一鍵領取成就時用 derive 推算存檔數值', () => {
     const s = { ...fresh(), player: { ...fresh().player, level: 20 } };
     const r = claimAllQuests(s, ['achievement'], gameData.quests, config, MON, questDerived);
-    expect(r.claimed.map((q) => q.id)).toEqual(['a-playerLevel-10', 'a-playerLevel-20']);
+    expect(r.claimed.map((q) => q.id)).toEqual(['a-playerLevel-10', 'a-playerLevel-20', 'a-codex-opening']);
     expect(claimAllQuests(s, ['achievement'], gameData.quests, config, MON).claimed).toEqual([]);
   });
 
   it('主城紅點：可領登入、任務、成就時亮起', () => {
     const s = fresh();
-    expect(homeBadges(s, MON)).toEqual({ login: true, quests: false, achievements: false, chapters: false, collection: false, titles: false, adventure: expect.any(Boolean) });
+    expect(homeBadges(s, MON)).toEqual({ login: true, quests: false, achievements: true, chapters: false, collection: false, titles: false, adventure: expect.any(Boolean) });
+    const giftClaimed = { ...s, quests: { ...s.quests, claimed: ['a-codex-opening'] } };
+    expect(homeBadges(giftClaimed, MON).achievements).toBe(false);
     const busy = addQuestCounters(s, { stageClear: 3, gachaPull: 1 }, gameData.quests, MON);
     expect(homeBadges(busy, MON)).toMatchObject({ quests: true, achievements: true });
   });

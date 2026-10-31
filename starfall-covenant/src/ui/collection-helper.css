@@ -16,20 +16,16 @@
 }
 .codex-grid { grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); }
 .codex-grid .card-thumb { position: relative; }
-.card-thumb.codex-seen { filter: grayscale(0.85) brightness(0.65); }
-.card-thumb.codex-unseen > img,
-.card-thumb.codex-unseen > svg { visibility: hidden; }
-.card-thumb.codex-unseen { background: radial-gradient(circle at 50% 40%, var(--bg-elev), var(--bg-deep)); }
-.card-thumb.codex-unseen::after {
-  content: '?';
+.codex-owned-mark {
   position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-family: var(--font-title);
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--text-faint);
+  left: 2px;
+  top: 2px;
+  padding: 0 3px;
+  border-radius: 4px;
+  background: rgba(6, 10, 31, 0.9);
+  color: var(--gold);
+  font-size: 12px;
+  line-height: 16px;
 }
 .codex-no {
   position: absolute;
@@ -57,9 +53,6 @@
 }
 .codex-detail { display: flex; flex-direction: column; gap: 10px; }
 .codex-detail .stat-row > div { display: flex; flex-direction: column; }
-.codex-seen-art .card-portrait { filter: grayscale(0.7) drop-shadow(0 8px 20px rgba(0, 0, 0, 0.5)); }
-.codex-unseen-art .card-portrait img,
-.codex-unseen-art .card-portrait svg { filter: brightness(0) opacity(0.6); }
 .codex-list { margin: 0; padding-left: 20px; line-height: 1.7; }
 
 /* ---------- 助戰 ---------- */

@@ -1,4 +1,4 @@
-// 圖鑑：全部卡片的收集狀態（擁有過／見過／未見過）、篩選、卡片資料與收集獎勵
+// 圖鑑資料全開；收集狀態與獎勵仍只依實際取得紀錄計算
 import { h } from '../dom';
 import { gameData } from '../../data/load';
 import { ARCHETYPE_IDS, ATTRIBUTES, RACES, type ArchetypeId, type Attribute, type Race } from '../../core/types';
@@ -19,8 +19,9 @@ import { questDerived } from '../economy';
 import { rewardChips } from '../components/rewards';
 import '../collection-helper.css';
 import { codexSwitch } from './bestiary';
+import { passiveText } from './growth-view';
 
-const STATUS_LABEL: Record<CollectionStatus, string> = { owned: '已取得', seen: '見過', unseen: '未發現' };
+const STATUS_LABEL: Record<CollectionStatus, string> = { owned: '已取得', seen: '見過', unseen: '未見過' };
 const archetypeName = (id: string) => gameData.archetypes.find((a) => a.id === id)?.name ?? id;
 
 // 篩選條件在這次遊玩中保留，從卡片詳情返回時不用重選
@@ -30,6 +31,8 @@ function select<T extends string>(label: string, value: T | undefined, options: 
   const el = h('select', { class: 'codex-select', 'aria-label': label },
     h('option', { value: '' }, `${label}：全部`),
     options.map((o) => h('option', { value: o.id, selected: o.id === value }, o.label)));
+  // 明確同步保留的篩選值，不依賴逐個插入 option 時的預設選取行為。
+  el.value = value ?? '';
   el.addEventListener('change', () => onChange((el.value || undefined) as T | undefined));
   return el;
 }
@@ -40,6 +43,32 @@ function claimAll(after: () => void): void {
   commit(r.save);
   void revealReward('圖鑑獎勵', { gems: r.gems }, `領取 ${r.cards.length} 張卡的圖鑑獎勵`);
   after();
+}
+
+/** 紀念禮與成就頁共用終身 claimed，領取前重新讀取存檔，避免舊面板或連點重發。 */
+function openingGift(): HTMLElement | null {
+  const quest = gameData.quests.find(q => q.id === 'a-codex-opening');
+  if (!quest) return null;
+  const claim = button('', { variant: 'primary', block: true, sound: false, onClick: () => {
+    const save = getSave();
+    const result = claimQuest(save, quest, gameData.quests, gameData.config, Date.now(), questDerived(save));
+    if (!result.ok) { refresh(); return; }
+    // 先同步保存，再播放演出；重新整理或另一個入口都會讀到已領紀錄。
+    commit(result.save);
+    refresh();
+    void revealReward(quest.name, quest.reward, '每份存檔限領一次');
+  } });
+  claim.setAttribute('data-codex-gift', '');
+  const refresh = () => {
+    const save = getSave();
+    const progress = questProgress(save, quest, questDerived(save));
+    claim.disabled = progress.claimed || !progress.done;
+    claim.textContent = progress.claimed ? '已領取' : `領取 ${quest.reward.gems} 星晶`;
+  };
+  refresh();
+  return panel({ title: quest.name, gold: true },
+    h('p', { class: 'small-text' }, `慶祝圖鑑資料全開！贈送 ${quest.reward.gems} 星晶，每份存檔限領一次；與成就頁共用領取紀錄。`),
+    claim);
 }
 
 /** 圖鑑完成度里程碑（quests.json 裡 counter 為 collectionPercent 的成就）：25%、50%、75%、100% 各領一次 */
@@ -105,8 +134,9 @@ export const collectionScreen: ScreenDef = {
         ? list.map(({ card, status, claimable }) => {
           const el = cardThumb(card, { size: 64, onClick: () => nav.go('collection-card', [card.id]) });
           el.classList.add(`codex-${status}`);
-          el.title = status === 'unseen' ? '？？？' : card.name;
-          if (status === 'unseen') el.setAttribute('aria-label', `${card.id} 未發現`);
+          el.title = `${card.name}・${STATUS_LABEL[status]}`;
+          el.setAttribute('aria-label', `${card.name}・${STATUS_LABEL[status]}`);
+          if (status === 'owned') el.appendChild(h('span', { class: 'codex-owned-mark', 'aria-hidden': 'true' }, '✓'));
           el.appendChild(h('span', { class: 'codex-no' }, card.id.replace(/^c/, 'No.')));
           if (claimable) el.appendChild(h('span', { class: 'codex-claim' }, `+${claimable}`));
           return el;
@@ -122,6 +152,8 @@ export const collectionScreen: ScreenDef = {
       'div',
       null,
       codexSwitch('cards', nav),
+      h('p', { class: 'small-text dim' }, '圖鑑資料全開，可直接查看所有卡片並規劃搭配；收集進度與獎勵仍需實際取得卡片。'),
+      openingGift(),
       summaryHost,
       tabs<'all' | CollectionStatus>(
         [{ id: 'all', label: '全部' }, ...(['owned', 'seen', 'unseen'] as const).map((s) => ({ id: s, label: STATUS_LABEL[s] }))],
@@ -132,7 +164,7 @@ export const collectionScreen: ScreenDef = {
         select<Attribute>('屬性', filter.attribute, ATTRIBUTES.map((a) => ({ id: a, label: ATTRIBUTE_NAMES[a] })), (v) => setFilter({ attribute: v })),
         select<Race>('種族', filter.race, RACES.map((r) => ({ id: r, label: RACE_NAMES[r] })), (v) => setFilter({ race: v })),
         select<ArchetypeId>('流派', filter.archetype, ARCHETYPE_IDS.map((a) => ({ id: a, label: archetypeName(a) })), (v) => setFilter({ archetype: v }))),
-      h('div', { class: 'row between' }, count, h('span', { class: 'small-text faint' }, '彩色＝已取得・灰＝見過・剪影＝未發現')),
+      h('div', { class: 'row between' }, count, h('span', { class: 'small-text faint' }, '✓＝已取得・所有卡片皆可查看')),
       grid,
     );
   },
@@ -151,17 +183,6 @@ export const collectionCardScreen: ScreenDef = {
     // 追卡指南：取得方式、現在能不能拿、點了前往（acquire-guide.ts）
     const sourcePanel = acquirePanel(def.id, nav);
 
-    if (status === 'unseen') {
-      return h(
-        'div',
-        { class: 'codex-detail' },
-        h('div', { class: 'codex-unseen-art' }, cardPortrait(def)),
-        panel(null, h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, '？？？'), stars(def.rarity)),
-          h('p', { class: 'small-text dim' }, `${def.id.replace(/^c/, 'No.')}・還沒見過這張卡。在召喚卡池、關卡或取得後就會登錄到圖鑑。`)),
-        sourcePanel,
-      );
-    }
-
     const skill = def.activeSkill ? growth.skill(def.activeSkill) : undefined;
     const leader = def.leaderSkill ? growth.leaderSkill(def.leaderSkill) : undefined;
     const reward = collectionReward(growth, def.id);
@@ -173,14 +194,13 @@ export const collectionCardScreen: ScreenDef = {
     const evoLink = (id: string, prefix: string) => {
       const c = growth.card(id);
       if (!c) return null;
-      const known = collectionStatus(save, id) !== 'unseen';
-      return button(`${prefix}${known ? c.name : '？？？'}`, { small: true, variant: 'ghost', onClick: () => nav.replace('collection-card', [id]) });
+      return button(`${prefix}${c.name}`, { small: true, variant: 'ghost', onClick: () => nav.replace('collection-card', [id]) });
     };
 
     return h(
       'div',
       { class: 'codex-detail' },
-      h('div', { class: status === 'seen' ? 'codex-seen-art' : undefined }, cardPortrait(def)),
+      cardPortrait(def),
       panel(
         null,
         h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, def.name), stars(def.rarity)),
@@ -194,6 +214,9 @@ export const collectionCardScreen: ScreenDef = {
       ),
       skill && panel({ title: `主動技・${skill.name}` }, h('p', null, skill.description), h('p', { class: 'small-text dim' }, `冷卻 ${skill.cooldown.max} 回合（最短 ${skill.cooldown.min}）`)),
       leader && panel({ title: `隊長技・${leader.name}` }, h('p', null, leader.description)),
+      !!def.awakenings?.length && panel({ title: '星紋覺醒' },
+        h('p', { class: 'small-text dim' }, '以下為可解鎖效果，需取得卡片後逐項覺醒；上方數值為未突破、未覺醒的滿級基礎值。'),
+        h('ol', { class: 'codex-list' }, def.awakenings.map(p => h('li', null, passiveText(p))))),
       def.flavor && panel({ title: '背景故事' }, h('p', { class: 'small-text', style: { lineHeight: '1.7' } }, def.flavor)),
       (evoFrom || evoTo) && panel({ title: '進化' }, h('div', { class: 'row wrap' }, evoFrom && evoLink(evoFrom, '← '), evoTo && evoLink(evoTo, '→ '))),
       sourcePanel,
