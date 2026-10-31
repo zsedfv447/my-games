@@ -4,6 +4,7 @@ import { TUTORIAL_STEPS, type CardDef, type GachaPoolDef, type SaveData, type Tu
 import { firstPullCandidates } from '../../progression/gacha';
 import { applyPath, boardFromStrings, findMatches, isAdjacent, type Board, type Pos } from '../../battle/board';
 import type { Rng } from '../../core/rng';
+import { LABEL } from '../wording';
 
 export const FIRST_STAGE = 'st-1-1';
 
@@ -121,7 +122,7 @@ export function guideFor(step: TutorialStep, route: { name: string; args: string
         return {
           lines: ['這是你的隊伍。最左邊是「隊長」，隊長技會在戰鬥中一直生效。', ...teamFitLines(team), '點頭像就能換人；隊伍空間有上限，稀有的卡比較佔位置。'],
           target: '.team-slot',
-          action: { label: '知道了', advance: true },
+          action: { label: LABEL.ok, advance: true },
         };
       }
       return { lines: ['剛剛的隊長技很強吧？來看看你的隊伍是怎麼組成的。'], action: { label: '前往編隊', go: ['team', []] } };

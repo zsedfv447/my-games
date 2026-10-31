@@ -2,6 +2,7 @@
 import { h, type Child } from '../dom';
 import { button } from './basic';
 import { bindToRoute } from '../route-scope';
+import { LABEL } from '../wording';
 
 let host: HTMLElement | undefined;
 let toastHost: HTMLElement | undefined;
@@ -52,7 +53,7 @@ export function openDialog(title: string, body: Child, actions: HTMLElement[] = 
   return { close };
 }
 
-export function confirmDialog(title: string, message: Child, okLabel = '確定', cancelLabel = '取消'): Promise<boolean> {
+export function confirmDialog(title: string, message: Child, okLabel: string = LABEL.ok, cancelLabel = '取消'): Promise<boolean> {
   return new Promise((resolve) => {
     const dlg = openDialog(title, h('p', null, message), [
       button(cancelLabel, { variant: 'ghost', sound: 'back', onClick: () => { dlg.close(); resolve(false); } }),
@@ -64,7 +65,7 @@ export function confirmDialog(title: string, message: Child, okLabel = '確定',
 /**
  * 綁定目前畫面的確認框：玩家選了回傳 true／false；還沒選就換了畫面，自動關閉並回傳 null（什麼都不做）。
  */
-export function confirmOnScreen(title: string, message: Child, okLabel = '確定', cancelLabel = '取消'): Promise<boolean | null> {
+export function confirmOnScreen(title: string, message: Child, okLabel: string = LABEL.ok, cancelLabel = '取消'): Promise<boolean | null> {
   return new Promise((resolve) => {
     let answered = false;
     const answer = (v: boolean) => { answered = true; dlg.close(); resolve(v); };

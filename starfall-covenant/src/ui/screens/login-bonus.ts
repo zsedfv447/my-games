@@ -13,6 +13,7 @@ import { loginCalendar, loginRewards } from '../economy';
 import type { ScreenDef } from '../router';
 import { commit, getSave } from '../state';
 import { isTutorialActive } from '../tutorial/flow';
+import { LABEL } from '../wording';
 
 /** 領取今天的登入獎勵並存檔；成功回傳 true */
 export function claimToday(): boolean {
@@ -63,7 +64,7 @@ export function maybeShowLoginPopup(onClaimed?: () => void): boolean {
   popupShownFor = dateKey(now);
   const body = h('div', { class: 'login-popup' }, loginGrid());
   const dlg = openDialog('七日星約', body, [
-    button('稍後', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
+    button(LABEL.later, { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
     button('領取', { variant: 'primary', icon: 'gift', sound: false, onClick: () => { if (claimToday()) { dlg.close(); onClaimed?.(); } } }),
   ], { scope: 'route' });
   return true;

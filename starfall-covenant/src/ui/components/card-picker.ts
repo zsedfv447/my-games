@@ -8,6 +8,7 @@ import { button, tabs } from './basic';
 import { cardThumb } from './card-thumb';
 import { openDialog } from './overlay';
 import { getSave, growth } from '../state';
+import { LABEL } from '../wording';
 
 export function pickCard(title: string, opts: { exclude?: Set<string>; allowRemove?: boolean }, onPick: (uid: string | null) => void): void {
   // 星靈遠行中的卡不能編隊、也不能當養成目標
@@ -28,6 +29,6 @@ export function pickCard(title: string, opts: { exclude?: Set<string>; allowRemo
     grid,
   ), [
     ...(opts.allowRemove ? [button('移出隊伍', { variant: 'danger', onClick: () => { dlg.close(); onPick(null); } })] : []),
-    button('關閉', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
+    button(LABEL.close, { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
   ]);
 }

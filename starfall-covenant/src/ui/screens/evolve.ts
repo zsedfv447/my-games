@@ -9,6 +9,7 @@ import type { ScreenDef } from '../router';
 import { celebrate, growthBackdrop, statTable } from './enhance';
 import { evolutionCompare, evolutionNeeds, statLines } from './growth-view';
 import '../growth.css';
+import { LABEL } from '../wording';
 
 export const evolveScreen: ScreenDef = {
   name: 'evolve',
@@ -76,7 +77,7 @@ export const evolveScreen: ScreenDef = {
       panel({ title: '進化條件' },
         h('div', { class: 'evolve-reqs' },
           h('div', { class: ['req', levelOk ? 'ok' : 'ng'] }, h('span', null, levelOk ? '✓' : '✗'), `等級 ${owned.level} / ${def.maxLevel}`,
-            !levelOk && button('去強化', { small: true, onClick: () => nav.go('enhance', [uid]) })),
+            !levelOk && button(LABEL.toEnhance, { small: true, onClick: () => nav.go('enhance', [uid]) })),
           needs.map((n) => {
             const m = growth.card(n.id);
             const ok = n.have >= n.need;

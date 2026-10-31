@@ -11,6 +11,7 @@ import { chapterLayout } from './constellation-view';
 import { overlayRoot, toast } from './overlay';
 import { endOnRouteChange } from '../route-scope';
 import '../constellation.css';
+import { LABEL } from '../wording';
 
 const cardById = new Map(gameData.cards.map((c) => [c.id, c]));
 const RARITY_COLOR = ['#8a8f9e', '#8a8f9e', '#8a8f9e', '#b9c4d8', '#f2c45a', '#c792ff', '#ff9fd6'];
@@ -242,7 +243,7 @@ export async function openSharePreview(plan: SharePlan, chapter?: number): Promi
     h('h2', { class: 'rv-title' }, plan.title),
     h('img', { src: url, alt: `${plan.stageName} 的${plan.title}` }),
     h('div', { class: 'rv-actions' },
-      button('關閉', { variant: 'ghost', sound: 'back', onClick: close }),
+      button(LABEL.close, { variant: 'ghost', sound: 'back', onClick: close }),
       button('儲存圖片', { variant: canShare ? undefined : 'primary', onClick: save }),
       canShare && button('分享', { variant: 'primary', onClick: share }))));
   layer.addEventListener('click', (e) => { if (e.target === layer) close(); });

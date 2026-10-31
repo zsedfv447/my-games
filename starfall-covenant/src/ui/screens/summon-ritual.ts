@@ -12,6 +12,7 @@ import { getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
 import { setPending, startPull, takePending, type PendingSummon } from './summon';
 import '../summon.css';
+import { LABEL } from '../wording';
 
 /** 原320座標最大360／放手容許310；此處採640像素素材基準。 */
 export const PULL_DISTANCE = 720;
@@ -91,7 +92,7 @@ class Ritual {
       this.machine,
       h('div', { class: 'clamp-pull-hint' }, h('strong', null, '往下拉'), h('span', null, '按住卡片往下拉，鬆手解除封印')),
       this.results, this.actions,
-      button('跳過', { variant: 'ghost', small: true, onClick: () => this.skip() }));
+      button(LABEL.skip, { variant: 'ghost', small: true, onClick: () => this.skip() }));
     this.el.lastElementChild!.classList.add('ritual-skip');
     this.el.addEventListener('pointerdown', this.onDown);
     this.el.addEventListener('pointermove', this.onMove);
@@ -232,7 +233,7 @@ class Ritual {
     this.setPhase('done');
     const cost = pullCost(this.p.pool, this.p.count);
     this.actions.replaceChildren(
-      button(this.p.count === 10 ? '再十連' : '再抽一次', { cost: { kind: 'gem', amount: cost }, disabled: getSave().player.gems < cost, onClick: () => this.exit.again() }),
+      button(this.p.count === 10 ? LABEL.summonTenAgain : LABEL.summonOnceAgain, { cost: { kind: 'gem', amount: cost }, disabled: getSave().player.gems < cost, onClick: () => this.exit.again() }),
       button('完成', { variant: 'primary', onClick: () => this.exit.done() }));
   }
   private showcase(r: PullResult): void {
@@ -273,7 +274,7 @@ export const summonRitualScreen: ScreenDef = {
       again: () => {
         if (left || confirming) return;
         confirming = true;
-        const confirm = button('開啟封印', { variant: 'primary', onClick: () => {
+        const confirm = button(LABEL.summon, { variant: 'primary', onClick: () => {
           if (left || confirm.disabled) return;
           confirm.disabled = true;
           const next = startPull(p.pool, p.count);

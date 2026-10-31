@@ -33,6 +33,7 @@ import { starText } from './prepare';
 import { enemyChips, teamChips, STATUS_NAMES, type StatusChip } from '../status-labels';
 import { storyBox } from '../components/story';
 import { stageStoryToPlay } from '../../progression/stage-story';
+import { markHintsSeen, newMechanics, showMechanicHints } from '../tutorial/mechanic-hints';
 import { openClearResult, type ResultNote } from '../components/reward-reveal';
 import { grantLorePage, loreNotes } from '../../progression/lore';
 import { clearItems, levelUpView } from '../reward-plan';
@@ -63,6 +64,7 @@ import { stageCleared } from '../eclipse-view';
 import { completeEclipseStage, isEclipseId } from '../../progression/eclipse';
 import { collectedDrops } from '../../progression/active-battle';
 import type { CardExpGain } from '../../growth';
+import { LABEL } from '../wording';
 
 const CELL = 63;
 
@@ -236,6 +238,8 @@ class BattleView {
       this.titlesBefore = unlockedTitleIds(getSave());
     }
     if (!s.practice) this.maybeBossStory();
+    // 開場就有的機制（例如第 1 波的七曜環）：說明完才開放轉珠
+    if (!s.guide) queueMicrotask(() => void this.mechanicHints().then((shown) => { if (shown && this.state.phase === 'player') this.enableBoard(); }));
     if (s.resumed) queueMicrotask(() => this.afterResume());
     s.guide?.attach({
       root: this.element,
@@ -357,6 +361,17 @@ class BattleView {
   }
 
   /** 動畫播完開放轉珠；暫停中就等繼續時再開 */
+  /** 第一次遇到某個機制就說明一次，看過記在存檔；教學戰鬥自己有引導，不另外提示 */
+  private async mechanicHints(): Promise<boolean> {
+    if (this.s.guide) return false;
+    const hints = newMechanics(getSave(), this.state);
+    if (!hints.length) return false;
+    this.boardView.setEnabled(false);
+    commit(markHintsSeen(getSave(), hints));
+    await showMechanicHints(this.element, hints);
+    return true;
+  }
+
   private enableBoard(): void {
     if (this.paused) this.enableWhenResumed = true;
     else this.boardView.setEnabled(true);
@@ -581,6 +596,8 @@ class BattleView {
 
     if (after.phase === 'won') return this.onWin();
     if (after.phase === 'lost') return this.onLose();
+    // 第一次遇到七曜環、隱藏珠、星紋封印時先說明（tutorial/mechanic-hints.ts）
+    await this.mechanicHints();
     this.enableBoard();
     this.s.guide?.afterTurn(after);
   }
@@ -780,7 +797,7 @@ class BattleView {
       share: () => shareClear(this.s.stage, this.state.team, this.s.memberUids ?? [], result, clear, firstClear, (this.s.stage.stars ?? []).map(starText)),
       leaderLine: bond?.thanks ?? leaderLineOf(this.state),
       actions: [
-        button(next ? '再戰' : '再戰一次', { variant: next ? 'ghost' : undefined, onClick: () => { this.dialog?.close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', this.s.practiceMode ? ['practice', this.s.practiceMode] : [this.s.stage.id]); } }),
+        button(LABEL.retry, { variant: next ? 'ghost' : undefined, onClick: () => { this.dialog?.close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', this.s.practiceMode ? ['practice', this.s.practiceMode] : [this.s.stage.id]); } }),
         button('返回', { variant: next ? undefined : 'primary', onClick: () => leave() }),
         next,
       ],

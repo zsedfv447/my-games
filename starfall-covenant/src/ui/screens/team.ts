@@ -12,6 +12,7 @@ import type { ScreenDef } from '../router';
 import { overCostText, suggestSwapOut } from '../team-cost-hint';
 import { cleanTeamName, leaderHighlights, TEAM_NAME_MAX, teamTotals } from '../team-summary';
 import '../convenience.css';
+import { LABEL } from '../wording';
 
 const archetypeName = (id: string | null) => (id ? gameData.archetypes.find((a) => a.id === id)?.name ?? id : '未定');
 
@@ -36,7 +37,7 @@ function renameTeam(index: number, done: () => void): void {
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') save(); });
   const dlg = openDialog('隊伍名稱', h('div', null, input, h('p', { class: 'small-text dim' }, `最多 ${TEAM_NAME_MAX} 個字`)), [
     button('取消', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
-    button('確定', { variant: 'primary', onClick: save }),
+    button(LABEL.ok, { variant: 'primary', onClick: save }),
   ]);
   setTimeout(() => { input.focus(); input.select(); }, 50);
 }
