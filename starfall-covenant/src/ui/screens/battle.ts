@@ -39,6 +39,7 @@ import { clearItems, levelUpView } from '../reward-plan';
 import { resultConstellation, shareClear } from '../clear-extras';
 import { showDefeatGuide } from '../components/defeat-guide';
 import { trackBattleRecords, type BattleRecordTracker } from '../battle-records';
+import { newTitleNotes, unlockedTitleIds } from '../title-notice';
 import { leaderLineOf } from '../victory-line';
 import { helperBondOnClear } from '../helper-bond-clear';
 import { cardBondOnClear } from '../card-bond-clear';
@@ -163,6 +164,8 @@ class BattleView {
   private dialog?: DialogHandle;
   /** 契印師手札的戰績紀錄（練習與教學不記） */
   private records?: BattleRecordTracker;
+  /** 開戰時已解鎖的稱號，結算時比對出新稱號 */
+  private titlesBefore?: string[];
   private speed: number;
   /** 暫停選單開著；這段期間動畫播完要開放轉珠時，等繼續再開 */
   private paused = false;
@@ -220,6 +223,7 @@ class BattleView {
     if (this.policy.recordsNotebook) {
       this.records = trackBattleRecords(s.battle, s.stage.id, s.memberUids ?? []);
       this.offs.push(this.records.dispose);
+      this.titlesBefore = unlockedTitleIds(getSave());
     }
     if (!s.practice) this.maybeBossStory();
     if (s.resumed) queueMicrotask(() => this.afterResume());
@@ -698,6 +702,8 @@ class BattleView {
     if (bond) notes.push(...bond.notes);
     // 出戰的玩家角色：羈絆 +1，10、30 場解鎖小劇場
     if (!this.s.practice) notes.push(...cardBondOnClear(this.s.stage, this.s.memberUids ?? []));
+    // 這場解鎖的契印師稱號（title-notice.ts）：放在羈絆、情誼加點之後才比對得到
+    if (this.titlesBefore) notes.push(...newTitleNotes(this.titlesBefore, getSave()));
     // then：離開後要去的 hash 路徑（下一關）；沒給就回到這關所屬的關卡列表（練習回上一頁）
     const leave = (then?: string) => {
       this.dialog?.close();

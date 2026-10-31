@@ -19,7 +19,7 @@ import { equippedTitle } from '../../progression/titles';
 import { titleContext } from '../title-context';
 
 /** 捷徑上的紅點：有可領的登入、任務、成就或圖鑑收集獎勵 */
-const BADGE_OF: Record<string, keyof HomeBadges> = { 'login-bonus': 'login', quests: 'quests', achievements: 'achievements', collection: 'collection' };
+const BADGE_OF: Record<string, keyof HomeBadges> = { 'login-bonus': 'login', quests: 'quests', achievements: 'achievements', collection: 'collection', notebook: 'titles' };
 
 const SHORTCUTS: { label: string; icon: IconName; to: string; args?: string[] }[] = [
   { label: '任務', icon: 'quest', to: 'quests' },
