@@ -63,3 +63,24 @@ export function starterTeams(cards: CardDef[] = proposalCards): SimTeam[] {
     return { archetype, members, helper: { ...members[0] } };
   });
 }
+
+/**
+ * 「滿等、有覺醒」的老手隊：入門隊的卡能進化的都換成最終型態（免抽卡的進化素材都是關卡掉落），
+ * 全員滿等、覺醒全開。用來設定後期關卡（第 5 章、挑戰之塔頂層）的數值。
+ */
+export function veteranTeams(cards: CardDef[] = proposalCards): SimTeam[] {
+  const byId = new Map(cards.map((c) => [c.id, c]));
+  const final = (id: string): CardDef => {
+    let card = byId.get(id)!;
+    while (card.evolution && byId.has(card.evolution.to)) card = byId.get(card.evolution.to)!;
+    return card;
+  };
+  return starterTeams(cards).map((t) => {
+    const upgrade = (m: { cardId: string }) => {
+      const card = final(m.cardId);
+      return { cardId: card.id, level: card.maxLevel, awakened: card.awakenings?.length ?? 0 };
+    };
+    const members = t.members.map(upgrade);
+    return { archetype: t.archetype, members, helper: { ...members[0] } };
+  });
+}

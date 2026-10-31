@@ -1,10 +1,11 @@
-// 用法：npm run sim -- [--set bench|main|daily|event|tower|trial] [--runs 20] [--stage id] [--archetype id] [--team newbie] [--json out.json]
+// 用法：npm run sim -- [--set bench|main|daily|event|tower|trial] [--runs 20] [--stage id] [--archetype id] [--team newbie] [--teams starter|veteran] [--json out.json]
 //                     [--progress] [--chapter-stages 1,5,9]（--progress 只用於 --set main，見 progress.ts）
 // bench＝基準關卡；其他＝data/stages.json 對應種類的關卡（敵人用 data/enemies.json）
+// teams：starter＝免抽入門隊（預設）；veteran＝同一批卡進化到最終型態、滿等、覺醒全開
 import { writeFileSync } from 'node:fs';
 import { gameData } from '../../src/data/load';
 import type { StageDef } from '../../src/core/types';
-import { benchmarkStages, fixedTeamOf, fixtureData, gameStageData, newbieTeams, starterTeams } from './fixtures';
+import { benchmarkStages, fixedTeamOf, fixtureData, gameStageData, newbieTeams, starterTeams, veteranTeams } from './fixtures';
 import { formatReport, simulateMatrix, type CellResult } from './simulate';
 import { runProgress } from './progress-run';
 
@@ -24,7 +25,8 @@ const chapterStages = flag('chapter-stages')?.split(',').map(Number);
 const stages = pool.filter((s) => (!stageFilter || s.id === stageFilter)
   && (!chapterStages || chapterStages.includes(Number(s.id.split('-').pop()))));
 const data = set === 'bench' ? fixtureData : gameStageData;
-const teams = starterTeams().filter((t) => !archetypeFilter || t.archetype === archetypeFilter);
+const teamSet = flag('teams') ?? 'starter';
+const teams = (teamSet === 'veteran' ? veteranTeams() : starterTeams()).filter((t) => !archetypeFilter || t.archetype === archetypeFilter);
 
 const started = Date.now();
 let results: CellResult[];
@@ -54,7 +56,7 @@ if (args.includes('--progress')) {
   results = simulateMatrix(stages, teams, data, runs);
 }
 const names = Object.fromEntries(stages.map((s) => [s.id, s.id]));
-console.log(`# 流派模擬報表：${set}（每格 ${runs} 場：勝率／勝場平均回合）\n`);
+console.log(`# 流派模擬報表：${set}${teamSet === 'veteran' ? '（老手隊）' : ''}（每格 ${runs} 場：勝率／勝場平均回合）\n`);
 console.log(formatReport(results, names));
 console.log(`\n共 ${results.length * runs} 場，耗時 ${((Date.now() - started) / 1000).toFixed(1)} 秒`);
 const out = flag('json');

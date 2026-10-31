@@ -112,7 +112,8 @@ describe('隊長技強度評估', () => {
 
   it('依星數檢查百分比與上限；3★ 不能有百分比追打', () => {
     expect(checkLeaderTier(pctLeader, 6)).toEqual([]);
-    expect(checkLeaderTier(pctLeader, 5)).toEqual(['百分比追打 % 3 超過 5★ 上限 2', '百分比追打上限 60000 超過 5★ 上限 30000']);
+    expect(checkLeaderTier(pctLeader, 5)).toEqual(['百分比追打上限 60000 超過 5★ 上限 40000']);
+    expect(checkLeaderTier(pctLeader, 4)).toEqual(['百分比追打 % 3 超過 4★ 上限 2', '百分比追打上限 60000 超過 4★ 上限 20000']);
     expect(checkLeaderTier(pctLeader, 3).length).toBe(2);
     expect(LEADER_TIERS[3].percentFollowUp).toBe(0);
     for (const r of [3, 4, 5, 6] as const) expect(LEADER_TIERS[r].percentFollowUpCap).toBeGreaterThanOrEqual(LEADER_TIERS[r].fixedFollowUp);
@@ -131,13 +132,14 @@ describe('隊長技強度評估', () => {
 });
 
 describe('資料驗證', () => {
-  it('主動技的最大生命百分比傷害沒填上限會被擋下；正式資料目前沒有用到新模式', () => {
+  it('主動技的最大生命百分比傷害沒填上限會被擋下；正式資料用到的都有上限', () => {
     const bad = { id: 'sk-bad', name: '壞', cooldown: { max: 5, min: 3 }, description: '', effects: [{ type: 'damage' as const, target: 'single' as const, mode: 'percentMaxHp' as const, value: 5 }] };
     expect(validateGameData({ ...gameData, skills: [...gameData.skills, bad] })).toContain('skills/sk-bad: 最大生命百分比傷害一定要有上限 cap');
     // heal 本來就有 percentMaxHp（回復最大生命 %），這裡只看傷害與追打
     const damageUses = gameData.skills.flatMap((x) => x.effects).filter((e) => e.type === 'damage' && e.mode === 'percentMaxHp');
     const followUses = gameData.leaderSkills.flatMap((l) => l.rules.flatMap((r) => r.effects)).filter((e) => e.type === 'followUpDamage' && e.mode === 'percentMaxHp');
-    expect([...damageUses, ...followUses]).toEqual([]);
+    expect(followUses.length).toBeGreaterThan(0);
+    for (const e of [...damageUses, ...followUses]) expect('cap' in e && e.cap! > 0).toBe(true);
   });
 });
 

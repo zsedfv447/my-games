@@ -228,6 +228,33 @@ describe('整合：轉珠 → 隊長技 → 傷害', () => {
   });
 });
 
+describe('強化珠天降與分段追打', () => {
+  it('強化珠天降只看開場條件，多個取最高', () => {
+    const a = leader([{ conditions: [{ type: 'always' }], effects: [{ type: 'enhancedSkyfall', rate: 0.1 }] }]);
+    const b = leader([{ conditions: [{ type: 'always' }], effects: [{ type: 'enhancedSkyfall', rate: 0.15 }] }]);
+    expect(evaluateLeaderStatic([a, b], [member('wood')]).enhancedSkyfall).toBe(0.15);
+    expect(evaluateLeaderStatic([undefined, undefined], [member('wood')]).enhancedSkyfall).toBe(0);
+    const conditional = leader([{ conditions: [{ type: 'hpBelow', percent: 50 }], effects: [{ type: 'enhancedSkyfall', rate: 0.1 }] }]);
+    expect(lintLeaderSkill(conditional)).toHaveLength(1);
+  });
+
+  it('固定追打每多消除 1 組心珠加碼，有上限', () => {
+    const ls = leader([{
+      conditions: [{ type: 'heartsMatched', count: 1 }],
+      effects: [{ type: 'followUpDamage', mode: 'fixed', value: 2000, perStep: 1000, maxValue: 4000 }],
+    }]);
+    const amount = (hearts: number) =>
+      evaluateLeaderTurn([ls], ctx({ team: [member('wood')], groups: Array.from({ length: hearts }, () => group('heart')) })).followUps.map((f) => f.amount);
+    expect(amount(0)).toEqual([]);
+    expect(amount(1)).toEqual([2000]);
+    expect(amount(2)).toEqual([3000]);
+    expect(amount(5)).toEqual([4000]);
+    expect(leaderSkillProfile(ls).fixedFollowUp).toBe(4000);
+    expect(lintLeaderSkill(leader([{ conditions: [{ type: 'always' }], effects: [{ type: 'followUpDamage', mode: 'fixed', value: 1, perStep: 1 }] }])))
+      .toEqual(['rule 0：followUpDamage 有 perStep，但沒有可分級的條件']);
+  });
+});
+
 describe('星數分級', () => {
   const chain = (value: number, extra: LeaderSkillDef['rules'][number]['effects'] = []) =>
     leader([{ conditions: [{ type: 'orbsInOneMatch', count: 6 }], effects: [{ type: 'atkMultiplier', value }, ...extra] }]);

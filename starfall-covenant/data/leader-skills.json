@@ -203,12 +203,19 @@
             "target": {
               "attribute": "fire"
             },
-            "value": 2.5
+            "value": 2.3
+          },
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "attribute": "fire"
+            },
+            "value": 1.2
           }
         ]
       }
     ],
-    "description": "焰屬性攻擊 2.5 倍。"
+    "description": "焰屬性攻擊 2.3 倍、生命 1.2 倍。"
   },
   {
     "id": "l107",
@@ -272,7 +279,7 @@
         "conditions": [
           {
             "type": "hpBelow",
-            "percent": 50
+            "percent": 70
           }
         ],
         "effects": [
@@ -281,9 +288,22 @@
             "value": 2
           }
         ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "value": 1.2
+          }
+        ]
       }
     ],
-    "description": "生命 < 50% 時全隊攻擊 2 倍。"
+    "description": "生命 < 70% 時全隊攻擊 2 倍；全隊生命 1.2 倍。"
   },
   {
     "id": "l110",
@@ -299,26 +319,25 @@
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 2
+            "value": 3
           }
         ]
       },
       {
         "conditions": [
           {
-            "type": "hpBelow",
-            "percent": 30
+            "type": "always"
           }
         ],
         "effects": [
           {
-            "type": "atkMultiplier",
-            "value": 1.5
+            "type": "hpMultiplier",
+            "value": 1.3
           }
         ]
       }
     ],
-    "description": "生命 < 50% 時全隊攻擊 2 倍；生命 < 30% 時再 1.5 倍（共 3 倍）。"
+    "description": "生命 < 50% 時全隊攻擊 3 倍；全隊生命 1.3 倍。"
   },
   {
     "id": "l111",
@@ -340,9 +359,22 @@
             "value": 2
           }
         ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "enhancedSkyfall",
+            "rate": 0.1
+          }
+        ]
       }
     ],
-    "description": "消除 3 顆以上強化珠時焰屬性攻擊 2 倍。"
+    "description": "消除 3 顆以上強化珠時焰屬性攻擊 2 倍；天降珠有 10% 機率是強化珠。"
   },
   {
     "id": "l112",
@@ -366,9 +398,22 @@
             "maxValue": 3
           }
         ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "enhancedSkyfall",
+            "rate": 0.15
+          }
+        ]
       }
     ],
-    "description": "消除 3 顆以上強化珠時焰屬性攻擊 2 倍，每多 1 顆 +0.25 倍，最高 3 倍。"
+    "description": "消除 3 顆以上強化珠時焰屬性攻擊 2 倍，每多 1 顆 +0.25 倍，最高 3 倍；天降珠有 15% 機率是強化珠。"
   },
   {
     "id": "l201",
@@ -659,11 +704,15 @@
           {
             "type": "enemyCooldownPlus",
             "turns": 1
+          },
+          {
+            "type": "atkMultiplier",
+            "value": 1.5
           }
         ]
       }
     ],
-    "description": "敵人攻擊倒數永遠 +1。"
+    "description": "敵人攻擊倒數永遠 +1；全隊攻擊 1.5 倍。"
   },
   {
     "id": "l210",
@@ -686,15 +735,12 @@
           },
           {
             "type": "atkMultiplier",
-            "target": {
-              "attribute": "water"
-            },
-            "value": 1.5
+            "value": 2
           }
         ]
       }
     ],
-    "description": "敵人攻擊倒數永遠 +1；全隊受到傷害減少 20%；潮屬性攻擊 1.5 倍。"
+    "description": "敵人攻擊倒數永遠 +1；全隊受到傷害減少 20%；全隊攻擊 2 倍。"
   },
   {
     "id": "l211",
@@ -778,18 +824,20 @@
         "conditions": [
           {
             "type": "heartsMatched",
-            "count": 3
+            "count": 1
           }
         ],
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 3.5
+            "value": 2.5,
+            "perStep": 1,
+            "maxValue": 3.5
           }
         ]
       }
     ],
-    "description": "全隊回復 2 倍、受到傷害減少 40%；消除 3 組以上心珠時全隊攻擊 3.5 倍。"
+    "description": "全隊回復 2 倍、受到傷害減少 40%；消除心珠時全隊攻擊 2.5 倍，消除 2 組以上 3.5 倍。"
   },
   {
     "id": "l302",
@@ -810,9 +858,22 @@
             "maxValue": 4
           }
         ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "enhancedSkyfall",
+            "rate": 0.2
+          }
+        ]
       }
     ],
-    "description": "消除 3 顆以上強化珠時全隊攻擊 2.5 倍，每多 1 顆 +0.25 倍，最高 4 倍。"
+    "description": "消除 3 顆以上強化珠時全隊攻擊 2.5 倍，每多 1 顆 +0.25 倍，最高 4 倍；天降珠有 20% 機率是強化珠。"
   },
   {
     "id": "l303",
@@ -844,11 +905,15 @@
           {
             "type": "hpMultiplier",
             "value": 1.2
+          },
+          {
+            "type": "enhancedSkyfall",
+            "rate": 0.25
           }
         ]
       }
     ],
-    "description": "同上最高改為 5 倍；全隊生命 1.2 倍。"
+    "description": "消除 3 顆以上強化珠時全隊攻擊 2.5 倍，每多 1 顆 +0.25 倍，最高 5 倍；全隊生命 1.2 倍；天降珠有 25% 機率是強化珠。"
   },
   {
     "id": "l304",
@@ -871,19 +936,29 @@
         "conditions": [
           {
             "type": "heartsMatched",
-            "count": 2
+            "count": 1
           }
         ],
         "effects": [
           {
             "type": "followUpDamage",
             "mode": "fixed",
-            "value": 5000
+            "value": 4000,
+            "perStep": 2000,
+            "maxValue": 8000
+          },
+          {
+            "type": "followUpDamage",
+            "mode": "percentMaxHp",
+            "value": 1,
+            "perStep": 0.5,
+            "maxValue": 2,
+            "cap": 30000
           }
         ]
       }
     ],
-    "description": "全隊回復 1.3 倍；消除 2 組以上心珠時追加 5000 固定傷害。"
+    "description": "全隊回復 1.3 倍；消除心珠時追加 4000 固定傷害與敵人最大生命 1% 的傷害（最多 30000），每多消除 1 組各 +2000／+0.5%，最高 8000／2%。"
   },
   {
     "id": "l305",
@@ -910,14 +985,24 @@
         "conditions": [
           {
             "type": "heartsMatched",
-            "count": 2
+            "count": 1
           }
         ],
         "effects": [
           {
             "type": "followUpDamage",
             "mode": "fixed",
-            "value": 10000
+            "value": 6000,
+            "perStep": 3000,
+            "maxValue": 14000
+          },
+          {
+            "type": "followUpDamage",
+            "mode": "percentMaxHp",
+            "value": 1.5,
+            "perStep": 0.75,
+            "maxValue": 3,
+            "cap": 60000
           },
           {
             "type": "atkMultiplier",
@@ -926,7 +1011,7 @@
         ]
       }
     ],
-    "description": "全隊回復 1.5 倍、生命 1.3 倍；消除 2 組以上心珠時追加 10000 固定傷害，並且全隊攻擊 1.5 倍。"
+    "description": "全隊回復 1.5 倍、生命 1.3 倍；消除心珠時追加 6000 固定傷害與敵人最大生命 1.5% 的傷害（最多 60000），每多消除 1 組各 +3000／+0.75%，最高 14000／3%，並且全隊攻擊 1.5 倍。"
   },
   {
     "id": "l306",
@@ -953,18 +1038,20 @@
         "conditions": [
           {
             "type": "heartsMatched",
-            "count": 3
+            "count": 1
           }
         ],
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 2.5
+            "value": 2,
+            "perStep": 0.5,
+            "maxValue": 2.5
           }
         ]
       }
     ],
-    "description": "全隊回復 1.5 倍、受到傷害減少 20%；消除 3 組以上心珠時全隊攻擊 2.5 倍。"
+    "description": "全隊回復 1.5 倍、受到傷害減少 20%；消除心珠時全隊攻擊 2 倍，消除 2 組以上 2.5 倍。"
   },
   {
     "id": "l307",
@@ -974,14 +1061,24 @@
         "conditions": [
           {
             "type": "heartsMatched",
-            "count": 3
+            "count": 1
           }
         ],
         "effects": [
           {
             "type": "followUpDamage",
             "mode": "fixed",
-            "value": 3000
+            "value": 2000,
+            "perStep": 1000,
+            "maxValue": 4000
+          },
+          {
+            "type": "followUpDamage",
+            "mode": "percentMaxHp",
+            "value": 1,
+            "perStep": 0.5,
+            "maxValue": 2,
+            "cap": 20000
           }
         ]
       },
@@ -995,11 +1092,15 @@
           {
             "type": "hpMultiplier",
             "value": 1.3
+          },
+          {
+            "type": "damageReduction",
+            "percent": 15
           }
         ]
       }
     ],
-    "description": "消除 3 組以上心珠時追加 3000 固定傷害；全隊生命 1.3 倍。"
+    "description": "消除心珠時追加 2000 固定傷害與敵人最大生命 1% 的傷害（最多 20000），每多消除 1 組各 +1000／+0.5%，最高 4000／2%；全隊生命 1.3 倍、受到傷害減少 15%。"
   },
   {
     "id": "l308",
@@ -1042,9 +1143,26 @@
             "value": 2
           }
         ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "value": 1.2
+          },
+          {
+            "type": "enhancedSkyfall",
+            "rate": 0.1
+          }
+        ]
       }
     ],
-    "description": "消除 3 顆以上強化珠時全隊攻擊 2 倍。"
+    "description": "消除 3 顆以上強化珠時全隊攻擊 2 倍；全隊生命 1.2 倍；天降珠有 10% 機率是強化珠。"
   },
   {
     "id": "l310",
@@ -1065,9 +1183,26 @@
             "maxValue": 3
           }
         ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "value": 1.3
+          },
+          {
+            "type": "enhancedSkyfall",
+            "rate": 0.15
+          }
+        ]
       }
     ],
-    "description": "消除 3 顆以上強化珠時全隊攻擊 2 倍，每多 1 顆 +0.25 倍，最高 3 倍。"
+    "description": "消除 3 顆以上強化珠時全隊攻擊 2 倍，每多 1 顆 +0.25 倍，最高 3 倍；全隊生命 1.3 倍；天降珠有 15% 機率是強化珠。"
   },
   {
     "id": "l311",
@@ -1088,7 +1223,7 @@
             "value": 2
           },
           {
-            "type": "rcvMultiplier",
+            "type": "hpMultiplier",
             "target": {
               "race": "sylph"
             },
@@ -1097,7 +1232,7 @@
         ]
       }
     ],
-    "description": "靈仙攻擊 2 倍、回復 1.2 倍。"
+    "description": "靈仙攻擊 2 倍、生命 1.2 倍。"
   },
   {
     "id": "l312",
@@ -1339,14 +1474,27 @@
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 2.5,
+            "value": 2.2,
             "perStep": 0.5,
-            "maxValue": 3
+            "maxValue": 2.7
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "value": 1.2
           }
         ]
       }
     ],
-    "description": "同時消除 4 種屬性時全隊攻擊 2.5 倍，消除 5 種時 3 倍。"
+    "description": "同時消除 4 種屬性時全隊攻擊 2.2 倍，消除 5 種時 2.7 倍；全隊生命 1.2 倍。"
   },
   {
     "id": "l407",
@@ -1426,11 +1574,15 @@
           {
             "type": "skillCooldownStart",
             "charged": true
+          },
+          {
+            "type": "atkMultiplier",
+            "value": 1.5
           }
         ]
       }
     ],
-    "description": "開場全員技能冷卻已滿。"
+    "description": "開場全員技能冷卻已滿；全隊攻擊 1.5 倍。"
   },
   {
     "id": "l410",
@@ -1446,6 +1598,10 @@
           {
             "type": "skillCooldownStart",
             "charged": true
+          },
+          {
+            "type": "atkMultiplier",
+            "value": 1.5
           }
         ]
       },
@@ -1458,12 +1614,12 @@
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 2.5
+            "value": 2
           }
         ]
       }
     ],
-    "description": "開場全員技能冷卻已滿；本回合施放過主動技時全隊攻擊 2.5 倍。"
+    "description": "開場全員技能冷卻已滿；全隊攻擊 1.5 倍，本回合施放過主動技時再 2 倍。"
   },
   {
     "id": "l411",
@@ -1556,14 +1712,24 @@
         "conditions": [
           {
             "type": "heartsMatched",
-            "count": 3
+            "count": 1
           }
         ],
         "effects": [
           {
             "type": "followUpDamage",
             "mode": "fixed",
-            "value": 8000
+            "value": 5000,
+            "perStep": 2500,
+            "maxValue": 10000
+          },
+          {
+            "type": "followUpDamage",
+            "mode": "percentMaxHp",
+            "value": 1.5,
+            "perStep": 0.75,
+            "maxValue": 3,
+            "cap": 40000
           }
         ]
       },
@@ -1581,7 +1747,7 @@
         ]
       }
     ],
-    "description": "消除 3 組以上心珠時追加 8000 固定傷害；全隊生命 1.5 倍。"
+    "description": "消除心珠時追加 5000 固定傷害與敵人最大生命 1.5% 的傷害（最多 40000），每多消除 1 組各 +2500／+0.75%，最高 10000／3%；全隊生命 1.5 倍。"
   },
   {
     "id": "l503",
@@ -1591,14 +1757,24 @@
         "conditions": [
           {
             "type": "heartsMatched",
-            "count": 3
+            "count": 1
           }
         ],
         "effects": [
           {
             "type": "followUpDamage",
             "mode": "fixed",
-            "value": 15000
+            "value": 8000,
+            "perStep": 4000,
+            "maxValue": 18000
+          },
+          {
+            "type": "followUpDamage",
+            "mode": "percentMaxHp",
+            "value": 2,
+            "perStep": 1,
+            "maxValue": 4,
+            "cap": 80000
           }
         ]
       },
@@ -1616,7 +1792,7 @@
         ]
       }
     ],
-    "description": "同上改為 15000，生命 1.8 倍。"
+    "description": "消除心珠時追加 8000 固定傷害與敵人最大生命 2% 的傷害（最多 80000），每多消除 1 組各 +4000／+1%，最高 18000／4%；全隊生命 1.8 倍。"
   },
   {
     "id": "l504",
@@ -1724,12 +1900,31 @@
         "effects": [
           {
             "type": "atkMultiplier",
-            "value": 3
+            "value": 2.6
+          }
+        ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "attribute": [
+                "water",
+                "dark"
+              ]
+            },
+            "value": 1.2
           }
         ]
       }
     ],
-    "description": "同時消除蝕珠與潮珠時全隊攻擊 3 倍。"
+    "description": "同時消除蝕珠與潮珠時全隊攻擊 2.6 倍；潮、蝕屬性生命 1.2 倍。"
   },
   {
     "id": "l507",
@@ -1798,7 +1993,7 @@
         "conditions": [
           {
             "type": "orbsInOneMatch",
-            "count": 6
+            "count": 5
           }
         ],
         "effects": [
@@ -1807,9 +2002,22 @@
             "value": 2
           }
         ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "value": 1.2
+          }
+        ]
       }
     ],
-    "description": "一串消除 6 顆以上珠時全隊攻擊 2 倍。"
+    "description": "一串消除 5 顆以上珠時全隊攻擊 2 倍；全隊生命 1.2 倍。"
   },
   {
     "id": "l510",
@@ -1819,7 +2027,7 @@
         "conditions": [
           {
             "type": "orbsInOneMatch",
-            "count": 6
+            "count": 5
           }
         ],
         "effects": [
@@ -1831,9 +2039,22 @@
             "type": "ignoreDefense"
           }
         ]
+      },
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "value": 1.3
+          }
+        ]
       }
     ],
-    "description": "一串消除 6 顆以上珠時全隊攻擊 2.5 倍並無視防禦。"
+    "description": "一串消除 5 顆以上珠時全隊攻擊 2.5 倍並無視防禦；全隊生命 1.3 倍。"
   },
   {
     "id": "l511",

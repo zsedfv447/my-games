@@ -136,15 +136,18 @@ export type LeaderEffect =
   | { type: 'extendMoveTime'; seconds: number }
   /**
    * 追打：multiplier = 全隊攻擊力 × value；fixed = 固定 value 點；
-   * percentMaxHp = 目標最大生命的 value %，每次最多 cap 點（規則見 GDD 2.1「百分比傷害」）
+   * percentMaxHp = 目標最大生命的 value %，每次最多 cap 點（規則見 GDD 2.1「百分比傷害」）。
+   * perStep：每超過條件 1 級再加的數值（例：每多消除 1 組心珠追打更多），maxValue 為上限
    */
-  | { type: 'followUpDamage'; mode: 'multiplier' | 'fixed' | 'percentMaxHp'; value: number; cap?: number }
+  | { type: 'followUpDamage'; mode: 'multiplier' | 'fixed' | 'percentMaxHp'; value: number; cap?: number; perStep?: number; maxValue?: number }
   | { type: 'ignoreDefense' }
   | { type: 'enemyCooldownPlus'; turns: number }
   | { type: 'skillCooldownStart'; charged: boolean }
   /** 每回合全隊技能冷卻額外減少 turns（提案 001，用於技能循環） */
   | { type: 'allyCooldownPerTurn'; turns: number }
-  | { type: 'boardSize'; cols: number; rows: number };
+  | { type: 'boardSize'; cols: number; rows: number }
+  /** 天降珠為強化珠的機率（0–1），和主動技的設定取較高者（用於強化珠增幅） */
+  | { type: 'enhancedSkyfall'; rate: number };
 
 export interface LeaderSkillDef {
   id: string;

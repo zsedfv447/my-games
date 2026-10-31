@@ -506,7 +506,10 @@ export function startBattle(
     submitMove(path) {
       if (state.phase !== 'player') return fail('戰鬥已結束');
       const moved = applyPath(state.board, path);
-      const resolved = resolveBoard(moved.board, rng, { ...skyfallOptions(state), sealedOrbs: sealedOrbs(state) });
+      const skyfall = skyfallOptions(state);
+      // 隊長技的強化珠天降和主動技的設定取較高者
+      skyfall.enhancedChance = Math.max(skyfall.enhancedChance ?? 0, leaderStatic.enhancedSkyfall);
+      const resolved = resolveBoard(moved.board, rng, { ...skyfall, sealedOrbs: sealedOrbs(state) });
       const { groups, combo } = resolved;
       state.board = resolved.board;
       const heartSealed = isHeartSealed(state);

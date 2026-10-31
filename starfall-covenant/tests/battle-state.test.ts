@@ -153,6 +153,22 @@ describe('startBattle', () => {
 });
 
 describe('TurnSummary.steps', () => {
+  it('隊長技的強化珠天降：天降的新珠依機率變成強化珠', () => {
+    const sky = (rate: number): BattleData => ({
+      ...data,
+      leaderSkills: [...data.leaderSkills, { id: 'ls-sky', name: '天降', description: '', rules: [{ conditions: [{ type: 'always' }], effects: [{ type: 'enhancedSkyfall', rate }] }] }],
+      cards: [card('c-sky', 'fire', { leaderSkill: 'ls-sky' })],
+    });
+    const enhancedAfterMove = (rate: number) => {
+      const battle = startBattle(stage([['boss']]), [{ cardId: 'c-sky', level: 50 }], null, createRng(3), sky(rate));
+      expect(battle.getState().board.cells.some((o) => o.enhanced)).toBe(false);
+      battle.submitMove(findMove(battle.getState().board));
+      return battle.getState().board.cells.filter((o) => o.enhanced).length;
+    };
+    expect(enhancedAfterMove(1)).toBeGreaterThanOrEqual(3);
+    expect(enhancedAfterMove(0)).toBe(0);
+  });
+
   it('轉珠結算附上放手後的盤面與逐段消除', () => {
     const battle = startBattle(stage([['boss']]), [{ cardId: 'c-fire', level: 1 }], null, createRng(5), data);
     const before = battle.getState().board;
