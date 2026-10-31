@@ -40,7 +40,7 @@ describe('助戰資料', () => {
 describe('助戰強度', () => {
   it('6★ 助戰只在主線通關（st-5-9）後出現', () => {
     for (const npc of HELPER_NPCS) {
-      for (const t of npc.tiers) if (cardById(t.card)!.rarity >= 6) expect(t.after, `${npc.id} ${t.card}`).toBe('st-5-9');
+      for (const t of npc.tiers) if (cardById(t.card)!.rarity >= 6) expect(t.after ?? npc.unlockAfter, `${npc.id} ${t.card}`).toBe('st-5-9');
     }
   });
 });

@@ -1,0 +1,65 @@
+{
+  "description": "素材包中的資源、商店道具與選單圖示；保留遊戲原有名稱及功能。",
+  "assets": [
+    {
+      "output": "assets/user/ui/pack-resource-coin.png",
+      "source": "03-community-repositories/chenFlyingkite__MyTosWiki/app/src/main/res/drawable-xhdpi/coin.png",
+      "sha256": "ac92011702d3ec86a3f5536978dfe499461c58c3db99b97c41596759c8423296",
+      "transformation": "none; original file copied unchanged"
+    },
+    {
+      "output": "assets/user/ui/pack-resource-gem.png",
+      "source": "03-community-repositories/chenFlyingkite__MyTosWiki/app/src/main/res/drawable-xhdpi/diamond.png",
+      "sha256": "df13160ef8db880fa18042efc24a73e0a00610a4eaeaeedf4a1301defdca7ee9",
+      "transformation": "none; original file copied unchanged"
+    },
+    {
+      "output": "assets/user/ui/pack-resource-stamina.png",
+      "source": "03-community-repositories/chenFlyingkite__MyTosWiki/app/src/main/res/drawable-xhdpi/logo_stamina.png",
+      "sha256": "0b2ae99577933c8bcf13ce64a2b5b7d5c8ef079949e3ad6e84aa5cc0ecb7f681",
+      "transformation": "none; original file copied unchanged"
+    },
+    {
+      "output": "assets/user/ui/pack-shop-refill.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/-- 通用素材/store_recover.imageset/store_recover@2x.png",
+      "sha256": "15128a1876aaec0229ccaa63466113a9057a673804e29c48ee6d029b8732d367",
+      "transformation": "none; original file copied unchanged"
+    },
+    {
+      "output": "assets/user/ui/pack-shop-expand.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/-- 通用素材/store_extend.imageset/store_extend@2x.png",
+      "sha256": "78b405780abd036045e8ce8bebac0b0438eb40d99fdc3fc671a1523362255533",
+      "transformation": "none; original file copied unchanged"
+    },
+    {
+      "output": "assets/user/ui/pack-shop-coin.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/-- 通用素材/store_treasure.imageset/store_treasure@2x.png",
+      "sha256": "a876fadc6519c767cea55609b1b701973085c00055c93ee0124470d24c7bafe5",
+      "transformation": "none; original file copied unchanged"
+    },
+    {
+      "output": "assets/user/ui/pack-shop-gems.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/-- 通用素材/store_stone.imageset/store_stone@2x.png",
+      "sha256": "d9bb5c4b600f028297d8c96923a2ee66caca268cb4feebd3bd22f5362d3f99c9",
+      "transformation": "none; original file copied unchanged"
+    },
+    {
+      "output": "assets/user/ui/pack-login-chest.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/-- 通用素材/store_gift.imageset/store_gift@2x.png",
+      "sha256": "7f91ae9c75a45bf9d95771cc603519c0fa0dabfdacefb52e623f548f3eaa7c33",
+      "transformation": "none; original file copied unchanged"
+    },
+    {
+      "output": "assets/user/ui/pack-nav-cards.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/-- 通用素材/store_card.imageset/store_card@2x.png",
+      "sha256": "dd0e6d8e78263afc29dbd800d181395e385aa304cb1701ef431f2a0b2270ea80",
+      "transformation": "none; original file copied unchanged"
+    },
+    {
+      "output": "assets/user/ui/pack-nav-summon.png",
+      "source": "03-community-repositories/jordengit__TowerOfSaviorsHelper/iOS Source Code/TowerOfSaviors/Assets.xcassets/-- 通用素材/store_draw.imageset/store_draw@2x.png",
+      "sha256": "83c84849f58fc6bd2e769e53f41e624cfd4d9744a203e71e881cb65ce2d84be5",
+      "transformation": "none; original file copied unchanged"
+    }
+  ]
+}

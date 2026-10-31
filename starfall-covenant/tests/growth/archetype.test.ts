@@ -17,7 +17,7 @@ describe('流派圖鑑', () => {
   it('列出每個流派的卡、擁有狀況、免抽隊長與是否已能組隊', () => {
     const save = makeSave([owned('u1', 'c102'), owned('u2', 'c206'), owned('u3', 'c211')]);
     const codex = archetypeCodex(save, ctx);
-    expect(codex).toHaveLength(12);
+    expect(codex).toHaveLength(15);
     const chain = codex.find((e) => e.id === 'chain')!;
     expect(chain.cards.map((c) => c.cardId)).toEqual(['c102', 'c103', 'c107']);
     // c103 沒擁有，但同鏈的 c102 有

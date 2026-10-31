@@ -839,5 +839,290 @@
       "count": 4,
       "per": "month"
     }
+  },
+  {
+    "id": "classic-c801",
+    "name": "經典角色・費雷",
+    "price": {
+      "coin": 50000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c801",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "classic-c802",
+    "name": "經典角色・提爾",
+    "price": {
+      "coin": 50000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c802",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "classic-c803",
+    "name": "經典角色・費蕾雅",
+    "price": {
+      "coin": 50000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c803",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "classic-c804",
+    "name": "經典角色・索爾",
+    "price": {
+      "coin": 50000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c804",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "classic-c805",
+    "name": "經典角色・洛基",
+    "price": {
+      "coin": 50000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c805",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "classic-c806",
+    "name": "經典角色・波塞頓",
+    "price": {
+      "coin": 50000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c806",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "classic-c807",
+    "name": "經典角色・赫淮斯托斯",
+    "price": {
+      "coin": 50000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c807",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "classic-c808",
+    "name": "經典角色・雅典娜",
+    "price": {
+      "coin": 50000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c808",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "classic-c809",
+    "name": "經典角色・阿波羅",
+    "price": {
+      "coin": 50000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c809",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "classic-c810",
+    "name": "經典角色・阿提密斯",
+    "price": {
+      "coin": 50000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c810",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "classic-c811",
+    "name": "經典角色・饕餮",
+    "price": {
+      "coin": 15000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c811",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "classic-c812",
+    "name": "經典角色・巴風特",
+    "price": {
+      "coin": 15000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c812",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "classic-c813",
+    "name": "經典角色・朱雀",
+    "price": {
+      "coin": 15000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c813",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "classic-c814",
+    "name": "經典角色・玄武",
+    "price": {
+      "coin": 15000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c814",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
+  },
+  {
+    "id": "classic-c815",
+    "name": "經典角色・白虎",
+    "price": {
+      "coin": 15000
+    },
+    "reward": {
+      "cards": [
+        {
+          "card": "c815",
+          "count": 1
+        }
+      ]
+    },
+    "limit": {
+      "count": 1,
+      "per": "forever"
+    }
   }
 ]

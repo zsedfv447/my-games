@@ -10,12 +10,12 @@ export type Attribute = (typeof ATTRIBUTES)[number];
 export const ORB_TYPES = [...ATTRIBUTES, 'heart'] as const;
 export type OrbType = (typeof ORB_TYPES)[number];
 
-export const RACES = ['beast', 'dragon', 'machina', 'sylph', 'nether', 'human', 'material'] as const;
+export const RACES = ['beast', 'dragon', 'machina', 'sylph', 'nether', 'human', 'god', 'material'] as const;
 export type Race = (typeof RACES)[number];
 
 export const ARCHETYPE_IDS = [
   'mono', 'rainbow', 'combo', 'chain', 'heart', 'race',
-  'enhance', 'control', 'berserk', 'dual', 'skillcycle', 'fixed',
+  'enhance', 'control', 'berserk', 'dual', 'skillcycle', 'fixed', 'norse', 'greek', 'classicbeast',
 ] as const;
 export type ArchetypeId = (typeof ARCHETYPE_IDS)[number];
 export type ArchetypeRole = 'leader' | 'core' | 'support';
@@ -88,6 +88,8 @@ export type SkillEffect =
   | { type: 'heal'; mode: 'rcvMultiplier' | 'percentMaxHp'; value: number }
   | { type: 'selfDamage'; percentCurrentHp: number }
   | { type: 'surviveOnce'; turns: number }
+  | { type: 'markAttack'; attribute: Attribute; step: number; maxMultiplier: number; initialMultiplier?: number }
+  | { type: 'reduceEnemyDefense'; percent: number; turns: number }
   | { type: 'buffAttack'; target?: UnitFilter; multiplier: number; turns: number }
   | { type: 'rcvToAtk'; ratio: number; turns: number }
   | { type: 'reduceDamage'; percent: number; turns: number }
@@ -128,6 +130,9 @@ export type LeaderCondition =
   | { type: 'teamAll'; filter: UnitFilter }
   | { type: 'skillUsedThisTurn' };
 
+/** 每段消除同色珠每 count 顆，在該段補珠中生成 spawn 顆同色強化珠。 */
+export interface MatchedOrbSkyfall { orb: OrbType; count: number; spawn: number }
+
 export type LeaderEffect =
   | { type: 'atkMultiplier'; target?: UnitFilter; value: number; /** 每超過條件 1 級再加的倍率 */ perStep?: number; maxValue?: number }
   | { type: 'hpMultiplier'; target?: UnitFilter; value: number }
@@ -147,7 +152,8 @@ export type LeaderEffect =
   | { type: 'allyCooldownPerTurn'; turns: number }
   | { type: 'boardSize'; cols: number; rows: number }
   /** 天降珠為強化珠的機率（0–1），和主動技的設定取較高者（用於強化珠增幅） */
-  | { type: 'enhancedSkyfall'; rate: number };
+  | { type: 'enhancedSkyfall'; rate: number }
+  | ({ type: 'matchedOrbSkyfall' } & MatchedOrbSkyfall);
 
 export interface LeaderSkillDef {
   id: string;
@@ -168,7 +174,7 @@ export type PassiveEffect =
 export const STATUS_IDS = [
   'poison', 'skillSeal', 'orbLock', 'moveTimeDown', 'shield', 'attributeShield',
   'comboShield', 'heartSeal', 'darkOrbs', 'poisonOrbs', 'lockedOrbs',
-  'damageAbsorb', 'enrage', 'delayImmune', 'multiHit', 'attributeSeal', 'ringShield',
+  'damageAbsorb', 'enrage', 'delayImmune', 'multiHit', 'attributeSeal', 'defenseDown', 'ringShield',
 ] as const;
 export type StatusId = (typeof STATUS_IDS)[number];
 

@@ -722,6 +722,14 @@
       {
         "id": "combo",
         "role": "leader"
+      },
+      {
+        "id": "norse",
+        "role": "support"
+      },
+      {
+        "id": "greek",
+        "role": "support"
       }
     ],
     "art": {},
@@ -776,6 +784,14 @@
       {
         "id": "combo",
         "role": "leader"
+      },
+      {
+        "id": "norse",
+        "role": "support"
+      },
+      {
+        "id": "greek",
+        "role": "support"
       }
     ],
     "art": {},
@@ -975,6 +991,14 @@
       {
         "id": "dual",
         "role": "core"
+      },
+      {
+        "id": "norse",
+        "role": "core"
+      },
+      {
+        "id": "greek",
+        "role": "core"
       }
     ],
     "art": {},
@@ -1017,6 +1041,14 @@
       },
       {
         "id": "fixed",
+        "role": "support"
+      },
+      {
+        "id": "norse",
+        "role": "support"
+      },
+      {
+        "id": "greek",
         "role": "support"
       }
     ],
@@ -4306,6 +4338,992 @@
     "flavor": "曾被星骸吞沒、守著被刮掉名字的斷誓騎影。誤會解開後，他把劍重新立在雷恩身旁，這次守的是活著的人。",
     "lines": {
       "victory": "誓約我會再立一次。這一次，不再弄丟。"
+    }
+  },
+  {
+    "id": "c801",
+    "name": "勝利海神費雷",
+    "attribute": "water",
+    "race": "god",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1344,
+        4200
+      ],
+      "atk": [
+        528,
+        1650
+      ],
+      "rcv": [
+        170,
+        530
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 13,
+    "activeSkill": "s801",
+    "leaderSkill": "l801",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "water",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "norse",
+        "role": "leader"
+      },
+      {
+        "id": "mono",
+        "role": "leader"
+      },
+      {
+        "id": "enhance",
+        "role": "core"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c801.png",
+      "icon": "assets/user/cards/c801_i.png"
+    },
+    "flavor": "經典北歐神。以同屬性隊伍出戰，先補足水珠，再用符石強化把握爆發回合。",
+    "lines": {
+      "victory": "潮聲停了。這場勝利，屬於同行的每一位。"
+    }
+  },
+  {
+    "id": "c802",
+    "name": "獨臂戰神提爾",
+    "attribute": "fire",
+    "race": "god",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1392,
+        4350
+      ],
+      "atk": [
+        570,
+        1780
+      ],
+      "rcv": [
+        150,
+        470
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 13,
+    "activeSkill": "s802",
+    "leaderSkill": "l802",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "fire",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "norse",
+        "role": "leader"
+      },
+      {
+        "id": "mono",
+        "role": "leader"
+      },
+      {
+        "id": "enhance",
+        "role": "core"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c802.png",
+      "icon": "assets/user/cards/c802_i.png"
+    },
+    "flavor": "經典北歐神。以同屬性隊伍出戰，先補足火珠，再用符石強化把握爆發回合。",
+    "lines": {
+      "victory": "兵刃放下吧，讓同伴先喘口氣。"
+    }
+  },
+  {
+    "id": "c803",
+    "name": "妙曼愛神費蕾雅",
+    "attribute": "wood",
+    "race": "god",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1456,
+        4550
+      ],
+      "atk": [
+        496,
+        1550
+      ],
+      "rcv": [
+        163,
+        510
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 13,
+    "activeSkill": "s803",
+    "leaderSkill": "l803",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "wood",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "norse",
+        "role": "leader"
+      },
+      {
+        "id": "mono",
+        "role": "leader"
+      },
+      {
+        "id": "enhance",
+        "role": "core"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c803.png",
+      "icon": "assets/user/cards/c803_i.png"
+    },
+    "flavor": "經典北歐神。以同屬性隊伍出戰，先補足木珠，再用符石強化把握爆發回合。",
+    "lines": {
+      "victory": "把力量留一點，回去的路還很長。"
+    }
+  },
+  {
+    "id": "c804",
+    "name": "轟天雷神索爾",
+    "attribute": "light",
+    "race": "god",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1376,
+        4300
+      ],
+      "atk": [
+        506,
+        1580
+      ],
+      "rcv": [
+        176,
+        550
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 13,
+    "activeSkill": "s804",
+    "leaderSkill": "l804",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "light",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "norse",
+        "role": "leader"
+      },
+      {
+        "id": "mono",
+        "role": "leader"
+      },
+      {
+        "id": "enhance",
+        "role": "core"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c804.png",
+      "icon": "assets/user/cards/c804_i.png"
+    },
+    "flavor": "經典北歐神。以同屬性隊伍出戰，先補足光珠，再用符石強化把握爆發回合。",
+    "lines": {
+      "victory": "雷聲已遠，確認大家都平安再走。"
+    }
+  },
+  {
+    "id": "c805",
+    "name": "黃昏號角洛基",
+    "attribute": "dark",
+    "race": "god",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1296,
+        4050
+      ],
+      "atk": [
+        592,
+        1850
+      ],
+      "rcv": [
+        157,
+        490
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 13,
+    "activeSkill": "s805",
+    "leaderSkill": "l805",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "dark",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "norse",
+        "role": "leader"
+      },
+      {
+        "id": "mono",
+        "role": "leader"
+      },
+      {
+        "id": "enhance",
+        "role": "core"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c805.png",
+      "icon": "assets/user/cards/c805_i.png"
+    },
+    "flavor": "經典北歐神。以同屬性隊伍出戰，先補足暗珠，再用符石強化把握爆發回合。",
+    "lines": {
+      "victory": "算得不錯。下一回合，也讓我看看吧。"
+    }
+  },
+  {
+    "id": "c806",
+    "name": "海神波塞頓",
+    "attribute": "water",
+    "race": "god",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1136,
+        3550
+      ],
+      "atk": [
+        570,
+        1780
+      ],
+      "rcv": [
+        157,
+        490
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 13,
+    "activeSkill": "s806",
+    "leaderSkill": "l806",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "water",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "greek",
+        "role": "leader"
+      },
+      {
+        "id": "enhance",
+        "role": "leader"
+      },
+      {
+        "id": "mono",
+        "role": "core"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c806.png",
+      "icon": "assets/user/cards/c806_i.png"
+    },
+    "flavor": "經典希臘神。以水之連動補出本色強化珠，持續造成水屬性傷害才能維持印記增幅。",
+    "lines": {
+      "victory": "潮水仍在流動，我們繼續前進。"
+    }
+  },
+  {
+    "id": "c807",
+    "name": "奧林火神赫淮斯托斯",
+    "attribute": "fire",
+    "race": "god",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1168,
+        3650
+      ],
+      "atk": [
+        602,
+        1880
+      ],
+      "rcv": [
+        141,
+        440
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 13,
+    "activeSkill": "s807",
+    "leaderSkill": "l807",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "fire",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "greek",
+        "role": "leader"
+      },
+      {
+        "id": "enhance",
+        "role": "leader"
+      },
+      {
+        "id": "mono",
+        "role": "core"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c807.png",
+      "icon": "assets/user/cards/c807_i.png"
+    },
+    "flavor": "經典希臘神。以火之連動補出本色強化珠，持續造成火屬性傷害才能維持印記增幅。",
+    "lines": {
+      "victory": "火光收好了，別燙著身旁的人。"
+    }
+  },
+  {
+    "id": "c808",
+    "name": "智慧女神雅典娜",
+    "attribute": "wood",
+    "race": "god",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1264,
+        3950
+      ],
+      "atk": [
+        525,
+        1640
+      ],
+      "rcv": [
+        147,
+        460
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 13,
+    "activeSkill": "s808",
+    "leaderSkill": "l808",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "wood",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "greek",
+        "role": "leader"
+      },
+      {
+        "id": "enhance",
+        "role": "leader"
+      },
+      {
+        "id": "mono",
+        "role": "core"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c808.png",
+      "icon": "assets/user/cards/c808_i.png"
+    },
+    "flavor": "經典希臘神。以木之連動補出本色強化珠，持續造成木屬性傷害才能維持印記增幅。",
+    "lines": {
+      "victory": "看清局勢，再好的力量才有去處。"
+    }
+  },
+  {
+    "id": "c809",
+    "name": "光明之神阿波羅",
+    "attribute": "light",
+    "race": "god",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1168,
+        3650
+      ],
+      "atk": [
+        528,
+        1650
+      ],
+      "rcv": [
+        163,
+        510
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 13,
+    "activeSkill": "s809",
+    "leaderSkill": "l809",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "light",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "greek",
+        "role": "leader"
+      },
+      {
+        "id": "enhance",
+        "role": "leader"
+      },
+      {
+        "id": "mono",
+        "role": "core"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c809.png",
+      "icon": "assets/user/cards/c809_i.png"
+    },
+    "flavor": "經典希臘神。以光之連動補出本色強化珠，持續造成光屬性傷害才能維持印記增幅。",
+    "lines": {
+      "victory": "光已照亮前路，慢慢走也無妨。"
+    }
+  },
+  {
+    "id": "c810",
+    "name": "月之狩獵女神阿提密斯",
+    "attribute": "dark",
+    "race": "god",
+    "rarity": 6,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1104,
+        3450
+      ],
+      "atk": [
+        624,
+        1950
+      ],
+      "rcv": [
+        144,
+        450
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 13,
+    "activeSkill": "s810",
+    "leaderSkill": "l810",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "dark",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 3000,
+    "sellValue": 2000,
+    "archetypes": [
+      {
+        "id": "greek",
+        "role": "leader"
+      },
+      {
+        "id": "enhance",
+        "role": "leader"
+      },
+      {
+        "id": "mono",
+        "role": "core"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c810.png",
+      "icon": "assets/user/cards/c810_i.png"
+    },
+    "flavor": "經典希臘神。以暗之連動補出本色強化珠，持續造成暗屬性傷害才能維持印記增幅。",
+    "lines": {
+      "victory": "這一擊已足夠，留神下一段路。"
+    }
+  },
+  {
+    "id": "c811",
+    "name": "饕餮渾沌魔君",
+    "attribute": "dark",
+    "race": "beast",
+    "rarity": 5,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1008,
+        3150
+      ],
+      "atk": [
+        422,
+        1320
+      ],
+      "rcv": [
+        125,
+        390
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s811",
+    "leaderSkill": "l811",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "dark",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 2000,
+    "sellValue": 1200,
+    "archetypes": [
+      {
+        "id": "classicbeast",
+        "role": "leader"
+      },
+      {
+        "id": "race",
+        "role": "leader"
+      },
+      {
+        "id": "heart",
+        "role": "support"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c811.png",
+      "icon": "assets/user/cards/c811_i.png"
+    },
+    "flavor": "經典獸隊的黑狗隊長。光轉心可保命，與巴風特的心轉暗接力則能準備暗珠爆發。",
+    "lines": {
+      "victory": "贏了！回去有東西吃嗎？"
+    }
+  },
+  {
+    "id": "c812",
+    "name": "惡魔巴風特",
+    "attribute": "dark",
+    "race": "beast",
+    "rarity": 5,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        960,
+        3000
+      ],
+      "atk": [
+        464,
+        1450
+      ],
+      "rcv": [
+        54,
+        170
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s812",
+    "leaderSkill": "l812",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "dark",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 2000,
+    "sellValue": 1200,
+    "archetypes": [
+      {
+        "id": "classicbeast",
+        "role": "core"
+      },
+      {
+        "id": "race",
+        "role": "core"
+      },
+      {
+        "id": "mono",
+        "role": "core"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c812.png",
+      "icon": "assets/user/cards/c812_i.png"
+    },
+    "flavor": "經典獸隊的魔羊。心轉暗可與饕餮接力；轉掉心珠前，別忘了確認隊伍是否需要回復。",
+    "lines": {
+      "victory": "這些心珠，這回合該怎麼用？"
+    }
+  },
+  {
+    "id": "c813",
+    "name": "朱雀陵光神君",
+    "attribute": "fire",
+    "race": "beast",
+    "rarity": 5,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1120,
+        3500
+      ],
+      "atk": [
+        442,
+        1380
+      ],
+      "rcv": [
+        134,
+        420
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s813",
+    "leaderSkill": "l813",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "fire",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 2000,
+    "sellValue": 1200,
+    "archetypes": [
+      {
+        "id": "classicbeast",
+        "role": "support"
+      },
+      {
+        "id": "race",
+        "role": "support"
+      },
+      {
+        "id": "heart",
+        "role": "support"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c813.png",
+      "icon": "assets/user/cards/c813_i.png"
+    },
+    "flavor": "經典獸隊的轉心支援。保留木珠作為救急的心珠來源，搭配玄武的減傷爭取回復空間。",
+    "lines": {
+      "victory": "先歇歇吧，大家都辛苦了。"
+    }
+  },
+  {
+    "id": "c814",
+    "name": "玄武執明神君",
+    "attribute": "wood",
+    "race": "beast",
+    "rarity": 5,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1264,
+        3950
+      ],
+      "atk": [
+        381,
+        1190
+      ],
+      "rcv": [
+        138,
+        430
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s814",
+    "leaderSkill": "l814",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "wood",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 2000,
+    "sellValue": 1200,
+    "archetypes": [
+      {
+        "id": "classicbeast",
+        "role": "support"
+      },
+      {
+        "id": "race",
+        "role": "support"
+      },
+      {
+        "id": "control",
+        "role": "support"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c814.png",
+      "icon": "assets/user/cards/c814_i.png"
+    },
+    "flavor": "經典獸隊的減傷守護者。防禦壁可撐過敵人攻勢，但技能冷卻較長，應留給關鍵回合。",
+    "lines": {
+      "victory": "守住了。現在，換大家休息。"
+    }
+  },
+  {
+    "id": "c815",
+    "name": "白虎監兵神君",
+    "attribute": "light",
+    "race": "beast",
+    "rarity": 5,
+    "maxLevel": 99,
+    "stats": {
+      "hp": [
+        1040,
+        3250
+      ],
+      "atk": [
+        387,
+        1210
+      ],
+      "rcv": [
+        134,
+        420
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 9,
+    "activeSkill": "s815",
+    "leaderSkill": "l815",
+    "awakenings": [
+      {
+        "type": "orbDamageUp",
+        "orb": "light",
+        "percent": 10
+      },
+      {
+        "type": "statUp",
+        "stat": "hp",
+        "value": 250
+      },
+      {
+        "type": "moveTimeUp",
+        "seconds": 0.5
+      }
+    ],
+    "expValue": 2000,
+    "sellValue": 1200,
+    "archetypes": [
+      {
+        "id": "classicbeast",
+        "role": "core"
+      },
+      {
+        "id": "race",
+        "role": "leader"
+      }
+    ],
+    "art": {
+      "portrait": "assets/user/cards/c815.png",
+      "icon": "assets/user/cards/c815_i.png"
+    },
+    "flavor": "經典獸隊的破防支援。護牆崩壞削弱高防禦敵人，作為隊長也能帶領不同屬性的獸類進攻。",
+    "lines": {
+      "victory": "前路開了，跟緊隊伍。"
     }
   }
 ]

@@ -29,7 +29,8 @@ export function rewardArt(reward: Reward, art?: string, fallback?: Child): HTMLE
 
 /** 畫面頂部橫幅：有使用者素材就顯示圖，沒有就只顯示標題 */
 export function screenBanner(art: string, title: string, sub: string): HTMLElement {
-  const url = userAsset('ui', art);
+  const packArt: Record<string, string> = { 'shop-banner': 'pack-shop-banner', 'login-banner': 'pack-login-banner', 'quest-banner': 'pack-quest-banner' };
+  const url = (packArt[art] && userAsset('backgrounds', packArt[art])) || userAsset('ui', art);
   return h('div', { class: ['screen-banner', url && 'has-art'] },
     url && h('img', { src: url, alt: '', draggable: 'false' }),
     h('div', { class: 'screen-banner-copy' }, h('strong', null, title), h('small', null, sub)));

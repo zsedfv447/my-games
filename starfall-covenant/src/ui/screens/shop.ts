@@ -21,10 +21,10 @@ const TABS: { id: ShopTab; label: string }[] = [
 
 /** 商品圖：特殊商品用 assets/user/ui 的圖，卡片用卡面 */
 const ITEM_ART: Record<string, string> = {
-  'gem-refill': 'shop-refill',
-  'gem-expand': 'shop-expand',
-  'gem-coin': 'shop-coin-bag',
-  'ev-gems': 'shop-gems',
+  'gem-refill': 'pack-shop-refill',
+  'gem-expand': 'pack-shop-expand',
+  'gem-coin': 'pack-shop-coin',
+  'ev-gems': 'pack-shop-gems',
 };
 
 let activeTab: ShopTab = 'gems';

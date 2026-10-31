@@ -1,5 +1,8 @@
 // 星紋謎題每日一題（提案 51）：不扣體力、沒有敵人，一次轉珠達成條件就過關；每天第一次解開領獎
 import '../puzzle.css';
+import { AssistantPlannerClient } from '../../battle/assistant/client';
+import type { AssistantPlan } from '../../battle/assistant/types';
+import type { BattleState } from '../../battle/runtime';
 import { computeDrops, dropAndFill, type Pos } from '../../battle/board';
 import { BoardView } from '../../battle/view/board-view';
 import { createRng } from '../../core/rng';
@@ -73,6 +76,18 @@ class PuzzleView {
   readonly element: HTMLElement;
   private board: BoardView;
   private steps = 0;
+  private alive = true;
+  private assistantPlaying = false;
+  private resolving = false;
+  private visibilityChanged = () => { if (document.hidden && !this.resolving) this.cancelAssistant(); };
+  private generation = 0;
+  private planner = new AssistantPlannerClient();
+  private plan: AssistantPlan | null = null;
+  private playback: AbortController | null = null;
+  private assistantStatus = h('p', { class: 'small-text', role: 'status' }, '依今天的題目規劃，只算首消，不使用參考解。');
+  private planButton = button('規劃解題路線', { small: true, onClick: () => void this.planPuzzle() });
+  private previewButton = button('預覽路線', { small: true, onClick: () => { if (this.plan && this.board.canInteract) this.board.previewPath(this.plan.path); } });
+  private executeButton = button('照路線轉珠一次', { small: true, onClick: () => void this.executePlan() });
   private stepEl = h('span', { class: 'puzzle-steps' });
   private statusEl = h('div', { class: 'puzzle-status', 'aria-live': 'polite' });
   private rewardEl = h('div', { class: 'puzzle-reward small-text' });
@@ -96,14 +111,113 @@ class PuzzleView {
         this.rewardEl,
       ),
       h('div', { class: 'puzzle-board' }, this.board.element),
+      h('details', null, h('summary', null, '轉珠助手'), this.assistantStatus,
+        h('div', { class: 'row' }, this.planButton, this.previewButton, this.executeButton,
+          button('取消／清除路線', { small: true, variant: 'ghost', onClick: () => { if (!this.resolving) this.cancelAssistant(); } }))),
       this.statusEl,
       h('div', { class: 'row', style: { justifyContent: 'center' } }, this.retryBtn),
     );
     this.reset();
+    document.addEventListener('visibilitychange', this.visibilityChanged);
   }
 
   destroy(): void {
+    this.alive = false;
+    document.removeEventListener('visibilitychange', this.visibilityChanged);
+    this.cancelAssistant();
     this.board.destroy();
+  }
+
+  private cancelAssistant(): void {
+    this.generation++;
+    this.planner.cancel();
+    const wasPlaying = this.assistantPlaying;
+    this.playback?.abort();
+    this.playback = null;
+    this.assistantPlaying = false;
+    if (wasPlaying && this.alive) {
+      this.steps = 0;
+      this.renderSteps();
+      this.board.setEnabled(true);
+    }
+    this.plan = null;
+    this.board.previewPath(null);
+    this.planButton.disabled = false;
+    this.previewButton.disabled = true;
+    this.executeButton.disabled = true;
+    this.assistantStatus.textContent = '可依今天的題目重新規劃路線。';
+  }
+
+  private async planPuzzle(): Promise<void> {
+    if (this.resolving || !this.board.canInteract || this.steps > 0) return;
+    this.cancelAssistant();
+    const generation = this.generation;
+    this.planButton.disabled = true;
+    this.assistantStatus.textContent = '正在規劃，可取消或直接自行轉珠。';
+    const state: BattleState = {
+      stageId: 'puzzle', phase: 'player', wave: 0, waveCount: 1,
+      board: this.puzzle.board, team: [], hp: 1, maxHp: 1, enemies: [], target: 0,
+      moveTimeSeconds: 120, turns: 0, maxCombo: 0, usedActiveSkill: false,
+      continues: 0, buffs: [], teamStatuses: [],
+    };
+    try {
+      const plan = await this.planner.plan({ state, leaders: [], config: gameData.config.battle,
+        request: { goal: 'puzzle' }, puzzle: { goal: this.puzzle.goal, maxSteps: this.puzzle.maxSteps } });
+      if (!this.alive || generation !== this.generation) return;
+      this.planButton.disabled = false;
+      if (!plan || !this.board.canInteract || this.steps > 0 || plan.path.length - 1 > this.puzzle.maxSteps) {
+        this.assistantStatus.textContent = '這次沒有可用路線，請重新規劃。';
+        return;
+      }
+      this.plan = plan;
+      this.previewButton.disabled = false;
+      this.executeButton.disabled = false;
+      const judgement = judgePuzzle(this.puzzle, plan.path);
+      this.assistantStatus.textContent = `${judgement.solved ? '找到達成題目的路線' : '目前找到的路線尚未達成題目'}：${progressText(this.puzzle.goal, judgement.value)}，${plan.path.length - 1} 步。${plan.timedOut ? '已達搜尋時間上限。' : ''}可預覽或執行一次。`;
+    } catch {
+      if (!this.alive || generation !== this.generation) return;
+      this.planButton.disabled = false;
+      this.assistantStatus.textContent = '規劃失敗，請再試一次。';
+    }
+  }
+
+  private async executePlan(): Promise<void> {
+    const plan = this.plan;
+    if (this.resolving || !plan || !this.board.canInteract || this.steps > 0) return;
+    this.cancelAssistant();
+    const generation = this.generation;
+    const playback = new AbortController();
+    this.playback = playback;
+    this.assistantPlaying = true;
+    this.retryBtn.disabled = true;
+    this.planButton.disabled = true;
+    this.assistantStatus.textContent = '正在照路線轉珠一次。';
+    let completed = false;
+    try {
+      completed = await this.board.playPath(plan.path, playback.signal);
+    } catch {
+      if (this.alive && generation === this.generation) {
+        this.cancelAssistant();
+        this.board.setBoard(this.puzzle.board);
+        this.board.setEnabled(true);
+        this.retryBtn.disabled = false;
+        this.assistantStatus.textContent = '路線播放中斷，已還原盤面，請重新規劃。';
+      }
+      return;
+    }
+    if (!this.alive || generation !== this.generation || playback.signal.aborted) {
+      if (this.alive && !this.assistantPlaying && !this.resolving) {
+        this.board.setEnabled(true);
+        this.retryBtn.disabled = false;
+      }
+      return;
+    }
+    this.playback = null;
+    this.assistantPlaying = false;
+    this.steps = plan.path.length - 1;
+    this.renderSteps();
+    if (completed) await this.resolve(plan.path);
+    else { this.cancelAssistant(); this.retryBtn.disabled = false; }
   }
 
   private renderReward(): void {
@@ -125,12 +239,16 @@ class PuzzleView {
   }
 
   private step(): void {
+    if (!this.assistantPlaying) this.cancelAssistant();
     audio.play('tap');
     this.steps++;
     this.renderSteps();
   }
 
   private reset(): void {
+    this.resolving = false;
+    this.retryBtn.disabled = false;
+    this.cancelAssistant();
     this.steps = 0;
     this.renderSteps();
     this.renderReward();
@@ -141,6 +259,11 @@ class PuzzleView {
   }
 
   private async resolve(path: Pos[]): Promise<void> {
+    this.cancelAssistant();
+    const generation = this.generation;
+    this.resolving = true;
+    this.retryBtn.disabled = true;
+    this.planButton.disabled = true;
     this.board.setEnabled(false);
     const result = judgePuzzle(this.puzzle, path);
     // 播放這次消除，空格由固定種子補珠（只是畫面，不影響判定）
@@ -149,6 +272,9 @@ class PuzzleView {
       const after = dropAndFill(result.board, cleared, createRng(daySeed(this.puzzle.day)));
       await this.board.playSteps([{ cascade: 0, before: result.board, groups: result.groups, drops: computeDrops(result.board, cleared), after }], (combo) => audio.play('match', combo), getSettings().battleSpeed);
     }
+    if (!this.alive || generation !== this.generation) return;
+    this.resolving = false;
+    this.retryBtn.disabled = false;
     if (!result.solved) {
       audio.play('lose');
       const why = result.invalid === 'tooManySteps' ? `超過 ${this.puzzle.maxSteps} 步了` : result.invalid === 'blocked' ? '這條路徑走不通' : progressText(this.puzzle.goal, result.value);

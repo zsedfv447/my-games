@@ -1,5 +1,6 @@
 // 星淵回廊（#/abyss）：本週星象、最高層、每層的本週首通獎勵；點可挑戰的層直接出戰（不耗體力、不帶助戰）
 import { h } from '../dom';
+import { userAsset } from '../assets';
 import { gameData } from '../../data/load';
 import {
   ABYSS_FLOORS, ABYSS_UNLOCK_STAGE, abyssFloor, abyssFloorReward, abyssOmen, abyssProgress, abyssRewardProgress, abyssWeeklyTotal, isAbyssOpen,
@@ -77,7 +78,8 @@ export const abyssScreen: ScreenDef = {
         if (!clearedList.childElementCount) clearedList.append(...Array.from({ length: p.best }, (_, i) => floorRow(p.best - i)));
       },
     });
-    return h('div', null,
+    return h('div', { class: 'scene-abyss' },
+      h('div', { class: 'scene-art-banner' }, h('img', { src: userAsset('backgrounds', 'pack-abyss'), alt: '', loading: 'lazy' })),
       panel({ gold: true },
         h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, '星淵回廊'),
           badge(endless ? `本週 ${ABYSS_FLOORS}/${ABYSS_FLOORS}・無盡 ${p.best} 層` : `本週 ${p.best}/${ABYSS_FLOORS} 層`, 'gold')),

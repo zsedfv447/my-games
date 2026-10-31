@@ -389,6 +389,9 @@ export function startBattle(
     }));
     const applied = applyHits(hits, targets, state.target, { combo, config: config.battle });
     takenThisTurn = applied.taken;
+    for(const mark of state.buffs){
+      if(mark.kind==='markAttack'&&applied.results.some(r=>r.damage>0&&r.hit.attribute===mark.attribute))mark.dealtDamage=true;
+    }
     state.enemies.forEach((e, i) => {
       const before = e.hp;
       e.hp = applied.hp[i];
@@ -544,7 +547,7 @@ export function startBattle(
       const skyfall = skyfallOptions(state);
       // 隊長技的強化珠天降和主動技的設定取較高者
       skyfall.enhancedChance = Math.max(skyfall.enhancedChance ?? 0, leaderStatic.enhancedSkyfall);
-      const resolved = resolveBoard(moved.board, rng, { ...skyfall, sealedOrbs: sealedOrbs(state) });
+      const resolved = resolveBoard(moved.board, rng, { ...skyfall, matchedOrbSkyfall: leaderStatic.matchedOrbSkyfall, sealedOrbs: sealedOrbs(state) });
       const { groups, combo } = resolved;
       state.board = resolved.board;
       const heartSealed = isHeartSealed(state);

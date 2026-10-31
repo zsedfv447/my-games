@@ -13,7 +13,8 @@ export const buffsOf = <K extends Buff['kind']>(state: BattleState, kind: K) =>
 /** 主動技攻擊加成（每位隊員），多個 buff 相乘 */
 export function buffAttackMultipliers(state: BattleState): number[] {
   return state.team.map((m) =>
-    buffsOf(state, 'attack').reduce((mul, b) => (matchesFilter(m, b.target) ? mul * b.multiplier : mul), 1),
+    buffsOf(state, 'attack').reduce((mul, b) => (matchesFilter(m, b.target) ? mul * b.multiplier : mul), 1) *
+    buffsOf(state, 'markAttack').reduce((mul,b)=>m.attribute===b.attribute?mul*b.multiplier:mul,1),
   );
 }
 
@@ -41,7 +42,10 @@ export function skyfallOptions(state: BattleState): SkyfallOptions {
 
 /** 經過一回合：回合數 −1，歸零的移除 */
 export function tickBuffs(buffs: Buff[]): Buff[] {
-  return buffs.filter((b) => b.turns > 1).map((b) => ({ ...b, turns: b.turns - 1 }));
+  return buffs.flatMap((b):Buff[] => {
+    if(b.kind==='markAttack')return b.dealtDamage?[{...b,multiplier:Math.min(b.maxMultiplier,b.multiplier+b.step),dealtDamage:false}]:[];
+    return b.turns>1?[{...b,turns:b.turns-1}]:[];
+  });
 }
 
 /** 瀕死保命：有的話消耗掉並回傳 true */

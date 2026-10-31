@@ -7,7 +7,7 @@ import { cardThumb } from '../components/card-thumb';
 import { getSave, growth } from '../state';
 import type { Navigator, ScreenDef } from '../router';
 
-function codexCards(entry: CodexEntry): HTMLElement | null {
+function codexCards(entry: CodexEntry, nav: Navigator): HTMLElement | null {
   if (!entry.cards.length) return null;
   return h(
     'div',
@@ -15,7 +15,7 @@ function codexCards(entry: CodexEntry): HTMLElement | null {
     entry.cards.map((c) => {
       const def = growth.card(c.cardId);
       if (!def) return null;
-      const el = cardThumb(def, { size: 48 });
+      const el = cardThumb(def, { size: 48, onClick: () => nav.go('collection-card', [def.id]) });
       el.title = `${def.name}・${ROLE_LABEL[c.role]}${c.free ? '・免抽' : ''}`;
       if (!c.owned) el.classList.add('unowned');
       return el;
@@ -71,8 +71,15 @@ export const archetypesScreen: ScreenDef = {
           h('p', { class: 'small-text dim' }, h('strong', null, '入門：'), a.starterPath),
           entry && entry.total > 0 && h('div', null,
             bar({ value: entry.owned, max: entry.total, variant: 'gold', label: `收集 ${entry.owned} / ${entry.total}` }),
-            codexCards(entry),
+            codexCards(entry, nav),
           ),
+          ['norse', 'greek', 'classicbeast'].includes(a.id) && h('div', { class: 'classic-archetype' },
+            h('p', { class: 'small-text' }, h('strong', null, '推薦入門隊：'),
+              gameData.stages.find(stage => stage.archetype === a.id && stage.fixedTeam)?.fixedTeam?.members.map(m => growth.card(m.card)?.name ?? m.card).join('、')),
+            h('p', { class: 'small-text dim' }, '點角色頭像可查看技能與取得途徑。可先借隊試玩，首通送隊長；全系列也能用金幣各兌換一次。'),
+            h('div', { class: 'row wrap' },
+              button('經典封印', { small: true, onClick: () => nav.go('summon', ['classic-seal']) }),
+              button('金幣兌換', { small: true, onClick: () => nav.go('shop', ['coin']) }))),
           trialButtons(a.id, nav),
         );
       }),

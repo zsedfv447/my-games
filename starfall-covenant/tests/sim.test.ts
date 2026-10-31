@@ -31,7 +31,7 @@ describe('模擬器資料', () => {
     expect(validateGameData(data)).toEqual([]);
   });
 
-  it('12 個流派都有策略和免抽入門隊', () => {
+  it('15 個流派都有策略和免抽入門隊', () => {
     for (const id of ARCHETYPE_IDS) expect(STRATEGIES[id].id).toBe(id);
     expect(starterTeams().map((t) => t.archetype)).toEqual([...ARCHETYPE_IDS]);
   });

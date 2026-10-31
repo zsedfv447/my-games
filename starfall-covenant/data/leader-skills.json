@@ -2625,5 +2625,380 @@
       }
     ],
     "description": "人傑攻擊 2.5 倍、生命 1.3 倍。"
+  },
+  {
+    "id": "l801",
+    "name": "海之怒",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "water"
+            },
+            "value": 3.5
+          }
+        ]
+      }
+    ],
+    "description": "水屬性成員攻擊力 3.5 倍。"
+  },
+  {
+    "id": "l802",
+    "name": "炎之怒",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "fire"
+            },
+            "value": 3.5
+          }
+        ]
+      }
+    ],
+    "description": "火屬性成員攻擊力 3.5 倍。"
+  },
+  {
+    "id": "l803",
+    "name": "森之怒",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "wood"
+            },
+            "value": 3.5
+          }
+        ]
+      }
+    ],
+    "description": "木屬性成員攻擊力 3.5 倍。"
+  },
+  {
+    "id": "l804",
+    "name": "聖之怒",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "light"
+            },
+            "value": 3.5
+          }
+        ]
+      }
+    ],
+    "description": "光屬性成員攻擊力 3.5 倍。"
+  },
+  {
+    "id": "l805",
+    "name": "邪之怒",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "dark"
+            },
+            "value": 3.5
+          }
+        ]
+      }
+    ],
+    "description": "暗屬性成員攻擊力 3.5 倍。"
+  },
+  {
+    "id": "l806",
+    "name": "水之連動",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "water"
+            },
+            "value": 2.5
+          },
+          {
+            "type": "matchedOrbSkyfall",
+            "orb": "water",
+            "count": 3,
+            "spawn": 1
+          }
+        ]
+      }
+    ],
+    "description": "水屬性成員攻擊力 2.5 倍；每段消除每 3 顆水珠，該段補珠產生 1 顆水強化珠（以可補空格為上限；相同連動不疊加）。"
+  },
+  {
+    "id": "l807",
+    "name": "火之連動",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "fire"
+            },
+            "value": 2.5
+          },
+          {
+            "type": "matchedOrbSkyfall",
+            "orb": "fire",
+            "count": 3,
+            "spawn": 1
+          }
+        ]
+      }
+    ],
+    "description": "火屬性成員攻擊力 2.5 倍；每段消除每 3 顆火珠，該段補珠產生 1 顆火強化珠（以可補空格為上限；相同連動不疊加）。"
+  },
+  {
+    "id": "l808",
+    "name": "木之連動",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "wood"
+            },
+            "value": 2.5
+          },
+          {
+            "type": "matchedOrbSkyfall",
+            "orb": "wood",
+            "count": 3,
+            "spawn": 1
+          }
+        ]
+      }
+    ],
+    "description": "木屬性成員攻擊力 2.5 倍；每段消除每 3 顆木珠，該段補珠產生 1 顆木強化珠（以可補空格為上限；相同連動不疊加）。"
+  },
+  {
+    "id": "l809",
+    "name": "光之連動",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "light"
+            },
+            "value": 2.5
+          },
+          {
+            "type": "matchedOrbSkyfall",
+            "orb": "light",
+            "count": 3,
+            "spawn": 1
+          }
+        ]
+      }
+    ],
+    "description": "光屬性成員攻擊力 2.5 倍；每段消除每 3 顆光珠，該段補珠產生 1 顆光強化珠（以可補空格為上限；相同連動不疊加）。"
+  },
+  {
+    "id": "l810",
+    "name": "暗之連動",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "dark"
+            },
+            "value": 2.5
+          },
+          {
+            "type": "matchedOrbSkyfall",
+            "orb": "dark",
+            "count": 3,
+            "spawn": 1
+          }
+        ]
+      }
+    ],
+    "description": "暗屬性成員攻擊力 2.5 倍；每段消除每 3 顆暗珠，該段補珠產生 1 顆暗強化珠（以可補空格為上限；相同連動不疊加）。"
+  },
+  {
+    "id": "l811",
+    "name": "野獸之狂怒",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "race": "beast"
+            },
+            "value": 2.5
+          }
+        ]
+      }
+    ],
+    "description": "獸類成員攻擊力 2.5 倍。"
+  },
+  {
+    "id": "l812",
+    "name": "邪之怒",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "attribute": "dark"
+            },
+            "value": 2
+          }
+        ]
+      }
+    ],
+    "description": "暗屬性成員攻擊力 2 倍。"
+  },
+  {
+    "id": "l813",
+    "name": "野獸之再生",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "rcvMultiplier",
+            "target": {
+              "race": "beast"
+            },
+            "value": 2.5
+          }
+        ]
+      }
+    ],
+    "description": "獸類成員回復力 2.5 倍。"
+  },
+  {
+    "id": "l814",
+    "name": "野獸之意志",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "hpMultiplier",
+            "target": {
+              "race": "beast"
+            },
+            "value": 2.5
+          }
+        ]
+      }
+    ],
+    "description": "獸類成員生命力 2.5 倍。"
+  },
+  {
+    "id": "l815",
+    "name": "野獸之狂怒",
+    "rules": [
+      {
+        "conditions": [
+          {
+            "type": "always"
+          }
+        ],
+        "effects": [
+          {
+            "type": "atkMultiplier",
+            "target": {
+              "race": "beast"
+            },
+            "value": 2.5
+          }
+        ]
+      }
+    ],
+    "description": "獸類成員攻擊力 2.5 倍。"
   }
 ]

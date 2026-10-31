@@ -33,7 +33,7 @@ const maxGroup = (groups: MatchGroup[], orb?: OrbType) =>
   Math.max(0, ...groups.filter((g) => !orb || g.orb === orb).map((g) => g.cells.length));
 const normalHeal = (hp: number) => (hp < 40 ? 1.5 : hp < 70 ? 0.8 : 0.2);
 
-export const STRATEGIES: Record<ArchetypeId, Strategy> = {
+const CLASSIC_STRATEGIES: Omit<Record<ArchetypeId, Strategy>, 'norse' | 'greek' | 'classicbeast'> = {
   mono: {
     id: 'mono', name: '單屬爆發', aim: '盡量多消主屬性珠，湊出全體攻擊',
     healWeight: normalHeal,
@@ -100,4 +100,10 @@ export const STRATEGIES: Record<ArchetypeId, Strategy> = {
   },
 };
 
+export const STRATEGIES: Record<ArchetypeId, Strategy> = {
+  ...CLASSIC_STRATEGIES,
+  norse: {...CLASSIC_STRATEGIES.mono,id:'norse',name:'北歐強化爆發',aim:'主屬爆發搭配強化珠'},
+  greek: {...CLASSIC_STRATEGIES.enhance,id:'greek',name:'希臘同色連鎖',aim:'消除主屬珠引出同色強化天降'},
+  classicbeast: {...CLASSIC_STRATEGIES.race,id:'classicbeast',name:'經典獸隊',aim:'獸族羈絆搭配穩定消珠'},
+};
 export { ATTRS };

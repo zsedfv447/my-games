@@ -95,11 +95,17 @@ export function validateGameData(d: GameData): string[] {
   for (const s of d.skills) {
     if (s.cooldown.min > s.cooldown.max) err(`skills/${s.id}`, '最短冷卻大於最長冷卻');
     for (const e of s.effects) {
+      if (e.type === 'reduceEnemyDefense' && (!Number.isFinite(e.percent) || e.percent < 0 || e.percent > 100 || !Number.isInteger(e.turns) || e.turns < 1)) err(`skills/${s.id}`, '破防比例與回合無效');
+      if (e.type === 'markAttack' && (!ATTRIBUTES.includes(e.attribute) || !Number.isFinite(e.step) || e.step <= 0 || !Number.isFinite(e.maxMultiplier) || e.maxMultiplier < (e.initialMultiplier ?? 1 + e.step))) err(`skills/${s.id}`, '印記屬性或倍率無效');
       if (e.type === 'convertOrbs' && !ORB_TYPES.includes(e.to)) err(`skills/${s.id}`, `未知珠子 ${e.to}`);
       if (e.type === 'rowToOrb' && !ORB_TYPES.includes(e.to)) err(`skills/${s.id}`, `未知珠子 ${e.to}`);
       if (e.type === 'damage' && e.mode === 'percentMaxHp' && !(e.cap && e.cap > 0)) err(`skills/${s.id}`, '最大生命百分比傷害一定要有上限 cap');
       if (e.type === 'twoColorBoard' && (e.colors.length !== 2 || e.colors[0] === e.colors[1] || e.colors.some((c) => !ORB_TYPES.includes(c)))) err(`skills/${s.id}`, `雙色盤要指定兩種不同的珠 ${e.colors}`);
     }
+  }
+
+  for (const leader of d.leaderSkills) for (const rule of leader.rules) for (const e of rule.effects) {
+    if (e.type === 'matchedOrbSkyfall' && (!ORB_TYPES.includes(e.orb) || !Number.isInteger(e.count) || e.count < 1 || !Number.isInteger(e.spawn) || e.spawn < 1 || e.spawn > e.count)) err(`leader-skills/${leader.id}`, '同色強化掉珠規則無效');
   }
 
   for (const e of d.enemies) if (!ATTRIBUTES.includes(e.attribute)) err(`enemies/${e.id}`, `未知屬性 ${e.attribute}`);

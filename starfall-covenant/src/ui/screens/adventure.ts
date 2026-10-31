@@ -136,10 +136,12 @@ type ChapterEntry = { c: ChapterDef; p: ChapterProgress };
 let showCompleted = false;
 
 function chapterCard({ c, p }: ChapterEntry, dots: AdventureDots, nav: Navigator): HTMLElement {
+  const chapterArt = userAsset('backgrounds', `pack-chapter-${c.chapter}`) ?? userAsset('backgrounds', `chapter-${c.chapter}`);
   return h(
     'button',
     { type: 'button', class: 'chapter-card', onClick: () => nav.go('stages', [c.chapter]) },
-    userAsset('backgrounds', `chapter-${c.chapter}`) && h('img', { class: 'chapter-art', src: userAsset('backgrounds', `chapter-${c.chapter}`), alt: '', loading: 'lazy' }),
+    // 先用素材包的章節圖（pack-chapter-N），沒有再用 chapter-N
+    chapterArt && h('img', { class: 'chapter-art', src: chapterArt, alt: '', loading: 'lazy' }),
     h('div', { class: 'row between' },
       h('div', null, h('div', { class: 'chapter-no' }, `第 ${c.chapter} 章`), h('div', { class: 'chapter-name' }, c.name)),
       h('div', { class: 'row', style: { gap: '4px' } }, badge(c.constellation, 'gold'), badge(RACE_NAMES[c.race]))),

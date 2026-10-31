@@ -53,6 +53,7 @@ export interface EnemyState {
 
 /** 主動技留下的持續效果；turns 為剩餘回合，施放當回合算第 1 回合 */
 export type Buff =
+  | { kind: 'markAttack'; attribute: Attribute; multiplier: number; step: number; maxMultiplier: number; dealtDamage: boolean; turns: number }
   | { kind: 'attack'; target?: UnitFilter; multiplier: number; turns: number }
   | { kind: 'rcvToAtk'; ratio: number; turns: number }
   | { kind: 'reduceDamage'; percent: number; turns: number }

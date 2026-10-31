@@ -17,10 +17,10 @@ describe('第 60 項新卡', () => {
     }
   });
 
-  it('補齊種族缺口：獸裔、冥裔各 12 張，人傑 +4', () => {
+  it('補齊種族缺口：獸裔含經典系列 17 張、冥裔 12 張，人傑 +4', () => {
     const battle = gameData.cards.filter((c) => c.race !== 'material');
     const count = (race: string) => battle.filter((c) => c.race === race).length;
-    expect(count('beast')).toBe(12);
+    expect(count('beast')).toBe(17);
     expect(count('nether')).toBe(12);
     expect(NEW_IDS.filter((id) => card(id).race === 'human')).toHaveLength(4);
   });

@@ -17,7 +17,8 @@ describe('第 81 項：新卡也在主要卡池', () => {
     const inMain = new Set(MAIN_POOLS.flatMap((id) => Object.values(pool(id).cards).flat()));
     const missing: string[] = [];
     const skipped: string[] = [];
-    for (const p of gameData.gachaPools) {
+    // 經典系列使用獨立封印，不能為了此斷言改變原卡池名單與機率。
+    for (const p of gameData.gachaPools.filter(p => p.id !== 'classic-seal')) {
       for (const [rarity, ids] of Object.entries(p.cards)) {
         for (const id of ids ?? []) {
           if (cardById.get(id)?.race === 'material') continue;

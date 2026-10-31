@@ -77,7 +77,7 @@ describe('羈絆小劇場資料', () => {
     for (const c of roots.filter((r) => r.rarity >= 5)) expect(families.has(c.id), c.id).toBe(true);
     for (const id of ['c601', 'c602', 'c603', 'c604', 'c606', ...Array.from({ length: 11 }, (_, i) => `c7${String(i + 1).padStart(2, '0')}`)]) expect(families.has(id), id).toBe(true);
     const archetypes = new Set(CARD_BONDS.flatMap((b) => gameData.cards.find((c) => c.id === b.family)!.archetypes.filter((a) => a.role === 'leader').map((a) => a.id)));
-    expect(archetypes.size).toBe(12);
+    expect(archetypes.size).toBe(15);
   });
 
   it('驗證會擋下進化後的卡號與句數不對的劇場', () => {

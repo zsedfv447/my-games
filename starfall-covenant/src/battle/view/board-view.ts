@@ -1,6 +1,6 @@
 // 盤面繪製與拖曳轉珠（Canvas 2D＋Pointer Events，觸控與滑鼠共用）
 // 規則都在 board.ts：拖曳時用 swapOrbs 即時顯示，放手後把路徑交給 Battle.submitMove。
-import { swapOrbs, toIndex, type Board, type MatchGroup, type Orb, type Pos, type ResolveStep } from '../board';
+import { applyPath, swapOrbs, toIndex, type Board, type MatchGroup, type Orb, type Pos, type ResolveStep } from '../board';
 import { orbDataUrl, type OrbKind } from '../../ui/art/orbs';
 import { cellAt, nextStep, remainingMs, samplePoints } from './drag';
 import { userAsset } from '../../ui/assets';
@@ -29,6 +29,53 @@ export class BoardView {
   private timerFill: HTMLDivElement;
   private board: Board | null = null;
   private enabled = false;
+  private preview: Pos[] = [];
+  private playback?: AbortController;
+  private destroyed = false;
+  private boardRevision = 0;
+
+  get canInteract(): boolean { return this.enabled && this.pointerId === null && !this.playback && !this.destroyed; }
+
+  previewPath(path: Pos[] | null): void {
+    this.preview = path?.map(p => ({ ...p })) ?? [];
+    this.draw();
+  }
+
+  /** 只播放合法交換；呼叫者確認成功後才交給正式回合引擎。 */
+  async playPath(path: Pos[], signal?: AbortSignal): Promise<boolean> {
+    if (!this.board || this.destroyed || this.playback || this.pointerId !== null || signal?.aborted || path.length < 2) return false;
+    if (path.some(p => !Number.isInteger(p.col) || !Number.isInteger(p.row)) || !applyPath(this.board, path).completed) return false;
+    const original = this.board;
+    const revision = this.boardRevision;
+    const controller = new AbortController();
+    this.playback = controller;
+    const abort = () => controller.abort();
+    signal?.addEventListener('abort', abort, { once: true });
+    this.setEnabled(false);
+    this.preview = [];
+    this.path = [{ ...path[0] }];
+    this.touch = false;
+    const s = this.opts.cellSize;
+    this.held = { x: (path[0].col + .5) * s, y: (path[0].row + .5) * s };
+    let complete = false;
+    try {
+      for (let i = 1; i < path.length; i++) {
+        if (controller.signal.aborted || this.destroyed) return false;
+        this.swap(path[i - 1], path[i]);
+        this.held = { x: (path[i].col + .5) * s, y: (path[i].row + .5) * s };
+        this.draw();
+        await abortableWait(125, controller.signal);
+      }
+      complete = !controller.signal.aborted && !this.destroyed;
+      return complete;
+    } finally {
+      signal?.removeEventListener('abort', abort);
+      if (!complete && this.boardRevision === revision) this.board = original;
+      this.playback = undefined;
+      this.cancelDrag();
+    }
+  }
+
 
   // 拖曳狀態
   private pointerId: number | null = null;
@@ -85,6 +132,9 @@ export class BoardView {
   }
 
   setBoard(board: Board): void {
+    this.boardRevision++;
+    this.playback?.abort();
+    this.preview = [];
     const resized = !this.board || this.board.cols !== board.cols || this.board.rows !== board.rows;
     this.board = board;
     if (resized) {
@@ -101,6 +151,8 @@ export class BoardView {
   }
 
   destroy(): void {
+    this.destroyed = true;
+    this.playback?.abort();
     cancelAnimationFrame(this.raf);
     this.cancelDrag();
   }
@@ -230,6 +282,7 @@ export class BoardView {
 
   private onDown = (e: PointerEvent): void => {
     if (!this.enabled || !this.board || this.pointerId !== null) return;
+    this.preview = [];
     this.measure();
     const p = this.local(e);
     const pos = cellAt(p.x, p.y, this.opts.cellSize, this.board, 0);
@@ -465,6 +518,27 @@ export class BoardView {
     });
     ctx.globalAlpha = 1;
 
+    if (this.preview.length) {
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      this.preview.forEach((p, i) => {
+        const x = (p.col + .5) * s, y = (p.row + .5) * s;
+        if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+      });
+      ctx.strokeStyle = '#102238'; ctx.lineWidth = 8; ctx.stroke();
+      ctx.strokeStyle = '#80f4ff'; ctx.lineWidth = 4; ctx.stroke();
+      [this.preview[0], this.preview[this.preview.length - 1]].forEach((p, i) => {
+        const x = (p.col + .5) * s, y = (p.row + .5) * s;
+        ctx.fillStyle = i ? '#f6d578' : '#80f4ff';
+        ctx.beginPath(); ctx.arc(x, y, 12, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#102238'; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(i ? '終' : '起', x, y);
+      });
+      ctx.restore();
+    }
+
     // 手上的珠跟著指標，放大一點；觸控時往上偏移，避免被手指擋住
     if (this.held && heldIndex >= 0) {
       const img = this.image(board.cells[heldIndex]);
@@ -492,3 +566,11 @@ const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 /** 落地時輕輕彈一下 */
 const easeOutBounce = (t: number) => (t < 0.8 ? (t / 0.8) ** 2 : 1 - 0.06 * Math.sin(((t - 0.8) / 0.2) * Math.PI));
+
+function abortableWait(ms: number, signal: AbortSignal): Promise<void> {
+  return new Promise(resolve => {
+    const finish = () => { clearTimeout(timer); signal.removeEventListener('abort', finish); resolve(); };
+    const timer = setTimeout(finish, ms);
+    if (signal.aborted) finish(); else signal.addEventListener('abort', finish, { once: true });
+  });
+}

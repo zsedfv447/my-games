@@ -57,9 +57,12 @@ export function newbieTeams(stage: StageDef, now = Date.now()): (SimTeam & { lab
 /** 提案 001 第 8 節的免抽入門隊；全員滿等，助戰帶同一張隊長 */
 export function starterTeams(cards: CardDef[] = proposalCards): SimTeam[] {
   const byId = new Map(cards.map((c) => [c.id, c]));
-  const teams = proposal.starterTeams as Record<ArchetypeId, string[]>;
+  const teams: Partial<Record<ArchetypeId, string[]>> = { ...proposal.starterTeams };
+  for (const stage of gameData.stages) {
+    if (stage.kind === 'trial' && stage.archetype && stage.fixedTeam && !teams[stage.archetype]) teams[stage.archetype] = stage.fixedTeam.members.map(m => m.card);
+  }
   return ARCHETYPE_IDS.filter((a) => teams[a]).map((archetype) => {
-    const members = teams[archetype].map((cardId) => ({ cardId, level: byId.get(cardId)?.maxLevel ?? 1 }));
+    const members = teams[archetype]!.map((cardId) => ({ cardId, level: byId.get(cardId)?.maxLevel ?? 1 }));
     return { archetype, members, helper: { ...members[0] } };
   });
 }

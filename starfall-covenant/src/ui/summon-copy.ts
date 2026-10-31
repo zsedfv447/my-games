@@ -12,6 +12,7 @@ export interface BannerCopy {
 }
 
 const COPY: Record<string, Omit<BannerCopy, 'facts'>> = {
+  'classic-seal': { tag: '經典系列', en: 'CLASSIC SEAL', flavor: '北歐五神、希臘五神與經典獸隊　十五位熟悉的夥伴再聚首', featured: ['c801', 'c811'] },
   'covenant-seal': {
     tag: '常駐封印',
     en: 'COVENANT SEAL',
@@ -19,7 +20,7 @@ const COPY: Record<string, Omit<BannerCopy, 'facts'>> = {
     featured: ['c101', 'c201'],
   },
   'pool-standard': {
-    tag: '全星靈收錄',
+    tag: '星海常駐',
     en: 'STARSEA SUMMON',
     flavor: '星海漂流著剛墜落的新星靈　3★ 夥伴也在這裡等你',
     featured: ['c706', 'c705'],

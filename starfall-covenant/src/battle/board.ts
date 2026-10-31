@@ -1,7 +1,7 @@
 // 盤面：建立、轉珠路徑、消除判定、天降補珠、強化珠與干擾珠。
 // 純邏輯，不碰 DOM／Canvas；隨機一律透過 Rng。
 
-import { ATTRIBUTES, ORB_TYPES, type GameConfig, type OrbSource, type OrbType } from '../core/types';
+import { ATTRIBUTES, ORB_TYPES, type MatchedOrbSkyfall, type GameConfig, type OrbSource, type OrbType } from '../core/types';
 import type { Rng } from '../core/rng';
 
 export interface Orb {
@@ -31,6 +31,8 @@ export interface Board {
 export type BoardSize = Pick<GameConfig['board'], 'cols' | 'rows'>;
 
 export interface SkyfallOptions {
+  /** 本段補珠優先注入的強化珠，不會增加盤面格數。 */
+  forcedEnhancedOrbs?: OrbType[];
   /** 指定珠的出現機率（0–1）；其餘機率由沒指定的珠平分 */
   rates?: Partial<Record<OrbType, number>>;
   /** 新珠為強化珠的機率（0–1） */
@@ -330,16 +332,27 @@ export function dropAndFill(board: Board, cleared: Iterable<number>, rng: Rng, o
       if (!removed.has(i)) cells[write-- * cols + c] = { ...board.cells[i] };
     }
   }
+  const forced = [...(options.forcedEnhancedOrbs ?? [])].slice(0, removed.size);
+  const empty = cells.flatMap((cell,i)=>cell ? [] : [i]);
+  const injected = new Map<number, OrbType>();
+  // 只在此機制啟用時取亂數，舊關卡的亂數序列保持不變。
+  while (forced.length && empty.length) {
+    const slot = rng.int(empty.length);
+    injected.set(empty.splice(slot,1)[0], forced.shift()!);
+  }
   // 由下往上補，讓「天降不消除」時能看到下方已經存在的珠
   for (let r = rows - 1; r >= 0; r--) {
     for (let c = 0; c < cols; c++) {
       const i = r * cols + c;
       if (cells[i]) continue;
-      const type =
+      const requested = injected.get(i);
+      const forcedType = requested && !(options.skyfallCombo === false && wouldMatch(cells, cols, rows, i, requested)) ? requested : undefined;
+      const type = forcedType ?? (
         options.skyfallCombo === false
           ? rollNonMatching(rng, cells, cols, rows, i, options.rates)
-          : rollOrbType(rng, options.rates);
-      cells[i] = makeOrb(type, { enhanced: rng.next() < (options.enhancedChance ?? 0) });
+          : rollOrbType(rng, options.rates));
+      const enhanced = rng.next() < (options.enhancedChance ?? 0);
+      cells[i] = makeOrb(type, { enhanced: !!forcedType || enhanced });
     }
   }
   return { cols, rows, cells: cells as Orb[] };
@@ -367,6 +380,7 @@ export function computeDrops(board: Pick<Board, 'cols' | 'rows'>, cleared: Itera
 const MAX_CASCADES = 50;
 
 export interface ResolveOptions extends SkyfallOptions {
+  matchedOrbSkyfall?: MatchedOrbSkyfall[];
   /** 被封住、不能消除的珠種（敵人技能 lockedOrbs） */
   sealedOrbs?: OrbType[];
 }
@@ -381,7 +395,17 @@ export function resolveBoard(board: Board, rng: Rng, options: ResolveOptions = {
     if (found.length === 0) break;
     groups.push(...found);
     const cleared = found.flatMap((g) => g.cells);
-    const after = dropAndFill(current, cleared, rng, options);
+    const forcedEnhancedOrbs: OrbType[] = [];
+    for (const orb of ORB_TYPES) {
+      const count = found.filter(g=>g.orb===orb).reduce((n,g)=>n+g.cells.length,0);
+      const generated = Math.max(0,...(options.matchedOrbSkyfall??[])
+        .filter(e=>e.orb===orb && Number.isFinite(e.count) && e.count>=1 && Number.isFinite(e.spawn) && e.spawn>=1)
+        .map(e=>Math.floor(count/Math.floor(e.count))*Math.floor(e.spawn)));
+      // 一段補珠最多替換本段空格數；整回合仍受 MAX_CASCADES 限制。
+      const quota = Math.min(generated, cleared.length-forcedEnhancedOrbs.length);
+      for(let n=0;n<quota;n++) forcedEnhancedOrbs.push(orb);
+    }
+    const after = dropAndFill(current, cleared, rng, { ...options, forcedEnhancedOrbs });
     steps.push({ cascade, before: current, groups: found, drops: computeDrops(current, cleared), after });
     current = after;
   }

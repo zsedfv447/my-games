@@ -1,0 +1,55 @@
+{
+  "pack": "/Users/ethan/Documents/Codex/2026-10-30/new-chat-4/outputs/tower-of-saviors-art-20261030",
+  "note": "保留原圖；依畫面氣氛配置素材，並非對應神魔原作章節。",
+  "assets": [
+    {
+      "asset": "assets/user/backgrounds/pack-chapter-6.webp",
+      "source": "02-official-story/0df683_666e7c0a997e4ed2ae5fed18b72569ee~mv2.jpg",
+      "sourceSha256": "5139d19bdb57a5bffe86d25bd7e17ebaf18f5f0b3b28750ba00221729a5fa16d",
+      "operation": "resize max 1440x1000; WebP quality 85"
+    },
+    {
+      "asset": "assets/user/backgrounds/pack-chapter-7.webp",
+      "source": "05-artist-portfolios/additional-art-and-vfx-showcases/e3511b90-dff5-4ac5-97eb-e6a1c965acec_rw_1920.jpg",
+      "sourceSha256": "e51742699ea8cd3bfe4f5adb7304182cb406e5ad8dbbf1e3b5d9775f784a19f8",
+      "operation": "resize max 1440x1000; WebP quality 85"
+    },
+    {
+      "asset": "assets/user/backgrounds/pack-abyss.webp",
+      "source": "05-artist-portfolios/additional-art-and-vfx-showcases/8e46d7ee-7356-4f08-8b10-dd3f44d6deee_rw_1920.jpg",
+      "sourceSha256": "5b6d43c843411982cdb711ef0e5cf0254db80da09df3049eda94d5f4fe308a01",
+      "operation": "resize max 1440x1000; WebP quality 85"
+    },
+    {
+      "asset": "assets/user/backgrounds/pack-expedition.webp",
+      "source": "01-official-wallpapers/pc_wallaper_1920x1080_v03.jpg",
+      "sourceSha256": "c65afad037a918f513b6edd73a949ed0d5d70911c148fea7897198ab295161a4",
+      "operation": "upper 84% crop; resize max 1440x1000; WebP quality 85"
+    },
+    {
+      "asset": "assets/user/backgrounds/pack-shop-banner.webp",
+      "source": "01-official-wallpapers/pc_wallaper_1920x1080_v04.jpg",
+      "sourceSha256": "ca3631f58e5dd459b7794d2689871f284169cbbf499575c21c7492ae2ca55335",
+      "operation": "upper 84% crop; resize max 1440x1000; WebP quality 85"
+    },
+    {
+      "asset": "assets/user/backgrounds/pack-login-banner.webp",
+      "source": "01-official-wallpapers/pc_wallaper_1920x1080_v01.jpg",
+      "sourceSha256": "2bc706d1bf6e0fc0c8146fbbf965dc82e85691e07bd6180db4b64de63f60fa38",
+      "operation": "upper 84% crop; resize max 1440x1000; WebP quality 85"
+    },
+    {
+      "asset": "assets/user/backgrounds/pack-quest-banner.webp",
+      "source": "01-official-wallpapers/pc_wallaper_1920x1080_v05.jpg",
+      "sourceSha256": "8977421398efb7497109f2ee2cb3f0d2d0c04fe8ba60979a8229efca1d70358e",
+      "operation": "upper 84% crop; resize max 1440x1000; WebP quality 85"
+    },
+    {
+      "asset": "assets/user/backgrounds/pack-growth.jpg",
+      "source": "05-artist-portfolios/additional-art-and-vfx-showcases/8e46d7ee-7356-4f08-8b10-dd3f44d6deee_rw_1920.jpg",
+      "sourceSha256": "5b6d43c843411982cdb711ef0e5cf0254db80da09df3049eda94d5f4fe308a01",
+      "operation": "copy source JPEG without crop or resize",
+      "usage": "全養成共用的古城背景"
+    }
+  ]
+}

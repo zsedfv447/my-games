@@ -65,6 +65,11 @@ import { completeEclipseStage, isEclipseId } from '../../progression/eclipse';
 import { collectedDrops } from '../../progression/active-battle';
 import type { CardExpGain } from '../../growth';
 import { LABEL } from '../wording';
+import { openOrbAssistant, type OrbAssistantHandle } from '../components/orb-assistant';
+import { AssistantPlannerClient } from '../../battle/assistant/client';
+import type { AssistantPlan, AssistantRequest } from '../../battle/assistant/types';
+import { loadAssistantRequest, saveAssistantRequest, resolveAssistantRequest } from '../../battle/assistant/preferences';
+import { ASSISTANT_GOALS } from '../../battle/assistant/goals';
 
 const CELL = 63;
 
@@ -184,8 +189,18 @@ class BattleView {
   private resolving = false;
   /** 開著的暫停選單（結算剛好結束時更新撤退按鈕） */
   private pauseMenu?: PauseHandle;
+  private assistant?: OrbAssistantHandle;
+  private assistantClient = new AssistantPlannerClient();
+  private assistantAbort?: AbortController;
+  private assistantPlaying = false;
+  private assistantPlanning = false;
+  private assistantGeneration = 0;
+  private destroyed = false;
+  private assistantPlans = new WeakMap<AssistantPlan, { fingerprint: string; target?: number }>();
+  private assistantMode = button('模式：智慧', { small: true, onClick: () => this.openAssistant() });
+  private assistantRun = button('', { small: true, onClick: () => { if (this.assistantPlanning || this.assistantPlaying) this.stopAssistant(); else void this.quickAssistant(); } });
   private get guard() {
-    return { phase: this.state.phase, resolving: this.resolving };
+    return { phase: this.state.phase, resolving: this.resolving || this.assistantPlaying || this.assistantPlanning };
   }
 
   /** 練習場與新手教學不扣體力、不給獎勵、不寫手札與任務（battle-policy.ts） */
@@ -204,7 +219,7 @@ class BattleView {
       cellSize: CELL,
       moveSeconds: () => this.state.moveTimeSeconds,
       showTimer: () => getSettings().showMoveTimer,
-      onMove: (path) => void this.resolveTurn(path),
+      onMove: (path) => { this.boardView.previewPath(null); void this.resolveTurn(path); },
       onStep: () => { audio.play('tap'); buzz(6); },
     });
     this.element = h(
@@ -213,11 +228,15 @@ class BattleView {
       h('div', { class: 'battle-top safe-top' },
         h('div', null, this.waveLabel, this.hud.element),
         h('div', { class: 'stage-name' }, s.stage.name, this.oathHud),
-        iconButton('pause', '暫停', () => this.openPause())),
+        h('div', { class: 'battle-assistant-tools' },
+          !s.guide && h('div', { class: 'assistant-shortcut' }, this.assistantRun, this.assistantMode),
+          iconButton('pause', '暫停', () => this.openPause()))),
       this.enemyZone,
       this.comboEl,
       h('div', { class: 'battle-bottom safe-bottom' }, this.teamRow, this.teamChipsHost, this.hpHost, this.boardView.element),
     );
+    this.refreshAssistantButton();
+    this.boardView.element.addEventListener('pointerdown', () => this.boardView.previewPath(null), { capture: true });
     this.element.classList.toggle('low-fx', getSettings().lowFx);
     this.renderEnemies();
     this.renderTeam();
@@ -266,6 +285,8 @@ class BattleView {
   }
 
   destroy(): void {
+    this.destroyed = true;
+    this.stopAssistant();
     document.removeEventListener('visibilitychange', this.onVisibility);
     this.offs.forEach((off) => off());
     this.boardView.destroy();
@@ -373,18 +394,21 @@ class BattleView {
   }
 
   private enableBoard(): void {
+    if (this.destroyed || this.assistant || this.assistantPlaying || this.assistantPlanning) return;
     if (this.paused) this.enableWhenResumed = true;
     else this.boardView.setEnabled(true);
   }
 
   /** 分頁切到背景時，等待轉珠中就自動暫停 */
   private onVisibility = (): void => {
-    if (document.hidden && !this.dialog && !this.boardView.element.classList.contains('disabled')) this.openPause();
+    if (document.hidden) this.stopAssistant();
+    if (document.hidden && !this.dialog && (this.assistantPlaying || !this.boardView.element.classList.contains('disabled'))) this.openPause();
   };
 
   private openPause(): void {
     if (this.paused || this.state.phase !== 'player') return;
-    const wasEnabled = !this.boardView.element.classList.contains('disabled');
+    this.stopAssistant();
+    const wasEnabled = this.assistantPlaying || !this.boardView.element.classList.contains('disabled');
     this.paused = true;
     this.boardView.setEnabled(false);
     const close = () => {
@@ -416,9 +440,155 @@ class BattleView {
     });
   }
 
+  /** 不包含亂數狀態；只檢查規劃依據是否仍是同一回合。 */
+  private assistantFingerprint(): string {
+    const { skillUsedThisTurn, takenThisTurn } = this.s.battle.snapshot();
+    return JSON.stringify([this.s.battle.getState(), skillUsedThisTurn, takenThisTurn]);
+  }
+
+  private stopAssistant(): void {
+    this.assistantGeneration++;
+    const planning = this.assistantPlanning;
+    this.assistantPlanning = false;
+    this.assistantAbort?.abort();
+    this.assistantClient.cancel();
+    this.assistant?.close();
+    this.boardView.previewPath(null);
+    this.refreshAssistantButton();
+    if (planning && !this.destroyed && !this.paused && !this.assistantPlaying) this.enableBoard();
+  }
+
+  private refreshAssistantButton(): void {
+    const active = this.assistantPlanning || this.assistantPlaying;
+    this.assistantRun.replaceChildren(svg(`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${active ? '<rect x="5" y="5" width="14" height="14" rx="1"/>' : '<path d="M7 4.5v15l12-7.5z"/>'}</svg>`));
+    this.assistantRun.classList.add('assistant-play-button');
+    const name = ASSISTANT_GOALS.find(g => g.id === loadAssistantRequest().goal)?.label ?? '智慧判斷';
+    this.assistantMode.textContent = `模式：${name === '智慧判斷' ? '智慧' : name.replace('流派：', '')}`;
+    this.assistantMode.classList.add('assistant-mode-button');
+    this.assistantMode.title = `選擇轉珠模式，目前：${name}`;
+    this.assistantMode.setAttribute('aria-label', `設定轉珠模式：${name}`);
+    this.assistantRun.title = active ? '停止這次轉珠助手' : `使用上次設定：${name}`;
+    this.assistantRun.setAttribute('aria-label', active ? '停止轉珠助手' : `播放轉珠：${name}`);
+    this.assistantRun.classList.toggle('danger', active);
+  }
+
+  private async planAssistant(request: AssistantRequest): Promise<AssistantPlan | null> {
+    const fingerprint = this.assistantFingerprint();
+    const current = this.s.battle.getState();
+    const { skillUsedThisTurn, takenThisTurn } = this.s.battle.snapshot();
+    const leader = current.team[0]?.card;
+    const helper = current.team.find(m => m.isHelper)?.card;
+    const leaders = [leader, helper].map(card => this.s.data.leaderSkills.find(skill => skill.id === card?.leaderSkill));
+    const plan = await this.assistantClient.plan({ state: current, leaders, config: this.s.data.config.battle, stage: this.s.stage, skillUsedThisTurn, takenThisTurn, request });
+    if (!plan || this.destroyed || fingerprint !== this.assistantFingerprint()) return null;
+    this.assistantPlans.set(plan, { fingerprint, target: request.targetEnemy });
+    return plan;
+  }
+
+  private async quickAssistant(): Promise<void> {
+    if (this.s.guide || this.destroyed || this.paused || this.assistant || !canAct(this.guard) || !this.boardView.canInteract) return;
+    const request = resolveAssistantRequest(loadAssistantRequest(), this.s.battle.getState(), this.s.stage);
+    if (request.goal === 'star' && request.starIndex === undefined) {
+      toast('這個關卡的星章不同，請重新選擇星章設定。');
+      this.openAssistant();
+      return;
+    }
+    const generation = ++this.assistantGeneration;
+    this.assistantPlanning = true;
+    this.refreshAssistantButton();
+    this.boardView.setEnabled(false);
+    this.boardView.previewPath(null);
+    try {
+      const plan = await this.planAssistant(request);
+      if (generation !== this.assistantGeneration || this.destroyed || this.paused || document.hidden) return;
+      this.assistantPlanning = false;
+      this.refreshAssistantButton();
+      this.enableBoard();
+      if (!plan || plan.path.length < 2) { toast('沒有找到可用路線，可調整助手設定再試。'); return; }
+      if (!plan.forecast.goalAchieved) toast('這次未完全達成目標，將使用目前找到的最佳路線。');
+      await this.executeAssistant(plan);
+    } catch {
+      if (!this.destroyed && generation === this.assistantGeneration) toast('這次規劃失敗，請再試一次。');
+    } finally {
+      if (generation === this.assistantGeneration) {
+        this.assistantPlanning = false;
+        this.refreshAssistantButton();
+        if (!this.destroyed && !this.paused && !this.resolving && this.state.phase === 'player') this.enableBoard();
+      }
+    }
+  }
+
+  private openAssistant(): void {
+    if (this.s.guide || this.destroyed || this.paused || this.assistant || !canAct(this.guard) || !this.boardView.canInteract) return;
+    const state = this.s.battle.getState();
+    this.boardView.setEnabled(false);
+    this.assistant = openOrbAssistant({
+      state, stage: this.s.stage,
+      cancelPlan: () => this.assistantClient.cancel(),
+      initialRequest: resolveAssistantRequest(loadAssistantRequest(), state, this.s.stage),
+      onSaveRequest: request => { saveAssistantRequest(request); this.refreshAssistantButton(); },
+      requestPlan: request => this.planAssistant(request),
+      preview: plan => {
+        if (!plan) { this.boardView.previewPath(null); return; }
+        const saved = this.assistantPlans.get(plan);
+        if (!this.destroyed && saved?.fingerprint === this.assistantFingerprint()) {
+          if (saved.target !== undefined && !this.s.battle.setTarget(saved.target).ok) return;
+          this.state = this.s.battle.getState();
+          this.enemyEls.forEach((el, i) => el.classList.toggle('targeted', i === this.state.target));
+          markMatchups(this.teamRow, this.state, this.s.data.config.battle);
+          this.boardView.previewPath(plan.path);
+        }
+      },
+      execute: plan => this.executeAssistant(plan),
+      onClose: () => {
+        this.assistant = undefined;
+        if (!this.destroyed && !this.paused && !this.assistantPlaying && canAct(this.guard)) this.boardView.setEnabled(true);
+      },
+    });
+  }
+
+  private async executeAssistant(plan: AssistantPlan): Promise<boolean> {
+    const saved = this.assistantPlans.get(plan);
+    if (!saved || this.destroyed || document.hidden || this.paused || this.s.guide || !canAct(this.guard) || !this.boardView.canInteract || saved.fingerprint !== this.assistantFingerprint()) return false;
+    // 每份規劃只能執行一次；指定敵人與規劃使用同一目標。
+    this.assistantPlans.delete(plan);
+    if (saved.target !== undefined && !this.s.battle.setTarget(saved.target).ok) return false;
+    this.state = this.s.battle.getState();
+    this.enemyEls.forEach((el, i) => el.classList.toggle('targeted', i === this.state.target));
+    const expected = this.assistantFingerprint();
+    const abort = new AbortController();
+    this.assistantAbort = abort;
+    this.assistantPlaying = true;
+    this.refreshAssistantButton();
+    this.boardView.setEnabled(false);
+    this.boardView.previewPath(null);
+    try {
+      const played = await this.boardView.playPath(plan.path, abort.signal);
+      if (abort.signal.aborted || this.destroyed || this.paused || document.hidden) return true;
+      if (!played || expected !== this.assistantFingerprint()) {
+        this.state = this.s.battle.getState();
+        this.boardView.setBoard(this.state.board);
+        return false;
+      }
+      this.assistantPlaying = false;
+      this.refreshAssistantButton();
+      this.assistantAbort = undefined;
+      await this.resolveTurn(plan.path);
+      return true;
+    } finally {
+      if (this.assistantAbort === abort) this.assistantAbort = undefined;
+      this.assistantPlaying = false;
+      this.refreshAssistantButton();
+      if (!this.destroyed && !this.paused && !this.resolving && this.state.phase === 'player') this.enableBoard();
+    }
+  }
+
   // ---------- 操作 ----------
 
   private setTarget(i: number): void {
+    if (this.destroyed || this.paused || !canAct(this.guard)) return;
+    this.assistant?.close();
+    this.boardView.previewPath(null);
     if (this.s.battle.setTarget(i).ok) {
       audio.play('tap');
       this.state = this.s.battle.getState();
@@ -430,6 +600,8 @@ class BattleView {
   /** 點隊員頭像：顯示主動技說明，確認後施放 */
   private useSkill(i: number): void {
     if (!canAct(this.guard)) return;
+    this.assistant?.close();
+    this.boardView.previewPath(null);
     const m = this.state.team[i];
     const skill = m?.card.activeSkill ? this.s.data.skills.find((x) => x.id === m.card.activeSkill) : undefined;
     if (!m || !skill) return toast(`${m?.card.name ?? ''}沒有主動技`);
@@ -448,6 +620,7 @@ class BattleView {
 
   private async castSkill(i: number): Promise<void> {
     if (!canAct(this.guard)) return;
+    this.stopAssistant();
     const before = this.state;
     const r = this.s.battle.useSkill(i);
     if (!r.ok) return toast(r.reason);
@@ -506,6 +679,8 @@ class BattleView {
   }
 
   private async resolveTurn(path: Parameters<Battle['submitMove']>[0]): Promise<void> {
+    if (this.destroyed || this.paused || !canAct(this.guard)) return;
+    this.boardView.previewPath(null);
     const before = this.state;
     const veto = this.s.guide?.checkMove(path, before.board);
     if (veto) {

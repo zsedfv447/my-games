@@ -1,5 +1,6 @@
 // 星靈遠行：派沒上場的卡到已通關章節的星座，經過真實時間後回來領金幣、塵靈與少量星核（規則在 progression/expedition.ts）
 import { h } from '../dom';
+import { userAsset } from '../assets';
 import { gameData } from '../../data/load';
 import type { OwnedCard } from '../../core/types';
 import {
@@ -146,7 +147,9 @@ export const expeditionScreen: ScreenDef = {
           button('出發', { variant: 'primary', block: true, disabled: !owned.length, onClick: go }));
       }
 
-      root.replaceChildren(intro, ...parties.map((e) => partyPanel(e, now, draw)), form);
+      const scenery = h('div', { class: 'scene-art-banner' },
+        h('img', { src: userAsset('backgrounds', 'pack-expedition'), alt: '', loading: 'lazy' }));
+      root.replaceChildren(scenery, intro, ...parties.map((e) => partyPanel(e, now, draw)), form);
     };
 
     draw();

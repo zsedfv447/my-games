@@ -1,0 +1,37 @@
+.dialog.orb-assistant-dialog { width: min(94%, 520px); max-height: 90%; overflow-y: auto; overscroll-behavior: contain; }
+.orb-assistant { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.orb-assistant p { margin: 0; }
+.orb-assistant-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.orb-assistant-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; font-size: 13px; }
+.orb-assistant-field[hidden] { display: none; }
+.orb-assistant select, .orb-assistant input[type=number] { width: 100%; min-width: 0; min-height: 40px; box-sizing: border-box; border: 1px solid #766348; border-radius: 6px; background: #211e28; color: #fff1d5; padding: 7px; font: inherit; }
+.orb-assistant input[type=checkbox] { width: 20px; height: 20px; accent-color: #d7b76c; cursor: pointer; }
+.orb-assistant-conditions { border: 1px solid #766348; border-radius: 6px; padding: 8px; }
+.orb-assistant-conditions summary { cursor: pointer; padding: 4px 0; }
+.orb-assistant-conditions[open] summary { margin-bottom: 8px; }
+.orb-assistant-check { display: flex; align-items: center; gap: 7px; margin-top: 8px; }
+.orb-assistant table { width: 100%; font-size: 13px; border-collapse: collapse; text-align: center; margin-top: 6px; }
+.orb-assistant th, .orb-assistant td { padding: 3px; }
+.orb-assistant-status { font-size: 13px; color: #f0d69a; }
+.orb-assistant-result:empty { display: none; }
+.orb-assistant-result { border-top: 1px solid #766348; padding-top: 10px; display: grid; gap: 8px; }
+.orb-assistant-result h3 { margin: 0; font-size: 16px; }
+.orb-assistant-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; margin: 0; font-size: 13px; }
+.orb-assistant-stats dd { text-align: right; margin: 0; font-variant-numeric: tabular-nums; }
+.orb-assistant-warning { color: #ffb2a2; }
+.orb-assistant-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 4px; }
+.orb-assistant-actions .btn { flex: 1 1 42%; min-width: 0; min-height: 42px; white-space: normal; }
+.orb-assistant-actions [hidden] { display: none; }
+@media (max-width: 360px) { .orb-assistant-grid { grid-template-columns: 1fr; } .orb-assistant-actions .btn { flex-basis: 100%; } }
+.battle-assistant-tools { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+.battle-assistant-tools .btn { min-height: 34px; padding: 5px 8px; font-size: 12px; }
+.battle-assistant-tools [hidden] { display: none; }
+
+.assistant-shortcut { display: flex; align-items: center; gap: 0; }
+.assistant-shortcut > .btn { border-radius: 6px 0 0 6px; white-space: nowrap; }
+.assistant-shortcut > .icon-btn { width: 32px; height: 34px; min-height: 34px; border-radius: 0 6px 6px 0; }
+
+.assistant-shortcut > .assistant-mode-button { max-width: 104px; overflow: hidden; text-overflow: ellipsis; border-radius: 0 6px 6px 0; }
+
+.assistant-shortcut > .assistant-play-button { width: 36px; height: 34px; padding: 5px; flex: 0 0 36px; }
+.assistant-play-button svg { width: 21px; height: 21px; display: block; margin: auto; }
