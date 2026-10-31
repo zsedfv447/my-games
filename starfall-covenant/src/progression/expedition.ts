@@ -4,6 +4,7 @@ import type { Attribute, CardDef, ChapterDef, GameConfig, Race, Reward, SaveData
 import { createRng } from '../core/rng';
 import { expeditionUids, teamUids } from '../growth/save-ops';
 import { grantReward } from './rewards';
+import { addExpeditionReturn } from './records';
 
 export interface Expedition {
   id: string;
@@ -163,5 +164,6 @@ export function claimExpedition(
     return def ? [def] : [];
   });
   const reward = expeditionReward(done.expedition, members, chapters.find((c) => c.chapter === done.expedition.chapter)?.race);
-  return { ok: true, save: grantReward(done.save, reward, config, now).save, reward };
+  // 手札記一次遠行歸來（稱號「萬里星途」）
+  return { ok: true, save: addExpeditionReturn(grantReward(done.save, reward, config, now).save), reward };
 }

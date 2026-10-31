@@ -20,7 +20,19 @@ export type TitleCondition =
   /** 收集的殘頁張數；all＝全部 */
   | { type: 'lorePages'; atLeast: number | 'all' }
   /** 星紋謎題歷來最長的連續解開天數（puzzle.bestStreak，舊存檔從保留的解題日期推算） */
-  | { type: 'puzzleStreak'; atLeast: number };
+  | { type: 'puzzleStreak'; atLeast: number }
+  /** 通關指定關卡（例如各章最後一關） */
+  | { type: 'stageCleared'; id: string }
+  /** 單一章節星蝕拿到的星章數（每章 9 關 × 3） */
+  | { type: 'eclipseChapter'; atLeast: number }
+  /** 星淵回廊歷來最高層（含無盡層） */
+  | { type: 'abyssBest'; atLeast: number }
+  /** 誓約碑歷來最高誓約點數 */
+  | { type: 'oathHighest'; atLeast: number }
+  /** 星靈遠行累計領回次數 */
+  | { type: 'expeditions'; atLeast: number }
+  /** 星骸觀測錄遇過的敵人數；all＝全部 */
+  | { type: 'bestiary'; atLeast: number | 'all' };
 
 export interface TitleDef {
   id: string;
@@ -43,6 +55,10 @@ export interface TitleContext {
   achievementDone(id: string): boolean;
   /** 已收集與全部的殘頁張數（progression/lore.ts 的 collectedLorePages 會替舊存檔補上） */
   lorePages: { collected: number; total: number };
+  /** 星蝕：星章最多的那一章拿到幾顆（progression/eclipse.ts） */
+  eclipseBestChapterStars?: number;
+  /** 星骸觀測錄：遇過與全部的敵人數（progression/bestiary.ts） */
+  bestiary?: { seen: number; total: number };
 }
 
 export const TITLES = titleData as TitleDef[];
@@ -101,6 +117,30 @@ export function titleProgress(save: SaveData, def: TitleDef, ctx: TitleContext):
     case 'lorePages':
       value = ctx.lorePages.collected;
       target = c.atLeast === 'all' ? ctx.lorePages.total : c.atLeast;
+      break;
+    case 'stageCleared':
+      value = save.progress.clearedStages.includes(c.id) ? 1 : 0;
+      target = 1;
+      break;
+    case 'eclipseChapter':
+      value = ctx.eclipseBestChapterStars ?? 0;
+      target = c.atLeast;
+      break;
+    case 'abyssBest':
+      value = Math.max(save.abyss?.allTimeBest ?? 0, save.abyss?.best ?? 0);
+      target = c.atLeast;
+      break;
+    case 'oathHighest':
+      value = save.oaths?.highest ?? 0;
+      target = c.atLeast;
+      break;
+    case 'expeditions':
+      value = recordsOf(save).expeditionsReturned ?? 0;
+      target = c.atLeast;
+      break;
+    case 'bestiary':
+      value = ctx.bestiary?.seen ?? 0;
+      target = c.atLeast === 'all' ? ctx.bestiary?.total ?? 0 : c.atLeast;
       break;
     case 'puzzleStreak':
       // 記錄過的最長連續（含星燈保住的天數）；舊存檔沒有時從保留的解題日期推算

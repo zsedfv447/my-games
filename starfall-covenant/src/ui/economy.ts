@@ -8,6 +8,8 @@ import { canClaimLogin, type LoginRewardDef } from '../progression/login';
 import { claimableQuests, derivedCounters, questProgress, type DerivedCounters } from '../progression/quests';
 import { allLorePages, collectedLorePages, type LoreData } from '../progression/lore';
 import { newTitles, type TitleContext } from '../progression/titles';
+import { eclipseOf } from '../progression/eclipse';
+import { codexEnemies, seenEnemyIds } from '../progression/bestiary';
 import { claimableChapterRewards } from '../progression/stages';
 import { claimableCollection, createGrowthContext, type GrowthContext } from '../growth';
 import type { ShopFail } from '../progression/shop';
@@ -20,6 +22,7 @@ const TOKEN_NAMES = new Map(gameData.events.flatMap((e) => (e.token && e.tokenNa
 export const tokenName = (id: string) => TOKEN_NAMES.get(id) ?? id;
 
 const stageKind = new Map(gameData.stages.map((s) => [s.id, s.kind]));
+const stageChapter = new Map(gameData.stages.flatMap((s) => (s.chapter !== undefined ? [[s.id, s.chapter] as const] : [])));
 const evolvedForms = new Set(gameData.cards.flatMap((c) => (c.evolution ? [c.evolution.to] : [])));
 const nemesisEvents = new Set(gameData.events.filter((e) => e.series === 'nemesis').map((e) => e.id));
 const derivedData = {
@@ -144,7 +147,27 @@ export function titleContext(save: SaveData): TitleContext {
       return !!q && questProgress(save, q, derived).done;
     },
     lorePages: { collected: collectedLorePages(save, lore).length, total: allLorePages(lore).length },
+    eclipseBestChapterStars: eclipseBestChapterStars(save),
+    bestiary: bestiaryCount(save),
   };
+}
+
+/** 星蝕：每章星章數加總，取最多的一章（鍵是原關卡 id，章節看原關卡） */
+function eclipseBestChapterStars(save: SaveData): number {
+  const byChapter = new Map<number, number>();
+  for (const [id, stars] of Object.entries(eclipseOf(save).stars)) {
+    const chapter = stageChapter.get(id);
+    if (chapter === undefined) continue;
+    byChapter.set(chapter, (byChapter.get(chapter) ?? 0) + stars.filter(Boolean).length);
+  }
+  return Math.max(0, ...byChapter.values());
+}
+
+/** 星骸觀測錄：遇過幾種、全部幾種 */
+function bestiaryCount(save: SaveData): { seen: number; total: number } {
+  const codex = codexEnemies(gameData.enemies, gameData.stages);
+  const seen = seenEnemyIds(save, gameData.stages);
+  return { seen: codex.filter((e) => seen.has(e.id)).length, total: codex.length };
 }
 
 /** 任務列表排序：可領 → 進行中 → 已領 */

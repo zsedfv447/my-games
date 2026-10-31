@@ -2,7 +2,7 @@
 import { abyssProgress } from '../../progression/abyss';
 import { h } from '../dom';
 import { gameData } from '../../data/load';
-import { archetypeCounts, favoriteLeader, leaderRanking, recordsOf, starCount, winRate } from '../../progression/records';
+import { archetypeCounts, favoriteLeader, leaderRanking, recordsEstimated, recordsOf, starCount, winRate } from '../../progression/records';
 import { badge, bar, emptyState, panel } from '../components/basic';
 import { equippedTitle, newTitles, TITLES, unlockedTitles } from '../../progression/titles';
 import { titleContext } from '../title-context';
@@ -57,6 +57,8 @@ export const notebookScreen: ScreenDef = {
           stat('通關／星章', `${save.progress.clearedStages.length} 關・${starCount(save)} ★`),
           // 星淵回廊：本週最高與歷來最高（含第 30 層之後的無盡層）
           abyss.allTimeBest > 0 && stat('星淵回廊', `本週 ${abyss.best} 層・歷來 ${abyss.allTimeBest} 層`)),
+        // 舊存檔：手札開始記錄前的勝場以通關數估算（records.ts 的 recordsOf）
+        recordsEstimated(save) && h('p', { class: 'small-text dim', style: { margin: '6px 0 0' } }, '手札開始記錄前的戰績以通關數估算。'),
         // 契約週報：重看上週的回顧卡（components/weekly-report.ts）
         h('button', { type: 'button', class: 'btn small ghost', style: { marginTop: '8px' }, onClick: () => {
           const report = weeklyReport(getSave(), lastWeekKey(Date.now()), (id) => growth.card(id));
