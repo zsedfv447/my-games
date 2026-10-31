@@ -1,0 +1,12 @@
+/* 星蝕難度：章節頁的切換、星蝕關卡列與標籤 */
+.eclipse-toggle { display: flex; gap: 6px; margin-top: 10px; }
+.eclipse-tab {
+  flex: 1; padding: 8px 0; border-radius: 10px; font: inherit; font-weight: 700; cursor: pointer;
+  border: 1px solid rgba(160, 120, 255, 0.45); background: rgba(30, 18, 60, 0.4); color: inherit;
+}
+.eclipse-tab.on { background: linear-gradient(135deg, #3a1d6e, #7a2c8f); border-color: #c79bff; color: #fff; box-shadow: 0 0 12px rgba(190, 120, 255, 0.45); }
+.eclipse-hint { margin: 8px 0 0; }
+.badge.eclipse { background: linear-gradient(135deg, #4b1f7a, #a0359e); color: #fff; border-color: #d9a6ff; }
+.eclipse-mode .panel.gold { border-color: #b98cff; box-shadow: 0 0 16px rgba(150, 90, 255, 0.35); }
+.eclipse-row { border-left: 3px solid #a46cff; }
+.eclipse-note { margin: 6px 0 0; color: #d9b8ff; }

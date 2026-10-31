@@ -406,4 +406,6 @@ export interface SaveData {
   titles?: import('../progression/titles').TitleState;
   /** 星淵回廊本週進度（選填，讀取時用 progression/abyss.ts 的 abyssProgress 補預設值，換週重置） */
   abyss?: { week: string; best: number; claimed: number[] };
+  /** 星蝕難度的紀錄（可選；讀取一律經過 progression/eclipse.ts 的 eclipseOf 補預設值） */
+  eclipse?: { cleared: string[]; stars: Record<string, boolean[]>; chapterRewardsClaimed?: number[] };
 }

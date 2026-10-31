@@ -1,4 +1,5 @@
 // 出戰確認：關卡情報、推薦流派、隊伍限制或借用隊伍、星章條件，確認後扣體力進入戰鬥
+import { battleDataFor, findStage } from '../stage-lookup';
 import { h, svg } from '../dom';
 import { gameData } from '../../data/load';
 import '../flow-polish.css';
@@ -22,6 +23,8 @@ import { enemyArtUrl } from '../art/enemy-art';
 import { ATTRIBUTE_NAMES, ORB_COLORS } from '../art/palette';
 import { stageIntel } from '../stage-intel';
 import { recordsOf } from '../../progression/records';
+import { stageCleared, stageStars } from '../eclipse-view';
+import { eclipseScale, enterEclipseStage, isEclipseId } from '../../progression/eclipse';
 import '../convenience.css';
 
 const KIND_LABEL: Record<StageDef['kind'], string> = { main: '主線', daily: '每日', event: '活動', tower: '挑戰之塔', trial: '流派試煉', side: '外傳', abyss: '星淵回廊' };
@@ -33,8 +36,16 @@ const ENTER_ERRORS: Record<string, string> = {
   unknownStage: '找不到這一關',
   inventoryFull: '背包滿了，先整理卡片再出發',
   notEnoughStamina: '體力不足',
+  chapterNotStarred: '這一章的星章全部集滿後才開放星蝕',
   ...VIOLATION_TEXT,
 };
+
+/** 星蝕關卡的說明：敵人強化的倍率 */
+function eclipseNote(chapter?: number): string {
+  const k = eclipseScale(chapter);
+  const pct = (n: number) => `${Math.round(n * 100)}%`;
+  return `星蝕難度：敵人生命 ${pct(k.hp)}、攻擊 ${pct(k.atk)}、防禦 ${pct(k.def)}，Boss 生命低時會狂暴。不掉落卡片，首通有星晶與星核。`;
+}
 
 const archetypeName = (id: string) => gameData.archetypes.find((a) => a.id === id)?.name ?? id;
 const cardName = (id: string) => growth.card(id)?.name ?? id;
@@ -60,7 +71,7 @@ function enemyPortrait(e: EnemyDef, boss: boolean): Element {
 
 /** 關卡情報：每一波的敵人頭像、屬性、能力，Boss 加框；最上面是建議帶的屬性 */
 function intelPanel(stage: StageDef): HTMLElement {
-  const intel = stageIntel(stage, gameData.enemies, gameData.config.battle);
+  const intel = stageIntel(stage, battleDataFor(stage).enemies, gameData.config.battle);
   return panel(
     { title: '敵人情報' },
     intel.suggested.length > 0 && h('div', { class: 'row wrap intel-suggest' }, h('span', { class: 'small-text' }, '建議屬性'), intel.suggested.map(attrChip),
@@ -83,8 +94,9 @@ export const prepareScreen: ScreenDef = {
   chrome: 'sub',
   parent: 'adventure',
   render({ route, nav }) {
-    const stage = gameData.stages.find((s) => s.id === route.args[0]);
+    const stage = findStage(route.args[0] ?? '');
     if (!stage) return h('div', null, emptyState('adventure', '找不到這一關'));
+    const eclipse = isEclipseId(stage.id);
 
     const save = getSave();
     const helperAllowed = stageAllowsHelper(stage);
@@ -95,7 +107,7 @@ export const prepareScreen: ScreenDef = {
     const helperLeader = team.helperCard?.leaderSkill ? growth.leaderSkill(team.helperCard.leaderSkill) : undefined;
     const problem = sortieProblem(stage, team);
     const rules = describeTeamRule(stage.teamRule, archetypeName, cardName);
-    const gotStars = save.progress.stars[stage.id] ?? [];
+    const gotStars = stageStars(save, stage);
     const fastest = recordsOf(save).fastestTurns[stage.id];
 
     const start = async () => {
@@ -104,14 +116,17 @@ export const prepareScreen: ScreenDef = {
       if (check === 'resume') return nav.go('battle', [stage.id]);
       if (check === 'cancel') return;
       const now = Date.now();
-      const entered = enterStage(getSave(), stage, stageContext(gameData.stages, gameData.events), gameData.config, now,
-        team.borrowed ? undefined : { members: team.cards, helper: team.helperCard });
+      const sortie = team.borrowed ? undefined : { members: team.cards, helper: team.helperCard };
+      const ctx = stageContext(gameData.stages, gameData.events);
+      const entered = eclipse
+        ? enterEclipseStage(getSave(), stage, ctx, gameData.config, now, sortie, gameData.chapters)
+        : enterStage(getSave(), stage, ctx, gameData.config, now, sortie);
       if (!entered.ok) return toast(ENTER_ERRORS[entered.reason] ?? entered.reason);
       commit(entered.save);
       armBattle(stage.id);
       // 第一次挑戰時先播關卡開場劇情（progression/stage-story.ts），播完直接進戰鬥
       const saved = getSave();
-      const before = stageStoryToPlay(stage, 'before', gameData.story, saved.progress.storySeen, !saved.progress.clearedStages.includes(stage.id));
+      const before = stageStoryToPlay(stage, 'before', gameData.story, saved.progress.storySeen, !stageCleared(saved, stage));
       if (before) nav.go('story', [before], { next: `battle/${stage.id}` });
       else nav.go('battle', [stage.id]);
     };
@@ -121,7 +136,8 @@ export const prepareScreen: ScreenDef = {
       null,
       panel(
         { gold: true },
-        h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, stage.name), badge(KIND_LABEL[stage.kind], 'gold')),
+        h('div', { class: 'row between' }, h('h2', { style: { margin: '0' } }, stage.name), eclipse ? badge('星蝕', 'eclipse') : badge(KIND_LABEL[stage.kind], 'gold')),
+        eclipse && h('p', { class: 'small-text eclipse-note' }, eclipseNote(stage.chapter)),
         h('p', { class: 'small-text dim', style: { marginTop: '6px' } }, `${stage.waves.length} 波敵人・消耗體力 ${stage.stamina}`, fastest ? `・最快 ${fastest} 回合通關` : ''),
         stage.recommendedArchetypes?.length
           ? h('div', { class: 'row wrap', style: { gap: '4px' } }, h('span', { class: 'small-text' }, '推薦流派'), stage.recommendedArchetypes.map((a) => badge(archetypeName(a))))
@@ -170,7 +186,7 @@ export const prepareScreen: ScreenDef = {
       ),
       stageRewardPanel(stage, stage.rewards.periodFirstClear
         ? periodFirstClearClaimed(save, stage, gameData.events, Date.now())
-        : save.progress.clearedStages.includes(stage.id)),
+        : stageCleared(save, stage)),
       // 出發列固定在畫面底部（375×812 不用捲到最下面才能出發），上面的內容照常捲動
       h('div', { class: 'sortie-bar' },
         problem && h('p', { class: 'small-text sortie-problem' }, VIOLATION_TEXT[problem]),

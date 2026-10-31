@@ -10,6 +10,8 @@ import type { ResultNote } from './components/reward-reveal';
 import { growth } from './state';
 import { ABYSS_FLOORS, abyssLock, abyssStageId, parseAbyssId } from '../progression/abyss';
 import { armBattle } from './battle-session';
+import { findStage } from './stage-lookup';
+import { baseIdOf, eclipseIdOf, eclipseLockReason, isEclipseId } from '../progression/eclipse';
 
 /** 出戰的玩家卡 uid（不含助戰；借用隊伍時為空） */
 export function sortieUids(team: { borrowed: boolean; members: { uid?: string }[] }): string[] {
@@ -61,6 +63,14 @@ export function nextStageButton(stage: StageDef, save: SaveData, go: (path: stri
     if (floor > ABYSS_FLOORS || abyssLock(save, abyss.week, floor, now)) return null;
     const nextId = abyssStageId(abyss.week, floor);
     return button('下一層', { variant: 'primary', onClick: () => { armBattle(nextId); go(`battle/${nextId}`); } });
+  }
+  if (isEclipseId(stage.id)) {
+    // 星蝕：同章下一關的星蝕版，章節滿星且這關通過後才開放
+    const base = gameData.stages.find((s) => s.id === baseIdOf(stage.id));
+    const nextBase = base && nextStageAfter(base, gameData.stages);
+    const next = nextBase?.kind === 'main' && nextBase.chapter === stage.chapter ? findStage(eclipseIdOf(nextBase.id)) : undefined;
+    if (!next || eclipseLockReason(save, next, gameData.stages, gameData.chapters)) return null;
+    return button('下一關', { variant: 'primary', onClick: () => go(`prepare/${next.id}`) });
   }
   const next = nextStageAfter(stage, gameData.stages);
   if (!next || !isStageUnlocked(save, next, stageContext(gameData.stages, gameData.events), Date.now())) return null;

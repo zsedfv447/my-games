@@ -55,6 +55,8 @@ import { grantClearExp, nextStageButton, unlockNotice } from '../stage-clear';
 import { endBattle, openStageBattle, saveBattle } from '../battle-session';
 import { battleDataFor, findStage } from '../stage-lookup';
 import { completeAbyssFloor } from '../../progression/abyss';
+import { stageCleared } from '../eclipse-view';
+import { completeEclipseStage, isEclipseId } from '../../progression/eclipse';
 import { collectedDrops } from '../../progression/active-battle';
 import type { CardExpGain } from '../../growth';
 
@@ -665,7 +667,8 @@ class BattleView {
     if (this.s.guide) return this.tutorialResult(this.s.guide);
     const result = this.s.battle.getResult()!;
     let clear: StageClearResult | null = null;
-    const firstClear = !this.s.practice && !getSave().progress.clearedStages.includes(this.s.stage.id);
+    const firstClear = !this.s.practice && !stageCleared(getSave(), this.s.stage);
+    const eclipse = isEclipseId(this.s.stage.id);
     let expGains: CardExpGain[] = [];
     let loreGained: ResultNote[] = [];
     // 結算前的圖鑑：掉落卡是不是第一次獲得（NEW）
@@ -674,8 +677,11 @@ class BattleView {
       const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
       const ctx = stageContext(gameData.stages, gameData.events);
       // 星淵回廊：每週的關卡不寫進 clearedStages，首通改成「本週首通」（progression/abyss.ts）
+      // 星蝕版的通關與星章記在 save.eclipse（progression/eclipse.ts）
       const done = this.s.stage.kind === 'abyss'
         ? completeAbyssFloor(getSave(), this.s.stage, { ...result, team: teamUnits }, ctx, gameData.config, Date.now(), gameData.cards)
+        : eclipse
+          ? completeEclipseStage(getSave(), this.s.stage, { ...result, team: teamUnits }, ctx, gameData.config, createRng(this.s.dropSeed), Date.now())
         : completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, ctx, gameData.config, createRng(this.s.dropSeed), Date.now(), this.s.drops && plannedCards(this.s.drops));
       const exp = grantClearExp(done.save, this.s.memberUids ?? [], done.result.cardExp);
       expGains = exp.gains;
@@ -728,7 +734,8 @@ class BattleView {
       levelUp: clear?.levelUp && levelUpView(clear.levelUp, gameData.config),
       notes,
       onGo: (path) => leave(path),
-      constellation: resultConstellation(this.s.stage, clear),
+      // 星座點亮演出只給原版（星蝕的星章記在另一份紀錄）
+      constellation: eclipse ? null : resultConstellation(this.s.stage, clear),
       share: () => shareClear(this.s.stage, this.state.team, this.s.memberUids ?? [], result, clear, firstClear, (this.s.stage.stars ?? []).map(starText)),
       leaderLine: bond?.thanks ?? leaderLineOf(this.state),
       actions: [
