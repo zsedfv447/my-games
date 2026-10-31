@@ -17,3 +17,19 @@ export function closeRouteScoped(): void {
 }
 
 export const routeScopedCount = (): number => closers.size;
+
+/**
+ * 綁定畫面的一次性結束（獎勵演出等）：玩家自己關掉或換畫面，finish 都只會執行一次。
+ * 回傳給玩家關閉時呼叫的函式。
+ */
+export function endOnRouteChange(finish: () => void): () => void {
+  let ended = false;
+  const end = () => {
+    if (ended) return;
+    ended = true;
+    unbind();
+    finish();
+  };
+  const unbind = bindToRoute(end);
+  return end;
+}

@@ -10,6 +10,7 @@ import {
 import { badge, button, iconButton, panel, resourceIcon } from './basic';
 import { cardThumb } from './card-thumb';
 import { overlayRoot } from './overlay';
+import { endOnRouteChange } from '../route-scope';
 import { playBondStory } from '../bond-story';
 import type { LeaderLine } from '../victory-line';
 import '../reward-reveal.css';
@@ -168,13 +169,19 @@ export function openRewardReveal(title: string, items: RevealItem[], opts: { sub
     audio.play('reward');
     const reveal = playReveal(list, items);
     layer.addEventListener('click', () => reveal.skip());
+    // 換畫面（例如返回手勢）時自動收掉，不蓋住下一頁；獎勵在演出前就已寫入存檔，這裡只關畫面
+    const end = endOnRouteChange(() => {
+      reveal.skip();
+      layer.classList.add('closing');
+      setTimeout(() => layer.remove(), 140);
+      resolveClose();
+    });
     void reveal.done.then(() => {
+      if (!layer.isConnected || layer.classList.contains('closing')) return;
       actions.appendChild(button(opts.okLabel ?? '收下', {
         variant: 'primary', block: true, onClick: (e) => {
           e.stopPropagation();
-          layer.classList.add('closing');
-          setTimeout(() => layer.remove(), 140);
-          resolveClose();
+          end();
         },
       }));
     });
