@@ -57,7 +57,7 @@ describe('突破', () => {
 describe('星紋覺醒', () => {
   it('依序解鎖：第 1 個不需突破，之後需要突破階數、金幣與同屬性星核', () => {
     const c102 = ctx.card('c102')!;
-    expect(nextAwakening(c102, { awakened: 0 }, ctx)).toMatchObject({ slot: 0, limitBreak: 0, coin: 20000, material: 'c916', materials: 1 });
+    expect(nextAwakening(c102, { awakened: 0 }, ctx)).toMatchObject({ slot: 0, limitBreak: 0, coin: ctx.rules.awakenCoin[0], material: 'c916', materials: 1 });
 
     let save = makeSave([
       owned('u1', 'c102'), owned('u2', 'c916'), owned('u3', 'c905'), owned('u4', 'c916'), owned('u5', 'c916'),
@@ -66,7 +66,7 @@ describe('星紋覺醒', () => {
     expect(first.ok && first.unlocked).toEqual({ type: 'orbDamageUp', orb: 'fire', percent: 5 });
     if (!first.ok) return;
     save = first.save;
-    expect(save.player.coin).toBe(1_000_000 - 20000);
+    expect(save.player.coin).toBe(1_000_000 - ctx.rules.awakenCoin[0]);
 
     const code = (r: ReturnType<typeof awaken>) => (r.ok ? 'ok' : r.error.code);
     // 第 2 個需要突破 +3
