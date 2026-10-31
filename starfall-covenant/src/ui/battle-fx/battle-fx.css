@@ -157,5 +157,5 @@
 .ring-slot.broken::after { content: ''; position: absolute; left: -1px; right: -1px; top: 50%; height: 1.5px; background: #b9bdc8; transform: rotate(-45deg); }
 .ring-slot.just-broken { animation: ring-crack 500ms ease-out; }
 @keyframes ring-crack { 0% { transform: scale(1.8); box-shadow: 0 0 10px #fff; } 100% { transform: none; } }
-.enemy-ring.shattered { font-size: 10px; font-weight: 800; color: #ffcf7a; text-shadow: 0 1px 2px #000; }
+.enemy-ring.shattered .ring-slot { border-color: #ffcf7a; opacity: 0.85; }
 .battle.low-fx .ring-slot.just-broken { animation: none; }

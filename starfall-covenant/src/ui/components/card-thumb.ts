@@ -2,6 +2,7 @@
 import type { CardDef } from '../../core/types';
 import { h, svg } from '../dom';
 import { cardIconSvg, cardPortraitSvg, type CardFaceInput } from '../art/card-face';
+import { materialIconSvg, materialPortraitSvg, useMaterialArt } from '../art/material';
 import { resolveArtPath, userAsset } from '../assets';
 import { icon } from './basic';
 
@@ -34,7 +35,9 @@ export function cardThumb(card: CardLike, opts: ThumbOptions = {}): HTMLElement 
   const url = cardIconUrl(card);
   // 只有立繪沒有頭像時，用立繪上半部當頭像
   const portrait = !url ? cardPortraitUrl(card) : undefined;
-  const face = url ? img(url, card.name, () => cardIconSvg(card)) : portrait ? img(portrait, card.name, () => cardIconSvg(card)) : svg(cardIconSvg(card));
+  // 星核、星輝結晶：使用者素材優先，沒有圖才用程式繪製的素材圖示（art/material.ts）
+  const material = useMaterialArt(card, !!(url || portrait)) ? materialIconSvg(card) : null;
+  const face = material ? svg(material) : url ? img(url, card.name, () => cardIconSvg(card)) : portrait ? img(portrait, card.name, () => cardIconSvg(card)) : svg(cardIconSvg(card));
   if (portrait) (face as HTMLImageElement).style.objectFit = 'cover';
   return h(
     'button',
@@ -51,5 +54,8 @@ export function emptySlot(onClick?: () => void, size?: number): HTMLElement {
 
 export function cardPortrait(card: CardLike): HTMLElement {
   const url = cardPortraitUrl(card);
+  // 使用者素材優先，沒有立繪才用繪製的素材圖示
+  const material = useMaterialArt(card, !!url) ? materialPortraitSvg(card) : null;
+  if (material) return h('div', { class: 'card-portrait' }, svg(material));
   return h('div', { class: 'card-portrait' }, url ? img(url, card.name, () => cardPortraitSvg(card)) : svg(cardPortraitSvg(card)));
 }
