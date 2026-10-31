@@ -1,4 +1,4 @@
-// 七曜環的顯示（提案 96）：敵人名牌上方一排小圓點，一格一色；已點掉的變空心加斜線，全部點掉顯示「環碎」。
+// 七曜環的顯示（提案 96）：敵人名牌下方一排小圓點，一格一色；已點掉的變空心加斜線，全部點掉時整排空心（文字在狀態標籤）。
 // 純靜態圖形（低特效也一樣清楚）；破格時的小動畫在低特效模式由 CSS 關掉。
 import type { EnemyState } from '../../battle/battle-state';
 import { ringOf } from '../../battle/skills/ring';
@@ -10,7 +10,11 @@ import { h } from '../dom';
 export function ringBadge(e: Pick<EnemyState, 'statuses'>, justBroken: readonly OrbType[] = []): HTMLElement | null {
   const ring = ringOf(e);
   if (!ring) return null;
-  if (ring.shattered) return h('div', { class: 'enemy-ring shattered', title: `七曜環已碎裂：受到的屬性攻擊 ×${ring.vulnerable}` }, `環碎・易傷×${ring.vulnerable}`);
+  // 碎裂後只畫全部空心的格子；「環碎・易傷×N」的文字只在狀態標籤出現一次（提案 103）
+  if (ring.shattered) {
+    return h('div', { class: 'enemy-ring shattered', 'aria-label': `七曜環已碎裂：受到的屬性攻擊 ×${ring.vulnerable}`, title: `七曜環已碎裂：受到的屬性攻擊 ×${ring.vulnerable}` },
+      ring.slots.map((o) => h('span', { class: ['ring-slot', 'broken', justBroken.includes(o) && 'just-broken'], style: { '--slot': ORB_COLORS[o].base }, 'aria-hidden': 'true' })));
+  }
   const left = ring.slots.filter((o) => !ring.broken.includes(o)).map((o) => ORB_NAMES[o]).join('、');
   return h('div', { class: 'enemy-ring', 'aria-label': `七曜環還剩：${left}`, title: `七曜環：用${left}的攻擊（心格要消除心珠）點掉格子，全部點掉後環碎裂` },
     ring.slots.map((o) => h('span', {

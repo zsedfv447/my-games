@@ -2,6 +2,7 @@
 import type { CardDef } from '../../core/types';
 import { h, svg } from '../dom';
 import { cardIconSvg, cardPortraitSvg, type CardFaceInput } from '../art/card-face';
+import { materialIconSvg, materialPortraitSvg } from '../art/material';
 import { resolveArtPath, userAsset } from '../assets';
 import { icon } from './basic';
 
@@ -31,10 +32,12 @@ export interface ThumbOptions {
 }
 
 export function cardThumb(card: CardLike, opts: ThumbOptions = {}): HTMLElement {
-  const url = cardIconUrl(card);
+  // 星核、星輝結晶是物品：一律用程式繪製的素材圖示（art/material.ts）
+  const material = materialIconSvg(card);
+  const url = material ? undefined : cardIconUrl(card);
   // 只有立繪沒有頭像時，用立繪上半部當頭像
-  const portrait = !url ? cardPortraitUrl(card) : undefined;
-  const face = url ? img(url, card.name, () => cardIconSvg(card)) : portrait ? img(portrait, card.name, () => cardIconSvg(card)) : svg(cardIconSvg(card));
+  const portrait = !url && !material ? cardPortraitUrl(card) : undefined;
+  const face = material ? svg(material) : url ? img(url, card.name, () => cardIconSvg(card)) : portrait ? img(portrait, card.name, () => cardIconSvg(card)) : svg(cardIconSvg(card));
   if (portrait) (face as HTMLImageElement).style.objectFit = 'cover';
   return h(
     'button',
@@ -50,6 +53,8 @@ export function emptySlot(onClick?: () => void, size?: number): HTMLElement {
 }
 
 export function cardPortrait(card: CardLike): HTMLElement {
+  const material = materialPortraitSvg(card);
+  if (material) return h('div', { class: 'card-portrait' }, svg(material));
   const url = cardPortraitUrl(card);
   return h('div', { class: 'card-portrait' }, url ? img(url, card.name, () => cardPortraitSvg(card)) : svg(cardPortraitSvg(card)));
 }
