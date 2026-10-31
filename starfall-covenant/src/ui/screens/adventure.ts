@@ -10,6 +10,7 @@ import { getSave } from '../state';
 import { userAsset } from '../assets';
 import { eventStatusText } from '../../progression/events';
 import { nemesisLock, nemesisView } from '../nemesis';
+import { expeditionTileSub } from './expedition';
 import { puzzleEntrySub } from './puzzle';
 import { openPracticePicker } from '../practice-picker';
 import type { Navigator, ScreenDef } from '../router';
@@ -70,6 +71,7 @@ export const adventureScreen: ScreenDef = {
       { icon: 'puzzle', title: '星紋謎題', sub: puzzleEntrySub(now), to: ['puzzle', []], dot: !solvedToday(save, now) },
       ...(nemesis ? [nemesis] : []),
       { icon: 'tower', title: '挑戰之塔', sub: `不耗體力・第 ${save.progress.towerFloor} 層`, to: ['stages', ['tower']] },
+      { icon: 'constellation', title: '星靈遠行', to: ['expedition', []], ...expeditionTileSub(now) },
       abyssTile(save, now),
       {
         icon: 'scroll', title: '外傳・灰燈港夜話',

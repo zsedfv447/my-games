@@ -23,3 +23,4 @@
 .bag-sell-bar { position: sticky; bottom: 0; z-index: 2; display: flex; flex-direction: column; gap: 6px; padding: 10px; border-radius: var(--radius); background: rgba(6, 10, 31, 0.94); border: 1px solid var(--gold-deep); box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.5); }
 .bag-sell-bar .row .btn { flex: 1; }
 .material-exp { margin: 8px 0 0; font-size: 15px; color: var(--gold-soft); }
+.bag-cell .team-mark.expedition-mark { left: auto; right: 2px; color: #9fd8ff; border-color: #3d6f9a; }

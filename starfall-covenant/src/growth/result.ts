@@ -1,9 +1,9 @@
 import type { SaveData } from '../core/types';
 
 export type GrowthErrorCode =
-  | 'cardNotFound' | 'unknownCard' | 'cardLocked' | 'cardInTeam'
+  | 'cardNotFound' | 'unknownCard' | 'cardLocked' | 'cardInTeam' | 'cardOnExpedition'
   | 'noMaterials' | 'tooManyMaterials' | 'materialNotFound' | 'materialIsTarget'
-  | 'materialDuplicated' | 'materialLocked' | 'materialInTeam' | 'wrongMaterial'
+  | 'materialDuplicated' | 'materialLocked' | 'materialInTeam' | 'materialOnExpedition' | 'wrongMaterial'
   | 'notEnoughCoin' | 'notEnoughGems'
   | 'maxLevel' | 'notMaxLevel' | 'cannotEvolve'
   | 'noActiveSkill' | 'maxSkillLevel' | 'maxLimitBreak'
