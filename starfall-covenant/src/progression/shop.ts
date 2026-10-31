@@ -1,11 +1,11 @@
-// 商店：星晶／金幣／活動代幣購買，限購次數依每日／每週／永久／活動計算
+// 商店：星晶／金幣／活動代幣購買，限購次數依每日／每週／每月／永久／活動計算
 import type { GameConfig, SaveData, ShopItemDef } from '../core/types';
 import { maxStamina } from './player';
 import { fail, ok, type SaveResult } from './result';
 import { grantReward } from './rewards';
 import { regenStamina } from './stamina';
 import { eventPeriod, eventPeriodKey, type EventDef } from './events';
-import { dateKey, weekKey } from './time';
+import { dateKey, monthKey, weekKey } from './time';
 
 export type ShopFail = 'soldOut' | 'notEnoughGems' | 'notEnoughCoin' | 'notEnoughTokens' | 'alreadyFull';
 
@@ -24,6 +24,7 @@ function purchaseKey(item: ShopItemDef, now: number, events: EventDef[]): string
   switch (item.limit?.per) {
     case 'day': return `${item.id}@d${dateKey(now)}`;
     case 'week': return `${item.id}@w${weekKey(now)}`;
+    case 'month': return `${item.id}@m${monthKey(now)}`;
     case 'event': {
       const event = shopItemEvent(item, events);
       return event ? `${item.id}${eventPeriodKey(event, now)}` : item.id;
@@ -58,13 +59,14 @@ export function remainingPurchases(save: SaveData, item: ShopItemDef, now: numbe
   return Math.max(0, item.limit.count - purchasedCount(save, item, now, events));
 }
 
-/** 丟掉已過期的每日／每週計數，避免存檔越長越大 */
+/** 丟掉已過期的每日／每週／每月計數，避免存檔越長越大 */
 function pruneOld(purchases: Record<string, number>, now: number): Record<string, number> {
   const today = `@d${dateKey(now)}`;
   const week = `@w${weekKey(now)}`;
+  const month = `@m${monthKey(now)}`;
   const out: Record<string, number> = {};
   for (const [k, v] of Object.entries(purchases)) {
-    if ((k.includes('@d') && !k.endsWith(today)) || (k.includes('@w') && !k.endsWith(week))) continue;
+    if ((k.includes('@d') && !k.endsWith(today)) || (k.includes('@w') && !k.endsWith(week)) || (k.includes('@m') && !k.endsWith(month))) continue;
     out[k] = v;
   }
   return out;

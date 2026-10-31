@@ -19,7 +19,7 @@ export function isMaterialFor(
   switch (use) {
     case 'enhance': return true;
     case 'skill': return isSkillMaterial(target.def, material, ctx);
-    case 'limitBreak': return ctx.family(material.id) === ctx.family(target.def.id);
+    case 'limitBreak': return ctx.family(material.id) === ctx.family(target.def.id) || ctx.rules.limitBreakMaterialIds.includes(material.id);
     case 'awaken': return nextAwakening(target.def, target.owned, ctx)?.material === material.id;
     case 'evolve': return target.def.evolution?.materials.includes(material.id) ?? false;
   }
@@ -33,7 +33,7 @@ export function freeCards(save: SaveData, exceptUid?: string): OwnedCard[] {
 
 /**
  * 某張卡某種養成的候選素材（給選素材畫面用）。
- * 強化不列星核：星核留給覺醒，避免誤吃（仍可手動傳給 enhance）。
+ * 強化不列星核與星輝結晶：留給覺醒與突破，避免誤吃（仍可手動傳給 enhance）。
  */
 export function materialCandidates(
   save: SaveData, ctx: GrowthContext, targetUid: string, use: MaterialUse,
@@ -45,7 +45,7 @@ export function materialCandidates(
   for (const c of freeCards(save, targetUid)) {
     const m = ctx.card(c.cardId);
     if (!m || !isMaterialFor(use, { def, owned }, m, ctx)) continue;
-    if (use === 'enhance' && isStarCore(m.id, ctx)) continue;
+    if (use === 'enhance' && (isStarCore(m.id, ctx) || ctx.rules.limitBreakMaterialIds.includes(m.id))) continue;
     out.push({ owned: c, def: m });
   }
   return out;

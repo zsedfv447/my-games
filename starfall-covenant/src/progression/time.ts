@@ -14,6 +14,12 @@ export function weekKey(now: number): string {
   return dateKey(new Date(d.getFullYear(), d.getMonth(), d.getDate() - offset).getTime());
 }
 
+/** 當地年月，例如 2026-10（每月限購） */
+export function monthKey(now: number): string {
+  const d = new Date(now);
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
+}
+
 /** 星期幾（0=週日），和 StageDef.weekdays 一致 */
 export function weekday(now: number): number {
   return new Date(now).getDay();

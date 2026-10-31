@@ -11,9 +11,9 @@ const materials = gameData.cards.filter((c) => c.race === 'material');
 const evolvedIds = new Set(gameData.cards.flatMap((c) => (c.evolution ? [c.evolution.to] : [])));
 
 describe('正式卡片資料', () => {
-  it('76 張戰鬥卡＋20 張素材卡，對應 56 位角色（第 60 項新增 12 張）', () => {
+  it('76 張戰鬥卡＋21 張素材卡（含星輝結晶），對應 56 位角色（第 60 項新增 12 張）', () => {
     expect(battle).toHaveLength(76);
-    expect(materials).toHaveLength(20);
+    expect(materials).toHaveLength(21);
     expect(battle.filter((c) => !evolvedIds.has(c.id))).toHaveLength(56);
   });
 

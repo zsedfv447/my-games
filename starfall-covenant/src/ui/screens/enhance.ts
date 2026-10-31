@@ -252,7 +252,7 @@ function modeView(mode: GrowthMode, owned: OwnedCard, def: CardDef, selected: st
     return {
       info: h('div', null,
         h('div', { class: 'limit-pips' }, Array.from({ length: max }, (_, i) => h('span', { class: ['pip', i < owned.limitBreak && 'on', i >= owned.limitBreak && i < next && 'next'] }))),
-        h('p', { class: 'small-text dim', style: { margin: '6px 0 0' } }, `放入同名卡突破，每階基礎數值 +${Math.round(growth.rules.limitBreakStatBonus * 100)}%，最多 +${max}。突破也是星紋覺醒的條件。`)),
+        h('p', { class: 'small-text dim', style: { margin: '6px 0 0' } }, `放入同名卡或星輝結晶突破（可以混用），每階基礎數值 +${Math.round(growth.rules.limitBreakStatBonus * 100)}%，最多 +${max}。突破也是星紋覺醒的條件。`)),
       preview: !selected.length ? noPick : h('div', null,
         h('div', { class: 'growth-level-jump' }, h('span', null, `+${owned.limitBreak}`), h('span', { class: 'arrow' }, '→'), h('strong', { class: 'up' }, `+${next}`)),
         statTable(statLines(stats, computeStats(def, { ...owned, limitBreak: next }, growth.rules)))),
