@@ -10,6 +10,7 @@ import { celebrate, growthBackdrop, statTable } from './enhance';
 import { evolutionCompare, evolutionNeeds, statLines } from './growth-view';
 import '../growth.css';
 import { LABEL } from '../wording';
+import { evolutionMaterialPanel } from '../acquire-view';
 
 export const evolveScreen: ScreenDef = {
   name: 'evolve',
@@ -88,7 +89,9 @@ export const evolveScreen: ScreenDef = {
               badge(`${Math.min(n.have, n.need)} / ${n.need}`, ok ? 'gold' : 'danger'));
           }),
           h('div', { class: ['req', coinOk ? 'ok' : 'ng'] }, h('span', null, coinOk ? '✓' : '✗'), `金幣 ${evo.coin.toLocaleString()}（持有 ${save.player.coin.toLocaleString()}）`)),
-        !matsOk && h('p', { class: 'small-text dim', style: { margin: '6px 0 0' } }, '上鎖或在隊伍中的卡不會被當成素材；素材可在每日關卡取得。')),
+        !matsOk && h('p', { class: 'small-text dim', style: { margin: '6px 0 0' } }, '上鎖、在隊伍中或遠行中的卡不會被當成素材。')),
+      // 缺素材時指路：需要／持有、會掉的關卡（掉落率照實寫）、商店還能換幾個
+      !matsOk && evolutionMaterialPanel(needs, nav),
       h('div', { class: 'growth-action' },
         button('進化', { variant: 'primary', block: true, disabled: !(levelOk && matsOk && coinOk), cost: { kind: 'coin', amount: evo.coin }, onClick: () => void run() })),
     ));
