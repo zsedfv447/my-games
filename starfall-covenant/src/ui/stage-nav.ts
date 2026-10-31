@@ -112,6 +112,7 @@ export function stageListPath(stage: StageDef, events: EventDef[] = []): string 
   const series = stage.event ? events.find((e) => e.id === stage.event)?.series : undefined;
   if (series) return `stages/${series}`;
   if (stage.kind === 'trial') return 'archetypes';
+  if (stage.kind === 'abyss') return 'abyss';
   return `stages/${stage.kind}`;
 }
 

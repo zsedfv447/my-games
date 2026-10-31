@@ -3,7 +3,7 @@ import { resumeBattle, startBattle, type Battle } from '../battle/battle-state';
 import { bus } from '../core/events';
 import { createRng } from '../core/rng';
 import type { StageDef } from '../core/types';
-import { gameData } from '../data/load';
+import { battleDataFor, findStage } from './stage-lookup';
 import {
   abandonActiveBattle, activeBattleFor, beginActiveBattle, clearActiveBattle, dropSeed, recordBattleSnapshot,
 } from '../progression/active-battle';
@@ -15,7 +15,7 @@ import { commit, getSave, growth } from './state';
 
 /** 出戰確認扣過體力後呼叫：把隊伍、亂數種子與骰好的掉落寫進存檔，當作這一關的入場券 */
 export function armBattle(stageId: string, drops?: DropPlan): void {
-  const stage = gameData.stages.find((s) => s.id === stageId);
+  const stage = findStage(stageId);
   if (!stage) return;
   const team = buildSortieTeam(stage, getSave(), growth.card);
   const seed = Math.floor(Math.random() * 2 ** 32);
@@ -41,8 +41,8 @@ export function openStageBattle(stage: StageDef): StageBattle | string {
   if (!active) return '戰鬥已中斷，請重新出發';
   try {
     const battle = active.snapshot
-      ? resumeBattle(stage, active.snapshot, gameData)
-      : startBattle(stage, active.members, active.helper, createRng(active.seed), gameData);
+      ? resumeBattle(stage, active.snapshot, battleDataFor(stage))
+      : startBattle(stage, active.members, active.helper, createRng(active.seed), battleDataFor(stage));
     if (!active.snapshot) saveBattle(battle);
     const drops = planMatches(active.drops, stage) ? active.drops : { stageId: stage.id, drops: [] };
     return { battle, memberUids: active.members.flatMap((m) => (m.uid ? [m.uid] : [])), dropSeed: dropSeed(active), drops, resumed: !!active.snapshot };
@@ -74,7 +74,7 @@ export function abandonBattle(): void {
 export async function confirmNewBattle(stageId: string): Promise<'resume' | 'start' | 'cancel'> {
   const active = getSave().activeBattle;
   if (!active) return 'start';
-  const name = gameData.stages.find((s) => s.id === active.stageId)?.name ?? active.stageId;
+  const name = findStage(active.stageId)?.name ?? active.stageId;
   if (active.stageId === stageId) {
     const go = await confirmDialog('有未完成的戰鬥', `「${name}」還有沒打完的戰鬥，要直接繼續嗎？重新出發會視為放棄，並再次消耗體力。`, '繼續', '重新出發');
     if (go) return 'resume';
@@ -88,7 +88,7 @@ export async function confirmNewBattle(stageId: string): Promise<'resume' | 'sta
 /** 進主城時發現有沒打完的戰鬥：詢問要繼續還是放棄。有詢問時回傳 true */
 export function maybeOfferResume(nav: Navigator): boolean {
   const active = getSave().activeBattle;
-  const stage = active && gameData.stages.find((s) => s.id === active.stageId);
+  const stage = active && findStage(active.stageId);
   if (!active || !stage) return false;
   // 還沒選就換了畫面：不繼續也不放棄，下次回主城再問
   void confirmOnScreen('有未完成的戰鬥', `要繼續「${stage.name}」嗎？放棄會視為失敗，已消耗的體力不會退還。`, '繼續', '放棄').then((go) => {
