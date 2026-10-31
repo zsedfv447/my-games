@@ -77,7 +77,7 @@ export const settingsScreen: ScreenDef = {
           'div',
           { class: 'row' },
           button('重看教學', { small: true, onClick: () => { commit(restartTutorial(getSave())); toast('從轉珠戰鬥開始重看教學'); nav.go('home'); } }),
-          isTutorialActive(getSave()) && button('略過教學', { small: true, variant: 'ghost', onClick: () => { toast('已略過新手教學'); void skipTutorialNow().then(() => nav.replace('settings')); } }),
+          isTutorialActive(getSave()) && button('略過教學', { small: true, variant: 'ghost', onClick: () => { toast('已略過新手教學'); void skipTutorialNow().then(() => { if (location.hash.startsWith('#/settings')) nav.replace('settings'); }); } }),
         ),
       ),
       panel(
