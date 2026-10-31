@@ -402,6 +402,8 @@ export interface SaveData {
   helperBond?: Record<string, number>;
   /** 角色羈絆：進化鏈的家族 id（最初型態的卡號）→ 出戰通關場數（可選；讀取一律經過 progression/card-bond.ts 補預設值） */
   cardBond?: Record<string, number>;
+  /** 星靈遠行中的隊伍（可選；讀取一律經過 progression/expedition.ts 的 expeditionsOf 補預設值） */
+  expeditions?: import('../progression/expedition').Expedition[];
   /** 契印師稱號：正在使用的稱號與看過的稱號（可選；讀取一律經過 progression/titles.ts 的 titleStateOf 補預設值） */
   titles?: import('../progression/titles').TitleState;
   /** 星淵回廊本週進度（選填，讀取時用 progression/abyss.ts 的 abyssProgress 補預設值，換週重置） */

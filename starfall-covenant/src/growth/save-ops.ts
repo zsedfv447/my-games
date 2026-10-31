@@ -13,6 +13,11 @@ export function teamUids(save: SaveData): Set<string> {
   return set;
 }
 
+/** 星靈遠行中的卡（SaveData.expeditions，選填）：遠行中的卡不能養成、販賣或當素材 */
+export function expeditionUids(save: SaveData): Set<string> {
+  return new Set((save.expeditions ?? []).flatMap((e) => e.uids));
+}
+
 export function withCards(save: SaveData, cards: OwnedCard[]): SaveData {
   return { ...save, inventory: { ...save.inventory, cards } };
 }
@@ -39,6 +44,7 @@ export function resolveTarget(
 ): { owned: OwnedCard; def: CardDef } | GrowthFailure {
   const owned = findCard(save, uid);
   if (!owned) return fail('cardNotFound', '找不到這張卡片', uid);
+  if (expeditionUids(save).has(uid)) return fail('cardOnExpedition', '這張卡正在星靈遠行，回來後才能養成', uid);
   const def = ctx.card(owned.cardId);
   if (!def) return fail('unknownCard', `卡片資料 ${owned.cardId} 不存在`, owned.cardId);
   return { owned, def };
@@ -54,6 +60,7 @@ export function resolveMaterials(
 ): MaterialPick[] | GrowthFailure {
   if (uids.length === 0) return fail('noMaterials', '請先選擇素材');
   const inTeam = teamUids(save);
+  const away = expeditionUids(save);
   const seen = new Set<string>();
   const picks: MaterialPick[] = [];
   for (const uid of uids) {
@@ -64,6 +71,7 @@ export function resolveMaterials(
     if (!owned) return fail('materialNotFound', '找不到選擇的素材', uid);
     if (owned.locked) return fail('materialLocked', '上鎖的卡片不能當素材，請先解鎖', uid);
     if (inTeam.has(uid)) return fail('materialInTeam', '隊伍中的卡片不能當素材', uid);
+    if (away.has(uid)) return fail('materialOnExpedition', '遠行中的卡片不能當素材', uid);
     const def = ctx.card(owned.cardId);
     if (!def) return fail('unknownCard', `卡片資料 ${owned.cardId} 不存在`, owned.cardId);
     picks.push({ owned, def });

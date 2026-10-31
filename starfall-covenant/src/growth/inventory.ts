@@ -5,7 +5,7 @@ import type { GrowthContext } from './context';
 import { markOwned, markSeen } from './collection';
 import { fail, type GrowthResult } from './result';
 import { expForLevel } from './level';
-import { addCoin, addGems, findCard, isFailure, resolveMaterials, teamUids, withCards } from './save-ops';
+import { addCoin, addGems, expeditionUids, findCard, isFailure, resolveMaterials, teamUids, withCards } from './save-ops';
 
 // ---------- 加入卡片 ----------
 
@@ -94,13 +94,14 @@ export function sellPrice(owned: Pick<OwnedCard, 'level'>, def: CardDef, ctx: Gr
   return Math.floor(def.sellValue * (1 + ctx.rules.sellLevelBonus * (owned.level - 1)));
 }
 
-export type SellBlockReason = 'locked' | 'inTeam';
+export type SellBlockReason = 'locked' | 'inTeam' | 'expedition';
 
 /** 這張卡能不能賣；能賣回傳 null */
-export function sellBlockReason(save: SaveData, uid: string, inTeam = teamUids(save)): SellBlockReason | null {
+export function sellBlockReason(save: SaveData, uid: string, inTeam = teamUids(save), away = expeditionUids(save)): SellBlockReason | null {
   const c = findCard(save, uid);
   if (c?.locked) return 'locked';
   if (inTeam.has(uid)) return 'inTeam';
+  if (away.has(uid)) return 'expedition';
   return null;
 }
 

@@ -4,7 +4,7 @@ import { gameData } from '../../data/load';
 import {
   computeStats, filterCards, inventoryUsage, inventoryWarning, isStarCore, materialBaseExp, previewSell, ROLE_LABEL, sellCards, setLocked, sortCards, type SortKey,
 } from '../../growth';
-import { teamUids } from '../../growth/save-ops';
+import { expeditionUids, teamUids } from '../../growth/save-ops';
 import { ATTRIBUTE_NAMES, RACE_NAMES } from '../art/palette';
 import { badge, button, emptyState, panel, stars, tabs } from '../components/basic';
 import { cardPortrait, cardThumb } from '../components/card-thumb';
@@ -23,7 +23,7 @@ let sortKey: SortKey = 'obtainedAt';
 // 篩選條件跨畫面保留（從卡片詳情返回時不會被清掉）
 let filter: BagFilterState = emptyBagFilter();
 
-const BLOCK_TEXT = { locked: '上鎖的卡不能販賣', inTeam: '隊伍中的卡不能販賣' } as const;
+const BLOCK_TEXT = { locked: '上鎖的卡不能販賣', inTeam: '隊伍中的卡不能販賣', expedition: '遠行中的卡不能販賣' } as const;
 
 export const cardsScreen: ScreenDef = {
   name: 'cards',
@@ -75,6 +75,7 @@ export const cardsScreen: ScreenDef = {
       const usage = inventoryUsage(save);
       const warn = inventoryWarning(save, growth);
       const inTeam = teamUids(save);
+      const away = expeditionUids(save);
       const list = sortCards(filterCards(save, growth, toCardFilter(filter)), growth, sortKey);
       for (const uid of selected) if (!list.some((c) => c.uid === uid)) selected.delete(uid);
       const preview = previewSell(save, growth, [...selected]);
@@ -84,7 +85,7 @@ export const cardsScreen: ScreenDef = {
       const grid = h('div', { class: ['card-grid', selling && 'selling'] }, list.map((c) => {
         const def = growth.card(c.cardId);
         if (!def) return null;
-        const blocked = selling && (c.locked ? 'locked' : inTeam.has(c.uid) ? 'inTeam' : null);
+        const blocked = selling && (c.locked ? 'locked' : inTeam.has(c.uid) ? 'inTeam' : away.has(c.uid) ? 'expedition' : null);
         const el = cardThumb(def, {
           level: c.level, locked: c.locked, size: 70, selected: selected.has(c.uid),
           onClick: () => {
@@ -95,7 +96,9 @@ export const cardsScreen: ScreenDef = {
           },
         });
         if (blocked) el.classList.add('unsellable');
-        return h('div', { class: 'bag-cell' }, el, inTeam.has(c.uid) && h('span', { class: 'team-mark' }, '隊'));
+        return h('div', { class: 'bag-cell' }, el,
+          inTeam.has(c.uid) && h('span', { class: 'team-mark' }, '隊'),
+          away.has(c.uid) && h('span', { class: 'team-mark expedition-mark' }, '遠行'));
       }));
 
       clear(root);
