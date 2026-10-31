@@ -15,6 +15,7 @@ import { markSeen } from '../../growth';
 import { commit, getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
 import '../collection-helper.css';
+import { nextBondTitle } from '../../progression/titles';
 
 const archetypeName = (id: string) => gameData.archetypes.find((a) => a.id === id)?.name ?? id;
 
@@ -30,6 +31,12 @@ export function npcAvatar(npc: HelperNpcDef, size = 64): HTMLElement {
     url ? h('img', { src: url, alt: npc.name, draggable: 'false', loading: 'lazy' }) : h('span', null, npc.name.split('・').pop()!.slice(0, 1)));
 }
 
+/** 回憶全部解鎖後的長期目標：下一個情誼稱號（progression/titles.ts） */
+function afterBondCap(points: number): string {
+  const goal = nextBondTitle('helperBond', points);
+  return goal ? `・回憶全部解鎖・下一個目標：稱號「${goal.title.name}」（情誼 ${goal.atLeast}）` : '・回憶與情誼稱號全部解鎖';
+}
+
 /** 情誼點數與下一個門檻 */
 function bondText(npc: HelperNpcDef): HTMLElement {
   const points = bondPoints(getSave(), npc.id);
@@ -37,7 +44,7 @@ function bondText(npc: HelperNpcDef): HTMLElement {
   return h('div', { class: 'helper-bond small-text' },
     h('span', { class: 'helper-bond-heart' }, '♥'),
     ` 情誼 ${points}`,
-    h('span', { class: 'faint' }, next === null ? '・回憶全部解鎖' : `・下一段回憶 ${next}`));
+    h('span', { class: 'faint' }, next === null ? afterBondCap(points) : `・下一段回憶 ${next}`));
 }
 
 /** 已解鎖的情誼回憶：點了用劇情對話框播放 */

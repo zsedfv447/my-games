@@ -15,6 +15,8 @@ import { openLimitedEvents } from '../event-order';
 import { eventStatusText } from '../../progression/events';
 import '../flow-polish.css';
 import { maybeOfferResume } from '../battle-session';
+import { equippedTitle } from '../../progression/titles';
+import { titleContext } from '../title-context';
 
 /** 捷徑上的紅點：有可領的登入、任務、成就或圖鑑收集獎勵 */
 const BADGE_OF: Record<string, keyof HomeBadges> = { 'login-bonus': 'login', quests: 'quests', achievements: 'achievements', collection: 'collection' };
@@ -52,6 +54,7 @@ export const homeScreen: ScreenDef = {
     const chapter = gameData.chapters.find((c) => c.chapter === next?.chapter);
     const progress = chapter && chapterProgress(save, chapter.chapter, ctx, Date.now(), chapter.stageCount);
     const badges = homeBadges(save, Date.now());
+    const title = equippedTitle(save, titleContext(save));
     const dot = (to: string) => BADGE_OF[to] && badges[BADGE_OF[to]] && h('span', { class: 'badge dot', dataset: { badge: BADGE_OF[to] }, 'aria-label': '有可領取的獎勵' });
     const root = h(
       'div',
@@ -63,7 +66,9 @@ export const homeScreen: ScreenDef = {
         h('div', { class: 'home-heading' }, h('span', null, 'STARFALL COVENANT'), h('h1', null, '星骸契約')),
         portrait && h('button', { class: 'home-leader', type: 'button', 'aria-label': `查看隊長 ${leader!.name}`, onClick: () => nav.go('team') }, h('img', { src: portrait, alt: leader!.name, draggable: 'false' })),
         h('div', { class: 'home-side-links' }, SHORTCUTS.slice(0, 3).map((s) => h('button', { type: 'button', onClick: () => { audio.play('tap'); nav.go(s.to, s.args); } }, icon(s.icon), h('span', null, s.label), dot(s.to)))),
-        h('div', { class: 'caption' }, h('div', { class: 'place' }, '契約之門'), h('div', { class: 'small-text dim' }, leader?.name ?? '見習契印師的起點')),
+        h('div', { class: 'caption' }, h('div', { class: 'place' }, '契約之門'), h('div', { class: 'small-text dim' }, leader?.name ?? '見習契印師的起點'),
+          // 契印師稱號（progression/titles.ts）：點了到稱號列表
+          title && h('button', { type: 'button', class: 'home-title', onClick: () => nav.go('titles') }, `「${title.name}」`)),
       ),
       h('button', { type: 'button', class: 'quest-banner', onClick: () => nav.go('adventure') },
         h('span', { class: 'quest-seal' }, icon('tower')),

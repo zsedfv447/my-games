@@ -5,7 +5,7 @@ import { BoardView } from '../../battle/view/board-view';
 import { createRng } from '../../core/rng';
 import { gameData } from '../../data/load';
 import {
-  STREAK_DAYS, claimPuzzle, currentStreak, dailyPuzzle, daySeed, judgePuzzle, puzzleReward, solvedToday, type Puzzle, type PuzzleGoal,
+  claimPuzzle, currentStreak, dailyPuzzle, daySeed, judgePuzzle, puzzleReward, solvedToday, type Puzzle, type PuzzleGoal,
 } from '../../progression/puzzle';
 import { dateKey } from '../../progression/time';
 import { ORB_NAMES } from '../art/palette';
@@ -16,6 +16,7 @@ import { revealReward } from '../components/reward-reveal';
 import { h } from '../dom';
 import type { ScreenDef } from '../router';
 import { commit, getSave, getSettings } from '../state';
+import { nextPuzzleBonus } from '../../progression/milestones';
 
 const CELL = 58;
 
@@ -103,8 +104,9 @@ class PuzzleView {
       return;
     }
     const { reward, streak } = puzzleReward(save, now);
-    const left = STREAK_DAYS - (streak % STREAK_DAYS || STREAK_DAYS);
-    this.rewardEl.textContent = `解開獎勵：金幣 ${reward.coin}${reward.gems ? `＋星晶 ${reward.gems}（連續 ${STREAK_DAYS} 天）` : `・再連續 ${left} 天加送星晶`}`;
+    // 下一個加送星晶的天數（里程碑 7、14、30、60 天，其餘每 7 天）：progression/milestones.ts
+    const next = nextPuzzleBonus(streak);
+    this.rewardEl.textContent = `解開獎勵：金幣 ${reward.coin}${reward.gems ? `＋星晶 ${reward.gems}（連續 ${streak} 天）` : `・再連續 ${next.days - streak} 天加送星晶 ${next.gems}${next.milestone ? '（里程碑）' : ''}`}`;
   }
 
   private renderSteps(): void {
