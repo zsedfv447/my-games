@@ -8,6 +8,8 @@ import { button } from './components/basic';
 import { markJustUnlocked, stageContext, stageListPath } from './stage-nav';
 import type { ResultNote } from './components/reward-reveal';
 import { growth } from './state';
+import { ABYSS_FLOORS, abyssLock, abyssStageId, parseAbyssId } from '../progression/abyss';
+import { armBattle } from './battle-session';
 
 /** 出戰的玩家卡 uid（不含助戰；借用隊伍時為空） */
 export function sortieUids(team: { borrowed: boolean; members: { uid?: string }[] }): string[] {
@@ -51,6 +53,15 @@ export function unlockNotice(stage: StageDef): { row: HTMLElement | null; text?:
 
 /** 「下一關」：下一關目前可以進才給按鈕，點了用 go 前往它的出戰確認（hash 路徑） */
 export function nextStageButton(stage: StageDef, save: SaveData, go: (path: string) => void): HTMLButtonElement | null {
+  // 星淵回廊：直接出戰下一層（不耗體力、沒有出戰確認頁）
+  const abyss = stage.kind === 'abyss' ? parseAbyssId(stage.id) : null;
+  if (abyss) {
+    const now = Date.now();
+    const floor = abyss.floor + 1;
+    if (floor > ABYSS_FLOORS || abyssLock(save, abyss.week, floor, now)) return null;
+    const nextId = abyssStageId(abyss.week, floor);
+    return button('下一層', { variant: 'primary', onClick: () => { armBattle(nextId); go(`battle/${nextId}`); } });
+  }
   const next = nextStageAfter(stage, gameData.stages);
   if (!next || !isStageUnlocked(save, next, stageContext(gameData.stages, gameData.events), Date.now())) return null;
   return button('下一關', { variant: 'primary', onClick: () => go(`prepare/${next.id}`) });

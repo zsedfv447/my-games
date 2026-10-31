@@ -10,6 +10,7 @@ import { placeholderScreens } from './placeholders';
 import { prepareScreen } from './prepare';
 import { battleScreen } from './battle';
 import { stagesScreen } from './stages';
+import { abyssScreen } from './abyss';
 import { teamScreen } from './team';
 import { cardScreen, cardsScreen } from './cards';
 import { summonScreen, summonRatesScreen, summonHistoryScreen } from './summon';
@@ -39,6 +40,7 @@ export const SCREENS: ScreenDef[] = [
   prepareScreen,
   battleScreen,
   stagesScreen,
+  abyssScreen,
   teamScreen,
   cardsScreen,
   cardScreen,

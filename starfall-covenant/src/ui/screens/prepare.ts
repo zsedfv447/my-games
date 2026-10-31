@@ -24,7 +24,7 @@ import { stageIntel } from '../stage-intel';
 import { recordsOf } from '../../progression/records';
 import '../convenience.css';
 
-const KIND_LABEL: Record<StageDef['kind'], string> = { main: '主線', daily: '每日', event: '活動', tower: '挑戰之塔', trial: '流派試煉', side: '外傳' };
+const KIND_LABEL: Record<StageDef['kind'], string> = { main: '主線', daily: '每日', event: '活動', tower: '挑戰之塔', trial: '流派試煉', side: '外傳', abyss: '星淵回廊' };
 
 const ENTER_ERRORS: Record<string, string> = {
   locked: '還沒解鎖這一關',
