@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { gameData } from '../src/data/load';
-import { materialIconSvg, materialKind, materialPortraitSvg } from '../src/ui/art/material';
+import { materialIconSvg, materialKind, materialPortraitSvg, useMaterialArt } from '../src/ui/art/material';
 import { ORB_COLORS } from '../src/ui/art/palette';
 
 const card = (id: string) => gameData.cards.find((c) => c.id === id)!;
@@ -15,7 +15,13 @@ describe('素材卡的程式繪製圖示', () => {
     expect(materialKind(gameData.cards.find((c) => c.race !== 'material')!)).toBeNull();
   });
 
-  it('星核依屬性換色，五張圖互不相同', () => {
+  it('使用者素材優先：有素材包的圖就不用繪製圖示（星核），沒有才用（星輝結晶）', () => {
+    for (const c of cores) expect(useMaterialArt(c, true)).toBe(false);
+    expect(useMaterialArt(card('c921'), false)).toBe(true);
+    expect(useMaterialArt(card('c901'), false)).toBe(false);
+  });
+
+  it('沒有使用者素材時：星核依屬性換色，五張圖互不相同', () => {
     const svgs = cores.map((c) => materialIconSvg(c)!);
     for (const [i, c] of cores.entries()) expect(svgs[i]).toContain(ORB_COLORS[c.attribute].base);
     expect(new Set(svgs).size).toBe(5);

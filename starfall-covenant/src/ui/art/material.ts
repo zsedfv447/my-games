@@ -1,5 +1,5 @@
 // 素材卡的程式繪製圖示（提案 105）：星核依屬性換色，星輝結晶是完全不同的三柱晶簇。
-// 全部是靜態 SVG（低特效一樣清楚），不需要圖片檔；比使用者素材優先，因為「物品」用角色立繪會看不懂。
+// 全部是靜態 SVG（低特效一樣清楚），不需要圖片檔。使用者提供的美術素材優先：有素材包的圖就用它，沒有才畫圖示。
 import type { CardDef } from '../../core/types';
 import { ORB_COLORS, RARITY_FRAMES } from './palette';
 import { ORB_SYMBOLS } from './orbs';
@@ -56,6 +56,11 @@ function crystalBody(uid: string): string {
     ${prism(38, 14, 24, 66, `ma-${uid}`)}
     <path d="M78 14l2.5 6.5 6.5 2.5-6.5 2.5L78 32l-2.5-6.5L69 23l6.5-2.5z" fill="#fff6d8" stroke="#a0700f" stroke-width="1"/>
     <path d="M20 26l1.5 4 4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5z" fill="#fff"/>`;
+}
+
+/** 要不要用繪製的素材圖示：只有星核／星輝結晶，而且沒有使用者提供的圖時才用 */
+export function useMaterialArt(card: MaterialInput, hasUserArt: boolean): boolean {
+  return !hasUserArt && materialKind(card) !== null;
 }
 
 /** 正方形圖示（縮圖、清單、獎勵用）；不是這兩種素材回傳 null */
