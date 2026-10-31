@@ -44,3 +44,15 @@
 .home-event-banner strong { display: block; font-size: 14px; }
 .home-event-banner small { color: var(--gold-soft); font-size: 11px; }
 .sanctuary .home-event-banner { width: auto; margin: 8px 10px 0; }
+
+/*
+ * 主城放進一頁（375×812）：主視覺吃掉剩下的高度，最高 357px、最低 260px；
+ * 有活動橫幅、稱號等多出來的列時由主視覺讓出空間，而不是把「練習轉珠」擠到導覽列底下。
+ * 真的放不下（例如同時開好幾個活動）才會捲動。
+ */
+.screen.sanctuary > .home-hero { height: auto; flex: 1 1 357px; min-height: 260px; max-height: 357px; }
+.screen.sanctuary > :not(.home-hero) { flex-shrink: 0; }
+.sanctuary .home-event-banner { padding: 6px 14px; gap: 8px; }
+.sanctuary .home-event-banner svg { width: 20px; height: 20px; }
+.sanctuary .home-event-banner strong { font-size: 13px; line-height: 1.3; }
+.sanctuary .home-event-banner small { line-height: 1.3; }
