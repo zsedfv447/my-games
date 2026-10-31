@@ -1,6 +1,10 @@
 // 「練習戰」用的展示資料：正式卡片與敵人資料完成前，讓戰鬥畫面可以實際操作。
 // 名稱標明「示範」，不是正式角色；正式資料由創意顧問提案、總監審核後寫入 data/。
-import type { ActiveSkillDef, CardDef, EnemyDef, LeaderSkillDef, StageDef } from '../core/types';
+import { ORB_TYPES, type ActiveSkillDef, type CardDef, type EnemyDef, type LeaderSkillDef, type StageDef } from '../core/types';
+import { boardFromStrings } from '../battle/board';
+import type { Rng } from '../core/rng';
+import { DRILLS, DRILL_IDS, isDrillId, type DrillId } from '../progression/drills';
+import { scriptedBoardRng } from './tutorial/flow';
 import type { BattleData, TeamMemberInput } from '../battle/battle-state';
 import { gameData } from '../data/load';
 
@@ -77,10 +81,10 @@ export const DEMO_HELPER: TeamMemberInput = { cardId: 'demo-c6', level: 40 };
 
 // ---------- 練習場：敵人機制（隱藏珠、星紋封印） ----------
 
-export type PracticeMode = 'normal' | 'darkOrbs' | 'attributeSeal' | 'percentFollowUp' | 'ringShield';
+export type PracticeMode = 'normal' | 'darkOrbs' | 'attributeSeal' | 'percentFollowUp' | 'ringShield' | DrillId;
 
 /** 練習用的機制敵人：正式資料裡的示範敵人（e0046 幕紗星蛾、e0047 封紋司祭，不在任何關卡），生命與攻擊在練習場另外調整 */
-const MECHANIC_ENEMIES: Record<Exclude<PracticeMode, 'normal' | 'percentFollowUp' | 'ringShield'>, string> = { darkOrbs: 'e0046', attributeSeal: 'e0047' };
+const MECHANIC_ENEMIES: Record<Exclude<PracticeMode, 'normal' | 'percentFollowUp' | 'ringShield' | DrillId>, string> = { darkOrbs: 'e0046', attributeSeal: 'e0047' };
 
 /**
  * 機制示範敵人在練習場的生命：開場觸發一次、之後每 3 回合再觸發。
@@ -94,12 +98,22 @@ export const PRACTICE_MODES: { id: PracticeMode; label: string; description: str
   { id: 'attributeSeal', label: '星紋封印', description: '敵人封印隊長的屬性：被封印的隊員轉珠攻擊無效、不能施放主動技。' },
   { id: 'percentFollowUp', label: '百分比追打', description: '隊長每次轉珠追打 Boss 最大生命 3%（上限 60,000），對上 400 萬生命的巨像。' },
   { id: 'ringShield', label: '七曜環', description: '環心帶著六色的環：用各屬性攻擊、消除心珠點掉格子，全部點掉後環碎、傷害加倍。' },
+  // 戰術課：固定開場盤面、一句目標，第一次過關有少量金幣（progression/drills.ts）
+  ...DRILLS.map((d) => ({ id: d.id, label: d.label, description: d.goal })),
 ];
 
 export const isPracticeMode = (v: string | undefined): v is PracticeMode => PRACTICE_MODES.some((m) => m.id === v);
 
+export interface PracticeSetup {
+  stage: StageDef;
+  data: BattleData;
+  /** 戰術課：固定開場盤面的亂數（之後的天降照常隨機） */
+  rng?: (fallback: Rng) => Rng;
+}
+
 /** 練習場的關卡與資料；機制模式換成一隻會放該機制的示範敵人 */
-export function practiceSetup(mode: PracticeMode = 'normal'): { stage: StageDef; data: BattleData } {
+export function practiceSetup(mode: PracticeMode = 'normal'): PracticeSetup {
+  if (isDrillId(mode)) return drillSetup(mode);
   if (mode === 'percentFollowUp') return percentFollowUpPractice();
   if (mode === 'ringShield') return ringShieldPractice();
   const def = mode === 'normal' ? undefined : gameData.enemies.find((e) => e.id === MECHANIC_ENEMIES[mode]);
@@ -146,3 +160,67 @@ function ringShieldPractice(): { stage: StageDef; data: BattleData } {
   };
 }
 
+
+// ---------- 戰術課 ----------
+
+/** 戰術課用的固定開場盤面（f 焰 w 潮 g 森 l 輝 d 蝕 h 心），開場不會直接消除 */
+export const DRILL_BOARDS: Record<DrillId, string[]> = {
+  'drill-reserve': ['fwghld', 'hdlfwg', 'glhdfw', 'whfgdl', 'dgwlhf'],
+  'drill-hearts': ['hwghld', 'hdlhwg', 'glhdfh', 'whfgdl', 'dhwlhf'],
+  'drill-convert': ['gwgdgl', 'hgwgld', 'gdgwgh', 'lgdglw', 'gwlgdg'],
+  'drill-threat': ['fwghld', 'hdlfwg', 'glhdfw', 'whfgdl', 'dgwlhf'],
+};
+
+/** 大招的傷害約是示範隊伍生命上限的 85%：生命不滿就撐不住 */
+export const DRILL_CHARGER_ATK = 6800;
+
+function drillSetup(mode: DrillId): PracticeSetup {
+  const def = DRILLS.find((d) => d.id === mode)!;
+  const board = boardFromStrings(DRILL_BOARDS[def.id]);
+  const rng = (fallback: Rng) => scriptedBoardRng(board, ORB_TYPES, fallback);
+  const stage = (waves: StageDef['waves']): StageDef => ({ ...DEMO_STAGE, name: `練習場・${def.label.replace('戰術課・', '')}`, waves });
+  switch (def.id) {
+    case 'drill-reserve': {
+      // 小怪一下就打倒了，要留著它（只消心珠等等）讓焰擊充能
+      const imp = { ...enemy('drill-imp', '示範・慢吞吞的灰燼蟲', 'fire', 2500, 80, 3), def: 0 };
+      const boss = enemy('drill-boss', '示範・墜域之影', 'dark', 60000, 500, 4);
+      return { stage: stage([{ enemies: [imp.id] }, { enemies: [boss.id], boss: true }]), data: { ...DEMO_DATA, enemies: [...DEMO_DATA.enemies, imp, boss] }, rng };
+    }
+    case 'drill-hearts': {
+      const minion = enemy('drill-minion', '示範・碎光雀', 'light', 12000, 1200, 1);
+      const charger = enemy(DRILL_IDS.charger, '示範・蓄力之影', 'dark', 90000, DRILL_CHARGER_ATK, 3);
+      return { stage: stage([{ enemies: [minion.id, charger.id], boss: true }]), data: { ...DEMO_DATA, enemies: [...DEMO_DATA.enemies, minion, charger] }, rng };
+    }
+    case 'drill-convert': {
+      // 開場兩個技能都已充能：引火（森 → 焰）、淬火（強化焰珠）
+      const charged: LeaderSkillDef = {
+        id: 'drill-l-charged', name: '示範・備戰', description: '開場全員技能冷卻已滿；全隊攻擊力 1.5 倍',
+        rules: [{ conditions: [{ type: 'always' }], effects: [{ type: 'skillCooldownStart', charged: true }, { type: 'atkMultiplier', value: 1.5 }] }],
+      };
+      const drillSkills: ActiveSkillDef[] = [
+        { id: DRILL_IDS.convert, name: '示範・引火', cooldown: { max: 8, min: 8 }, effects: [{ type: 'convertOrbs', from: 'wood', to: 'fire' }], description: '森珠轉為焰珠' },
+        { id: DRILL_IDS.enhance, name: '示範・淬火', cooldown: { max: 8, min: 8 }, effects: [{ type: 'enhanceOrbs', orbs: 'fire' }], description: '強化全部焰珠' },
+      ];
+      const boss = enemy('drill-tree', '示範・枯木巨像', 'wood', 45000, 300, 5);
+      return {
+        stage: stage([{ enemies: [boss.id], boss: true }]),
+        data: {
+          ...DEMO_DATA,
+          cards: DEMO_DATA.cards.map((c) => (c.id === 'demo-c1' ? { ...c, leaderSkill: charged.id }
+            : c.id === 'demo-c3' ? { ...c, activeSkill: DRILL_IDS.convert }
+              : c.id === 'demo-c4' ? { ...c, activeSkill: DRILL_IDS.enhance } : c)),
+          skills: [...DEMO_DATA.skills, ...drillSkills],
+          leaderSkills: [...DEMO_DATA.leaderSkills, charged],
+          enemies: [...DEMO_DATA.enemies, boss],
+        },
+        rng,
+      };
+    }
+    case 'drill-threat': {
+      // 預設目標是左邊的大個子；刺客要手動點選
+      const tank = enemy('drill-tank', '示範・苔背巨蜥', 'water', 30000, 500, 6);
+      const assassin = { ...enemy(DRILL_IDS.assassin, '示範・夜爪刺客', 'dark', 6000, 4500, 2), def: 0 };
+      return { stage: stage([{ enemies: [tank.id, assassin.id] }]), data: { ...DEMO_DATA, enemies: [...DEMO_DATA.enemies, tank, assassin] }, rng };
+    }
+  }
+}

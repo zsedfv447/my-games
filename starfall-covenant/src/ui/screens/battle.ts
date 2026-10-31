@@ -26,6 +26,8 @@ import { badge, bar, button, emptyState, iconButton } from '../components/basic'
 import { cardThumb } from '../components/card-thumb';
 import { confirmDialog, openDialog, toast, type DialogHandle } from '../components/overlay';
 import { DEMO_HELPER, DEMO_TEAM, PRACTICE_MODES, isPracticeMode, practiceSetup, type PracticeMode } from '../demo';
+import { drillById, isDrillId, settleDrill, type DrillLog } from '../../progression/drills';
+import { trackDrill } from '../drill-tracker';
 import { stageContext, stageListPath } from '../stage-nav';
 import { commit, getSave, getSettings } from '../state';
 import type { Navigator, ScreenDef } from '../router';
@@ -131,8 +133,9 @@ function setup(stageId: string, nav: Navigator, variant?: string): Setup | strin
   if (stageId === 'practice') {
     // 第二個參數是練習模式（暫停選單可切換敵人機制）
     const mode: PracticeMode = isPracticeMode(variant) ? variant : 'normal';
-    const { stage, data } = practiceSetup(mode);
-    return { stage, data, practice: true, practiceMode: mode, battle: startBattle(stage, DEMO_TEAM, DEMO_HELPER, createRng(), data) };
+    const { stage, data, rng } = practiceSetup(mode);
+    // 戰術課的開場盤面固定（rng 只決定開場那一盤，之後照常隨機）
+    return { stage, data, practice: true, practiceMode: mode, battle: startBattle(stage, DEMO_TEAM, DEMO_HELPER, rng ? rng(createRng()) : createRng(), data) };
   }
   const stage = findStage(stageId);
   if (!stage) return '找不到這一關';
@@ -178,6 +181,7 @@ class BattleView {
   private shownHp: number;
   private dialog?: DialogHandle;
   /** 契印師手札的戰績紀錄（練習與教學不記） */
+  private drill?: { log: () => DrillLog; dispose: () => void };
   private records?: BattleRecordTracker;
   /** 開戰時已解鎖的稱號，結算時比對出新稱號 */
   private titlesBefore?: string[];
@@ -255,6 +259,12 @@ class BattleView {
       this.records = trackBattleRecords(s.battle, s.stage.id, s.memberUids ?? []);
       this.offs.push(this.records.dispose);
       this.titlesBefore = unlockedTitleIds(getSave());
+    }
+    if (isDrillId(s.practiceMode)) {
+      this.drill = trackDrill(s.battle);
+      this.offs.push(this.drill.dispose);
+      const goal = drillById(s.practiceMode)?.goal;
+      if (goal) queueMicrotask(() => toast(goal, 6000));
     }
     if (!s.practice) this.maybeBossStory();
     // 開場就有的機制（例如第 1 波的七曜環）：說明完才開放轉珠
@@ -928,6 +938,15 @@ class BattleView {
     }
     // 結算提示收成小標籤（點了展開）：新紀錄合成一個、章節開放放最前面
     const notes: ResultNote[] = [];
+    // 戰術課：判定有沒有達成目標，第一次過關給金幣（progression/drills.ts）
+    if (this.drill && isDrillId(this.s.practiceMode)) {
+      const settled = settleDrill(getSave(), this.s.practiceMode, this.drill.log());
+      if (settled.coin > 0) commit(settled.save);
+      const def = drillById(this.s.practiceMode)!;
+      notes.push(settled.passed
+        ? { text: settled.coin > 0 ? `戰術課過關！金幣 +${settled.coin}` : '戰術課過關！（獎勵已經領過）', chip: '🎓 過關', big: settled.coin > 0 }
+        : { text: `目標還沒達成：${def.goal}`, chip: '🎓 再試一次' });
+    }
     if (firstClear) {
       const notice = unlockNotice(this.s.stage);
       if (notice.note) notes.push(notice.note);
