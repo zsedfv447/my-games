@@ -280,6 +280,8 @@ export interface ActiveBattle {
   drops: DropPlan;
   /** 還沒開打（例如還在看開場劇情）時為 null */
   snapshot: BattleSnapshot | null;
+  /** 這場刻下的誓約（誓約碑，選填；舊存檔沒有就是沒有） */
+  oaths?: string[];
 }
 
 // ---------- 經濟 ----------
@@ -396,6 +398,8 @@ export interface SaveData {
   records?: import('../progression/records').PlayerRecords;
   /** 星紋謎題每日一題的紀錄（可選；讀取一律經過 progression/puzzle.ts 的 puzzleOf 補預設值） */
   puzzle?: import('../progression/puzzle').PuzzleRecord;
+  /** 誓約碑的每週紀錄（可選；讀取一律經過 progression/oaths.ts 的 oathsOf 補預設值） */
+  oaths?: import('../progression/oaths').OathRecord;
   /** 已收集的星骸殘頁 id（可選；讀取一律經過 progression/lore.ts 的 collectedLorePages 補預設值） */
   lorePages?: string[];
   /** 流浪契印師的同行情誼：NPC id → 點數（可選；讀取一律經過 progression/helper-bond.ts 的 bondPoints 補預設值） */

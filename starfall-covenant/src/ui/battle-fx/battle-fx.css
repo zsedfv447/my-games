@@ -159,3 +159,9 @@
 @keyframes ring-crack { 0% { transform: scale(1.8); box-shadow: 0 0 10px #fff; } 100% { transform: none; } }
 .enemy-ring.shattered .ring-slot { border-color: #ffcf7a; opacity: 0.85; }
 .battle.low-fx .ring-slot.just-broken { animation: none; }
+
+/* ---------- 誓約碑（提案 97）：戰鬥頂部顯示啟用中的誓約，續戰後變灰 ---------- */
+.oath-hud { display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 3px; margin-left: 6px; vertical-align: middle; }
+.oath-hud:empty { display: none; }
+.oath-chip { font-size: 10px; line-height: 14px; padding: 0 5px; border-radius: 7px; border: 1px solid #c9a35a; color: #f6e7c1; background: rgba(16, 18, 12, 0.85); }
+.oath-hud.broken .oath-chip { border-color: #6b6f7a; color: #8a8f9c; text-decoration: line-through; }
