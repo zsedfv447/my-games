@@ -175,8 +175,8 @@ describe('標籤與資料', () => {
     expect(statusChip(ringStatus({ slots: 'fire,water,heart', broken: 'fire' }), 'enemy').text).toBe('七曜環 2/3');
     expect(statusChip(ringStatus({ slots: 'fire', broken: 'fire' }), 'enemy').text).toBe('環碎・易傷×2');
   });
-  it('正式關卡沒有使用七曜環', () => {
+  it('七曜環只出現在第 7 章（提案 96 的環心）', () => {
     const ids = new Set(gameData.enemies.filter((e) => e.abilities.some((a) => a.status === 'ringShield')).map((e) => e.id));
-    for (const st of gameData.stages) for (const w of st.waves) for (const e of w.enemies) expect(ids.has(e)).toBe(false);
+    for (const st of gameData.stages) for (const w of st.waves) for (const e of w.enemies) if (ids.has(e)) expect(st.chapter, st.id).toBe(7);
   });
 });

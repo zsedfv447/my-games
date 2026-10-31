@@ -14,7 +14,10 @@ const maxTarget = (counter: string) => Math.max(...achievements.filter((q) => q.
 
 describe('成就補齊', () => {
   it('主線通關到最後一關；圖鑑全收用完成度 100%，跟圖鑑總數連動', () => {
-    expect(maxTarget('mainCleared')).toBe(gameData.stages.filter((s) => s.kind === 'main').length);
+    // 分批上線中的章節（已上線關數少於 stageCount）全部上線後才加「通過第 N 章」成就
+    const main = gameData.stages.filter((s) => s.kind === 'main');
+    const complete = gameData.chapters.filter((c) => main.filter((s) => s.chapter === c.chapter).length >= (c.stageCount ?? 9));
+    expect(maxTarget('mainCleared')).toBe(main.filter((s) => complete.some((c) => c.chapter === s.chapter)).length);
     // 持有卡的成就不寫死總數；「全收」由 collectionPercent 100 判斷，分母是 cards.json 全部卡（含素材，跟圖鑑頁的收集數一致）
     expect(maxTarget('cardsOwned')).toBeLessThan(gameData.cards.length);
     const s = fresh();
