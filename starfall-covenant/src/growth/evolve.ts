@@ -64,3 +64,9 @@ export function pickEvolutionMaterials(
   }
   return { uids, missing };
 }
+
+/** 現在就能進化：用 evolve 實際試一次（滿級、素材夠、金幣夠），不改存檔 */
+export function canEvolveNow(save: SaveData, ctx: GrowthContext, targetUid: string): boolean {
+  const pick = pickEvolutionMaterials(save, ctx, targetUid);
+  return pick.missing.length === 0 && evolve(save, ctx, targetUid, pick.uids).ok;
+}

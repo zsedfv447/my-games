@@ -1,7 +1,7 @@
 // 隊伍編成：5 組隊伍切換、換人、Cost 上限、流派提示（growth/archetype.ts 的 analyzeTeam）
 import { h } from '../dom';
 import { gameData } from '../../data/load';
-import { analyzeTeam, ROLE_LABEL } from '../../growth';
+import { analyzeTeam, ROLE_LABEL, skillCooldown } from '../../growth';
 import { teamCostLimit } from '../../progression/player';
 import { badge, bar, button, panel, tabs } from '../components/basic';
 import { cardThumb, emptySlot } from '../components/card-thumb';
@@ -10,6 +10,7 @@ import { openDialog, toast } from '../components/overlay';
 import { commit, getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
 import { overCostText, suggestSwapOut } from '../team-cost-hint';
+import { previewSwap } from '../team-compare';
 import { cleanTeamName, leaderHighlights, TEAM_NAME_MAX, teamTotals } from '../team-summary';
 import '../convenience.css';
 import { CAPABILITIES, CAPABILITY_HINT, CAPABILITY_LABEL, teamCapabilities } from '../team-capabilities';
@@ -44,6 +45,35 @@ function renameTeam(index: number, done: () => void): void {
 }
 
 const fmt = (n: number) => n.toLocaleString();
+
+const signed = (n: number) => (n > 0 ? `+${fmt(n)}` : n < 0 ? `−${fmt(-n)}` : '±0');
+
+/** 選卡時的比較：換上後隊伍總生命／回復／Cost 的增減、主動技 CD、吃不吃得到隊長技 */
+function swapPreview(uids: (string | null)[], slot: number, candUid: string, limit: number): HTMLElement {
+  const save = getSave();
+  const toMember = (uid: string | null) => {
+    const c = uid ? save.inventory.cards.find((x) => x.uid === uid) : undefined;
+    const card = c && growth.card(c.cardId);
+    return c && card ? { card, level: c.level, awakened: c.awakened, skillLevel: c.skillLevel } : null;
+  };
+  const cand = toMember(candUid)!;
+  const leaderOf = (card: { leaderSkill?: string }) => (card.leaderSkill ? growth.leaderSkill(card.leaderSkill) : undefined);
+  const p = previewSwap(uids.map(toMember), slot, cand, leaderOf, (card, lv) => skillCooldown(card, lv, growth));
+  const skill = cand.card.activeSkill ? growth.skill(cand.card.activeSkill) : undefined;
+  const delta = (label: string, value: number, d: number, bad = false) => h('div', { class: 'team-stat' },
+    h('small', null, label), h('strong', null, fmt(value)),
+    h('span', { class: ['swap-delta', d > 0 ? (bad ? 'down' : 'up') : d < 0 ? (bad ? 'up' : 'down') : ''] }, signed(d)));
+  return h('div', { class: 'swap-preview' },
+    h('div', { class: 'small-text' }, h('strong', null, cand.card.name), ` Lv${cand.level}`),
+    h('div', { class: 'team-stats' },
+      delta('總生命', p.hp, p.dHp), delta('總回復', p.rcv, p.dRcv), delta(`Cost（上限 ${limit}）`, p.cost, p.dCost, true)),
+    h('div', { class: 'row wrap', style: { gap: '4px', marginTop: '6px' } },
+      skill ? badge(`主動技・${skill.name}　CD ${p.cooldown}`) : badge('沒有主動技'),
+      p.leader.boosts.length ? p.leader.boosts.map((b) => badge(`吃隊長技 ${b}`, 'gold')) : badge(slot === 0 ? '隊長技沒有加成自己' : '吃不到隊長技的加成'),
+      p.leader.breaksTeamAll > 0 && badge('會讓「全隊」條件的隊長技失效', 'danger'),
+      p.cost > limit && badge('超過隊伍空間', 'danger')),
+    skill && h('p', { class: 'small-text dim', style: { margin: '4px 0 0' } }, skill.description));
+}
 
 /** 隊伍總生命／攻擊／回復與隊長技文字 */
 function statsPanel(uids: (string | null)[]): HTMLElement {
@@ -160,7 +190,7 @@ export const teamScreen: ScreenDef = {
             team.members.map((uid, slot) => {
               const owned = uid ? save.inventory.cards.find((c) => c.uid === uid) : undefined;
               const def = owned && growth.card(owned.cardId);
-              const pick = () => pickCard(slot === 0 ? '選擇隊長' : `選擇第 ${slot + 1} 位隊員`, { exclude: new Set(team.members.filter((u): u is string => !!u && u !== uid)), allowRemove: !!uid && slot > 0 }, (picked) => setMember(slot, picked));
+              const pick = () => pickCard(slot === 0 ? '選擇隊長' : `選擇第 ${slot + 1} 位隊員`, { exclude: new Set(team.members.filter((u): u is string => !!u && u !== uid)), allowRemove: !!uid && slot > 0, preview: (cand) => swapPreview(team.members, slot, cand, limit) }, (picked) => setMember(slot, picked));
               const el = def ? cardThumb(def, { level: owned!.level, size: 60, onClick: pick }) : emptySlot(pick, 60);
               const f = uid ? fit.get(uid) : undefined;
               if (f && !f.fits) el.classList.add('misfit');

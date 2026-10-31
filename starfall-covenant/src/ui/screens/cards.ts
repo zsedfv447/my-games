@@ -2,7 +2,7 @@
 import { append, clear, h } from '../dom';
 import { gameData } from '../../data/load';
 import {
-  computeStats, filterCards, inventoryUsage, inventoryWarning, isStarCore, materialBaseExp, previewSell, ROLE_LABEL, sellCards, setLocked, sortCards, type SortKey,
+  computeStats, inventoryUsage, inventoryWarning, isStarCore, materialBaseExp, previewSell, ROLE_LABEL, sellCards, setLocked, sortCards, type SortKey,
 } from '../../growth';
 import { expeditionUids, teamUids } from '../../growth/save-ops';
 import { ATTRIBUTE_NAMES, RACE_NAMES } from '../art/palette';
@@ -13,7 +13,7 @@ import { confirmDialog, toast } from '../components/overlay';
 import { commit, getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
 import {
-  activeFilterCount, ATTRIBUTE_CHIPS, emptyBagFilter, RACE_CHIPS, RARITY_CHIPS, toCardFilter, toggleValues, type BagFilterState,
+  activeFilterCount, applyBagFilter, ATTRIBUTE_CHIPS, emptyBagFilter, RACE_CHIPS, RARITY_CHIPS, toggleValues, type BagFilterState,
 } from './bag-view';
 import '../bag.css';
 import { cardBondPanel } from '../card-bond-view';
@@ -37,7 +37,10 @@ export const cardsScreen: ScreenDef = {
     let showFilter = activeFilterCount(filter) > 0;
     let selected = new Set<string>();
     let busy = false;
-    const root = h('div', { class: 'bag-screen' });
+    const root = h('div', { class: 'bag-body' });
+    // 搜尋框不隨 draw 重建，打字時才不會失去焦點
+    const search = h('input', { type: 'search', class: 'bag-search', placeholder: '搜尋卡名', value: filter.text, 'aria-label': '搜尋卡名' });
+    search.addEventListener('input', () => { filter = { ...filter, text: search.value }; draw(); });
 
     const chip = (label: string, on: boolean, onClick: () => void, cls?: string) =>
       h('button', { type: 'button', class: ['filter-chip', on && 'on', cls], 'aria-pressed': String(on), onClick }, label);
@@ -77,7 +80,7 @@ export const cardsScreen: ScreenDef = {
       const warn = inventoryWarning(save, growth);
       const inTeam = teamUids(save);
       const away = expeditionUids(save);
-      const list = sortCards(filterCards(save, growth, toCardFilter(filter)), growth, sortKey);
+      const list = sortCards(applyBagFilter(save, growth, filter), growth, sortKey);
       for (const uid of selected) if (!list.some((c) => c.uid === uid)) selected.delete(uid);
       const preview = previewSell(save, growth, [...selected]);
       const nFilter = activeFilterCount(filter);
@@ -113,6 +116,11 @@ export const cardsScreen: ScreenDef = {
           h('span', null, warn === 'full' ? '背包已滿，新取得的卡片會放不下。' : `背包快滿了，只剩 ${usage.free} 格。`),
           button('擴充', { small: true, onClick: () => nav.go('shop') })),
         showFilter && h('div', { class: 'bag-filter panel' },
+          h('div', { class: 'chip-row' }, h('span', { class: 'chip-label' }, '類別'),
+            ([['all', '全部'], ['unit', '角色'], ['material', '素材']] as const).map(([k, label]) => chip(label, filter.kind === k, () => setFilter({ ...filter, kind: k })))),
+          h('div', { class: 'chip-row' }, h('span', { class: 'chip-label' }, '進化'),
+            chip('有進化路線', filter.evolvable, () => setFilter({ ...filter, evolvable: !filter.evolvable })),
+            chip('現在可以進化', filter.evolveReady, () => setFilter({ ...filter, evolveReady: !filter.evolveReady }))),
           h('div', { class: 'chip-row' }, h('span', { class: 'chip-label' }, '屬性'),
             ATTRIBUTE_CHIPS.map((a) => chip(ATTRIBUTE_NAMES[a], filter.attribute.includes(a), () => setFilter({ ...filter, attribute: toggleValues(filter.attribute, [a]) }), `attr-${a}`))),
           h('div', { class: 'chip-row' }, h('span', { class: 'chip-label' }, '稀有'),
@@ -123,7 +131,7 @@ export const cardsScreen: ScreenDef = {
             gameData.archetypes.map((a) => chip(a.name, filter.archetype.includes(a.id), () => setFilter({ ...filter, archetype: toggleValues(filter.archetype, [a.id]) })))),
           nFilter > 0 && h('div', { class: 'row between' },
             h('span', { class: 'small-text dim' }, `符合 ${list.length} 張`),
-            button('清除篩選', { small: true, variant: 'ghost', onClick: () => setFilter(emptyBagFilter()) }))),
+            button('清除篩選', { small: true, variant: 'ghost', onClick: () => { search.value = ''; setFilter(emptyBagFilter()); } }))),
         tabs<SortKey>([
           { id: 'obtainedAt', label: '新取得' }, { id: 'rarity', label: '稀有度' }, { id: 'level', label: '等級' }, { id: 'attribute', label: '屬性' },
         ], sortKey, (k) => { sortKey = k; draw(); }),
@@ -139,7 +147,7 @@ export const cardsScreen: ScreenDef = {
       ]);
     };
     draw();
-    return root;
+    return h('div', { class: 'bag-screen' }, search, root);
   },
 };
 
