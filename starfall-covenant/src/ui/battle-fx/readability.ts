@@ -1,4 +1,5 @@
 // 戰鬥可讀性：屬性剋制提示（提案 25）、敵人下一招預告（提案 5）、Combo 演出（提案 6）、技能就緒（提案 15）
+import { enemyStatRows } from '../enemy-info';
 import type { BattleState, EnemyState } from '../../battle/battle-state';
 import type { BattleConfig } from '../../battle/damage';
 import { comboBonusText, comboTier, effectiveMatchup, effectiveWeakTo, enemyAbilityList, liveReductions, newlyReadySkills, predictEnemyIntent, reducedWeaknesses, weakTo, type IntentAbility } from '../../battle/feedback';
@@ -104,6 +105,7 @@ function showEnemyInfo(state: BattleState, i: number, config: BattleConfig): voi
   const dlg = openDialog(e.def.name, h('div', { class: 'list' },
     h('div', { class: 'row between' }, h('span', null, '屬性'), h('strong', null, `${ATTRIBUTE_NAMES[e.def.attribute]}（弱：${weakText(e, config)}）`)),
     h('div', { class: 'row between' }, h('span', null, '下次攻擊'), h('strong', null, next)),
+    ...enemyStatRows(e).map((r) => h('div', { class: 'row between' }, h('span', null, r.label), h('strong', null, r.value))),
     ringSummary(e) && h('div', { class: 'small-text' }, h('strong', null, '七曜環：'), ringSummary(e)),
     h('p', { class: 'small-text dim' }, '預估傷害已計入目前的減傷效果，隊長技減傷另計。'),
     list.length
