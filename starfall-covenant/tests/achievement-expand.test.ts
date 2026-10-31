@@ -13,9 +13,15 @@ const NEW_COUNTERS = ['awakenedCards', 'cardBondScenes', 'helperBondTiers', 'lor
 const maxTarget = (counter: string) => Math.max(...achievements.filter((q) => q.counter === counter).map((q) => q.target));
 
 describe('成就補齊', () => {
-  it('主線通關到最後一關、持有卡到圖鑑總數', () => {
+  it('主線通關到最後一關；圖鑑全收用完成度 100%，跟圖鑑總數連動', () => {
     expect(maxTarget('mainCleared')).toBe(gameData.stages.filter((s) => s.kind === 'main').length);
-    expect(maxTarget('cardsOwned')).toBe(gameData.cards.length);
+    // 持有卡的成就不寫死總數；「全收」由 collectionPercent 100 判斷，分母是 cards.json 全部卡（含素材，跟圖鑑頁的收集數一致）
+    expect(maxTarget('cardsOwned')).toBeLessThan(gameData.cards.length);
+    const s = fresh();
+    const all = { ...s, collection: { ...s.collection, owned: gameData.cards.map((c) => c.id) } };
+    const allButOne = { ...s, collection: { ...s.collection, owned: gameData.cards.slice(1).map((c) => c.id) } };
+    expect(questDerived(all).collectionPercent).toBe(100);
+    expect(questDerived(allButOne).collectionPercent).toBeLessThan(100);
   });
 
   it('新成就的計數器都認得，而且只給成就與新手契約用', () => {
@@ -39,7 +45,7 @@ describe('成就補齊', () => {
   });
 
   it('這次新增的成就星晶合計不超過 150', () => {
-    const added = achievements.filter((q) => NEW_COUNTERS.includes(q.counter) || ['a-mainCleared-54', 'a-cardsOwned-80', 'a-cardsOwned-96'].includes(q.id));
+    const added = achievements.filter((q) => NEW_COUNTERS.includes(q.counter) || ['a-mainCleared-54', 'a-cardsOwned-80'].includes(q.id));
     expect(added.reduce((n, q) => n + (q.reward.gems ?? 0), 0)).toBeLessThanOrEqual(150);
   });
 });

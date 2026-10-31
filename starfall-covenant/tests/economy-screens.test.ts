@@ -19,11 +19,11 @@ const shopItem = (id: string) => gameData.shop.find((i) => i.id === id)!;
 const quest = (id: string) => gameData.quests.find((q) => q.id === id)!;
 
 describe('商店與任務資料', () => {
-  it('每日、每週任務與 74 項成就', () => {
+  it('每日、每週任務與 73 項成就', () => {
     const count = (k: string) => gameData.quests.filter((q) => q.kind === k).length;
     expect(count('daily')).toBeGreaterThanOrEqual(5);
     expect(count('weekly')).toBeGreaterThanOrEqual(5);
-    expect(count('achievement')).toBe(74);
+    expect(count('achievement')).toBe(73);
   });
 
   it('星晶產出跟抽卡價格平衡：每日＋每週任務每週約 2–4 次單抽', () => {

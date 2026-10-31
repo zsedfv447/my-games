@@ -767,16 +767,6 @@
     }
   },
   {
-    "id": "a-cardsOwned-96",
-    "kind": "achievement",
-    "name": "圖鑑全收：持有全部 96 種卡片",
-    "counter": "cardsOwned",
-    "target": 96,
-    "reward": {
-      "gems": 15
-    }
-  },
-  {
     "id": "a-awakenedCards-1",
     "kind": "achievement",
     "name": "星紋初醒：讓 1 張卡覺醒",
@@ -1016,11 +1006,11 @@
   {
     "id": "a-collection-100",
     "kind": "achievement",
-    "name": "圖鑑完成度 100%",
+    "name": "圖鑑全收：圖鑑完成度 100%",
     "counter": "collectionPercent",
     "target": 100,
     "reward": {
-      "gems": 10,
+      "gems": 25,
       "cards": [
         {
           "card": "c916",
