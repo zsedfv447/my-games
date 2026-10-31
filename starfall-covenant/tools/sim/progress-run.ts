@@ -44,15 +44,15 @@ export function runProgress(stages: StageDef[], runs: number, archetypeFilter?: 
     }
     const avg = (f: (b: ProgressTeam) => number) => built.reduce((n, b) => n + f(b), 0) / Math.max(1, built.length);
     const cardLv = avg((b) => b.members.reduce((n, m) => n + m.level, 0) / b.members.length);
-    rows.push(`| ${stage.id} | ${level} | ${limit} | ${cardLv.toFixed(1)} | ${avg((b) => b.members.filter((m) => m.evolved).length).toFixed(1)} | ${built.filter((b) => b.members[0].awakened > 0).length}/${built.length} | ${avg((b) => b.fiveStars).toFixed(1)} | ${avg((b) => b.cost).toFixed(1)} | ${helper ? `${ctx.card(helper.cardId)?.name ?? helper.cardId} Lv${helper.level}` : '—'} |`);
-    detail.push(`- ${stage.id}：${built.map((b) => `${STRATEGIES[b.archetype as keyof typeof STRATEGIES].name} ${b.cost}/${b.limit}［${b.members.map((m) => `${m.cardId}${m.evolved ? '↑' : ''} Lv${m.level}${m.awakened ? '✦' : ''}`).join('、')}］`).join('；')}`);
+    rows.push(`| ${stage.id} | ${level} | ${limit} | ${cardLv.toFixed(1)} | ${avg((b) => b.members.filter((m) => m.evolved).length).toFixed(1)} | ${avg((b) => b.members.reduce((n, m) => n + m.limitBreak, 0)).toFixed(1)} | ${avg((b) => b.members.reduce((n, m) => n + m.awakened, 0)).toFixed(1)} | ${avg((b) => b.fiveStars).toFixed(1)} | ${avg((b) => b.cost).toFixed(1)} | ${helper ? `${ctx.card(helper.cardId)?.name ?? helper.cardId} Lv${helper.level}` : '—'} |`);
+    detail.push(`- ${stage.id}：${built.map((b) => `${STRATEGIES[b.archetype as keyof typeof STRATEGIES].name} ${b.cost}/${b.limit}［${b.members.map((m) => `${m.cardId}${m.evolved ? '↑' : ''} Lv${m.level}${m.limitBreak ? `+${m.limitBreak}` : ''}${m.awakened ? '✦'.repeat(m.awakened) : ''}`).join('、')}］`).join('；')}`);
   }
 
   console.log('## 估算的養成程度\n');
-  console.log('| 關卡 | 玩家 Lv | 隊伍空間 | 隊員平均 Lv | 進化張數 | 隊長覺醒 | 5★ 張數 | 隊伍 Cost | 助戰 |');
-  console.log('|---|---|---|---|---|---|---|---|---|');
+  console.log('| 關卡 | 玩家 Lv | 隊伍空間 | 隊員平均 Lv | 進化張數 | 突破總階 | 覺醒總數 | 5★ 張數 | 隊伍 Cost | 助戰 |');
+  console.log('|---|---|---|---|---|---|---|---|---|---|');
   for (const r of rows) console.log(r);
-  console.log('\n（各流派平均；↑＝已進化，✦＝隊長已覺醒）\n');
+  console.log('\n（各流派平均；↑＝已進化，+N＝突破階數，✦＝已解鎖的星紋覺醒數）\n');
   console.log('<details><summary>各流派隊伍明細</summary>\n');
   for (const d of detail) console.log(d);
   console.log('\n</details>\n');

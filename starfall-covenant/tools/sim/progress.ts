@@ -5,7 +5,7 @@ import type { TeamMemberInput } from '../../src/battle/battle-state';
 import { createNewSave } from '../../src/save/save';
 import { addPlayerExp, teamCostLimit } from '../../src/progression/player';
 import { HELPER_NPCS, helperRoster } from '../../src/progression/helpers';
-import { expForLevel, levelForExp, type GrowthContext } from '../../src/growth';
+import { expForLevel, levelForExp, nextAwakening, type GrowthContext } from '../../src/growth';
 import type { SimTeam } from './simulate';
 
 export interface ProgressAssumptions {
@@ -19,6 +19,13 @@ export interface ProgressAssumptions {
   feedMaterials: boolean;
   /** 持有的流派 5★（召喚取得）：第 chapter 章起累計擁有幾張 */
   fiveStarsByChapter: { chapter: number; count: number }[];
+  /** 星輝結晶（通用突破素材）：通過這一關後開始累積 */
+  crystalsFrom: string;
+  /** 之後每通過一關主線平均得到幾顆（約 1 天推進 1 關 → 每月 7～8 顆） */
+  crystalsPerMainStage: number;
+  /** 結晶中從商店買的比例（每顆扣 crystalCoin 金幣） */
+  crystalShopShare: number;
+  crystalCoin: number;
 }
 
 export const PROGRESS_ASSUMPTIONS: ProgressAssumptions = {
@@ -28,6 +35,11 @@ export const PROGRESS_ASSUMPTIONS: ProgressAssumptions = {
   feedMaterials: true,
   // 開場教學召喚保底 1 張 5★；第 3 章前後星晶夠再抽到 1 張
   fiveStarsByChapter: [{ chapter: 1, count: 1 }, { chapter: 3, count: 2 }],
+  // 克星週在 st-3-1 後開放（每週高級關首通 1 顆），商店每月限購 4 顆；合計每月約 8 顆，約一半用金幣買
+  crystalsFrom: 'st-3-1',
+  crystalsPerMainStage: 0.25,
+  crystalShopShare: 0.5,
+  crystalCoin: 10000,
 };
 
 export function describeAssumptions(a: ProgressAssumptions = PROGRESS_ASSUMPTIONS): string[] {
@@ -36,8 +48,9 @@ export function describeAssumptions(a: ProgressAssumptions = PROGRESS_ASSUMPTION
     `每日關卡開放後，每通過一關主線平均打 ${a.dailyRunsPerMainStage} 次每日關卡：${Math.round(a.coreDailyShare * 100)}% 打星核關，其餘打隊長屬性的經驗素材關；關卡難度取當時已開放的最高階。`,
     '玩家經驗、卡片經驗、金幣、掉落都取期望值；掉落的經驗素材' + (a.feedMaterials ? '全部平均餵給 5 位隊員（不算同屬加成）。' : '不拿來強化。'),
     '強化的金幣花費不計；進化與覺醒要扣金幣與星核，金幣或星核不夠就不做。',
-    '隊員滿級且有對應星核時進化，進化後多的經驗繼續算；隊長有剩下的同屬星核時解鎖第 1 個星紋覺醒（後面的覺醒需要突破，不估）。',
-    `技能等級 1、突破 +0（沒有估同名卡）。持有的流派 5★：${a.fiveStarsByChapter.map((x) => `第 ${x.chapter} 章起 ${x.count} 張`).join('、')}，從常駐池中這個流派的 5★ 依序取，換掉稀有度最低的隊員；放不進隊伍空間就不換。`,
+    '隊員滿級且有對應星核時進化，進化後多的經驗繼續算；之後有星紋覺醒的隊員依序解鎖覺醒，條件是突破階數、同屬星核與金幣都夠。',
+    `星輝結晶：通過 ${a.crystalsFrom} 後每通過一關主線得 ${a.crystalsPerMainStage} 顆（約 1 天 1 關，每月 7～8 顆），其中 ${Math.round(a.crystalShopShare * 100)}% 用金幣買（每顆 ${a.crystalCoin.toLocaleString()}）。結晶優先給有星紋覺醒的隊員（稀有度高的先），每人最多突破到 +5；同名卡不估。`,
+    `技能等級 1。持有的流派 5★：${a.fiveStarsByChapter.map((x) => `第 ${x.chapter} 章起 ${x.count} 張`).join('、')}，從常駐池中這個流派的 5★ 依序取，換掉稀有度最低的隊員；放不進隊伍空間就不換。`,
     '隊伍空間用 progression/player 的 teamCostLimit；進化後超過上限時，從 Cost 最高的隊員開始退回進化前。',
     '助戰：和出擊準備畫面一樣，取助戰名單中第一位沒有限制問題的 NPC（日期固定）。',
   ];
@@ -65,6 +78,8 @@ export interface ProgressEstimate {
   cardExpPerMember: number;
   /** 各屬性星核期望值 */
   cores: Record<Attribute, number>;
+  /** 星輝結晶期望值 */
+  crystals: number;
 }
 
 const ATTRS: Attribute[] = ['fire', 'water', 'wood', 'light', 'dark'];
@@ -103,8 +118,12 @@ export function estimateProgress(
   };
 
   let dailyRuns = 0;
+  let crystals = 0;
+  let crystalOpen = false;
   before.forEach((s, i) => {
     addRuns(s, a.mainClearsPerStage);
+    if (crystalOpen) crystals += a.crystalsPerMainStage;
+    if (s.id === a.crystalsFrom) crystalOpen = true;
     // 這一關打完時已開放的每日關卡（同類取最高階）
     const open = new Set(before.slice(0, i + 1).map((x) => x.id));
     const avail = daily.filter((d) => !d.unlockAfter || open.has(d.unlockAfter));
@@ -125,10 +144,11 @@ export function estimateProgress(
     chapter: stage.chapter ?? 1,
     playerLevel: level,
     teamCostLimit: teamCostLimit(level),
-    coin: Math.floor(coin + ctx.config.newPlayer.coin),
+    coin: Math.floor(coin + ctx.config.newPlayer.coin - crystals * a.crystalShopShare * a.crystalCoin),
     dailyRuns,
     cardExpPerMember: Math.floor(battleExp + feedExp / 5),
     cores,
+    crystals,
   };
 }
 
@@ -137,6 +157,7 @@ export interface ProgressMember {
   baseId: string;
   level: number;
   evolved: boolean;
+  limitBreak: number;
   awakened: number;
 }
 
@@ -205,7 +226,7 @@ export function buildProgressTeam(
       }
     }
     const capNow = expForLevel(def, def.maxLevel, ctx.rules);
-    return { cardId: def.id, baseId, level: levelForExp(def, Math.min(exp, capNow), ctx.rules), evolved, awakened: 0 };
+    return { cardId: def.id, baseId, level: levelForExp(def, Math.min(exp, capNow), ctx.rules), evolved, limitBreak: 0, awakened: 0 };
   });
 
   // 3. 超過隊伍空間：從 Cost 最高的進化隊員開始退回進化前
@@ -219,16 +240,26 @@ export function buildProgressTeam(
     m.evolved = false;
   }
 
-  // 4. 隊長第 1 個星紋覺醒
-  const leader = members[0];
-  const ldef = ctx.card(leader.cardId)!;
-  const gate = ctx.rules.awakenLimitBreakGate[0] ?? 0;
-  const at = ldef.attribute;
-  if (ldef.awakenings?.length && gate === 0 && cores[at] + EPS >= (ctx.rules.awakenMaterialCount[0] ?? 1) && coin >= (ctx.rules.awakenCoin[0] ?? 0)) {
-    leader.awakened = 1;
+  // 4. 星輝結晶突破、星紋覺醒：有覺醒的隊員優先（稀有度高的先）
+  let crystalsLeft = p.crystals;
+  const byPriority = members.map((m, i) => ({ m, i, d: ctx.card(m.cardId)! }))
+    .sort((x, y) => (y.d.awakenings?.length ?? 0) - (x.d.awakenings?.length ?? 0) || y.d.rarity - x.d.rarity || x.i - y.i);
+  for (const { m } of byPriority) {
+    const lb = Math.min(ctx.rules.maxLimitBreak, Math.floor(crystalsLeft + EPS));
+    m.limitBreak = lb;
+    crystalsLeft -= lb;
+  }
+  for (const { m, d } of byPriority) {
+    for (let req = nextAwakening(d, m, ctx); req; req = nextAwakening(d, m, ctx)) {
+      const at = d.attribute;
+      if (m.limitBreak < req.limitBreak || cores[at] + EPS < req.materials || coin < req.coin) break;
+      cores[at] -= req.materials;
+      coin -= req.coin;
+      m.awakened++;
+    }
   }
 
-  const toInput = (m: ProgressMember): TeamMemberInput => ({ cardId: m.cardId, level: m.level, skillLevel: 1, limitBreak: 0, awakened: m.awakened });
+  const toInput = (m: ProgressMember): TeamMemberInput => ({ cardId: m.cardId, level: m.level, skillLevel: 1, limitBreak: m.limitBreak, awakened: m.awakened });
   return { team: { archetype, members: members.map(toInput), helper: null }, members, cost: total(), limit, fiveStars: five };
 }
 
