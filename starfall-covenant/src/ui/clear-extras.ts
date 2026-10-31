@@ -1,10 +1,14 @@
 // 結算畫面的星座與「契約回憶」分享資料（battle.ts 只呼叫這裡，避免把結算細節塞進戰鬥畫面）
-import type { StageDef } from '../core/types';
+import type { StageDef, StoryLine } from '../core/types';
 import type { StageClearResult } from '../progression/stages';
 import { gameData } from '../data/load';
 import { clearConstellation } from './components/constellation-view';
 import { openShareCard } from './components/share-card';
-import { getSave } from './state';
+import { getSave, growth } from './state';
+import { cardBondPoints } from '../progression/card-bond';
+import { bondPoints, npcForHelperCard } from '../progression/helper-bond';
+import { HELPER_NPCS } from '../progression/helpers';
+import { OATH_STORY_ID, oathLines } from './oath';
 import { equippedTitle } from '../progression/titles';
 import { titleContext } from './economy';
 import type { ShareMember } from './share-plan';
@@ -51,4 +55,15 @@ export function shareClear(
     firstClear,
     title: equippedTitle(save, titleContext(save))?.name,
   }, info?.chapter);
+}
+
+/** Boss 前劇情要額外加的句子（目前只有第 7 章終 Boss 的同伴之誓）；team 是戰鬥中的隊員（含助戰） */
+export function extraBossLines(storyId: string, memberUids: string[], team: { cardId: string; isHelper: boolean }[]): StoryLine[] {
+  if (storyId !== OATH_STORY_ID) return [];
+  const save = getSave();
+  const owned = save.inventory.cards.filter((c) => memberUids.includes(c.uid));
+  const members = owned.map((c) => ({ name: growth.card(c.cardId)?.name ?? c.cardId, bond: cardBondPoints(save, growth.family(c.cardId)) }));
+  const helperCard = team.find((m) => m.isHelper);
+  const npc = helperCard ? npcForHelperCard(helperCard.cardId, HELPER_NPCS) : undefined;
+  return oathLines({ members, helper: npc ? { name: npc.name, bond: bondPoints(save, npc.id) } : undefined });
 }

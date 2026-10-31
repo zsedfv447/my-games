@@ -9,6 +9,7 @@
   { "id": "t-damage-10m", "name": "穹頂震動", "description": "單回合造成 100 萬傷害（要遇到血量很高的敵人才打得到）。", "condition": { "type": "record", "key": "maxTurnDamage", "atLeast": 1000000 } },
   { "id": "t-twelve-paths", "name": "十二道星路", "description": "用 12 種流派的隊伍各通關至少一次。", "condition": { "type": "archetypes", "atLeast": 12 } },
   { "id": "t-river-home", "name": "冥河彼岸的歸人", "description": "主線第 1～5 章全部通關。", "condition": { "type": "achievement", "id": "a-mainCleared-45" } },
+  { "id": "t-lamp-ring", "name": "輪流守燈的人", "description": "主線第 1～7 章全部通關。", "condition": { "type": "achievement", "id": "a-mainCleared-63" } },
   { "id": "t-tower-top", "name": "英雄座登頂者", "description": "登上挑戰之塔第 30 層。", "condition": { "type": "achievement", "id": "a-towerFloor-30" } },
   { "id": "t-trial-master", "name": "十二流派之師", "description": "通過全部 12 個流派試煉。", "condition": { "type": "achievement", "id": "a-trialCleared-12" } },
   { "id": "t-star-picker", "name": "摘星契印師", "description": "累積 50 次三星通關。", "condition": { "type": "achievement", "id": "a-stageClear3Stars-50" } },
