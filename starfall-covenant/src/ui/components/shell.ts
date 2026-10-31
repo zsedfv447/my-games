@@ -14,6 +14,7 @@ import { iconButton, resource } from './basic';
 import { ICONS, type IconName } from '../art/icons';
 import { setOverlayHost } from './overlay';
 import { LABEL } from '../wording';
+import { homeBadges } from '../economy';
 
 const TAB_INFO: Record<TabId, { label: string; icon: IconName }> = {
   home: { label: '主城', icon: 'home' },
@@ -40,7 +41,12 @@ export class Shell {
       if (stage.scrollTop || stage.scrollLeft) stage.scrollTop = stage.scrollLeft = 0;
     });
     setOverlayHost(stage);
-    onStateChange(() => this.screen && this.renderTop(this.screen));
+    onStateChange(() => {
+      if (!this.screen) return;
+      this.renderTop(this.screen);
+      // 領完獎勵後，底部「冒險」分頁的紅點也要跟著更新
+      this.renderBottom(this.screen);
+    });
     // 體力回復倒數：每秒更新；回復了一點就重畫資源列
     window.setInterval(() => this.tickStamina(), 1000);
   }
@@ -124,6 +130,7 @@ export class Shell {
     this.bottom.hidden = screen.chrome !== 'full';
     if (screen.chrome !== 'full') return;
     const bar = h('div', { class: 'navbar' });
+    const adventureDot = homeBadges(getSave(), Date.now()).adventure;
     for (const tab of TABS) {
       const info = TAB_INFO[tab];
       bar.appendChild(
@@ -138,6 +145,8 @@ export class Shell {
           },
           svg(ICONS[info.icon]),
           info.label,
+          // 冒險頁上有任何紅點（可領的獎勵、新開放的內容）就在分頁上亮一顆
+          tab === 'adventure' && adventureDot && h('span', { class: 'badge dot', 'aria-label': '冒險頁有可領取或新開放的內容' }),
         ),
       );
     }

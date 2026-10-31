@@ -56,3 +56,29 @@
 .sanctuary .home-event-banner svg { width: 20px; height: 20px; }
 .sanctuary .home-event-banner strong { font-size: 13px; line-height: 1.3; }
 .sanctuary .home-event-banner small { line-height: 1.3; }
+
+/* ---------- 冒險頁：已通關章節收成一列 ---------- */
+.chapter-done-row {
+  position: relative; display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; text-align: left;
+  border-radius: var(--radius); border: 1px solid var(--gold-deep); cursor: pointer;
+  background: linear-gradient(100deg, rgba(242, 196, 90, 0.16), rgba(22, 32, 74, 0.7)); color: var(--text); font-family: var(--font);
+}
+.chapter-done-row strong { font-size: 14px; }
+.chapter-done-row .chev { flex: none; font-size: 12px; color: var(--gold-soft); }
+/* 展開後每章一行：章名＋星章進度 */
+.chapter-done-item {
+  position: relative; display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; text-align: left;
+  border: 1px solid var(--line); border-radius: var(--radius-s); background: rgba(6, 10, 31, 0.4); color: var(--text); font: inherit; font-size: 13px; cursor: pointer;
+}
+.chapter-done-item .stars.dim { color: var(--text-dim); }
+.chapter-done-row .badge.dot { top: 6px; right: 6px; }
+
+/* ---------- 底部導覽：分頁紅點 ---------- */
+.navbar button { position: relative; }
+.navbar button .badge.dot { top: 6px; right: calc(50% - 22px); }
+
+/* 主線通關的老存檔：終局＋其他共 12 張小卡，稍微收緊間距讓冒險頁在 375×812 一頁放得下 */
+.adv-tiles { gap: 6px; }
+.adv-tile { padding: 7px 10px; min-height: 58px; row-gap: 1px; }
+.adv-tile-sub { line-height: 1.3; }
+.chapter-done-row { padding: 10px 14px; }

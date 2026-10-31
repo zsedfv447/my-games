@@ -10,9 +10,9 @@ import { allLorePages, collectedLorePages, type LoreData } from '../progression/
 import { newTitles, type TitleContext } from '../progression/titles';
 import { eclipseOf } from '../progression/eclipse';
 import { codexEnemies, seenEnemyIds } from '../progression/bestiary';
-import { claimableChapterRewards } from '../progression/stages';
 import { claimableCollection, createGrowthContext, type GrowthContext } from '../growth';
 import type { ShopFail } from '../progression/shop';
+import { adventureDots, anyAdventureDot } from './adventure-badges';
 
 export const loginRewards = loginRewardsJson as LoginRewardDef[];
 
@@ -122,6 +122,8 @@ export interface HomeBadges {
   collection: boolean;
   /** 有解鎖了但還沒在稱號列表看過的契印師稱號 */
   titles: boolean;
+  /** 冒險頁上有任何紅點（ui/adventure-badges.ts）：底部導覽的「冒險」分頁用 */
+  adventure: boolean;
 }
 
 let growthCtx: GrowthContext | undefined;
@@ -129,13 +131,15 @@ let growthCtx: GrowthContext | undefined;
 export function homeBadges(save: SaveData, now: number, quests: QuestDef[] = gameData.quests): HomeBadges {
   const ready = claimableQuests(save, quests, now, questDerived(save));
   growthCtx ??= createGrowthContext(gameData);
+  const adventure = adventureDots(save, now);
   return {
     login: canClaimLogin(save, now),
     quests: ready.some((q) => q.kind !== 'achievement'),
     achievements: ready.some((q) => q.kind === 'achievement'),
-    chapters: claimableChapterRewards(save, gameData.chapters, gameData.stages).length > 0,
+    chapters: adventure.chapters.length > 0,
     collection: claimableCollection(save, growthCtx).length > 0,
     titles: newTitles(save, titleContext(save)).length > 0,
+    adventure: anyAdventureDot(adventure),
   };
 }
 
