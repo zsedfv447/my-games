@@ -30,3 +30,8 @@
 .assistant-shortcut { display: flex; align-items: center; gap: 0; }
 .assistant-shortcut > .btn { border-radius: 6px 0 0 6px; white-space: nowrap; }
 .assistant-shortcut > .icon-btn { width: 32px; height: 34px; min-height: 34px; border-radius: 0 6px 6px 0; }
+
+.assistant-shortcut > .assistant-mode-button { max-width: 104px; overflow: hidden; text-overflow: ellipsis; border-radius: 0 6px 6px 0; }
+
+.assistant-shortcut > .assistant-play-button { width: 36px; height: 34px; padding: 5px; flex: 0 0 36px; }
+.assistant-play-button svg { width: 21px; height: 21px; display: block; margin: auto; }

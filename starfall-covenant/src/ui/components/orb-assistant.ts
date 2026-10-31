@@ -45,8 +45,8 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
   let generation = 0;
   let busy = false;
   let plan: AssistantPlan | null = null;
-  const category = h('select', { 'aria-label': '目標分類' }, CATEGORIES.map((c, i) => h('option', { value: i }, c.label)));
-  const goal = h('select', { 'aria-label': '轉珠目標' });
+  const listed = new Set<AssistantGoalId>();
+  const goal = h('select', { 'aria-label': '轉珠模式' }, CATEGORIES.map(category => h('optgroup', { label: category.label }, category.goals.filter(id => { if (listed.has(id)) return false; listed.add(id); return true; }).map(id => h('option', { value: id }, ASSISTANT_GOALS.find(g => g.id === id)!.label)))));
   const color = h('select', { 'aria-label': '指定珠色' }, COLORS.map(([id, name]) => h('option', { value: id }, name)));
   color.value = opts.state.team[0]?.card.attribute ?? 'fire';
   const enemy = h('select', { 'aria-label': '指定敵人' }, opts.state.enemies.map((e, i) => h('option', { value: i, disabled: e.hp <= 0 }, `${e.def.name}（生命 ${e.hp.toLocaleString()}）`)));
@@ -94,11 +94,7 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
     starField.hidden = goal.value !== 'star';
 
   };
-  const fillGoals = () => {
-    goal.replaceChildren(...CATEGORIES[Number(category.value)].goals.map(id => h('option', { value: id }, ASSISTANT_GOALS.find(g => g.id === id)!.label)));
-    syncGoal();
-  };
-  fillGoals();
+  syncGoal();
   const parseNumber = (input: HTMLInputElement): number | undefined => input.value === '' ? undefined : Number(input.value);
   const request = (): AssistantRequest => ({
     goal: goal.value as AssistantGoalId,
@@ -110,8 +106,7 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
   });
   const saved = opts.initialRequest;
   if (saved) {
-    const index = CATEGORIES.findIndex(c => c.goals.includes(saved.goal));
-    if (index >= 0) { category.value = String(index); fillGoals(); goal.value = saved.goal; syncGoal(); }
+    if (listed.has(saved.goal)) { goal.value = saved.goal; syncGoal(); }
     if (saved.color) color.value = saved.color;
     if (saved.targetEnemy !== undefined && opts.state.enemies[saved.targetEnemy]?.hp > 0) enemy.value = String(saved.targetEnemy);
     if (saved.starIndex !== undefined) star.value = String(saved.starIndex);
@@ -146,8 +141,8 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
   const body = h('div', { class: 'orb-assistant' },
     h('p', { class: 'small-text' }, `目前生命 ${opts.state.hp.toLocaleString()}／${opts.state.maxHp.toLocaleString()}。每次啟動只處理本回合。`),
     h('p', { class: 'small-text dim' }, '預估只看首消，不保證天降與最終戰果。'),
-    h('p', { class: 'small-text dim' }, '設定會在規劃或儲存後記住，下次可從上方按「一鍵轉珠」使用；每次只執行一回合。'),
-    h('div', { class: 'orb-assistant-grid' }, field('目標分類', category), field('轉珠目標', goal), colorField, enemyField, starField),
+    h('p', { class: 'small-text dim' }, '設定會在規劃或儲存後記住，下次可從上方按「▶」使用；每次只執行一回合。'),
+    h('div', { class: 'orb-assistant-grid' }, field('轉珠模式（點選可切換所有模式）', goal), colorField, enemyField, starField),
     h('details', { class: 'orb-assistant-conditions' }, h('summary', null, '附加條件'),
       h('div', { class: 'orb-assistant-grid' }, field('至少幾 Combo', minCombo), field('恰好幾 Combo', exactCombo), field('單組至少幾顆', minGroup), field('至少幾組心珠', minHeartGroups), field('至少幾顆強化珠', minEnhanced), field('至少破幾格七曜環', minRingBreaks), field('附加條件珠色', conditionColor), field('此色至少消幾顆', colorCount)),
       h('label', { class: 'orb-assistant-check' }, enhanced, '需要消除強化珠'),
@@ -160,7 +155,7 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
     h('div', { class: 'orb-assistant-actions' }, planButton, cancelButton, executeButton, previewButton, action('儲存設定並收起', () => { const r = validatedRequest(); if (!r) return; opts.onSaveRequest?.(r); dlg.close(); }), action('收起', () => dlg.close())),
   );
   const keydown = (event: KeyboardEvent) => { if (event.key === 'Escape') { event.preventDefault(); dlg.close(); } };
-  const dlg = openDialog('轉珠助手', body, [], { scope: 'route', onClose: () => {
+  const dlg = openDialog('轉珠模式設定', body, [], { scope: 'route', onClose: () => {
     closed = true;
     document.removeEventListener('keydown', keydown);
     generation++;
@@ -170,9 +165,8 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
   } });
   document.addEventListener('keydown', keydown);
   body.closest('.dialog')?.classList.add('orb-assistant-dialog');
-  category.addEventListener('change', () => { fillGoals(); reset(); });
   goal.addEventListener('change', () => { syncGoal(); if (goal.value === 'exactcombo') body.querySelector('details')!.open = true; reset(); });
-  body.addEventListener('change', e => { if (e.target !== category && e.target !== goal) reset(); });
+  body.addEventListener('change', e => { if (e.target !== goal) reset(); });
   if (saved?.constraints && Object.keys(saved.constraints).some(key => saved.constraints![key as keyof typeof saved.constraints] !== undefined)) body.querySelector('details')!.open = true;
   refresh();
 

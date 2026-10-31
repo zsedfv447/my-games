@@ -197,7 +197,8 @@ class BattleView {
   private assistantGeneration = 0;
   private destroyed = false;
   private assistantPlans = new WeakMap<AssistantPlan, { fingerprint: string; target?: number }>();
-  private assistantRun = button('一鍵轉珠', { small: true, onClick: () => { if (this.assistantPlanning || this.assistantPlaying) this.stopAssistant(); else void this.quickAssistant(); } });
+  private assistantMode = button('模式：智慧', { small: true, onClick: () => this.openAssistant() });
+  private assistantRun = button('', { small: true, onClick: () => { if (this.assistantPlanning || this.assistantPlaying) this.stopAssistant(); else void this.quickAssistant(); } });
   private get guard() {
     return { phase: this.state.phase, resolving: this.resolving || this.assistantPlaying || this.assistantPlanning };
   }
@@ -228,7 +229,7 @@ class BattleView {
         h('div', null, this.waveLabel, this.hud.element),
         h('div', { class: 'stage-name' }, s.stage.name, this.oathHud),
         h('div', { class: 'battle-assistant-tools' },
-          !s.guide && h('div', { class: 'assistant-shortcut' }, this.assistantRun, iconButton('gear', '轉珠助手設定', () => this.openAssistant())),
+          !s.guide && h('div', { class: 'assistant-shortcut' }, this.assistantRun, this.assistantMode),
           iconButton('pause', '暫停', () => this.openPause()))),
       this.enemyZone,
       this.comboEl,
@@ -459,10 +460,15 @@ class BattleView {
 
   private refreshAssistantButton(): void {
     const active = this.assistantPlanning || this.assistantPlaying;
-    this.assistantRun.textContent = active ? '停止' : '一鍵轉珠';
+    this.assistantRun.replaceChildren(svg(`<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${active ? '<rect x="5" y="5" width="14" height="14" rx="1"/>' : '<path d="M7 4.5v15l12-7.5z"/>'}</svg>`));
+    this.assistantRun.classList.add('assistant-play-button');
     const name = ASSISTANT_GOALS.find(g => g.id === loadAssistantRequest().goal)?.label ?? '智慧判斷';
+    this.assistantMode.textContent = `模式：${name === '智慧判斷' ? '智慧' : name.replace('流派：', '')}`;
+    this.assistantMode.classList.add('assistant-mode-button');
+    this.assistantMode.title = `選擇轉珠模式，目前：${name}`;
+    this.assistantMode.setAttribute('aria-label', `設定轉珠模式：${name}`);
     this.assistantRun.title = active ? '停止這次轉珠助手' : `使用上次設定：${name}`;
-    this.assistantRun.setAttribute('aria-label', active ? '停止轉珠助手' : `一鍵轉珠：${name}`);
+    this.assistantRun.setAttribute('aria-label', active ? '停止轉珠助手' : `播放轉珠：${name}`);
     this.assistantRun.classList.toggle('danger', active);
   }
 
