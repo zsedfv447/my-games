@@ -108,7 +108,7 @@ describe('星紋封印與隱藏珠：中途續戰', () => {
 describe('練習場的機制切換', async () => {
   const { PRACTICE_MODES, isPracticeMode, practiceSetup } = await import('../src/ui/demo');
   it('每個模式都有對應的示範敵人；一般模式是原本的練習場', () => {
-    expect(PRACTICE_MODES.map((m) => m.id)).toEqual(['normal', 'darkOrbs', 'attributeSeal', 'percentFollowUp']);
+    expect(PRACTICE_MODES.map((m) => m.id)).toEqual(['normal', 'darkOrbs', 'attributeSeal', 'percentFollowUp', 'ringShield']);
     expect(practiceSetup('normal').stage.id).toBe('practice');
     for (const mode of ['darkOrbs', 'attributeSeal'] as const) {
       const { stage, data } = practiceSetup(mode);

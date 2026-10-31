@@ -2,6 +2,7 @@
 import type { StatusId } from '../core/types';
 import type { BattleState, Buff, EnemyState, StatusInstance } from '../battle/battle-state';
 import { ATTRIBUTE_NAMES, ORB_NAMES } from './art/palette';
+import { ringOf } from '../battle/skills/ring';
 
 export type ChipTone = 'buff' | 'debuff' | 'enemy';
 
@@ -29,6 +30,7 @@ export const STATUS_NAMES: Record<StatusId, string> = {
   delayImmune: '不受延遲',
   multiHit: '連擊',
   attributeSeal: '星紋封印',
+  ringShield: '七曜環',
 };
 
 const STATUS_DETAILS: Record<StatusId, string> = {
@@ -48,6 +50,7 @@ const STATUS_DETAILS: Record<StatusId, string> = {
   delayImmune: '不受延遲與鎖定影響',
   multiHit: '一次攻擊多下',
   attributeSeal: '指定屬性的隊員轉珠攻擊無效、不能施放主動技（回復與隊長技不受影響）',
+  ringShield: '環還在時受到的傷害大幅減少；用各屬性的攻擊點掉對應格子、消除心珠點掉心格，全部點掉後環碎裂、受到的屬性攻擊加倍（固定與百分比傷害不能破環）',
 };
 
 /** 狀態名稱；星紋封印帶上被封印的屬性（「星紋封印・焰」「星紋封印・隊長屬性」） */
@@ -68,6 +71,10 @@ export function statusChip(s: StatusInstance, tone: ChipTone): StatusChip {
   if (s.id === 'comboShield' && s.value) name = `Combo≥${s.value}`;
   if (s.id === 'attributeShield' && typeof attr === 'string' && attr in ATTRIBUTE_NAMES) name = `${ATTRIBUTE_NAMES[attr as keyof typeof ATTRIBUTE_NAMES]}減傷`;
   if (s.id === 'attributeSeal') name = statusName(s.id, s.params);
+  if (s.id === 'ringShield') {
+    const ring = ringOf({ statuses: [s] });
+    if (ring) name = ring.shattered ? `環碎・易傷×${ring.vulnerable}` : `七曜環 ${ring.slots.length - ring.broken.length}/${ring.slots.length}`;
+  }
   const turns = s.turns === null ? '（持續）' : `（剩 ${s.turns} 回合）`;
   return { text: `${name}${turnsText(s.turns)}`, tone, detail: `${STATUS_NAMES[s.id] ?? s.id}：${STATUS_DETAILS[s.id] ?? ''}${turns}` };
 }

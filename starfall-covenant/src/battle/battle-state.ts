@@ -13,7 +13,7 @@
 
 import { bus, EventBus } from '../core/events';
 import { createRng, type Rng } from '../core/rng';
-import type { CardDef, GameConfig, LeaderSkillDef, OwnedCard, StageDef } from '../core/types';
+import type { Attribute, CardDef, GameConfig, LeaderSkillDef, OrbType, OwnedCard, StageDef } from '../core/types';
 import { gameData } from '../data/load';
 import type { GameData } from '../data/validate';
 import { applyPath, createBoard, resolveBoard, type Board, type MatchGroup, type Pos, type ResolveStep } from './board';
@@ -30,6 +30,7 @@ import {
 import { evaluateLeaderStatic, evaluateLeaderTurn } from './leader';
 import type { BattleState, EnemyState, MemberState, StatusInstance } from './runtime';
 import { applyActiveSkill, cooldownAtLevel } from './skills/active';
+import { breakRingSlots } from './skills/ring';
 import {
   buffAttackMultipliers,
   buffDamageReductions,
@@ -130,6 +131,8 @@ export interface BattleEvents extends Record<string, unknown> {
   /** 我方中毒扣血 */
   poisonTick: { damage: number };
   waveCleared: { wave: number };
+  /** 七曜環點掉了格子；shattered = 全部點掉、環碎裂 */
+  ringBroken: { enemy: number; broken: OrbType[]; shattered: boolean };
   battleEnd: { result: BattleResult };
   continued: { continues: number };
 }
@@ -376,8 +379,21 @@ export function startBattle(
     state.enemies.forEach((e, i) => {
       if (e.hp > 0) triggerAbilities(i, 'hpBelow');
     });
+    // 七曜環：這批攻擊裡實際打中的屬性攻擊點掉對應的格子（固定、百分比傷害不算）
+    state.enemies.forEach((e, i) => {
+      if (e.hp <= 0) return;
+      const attrs = applied.results
+        .filter((r) => r.enemy === i && r.damage > 0 && r.hit.attribute && !r.hit.fixed && r.hit.percentMaxHp === undefined)
+        .map((r) => r.hit.attribute!);
+      breakRing(i, attrs, false);
+    });
     if (state.enemies[state.target]?.hp <= 0 && firstAlive() >= 0) state.target = firstAlive();
     return applied.results;
+  };
+
+  const breakRing = (i: number, attrs: Attribute[], heartsCleared: boolean) => {
+    const r = breakRingSlots(state.enemies[i], attrs, heartsCleared);
+    if (r.broken.length) events.emit('ringBroken', { enemy: i, broken: r.broken, shattered: r.shattered });
   };
 
   /** 我方受傷；有瀕死保命時留 1 點 */
@@ -535,6 +551,8 @@ export function startBattle(
         ...turn.followUps,
       ];
       const results = dealDamage(hits, combo);
+      // 七曜環的心格：這回合消除了心珠（心珠被封印時不算）
+      if (!heartSealed && groups.some((g) => g.orb === 'heart')) state.enemies.forEach((e, i) => { if (e.hp > 0) breakRing(i, [], true); });
       const heal = heartSealed
         ? 0
         : computeHeal({ team, groups, combo, config: config.battle, rcvMultipliers: turn.rcvMultipliers });
