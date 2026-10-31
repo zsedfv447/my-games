@@ -2,12 +2,14 @@
 //                     [--progress] [--chapter-stages 1,5,9]（--progress 只用於 --set main，見 progress.ts）
 // bench＝基準關卡；其他＝data/stages.json 對應種類的關卡（敵人用 data/enemies.json）
 // teams：starter＝免抽入門隊（預設）；veteran＝同一批卡進化到最終型態、滿等、覺醒全開
+// --eclipse：--set main 的關卡改跑星蝕版（progression/eclipse.ts）
 import { writeFileSync } from 'node:fs';
 import { gameData } from '../../src/data/load';
 import type { StageDef } from '../../src/core/types';
 import { benchmarkStages, fixedTeamOf, fixtureData, gameStageData, newbieTeams, starterTeams, veteranTeams } from './fixtures';
 import { formatReport, simulateMatrix, type CellResult } from './simulate';
 import { runProgress } from './progress-run';
+import { eclipseEnemies, eclipseStage } from '../../src/progression/eclipse';
 
 const args = process.argv.slice(2);
 const flag = (name: string) => {
@@ -51,6 +53,13 @@ if (args.includes('--progress')) {
   results = stages.flatMap((s) => {
     const team = fixedTeamOf(s);
     return team ? simulateMatrix([s], [team], data, runs) : [];
+  });
+} else if (args.includes('--eclipse')) {
+  // 星蝕難度：主線關卡即時轉成星蝕版，每關各自補上星蝕敵人（progression/eclipse.ts）
+  const cardIds = new Set(data.cards.map((c) => c.id));
+  results = stages.filter((s) => s.kind === 'main').flatMap((s) => {
+    const st = eclipseStage(s, gameData.stages, data.enemies, cardIds);
+    return simulateMatrix([st], teams, { ...data, enemies: eclipseEnemies(st, data.enemies) }, runs);
   });
 } else {
   results = simulateMatrix(stages, teams, data, runs);

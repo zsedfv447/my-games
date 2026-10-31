@@ -8,6 +8,8 @@ import { button } from './components/basic';
 import { markJustUnlocked, stageContext, stageListPath } from './stage-nav';
 import type { ResultNote } from './components/reward-reveal';
 import { growth } from './state';
+import { stageById } from './eclipse-view';
+import { baseIdOf, eclipseIdOf, eclipseLockReason, isEclipseId } from '../progression/eclipse';
 
 /** 出戰的玩家卡 uid（不含助戰；借用隊伍時為空） */
 export function sortieUids(team: { borrowed: boolean; members: { uid?: string }[] }): string[] {
@@ -51,6 +53,14 @@ export function unlockNotice(stage: StageDef): { row: HTMLElement | null; text?:
 
 /** 「下一關」：下一關目前可以進才給按鈕，點了用 go 前往它的出戰確認（hash 路徑） */
 export function nextStageButton(stage: StageDef, save: SaveData, go: (path: string) => void): HTMLButtonElement | null {
+  if (isEclipseId(stage.id)) {
+    // 星蝕：同章下一關的星蝕版，章節滿星且這關通過後才開放
+    const base = gameData.stages.find((s) => s.id === baseIdOf(stage.id));
+    const nextBase = base && nextStageAfter(base, gameData.stages);
+    const next = nextBase?.kind === 'main' && nextBase.chapter === stage.chapter ? stageById(eclipseIdOf(nextBase.id)) : undefined;
+    if (!next || eclipseLockReason(save, next, gameData.stages, gameData.chapters)) return null;
+    return button('下一關', { variant: 'primary', onClick: () => go(`prepare/${next.id}`) });
+  }
   const next = nextStageAfter(stage, gameData.stages);
   if (!next || !isStageUnlocked(save, next, stageContext(gameData.stages, gameData.events), Date.now())) return null;
   return button('下一關', { variant: 'primary', onClick: () => go(`prepare/${next.id}`) });

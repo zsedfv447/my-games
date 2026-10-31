@@ -6,6 +6,7 @@
 npm run sim                                # 12 流派 × 全部基準關卡，每格 20 場
 npm run sim -- --runs 50 --stage sim-armor # 只跑一關
 npm run sim -- --archetype combo --json out.json
+npm run sim -- --set main --teams veteran --eclipse   # 星蝕難度（主線關卡即時轉成星蝕版）
 npm run sim -- --set main --teams veteran  # 老手隊：入門隊的卡進化到最終型態、滿等、覺醒全開
 npm run sim -- --set main --progress                          # 依主線進度估算玩家養成程度再模擬
 npm run sim -- --set main --progress --chapter-stages 1,5,9   # 只跑每章第 1、5、9 關

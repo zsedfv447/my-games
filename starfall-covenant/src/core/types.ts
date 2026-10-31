@@ -402,4 +402,6 @@ export interface SaveData {
   helperBond?: Record<string, number>;
   /** 角色羈絆：進化鏈的家族 id（最初型態的卡號）→ 出戰通關場數（可選；讀取一律經過 progression/card-bond.ts 補預設值） */
   cardBond?: Record<string, number>;
+  /** 星蝕難度的紀錄（可選；讀取一律經過 progression/eclipse.ts 的 eclipseOf 補預設值） */
+  eclipse?: { cleared: string[]; stars: Record<string, boolean[]>; chapterRewardsClaimed?: number[] };
 }

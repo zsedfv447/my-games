@@ -50,6 +50,8 @@ import { canAct, reenableAfterCancel } from '../battle-guard';
 import { battlePolicy, type BattlePolicy } from '../battle-policy';
 import { grantClearExp, nextStageButton, unlockNotice } from '../stage-clear';
 import { endBattle, openStageBattle, saveBattle } from '../battle-session';
+import { battleDataFor, stageById, stageCleared } from '../eclipse-view';
+import { completeEclipseStage, isEclipseId } from '../../progression/eclipse';
 import { collectedDrops } from '../../progression/active-battle';
 import type { CardExpGain } from '../../growth';
 
@@ -114,10 +116,10 @@ function setup(stageId: string, nav: Navigator, variant?: string): Setup | strin
     const { stage, data } = practiceSetup(mode);
     return { stage, data, practice: true, practiceMode: mode, battle: startBattle(stage, DEMO_TEAM, DEMO_HELPER, createRng(), data) };
   }
-  const stage = gameData.stages.find((s) => s.id === stageId);
+  const stage = stageById(stageId);
   if (!stage) return '找不到這一關';
   const opened = openStageBattle(stage);
-  return typeof opened === 'string' ? opened : { stage, data: gameData, practice: false, ...opened };
+  return typeof opened === 'string' ? opened : { stage, data: battleDataFor(stage), practice: false, ...opened };
 }
 
 export const battleScreen: ScreenDef = {
@@ -648,14 +650,19 @@ class BattleView {
     if (this.s.guide) return this.tutorialResult(this.s.guide);
     const result = this.s.battle.getResult()!;
     let clear: StageClearResult | null = null;
-    const firstClear = !this.s.practice && !getSave().progress.clearedStages.includes(this.s.stage.id);
+    const firstClear = !this.s.practice && !stageCleared(getSave(), this.s.stage);
+    const eclipse = isEclipseId(this.s.stage.id);
     let expGains: CardExpGain[] = [];
     let loreGained: ResultNote[] = [];
     // 結算前的圖鑑：掉落卡是不是第一次獲得（NEW）
     const ownedBefore = [...getSave().collection.owned];
     if (this.policy.grantsRewards) {
       const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
-      const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages, gameData.events), gameData.config, createRng(this.s.dropSeed), Date.now(), this.s.drops && plannedCards(this.s.drops));
+      const ctx = stageContext(gameData.stages, gameData.events);
+      // 星蝕版的通關與星章記在 save.eclipse（progression/eclipse.ts）
+      const done = eclipse
+        ? completeEclipseStage(getSave(), this.s.stage, { ...result, team: teamUnits }, ctx, gameData.config, createRng(this.s.dropSeed), Date.now())
+        : completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, ctx, gameData.config, createRng(this.s.dropSeed), Date.now(), this.s.drops && plannedCards(this.s.drops));
       const exp = grantClearExp(done.save, this.s.memberUids ?? [], done.result.cardExp);
       expGains = exp.gains;
       // 星骸殘頁：首次通關有殘頁的關卡（progression/lore.ts）
@@ -705,7 +712,8 @@ class BattleView {
       levelUp: clear?.levelUp && levelUpView(clear.levelUp, gameData.config),
       notes,
       onGo: (path) => leave(path),
-      constellation: resultConstellation(this.s.stage, clear),
+      // 星座點亮演出只給原版（星蝕的星章記在另一份紀錄）
+      constellation: eclipse ? null : resultConstellation(this.s.stage, clear),
       share: () => shareClear(this.s.stage, this.state.team, this.s.memberUids ?? [], result, clear, firstClear, (this.s.stage.stars ?? []).map(starText)),
       leaderLine: bond?.thanks ?? leaderLineOf(this.state),
       actions: [
