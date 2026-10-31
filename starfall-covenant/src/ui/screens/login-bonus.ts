@@ -32,7 +32,7 @@ export function loginGrid(): HTMLElement {
   return h('div', { class: 'login-grid' }, loginCalendar(getSave(), Date.now()).map((d) =>
     h('div', { class: ['login-day', d.state, d.day === loginRewards.length && 'big'] },
       h('span', { class: 'login-day-no' }, `第 ${d.day} 天`),
-      rewardArt(d.reward, d.day === loginRewards.length ? 'login-chest' : undefined),
+      rewardArt(d.reward, d.day === loginRewards.length ? 'pack-login-chest' : undefined),
       rewardChips(d.reward),
       (d.state === 'claimed' || d.state === 'claimedToday') && h('span', { class: 'login-stamp' }, '已領'))));
 }

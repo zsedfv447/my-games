@@ -47,7 +47,9 @@ function goNext(nav: Navigator, next: string | undefined): void {
 function player(id: string, next: string | undefined, nav: Navigator): HTMLElement {
   // 星骸殘頁集滿一卷後解鎖的隱藏對話也用這個播放器
   const lines = gameData.story[id] ?? loreSecretById(lore, id)?.secret.lines ?? [];
-  const bg = userAsset('backgrounds', `story-${id}`) ?? userAsset('backgrounds', 'story') ?? userAsset('backgrounds', 'title');
+  const chapter = /^ch(\d+)-/.exec(id)?.[1];
+  const bg = userAsset('backgrounds', `story-${id}`)
+    ?? (chapter && (userAsset('backgrounds', `pack-chapter-${chapter}`) ?? userAsset('backgrounds', `chapter-${chapter}`))) ?? userAsset('backgrounds', 'story') ?? userAsset('backgrounds', 'title');
   const done = () => {
     markStorySeen(id);
     goNext(nav, next);
@@ -58,7 +60,7 @@ function player(id: string, next: string | undefined, nav: Navigator): HTMLEleme
   }
   return h(
     'div',
-    { style: { background: 'radial-gradient(80% 50% at 50% 35%, #2a3a85, #060a1f)' } },
+    { class: 'scene-story', style: { background: 'radial-gradient(80% 50% at 50% 35%, #2a3a85, #060a1f)' } },
     bg ? h('img', { src: bg, alt: '', style: { position: 'absolute', inset: '0', width: '100%', height: '100%', objectFit: 'cover' } }) : svg(starfieldSvg()),
     h('div', { class: 'story-chapter' }, storyTitle(id)),
     h('button', { type: 'button', class: 'btn small ghost', style: { position: 'absolute', right: '12px', top: 'calc(12px + var(--safe-top, 0px))' }, onClick: done }, LABEL.skip),

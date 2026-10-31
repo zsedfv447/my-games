@@ -99,7 +99,7 @@ export const adventureScreen: ScreenDef = {
         unlockedChapters.map(({ c, p }) => h(
           'button',
           { type: 'button', class: 'chapter-card', onClick: () => nav.go('stages', [c.chapter]) },
-          userAsset('backgrounds', `chapter-${c.chapter}`) && h('img', { class: 'chapter-art', src: userAsset('backgrounds', `chapter-${c.chapter}`), alt: '', loading: 'lazy' }),
+          (userAsset('backgrounds', `pack-chapter-${c.chapter}`) ?? userAsset('backgrounds', `chapter-${c.chapter}`)) && h('img', { class: 'chapter-art', src: (userAsset('backgrounds', `pack-chapter-${c.chapter}`) ?? userAsset('backgrounds', `chapter-${c.chapter}`)), alt: '', loading: 'lazy' }),
           h('div', { class: 'row between' },
             h('div', null, h('div', { class: 'chapter-no' }, `第 ${c.chapter} 章`), h('div', { class: 'chapter-name' }, c.name)),
             h('div', { class: 'row', style: { gap: '4px' } }, badge(c.constellation, 'gold'), badge(RACE_NAMES[c.race]))),

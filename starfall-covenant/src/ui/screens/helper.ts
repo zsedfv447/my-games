@@ -26,7 +26,15 @@ export function rosterFor(stage: StageDef): HelperOffer[] {
 }
 
 export function npcAvatar(npc: HelperNpcDef, size = 64): HTMLElement {
-  const url = userAsset('ui', npc.id);
+  // 使用助戰卡對應的素材包頭像，避免載入舊的生成式 NPC 圖。
+  const avatarCards: Record<string, string> = {
+    'npc-mono': 'c106', 'npc-berserk': 'c110', 'npc-combo': 'c202',
+    'npc-heart': 'c301', 'npc-enhance': 'c302', 'npc-race': 'c311',
+    'npc-control': 'c201', 'npc-skillcycle': 'c402', 'npc-chain': 'c509',
+    'npc-rainbow': 'c406', 'npc-dual': 'c506', 'npc-fixed': 'c502',
+  };
+  const cardId = avatarCards[npc.id] ?? npc.tiers[0]?.card;
+  const url = cardId ? userAsset('cards', `${cardId}_i`) ?? userAsset('cards', cardId) : undefined;
   // 情誼滿 20 點的星契頭像框（純 CSS）
   return h('div', { class: ['npc-avatar', hasBondFrame(bondPoints(getSave(), npc.id)) && 'bond-frame'], style: { '--avatar': `${size}px` } },
     url ? h('img', { src: url, alt: npc.name, draggable: 'false', loading: 'lazy' }) : h('span', null, npc.name.split('・').pop()!.slice(0, 1)));

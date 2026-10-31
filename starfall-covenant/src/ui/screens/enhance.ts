@@ -20,7 +20,7 @@ import '../growth.css';
 import { LABEL } from '../wording';
 
 export function growthBackdrop(): Record<string, string> | undefined {
-  const bg = userAsset('backgrounds', 'growth');
+  const bg = userAsset('backgrounds', 'pack-growth') ?? userAsset('backgrounds', 'growth');
   return bg ? { '--growth-bg': `url("${bg}")` } : undefined;
 }
 

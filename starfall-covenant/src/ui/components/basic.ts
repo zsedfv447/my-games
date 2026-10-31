@@ -2,13 +2,34 @@
 import { h, svg, type Child } from '../dom';
 import { ICONS, RESOURCE_ICONS, type IconName, type ResourceIcon } from '../art/icons';
 import { audio } from '../audio';
+import { userAsset } from '../assets';
+
+const PACK_ICONS: Partial<Record<IconName, string>> = {
+  cards: 'pack-nav-cards', summon: 'pack-nav-summon',
+  shop: 'pack-shop-coin', gift: 'pack-login-chest',
+};
+
+/** 保留共用 SVG 尺寸介面，內容使用素材包原圖；缺圖時仍可辨識操作。 */
+function assetIcon(name: string | undefined, fallback: string): SVGSVGElement {
+  const url = name && userAsset('ui', name);
+  if (!url) return svg(fallback);
+  const el = svg('<svg viewBox="0 0 24 24" aria-hidden="true" class="pack-icon"></svg>');
+  const img = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+  img.setAttribute('href', url);
+  img.setAttribute('width', '24');
+  img.setAttribute('height', '24');
+  img.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  img.addEventListener('error', () => el.replaceWith(svg(fallback)), { once: true });
+  el.append(img);
+  return el;
+}
 
 export function icon(name: IconName): SVGSVGElement {
-  return svg(ICONS[name]);
+  return assetIcon(PACK_ICONS[name], ICONS[name]);
 }
 
 export function resourceIcon(name: ResourceIcon): SVGSVGElement {
-  return svg(RESOURCE_ICONS[name]);
+  return assetIcon(`pack-resource-${name}`, RESOURCE_ICONS[name]);
 }
 
 export interface ButtonOptions {
