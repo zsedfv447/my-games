@@ -1,6 +1,8 @@
 // 流派克星週：每週一輪替的主題挑戰。主題就是 events.json 裡 series 為 nemesis 的活動（純資料整理，不碰 DOM）
-import type { StageDef } from '../core/types';
+import type { SaveData, StageDef } from '../core/types';
 import { currentSeriesEvent, eventStatusText, type EventDef } from '../progression/events';
+import type { StageContext } from '../progression/stages';
+import { lockText, stageRow } from './stage-nav';
 
 export const NEMESIS = 'nemesis';
 
@@ -29,4 +31,12 @@ export function nemesisView(events: EventDef[], stages: StageDef[], archetypeNam
     archetypes: (cur.event.recommendedArchetypes ?? []).map(archetypeName),
     stages: stages.filter((s) => s.event === cur.event.id),
   };
+}
+
+/** 克星週還沒開放時的說明（例如「通過第 3 章「雲端林道」後開放」）；已開放回傳空字串 */
+export function nemesisLock(save: SaveData, view: NemesisView, ctx: StageContext, now: number): string {
+  const first = view.stages.find((s) => !s.unlockAfter || !view.stages.some((x) => x.id === s.unlockAfter));
+  if (!first) return '';
+  const row = stageRow(save, first, ctx, now);
+  return row.status === 'locked' ? lockText(row, ctx.stages) : '';
 }

@@ -150,7 +150,7 @@ describe('任務與成就', () => {
 
   it('主城紅點：可領登入、任務、成就時亮起', () => {
     const s = fresh();
-    expect(homeBadges(s, MON)).toEqual({ login: true, quests: false, achievements: false, chapters: false });
+    expect(homeBadges(s, MON)).toEqual({ login: true, quests: false, achievements: false, chapters: false, collection: false });
     const busy = addQuestCounters(s, { stageClear: 3, gachaPull: 1 }, gameData.quests, MON);
     expect(homeBadges(busy, MON)).toMatchObject({ quests: true, achievements: true });
   });
@@ -162,6 +162,14 @@ describe('任務與成就', () => {
     expect(homeBadges(full, MON).chapters).toBe(true);
     const claimed = { ...full, progress: { ...full.progress, chapterRewardsClaimed: [1] } };
     expect(homeBadges(claimed, MON).chapters).toBe(false);
+  });
+
+  it('主城紅點：圖鑑有可領的收集獎勵時亮起，領完熄滅', () => {
+    const s = fresh();
+    const owned = { ...s, collection: { ...s.collection, owned: ['c206'] } };
+    expect(homeBadges(owned, MON).collection).toBe(true);
+    const claimed = { ...owned, collection: { ...owned.collection, claimed: ['c206'] } };
+    expect(homeBadges(claimed, MON).collection).toBe(false);
   });
 
   it('列表排序：可領 → 進行中 → 已領', () => {
