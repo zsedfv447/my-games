@@ -68,6 +68,8 @@ import { LABEL } from '../wording';
 import { openOrbAssistant, type OrbAssistantHandle } from '../components/orb-assistant';
 import { AssistantPlannerClient } from '../../battle/assistant/client';
 import type { AssistantPlan, AssistantRequest } from '../../battle/assistant/types';
+import { loadAssistantRequest, saveAssistantRequest, resolveAssistantRequest } from '../../battle/assistant/preferences';
+import { ASSISTANT_GOALS } from '../../battle/assistant/goals';
 
 const CELL = 63;
 
@@ -191,11 +193,13 @@ class BattleView {
   private assistantClient = new AssistantPlannerClient();
   private assistantAbort?: AbortController;
   private assistantPlaying = false;
+  private assistantPlanning = false;
+  private assistantGeneration = 0;
   private destroyed = false;
   private assistantPlans = new WeakMap<AssistantPlan, { fingerprint: string; target?: number }>();
-  private assistantStop = button('停止轉珠', { small: true, variant: 'danger', onClick: () => this.stopAssistant() });
+  private assistantRun = button('一鍵轉珠', { small: true, onClick: () => { if (this.assistantPlanning || this.assistantPlaying) this.stopAssistant(); else void this.quickAssistant(); } });
   private get guard() {
-    return { phase: this.state.phase, resolving: this.resolving || this.assistantPlaying };
+    return { phase: this.state.phase, resolving: this.resolving || this.assistantPlaying || this.assistantPlanning };
   }
 
   /** 練習場與新手教學不扣體力、不給獎勵、不寫手札與任務（battle-policy.ts） */
@@ -224,13 +228,13 @@ class BattleView {
         h('div', null, this.waveLabel, this.hud.element),
         h('div', { class: 'stage-name' }, s.stage.name, this.oathHud),
         h('div', { class: 'battle-assistant-tools' },
-          !s.guide && button('轉珠助手', { small: true, onClick: () => this.openAssistant() }),
-          this.assistantStop, iconButton('pause', '暫停', () => this.openPause()))),
+          !s.guide && h('div', { class: 'assistant-shortcut' }, this.assistantRun, iconButton('gear', '轉珠助手設定', () => this.openAssistant())),
+          iconButton('pause', '暫停', () => this.openPause()))),
       this.enemyZone,
       this.comboEl,
       h('div', { class: 'battle-bottom safe-bottom' }, this.teamRow, this.teamChipsHost, this.hpHost, this.boardView.element),
     );
-    this.assistantStop.hidden = true;
+    this.refreshAssistantButton();
     this.boardView.element.addEventListener('pointerdown', () => this.boardView.previewPath(null), { capture: true });
     this.element.classList.toggle('low-fx', getSettings().lowFx);
     this.renderEnemies();
@@ -389,7 +393,7 @@ class BattleView {
   }
 
   private enableBoard(): void {
-    if (this.destroyed || this.assistant || this.assistantPlaying) return;
+    if (this.destroyed || this.assistant || this.assistantPlaying || this.assistantPlanning) return;
     if (this.paused) this.enableWhenResumed = true;
     else this.boardView.setEnabled(true);
   }
@@ -442,10 +446,70 @@ class BattleView {
   }
 
   private stopAssistant(): void {
+    this.assistantGeneration++;
+    const planning = this.assistantPlanning;
+    this.assistantPlanning = false;
     this.assistantAbort?.abort();
     this.assistantClient.cancel();
     this.assistant?.close();
     this.boardView.previewPath(null);
+    this.refreshAssistantButton();
+    if (planning && !this.destroyed && !this.paused && !this.assistantPlaying) this.enableBoard();
+  }
+
+  private refreshAssistantButton(): void {
+    const active = this.assistantPlanning || this.assistantPlaying;
+    this.assistantRun.textContent = active ? '停止' : '一鍵轉珠';
+    const name = ASSISTANT_GOALS.find(g => g.id === loadAssistantRequest().goal)?.label ?? '智慧判斷';
+    this.assistantRun.title = active ? '停止這次轉珠助手' : `使用上次設定：${name}`;
+    this.assistantRun.setAttribute('aria-label', active ? '停止轉珠助手' : `一鍵轉珠：${name}`);
+    this.assistantRun.classList.toggle('danger', active);
+  }
+
+  private async planAssistant(request: AssistantRequest): Promise<AssistantPlan | null> {
+    const fingerprint = this.assistantFingerprint();
+    const current = this.s.battle.getState();
+    const { skillUsedThisTurn, takenThisTurn } = this.s.battle.snapshot();
+    const leader = current.team[0]?.card;
+    const helper = current.team.find(m => m.isHelper)?.card;
+    const leaders = [leader, helper].map(card => this.s.data.leaderSkills.find(skill => skill.id === card?.leaderSkill));
+    const plan = await this.assistantClient.plan({ state: current, leaders, config: this.s.data.config.battle, stage: this.s.stage, skillUsedThisTurn, takenThisTurn, request });
+    if (!plan || this.destroyed || fingerprint !== this.assistantFingerprint()) return null;
+    this.assistantPlans.set(plan, { fingerprint, target: request.targetEnemy });
+    return plan;
+  }
+
+  private async quickAssistant(): Promise<void> {
+    if (this.s.guide || this.destroyed || this.paused || this.assistant || !canAct(this.guard) || !this.boardView.canInteract) return;
+    const request = resolveAssistantRequest(loadAssistantRequest(), this.s.battle.getState(), this.s.stage);
+    if (request.goal === 'star' && request.starIndex === undefined) {
+      toast('這個關卡的星章不同，請重新選擇星章設定。');
+      this.openAssistant();
+      return;
+    }
+    const generation = ++this.assistantGeneration;
+    this.assistantPlanning = true;
+    this.refreshAssistantButton();
+    this.boardView.setEnabled(false);
+    this.boardView.previewPath(null);
+    try {
+      const plan = await this.planAssistant(request);
+      if (generation !== this.assistantGeneration || this.destroyed || this.paused || document.hidden) return;
+      this.assistantPlanning = false;
+      this.refreshAssistantButton();
+      this.enableBoard();
+      if (!plan || plan.path.length < 2) { toast('沒有找到可用路線，可調整助手設定再試。'); return; }
+      if (!plan.forecast.goalAchieved) toast('這次未完全達成目標，將使用目前找到的最佳路線。');
+      await this.executeAssistant(plan);
+    } catch {
+      if (!this.destroyed && generation === this.assistantGeneration) toast('這次規劃失敗，請再試一次。');
+    } finally {
+      if (generation === this.assistantGeneration) {
+        this.assistantPlanning = false;
+        this.refreshAssistantButton();
+        if (!this.destroyed && !this.paused && !this.resolving && this.state.phase === 'player') this.enableBoard();
+      }
+    }
   }
 
   private openAssistant(): void {
@@ -455,18 +519,9 @@ class BattleView {
     this.assistant = openOrbAssistant({
       state, stage: this.s.stage,
       cancelPlan: () => this.assistantClient.cancel(),
-      requestPlan: async (request: AssistantRequest) => {
-        const fingerprint = this.assistantFingerprint();
-        const current = this.s.battle.getState();
-        const { skillUsedThisTurn, takenThisTurn } = this.s.battle.snapshot();
-        const leader = current.team[0]?.card;
-        const helper = current.team.find(m => m.isHelper)?.card;
-        const leaders = [leader, helper].map(card => this.s.data.leaderSkills.find(skill => skill.id === card?.leaderSkill));
-        const plan = await this.assistantClient.plan({ state: current, leaders, config: this.s.data.config.battle, stage: this.s.stage, skillUsedThisTurn, takenThisTurn, request });
-        if (!plan || this.destroyed || fingerprint !== this.assistantFingerprint()) return null;
-        this.assistantPlans.set(plan, { fingerprint, target: request.targetEnemy });
-        return plan;
-      },
+      initialRequest: resolveAssistantRequest(loadAssistantRequest(), state, this.s.stage),
+      onSaveRequest: request => { saveAssistantRequest(request); this.refreshAssistantButton(); },
+      requestPlan: request => this.planAssistant(request),
       preview: plan => {
         if (!plan) { this.boardView.previewPath(null); return; }
         const saved = this.assistantPlans.get(plan);
@@ -498,7 +553,7 @@ class BattleView {
     const abort = new AbortController();
     this.assistantAbort = abort;
     this.assistantPlaying = true;
-    this.assistantStop.hidden = false;
+    this.refreshAssistantButton();
     this.boardView.setEnabled(false);
     this.boardView.previewPath(null);
     try {
@@ -510,14 +565,14 @@ class BattleView {
         return false;
       }
       this.assistantPlaying = false;
-      this.assistantStop.hidden = true;
+      this.refreshAssistantButton();
       this.assistantAbort = undefined;
       await this.resolveTurn(plan.path);
       return true;
     } finally {
       if (this.assistantAbort === abort) this.assistantAbort = undefined;
       this.assistantPlaying = false;
-      this.assistantStop.hidden = true;
+      this.refreshAssistantButton();
       if (!this.destroyed && !this.paused && !this.resolving && this.state.phase === 'player') this.enableBoard();
     }
   }

@@ -26,3 +26,7 @@
 .battle-assistant-tools { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
 .battle-assistant-tools .btn { min-height: 34px; padding: 5px 8px; font-size: 12px; }
 .battle-assistant-tools [hidden] { display: none; }
+
+.assistant-shortcut { display: flex; align-items: center; gap: 0; }
+.assistant-shortcut > .btn { border-radius: 6px 0 0 6px; white-space: nowrap; }
+.assistant-shortcut > .icon-btn { width: 32px; height: 34px; min-height: 34px; border-radius: 0 6px 6px 0; }

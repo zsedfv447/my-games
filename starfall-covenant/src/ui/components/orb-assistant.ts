@@ -9,6 +9,8 @@ import '../orb-assistant.css';
 export interface OrbAssistantOptions {
   state: BattleState;
   stage?: Pick<StageDef, 'stars'>;
+  initialRequest?: AssistantRequest;
+  onSaveRequest?(request: AssistantRequest): void;
   requestPlan(request: AssistantRequest): Promise<AssistantPlan | null>;
   execute(plan: AssistantPlan): Promise<boolean>;
   preview(plan: AssistantPlan | null): void;
@@ -61,9 +63,10 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
   const colorCount = numberInput();
   const minRingBreaks = numberInput();
   const avoidAbsorb = h('input', { type: 'checkbox' });
-  const clearColors = h('input', { type: 'checkbox' });
+  const clearColors = COLORS.map(([id, name]) => ({ id, name, input: h('input', { type: 'checkbox' }) }));
   const groupColor = h('input', { type: 'checkbox' });
   const conditionColor = h('select', { 'aria-label': '附加條件珠色' }, COLORS.map(([id, name]) => h('option', { value: id }, name)));
+  const groupColorSelect = h('select', { 'aria-label': '單組限定珠色' }, COLORS.map(([id, name]) => h('option', { value: id }, name)));
   const enhanced = h('input', { type: 'checkbox' });
   const colors = COLORS.map(([id, name]) => ({ id, need: h('input', { type: 'checkbox', 'aria-label': `需要消除${name}珠` }), avoid: h('input', { type: 'checkbox', 'aria-label': `避免消除${name}珠` }), name }));
   const status = h('p', { class: 'orb-assistant-status', role: 'status', 'aria-live': 'polite' }, '選好目標後，按「規劃路線」。');
@@ -102,9 +105,30 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
     color: color.value as OrbType,
     targetEnemy: Number(enemy.value),
     starIndex: star.value === '' ? undefined : Number(star.value),
-    constraints: { minCombo: parseNumber(minCombo), exactCombo: parseNumber(exactCombo), minGroup: parseNumber(minGroup), enhanced: enhanced.checked || undefined, minHeartGroups: parseNumber(minHeartGroups), minEnhanced: parseNumber(minEnhanced), minRingBreaks: parseNumber(minRingBreaks), avoidAbsorb: avoidAbsorb.checked || undefined, minColorOrbs: colorCount.value ? { color: conditionColor.value as OrbType, count: Number(colorCount.value) } : undefined, groupColor: groupColor.checked ? conditionColor.value as OrbType : undefined, clearColors: clearColors.checked ? [conditionColor.value as OrbType] : undefined,
+    constraints: { minCombo: parseNumber(minCombo), exactCombo: parseNumber(exactCombo), minGroup: parseNumber(minGroup), enhanced: enhanced.checked || undefined, minHeartGroups: parseNumber(minHeartGroups), minEnhanced: parseNumber(minEnhanced), minRingBreaks: parseNumber(minRingBreaks), avoidAbsorb: avoidAbsorb.checked || undefined, minColorOrbs: colorCount.value ? { color: conditionColor.value as OrbType, count: Number(colorCount.value) } : undefined, groupColor: groupColor.checked ? groupColorSelect.value as OrbType : undefined, clearColors: clearColors.some(c => c.input.checked) ? clearColors.filter(c => c.input.checked).map(c => c.id) : undefined,
       requiredColors: colors.some(c => c.need.checked) ? colors.filter(c => c.need.checked).map(c => c.id) : undefined, avoidColors: colors.some(c => c.avoid.checked) ? colors.filter(c => c.avoid.checked).map(c => c.id) : undefined },
   });
+  const saved = opts.initialRequest;
+  if (saved) {
+    const index = CATEGORIES.findIndex(c => c.goals.includes(saved.goal));
+    if (index >= 0) { category.value = String(index); fillGoals(); goal.value = saved.goal; syncGoal(); }
+    if (saved.color) color.value = saved.color;
+    if (saved.targetEnemy !== undefined && opts.state.enemies[saved.targetEnemy]?.hp > 0) enemy.value = String(saved.targetEnemy);
+    if (saved.starIndex !== undefined) star.value = String(saved.starIndex);
+    const c = saved.constraints;
+    if (c) {
+      for (const [input, value] of [[minCombo, c.minCombo], [exactCombo, c.exactCombo], [minGroup, c.minGroup], [minHeartGroups, c.minHeartGroups], [minEnhanced, c.minEnhanced], [minRingBreaks, c.minRingBreaks]] as const) {
+        input.value = value === undefined ? '' : String(value);
+      }
+      enhanced.checked = !!c.enhanced;
+      avoidAbsorb.checked = !!c.avoidAbsorb;
+      groupColor.checked = !!c.groupColor;
+      if (c.groupColor) groupColorSelect.value = c.groupColor;
+      if (c.minColorOrbs) { conditionColor.value = c.minColorOrbs.color; colorCount.value = String(c.minColorOrbs.count); }
+      for (const color of colors) { color.need.checked = !!c.requiredColors?.includes(color.id); color.avoid.checked = !!c.avoidColors?.includes(color.id); }
+      for (const color of clearColors) color.input.checked = !!c.clearColors?.includes(color.id);
+    }
+  }
   const planButton = action('規劃路線', () => { void runPlan(); }, true);
   const cancelButton = action('取消規劃', () => reset('已取消規劃。'));
   const executeButton = action('照路線轉珠（本回合）', () => {
@@ -122,16 +146,18 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
   const body = h('div', { class: 'orb-assistant' },
     h('p', { class: 'small-text' }, `目前生命 ${opts.state.hp.toLocaleString()}／${opts.state.maxHp.toLocaleString()}。每次啟動只處理本回合。`),
     h('p', { class: 'small-text dim' }, '預估只看首消，不保證天降與最終戰果。'),
+    h('p', { class: 'small-text dim' }, '設定會在規劃或儲存後記住，下次可從上方按「一鍵轉珠」使用；每次只執行一回合。'),
     h('div', { class: 'orb-assistant-grid' }, field('目標分類', category), field('轉珠目標', goal), colorField, enemyField, starField),
     h('details', { class: 'orb-assistant-conditions' }, h('summary', null, '附加條件'),
       h('div', { class: 'orb-assistant-grid' }, field('至少幾 Combo', minCombo), field('恰好幾 Combo', exactCombo), field('單組至少幾顆', minGroup), field('至少幾組心珠', minHeartGroups), field('至少幾顆強化珠', minEnhanced), field('至少破幾格七曜環', minRingBreaks), field('附加條件珠色', conditionColor), field('此色至少消幾顆', colorCount)),
       h('label', { class: 'orb-assistant-check' }, enhanced, '需要消除強化珠'),
-      h('label', { class: 'orb-assistant-check' }, clearColors, '清空附加條件指定色'),
-      h('label', { class: 'orb-assistant-check' }, groupColor, '單組顆數限定附加條件指定色'),
+      h('div', null, h('p', { class: 'small-text' }, '需要清空的珠色'), h('div', { class: 'orb-assistant-grid' }, clearColors.map(c => h('label', { class: 'orb-assistant-check' }, c.input, c.name)))),
+      h('label', { class: 'orb-assistant-check' }, groupColor, '單組顆數限定珠色'),
+      field('單組限定珠色', groupColorSelect),
       h('label', { class: 'orb-assistant-check' }, avoidAbsorb, '避免造成傷害吸收'),
       h('table', null, h('thead', null, h('tr', null, h('th', null, '珠色'), h('th', null, '需要消除'), h('th', null, '避免消除'))), h('tbody', null, colors.map(c => h('tr', null, h('th', { scope: 'row' }, c.name), h('td', null, c.need), h('td', null, c.avoid))))),
     ), status, result,
-    h('div', { class: 'orb-assistant-actions' }, planButton, cancelButton, executeButton, previewButton, action('收起', () => dlg.close())),
+    h('div', { class: 'orb-assistant-actions' }, planButton, cancelButton, executeButton, previewButton, action('儲存設定並收起', () => { const r = validatedRequest(); if (!r) return; opts.onSaveRequest?.(r); dlg.close(); }), action('收起', () => dlg.close())),
   );
   const keydown = (event: KeyboardEvent) => { if (event.key === 'Escape') { event.preventDefault(); dlg.close(); } };
   const dlg = openDialog('轉珠助手', body, [], { scope: 'route', onClose: () => {
@@ -147,21 +173,32 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
   category.addEventListener('change', () => { fillGoals(); reset(); });
   goal.addEventListener('change', () => { syncGoal(); if (goal.value === 'exactcombo') body.querySelector('details')!.open = true; reset(); });
   body.addEventListener('change', e => { if (e.target !== category && e.target !== goal) reset(); });
+  if (saved?.constraints && Object.keys(saved.constraints).some(key => saved.constraints![key as keyof typeof saved.constraints] !== undefined)) body.querySelector('details')!.open = true;
   refresh();
 
-  async function runPlan(): Promise<void> {
+  function validatedRequest(): AssistantRequest | null {
     const numbers = [minCombo, exactCombo, minGroup, minHeartGroups, minEnhanced, colorCount, minRingBreaks];
-    if (numbers.some(input => !input.checkValidity())) { status.textContent = '請輸入 1 到 30 的整數。'; return; }
+    if (numbers.some(input => !input.checkValidity())) { status.textContent = '請輸入 1 到 30 的整數。'; return null; }
     const r = request();
     if (r.goal === 'exactcombo' && r.constraints?.exactCombo === undefined) {
       body.querySelector('details')!.open = true;
       status.textContent = '請在附加條件填入「恰好幾 Combo」。';
       exactCombo.focus();
-      return;
+      return null;
     }
-    if (colors.some(c => c.need.checked && c.avoid.checked)) { status.textContent = '同一珠色不能同時需要與避免。'; return; }
-    if (r.constraints?.exactCombo && r.constraints.minCombo && r.constraints.exactCombo < r.constraints.minCombo) { status.textContent = '恰好 Combo 不能小於最低 Combo。'; return; }
-    if (r.goal === 'star' && !opts.stage?.stars?.length) { status.textContent = '目前關卡沒有星章條件。'; return; }
+    if (colors.some(c => c.need.checked && c.avoid.checked)) { status.textContent = '同一珠色不能同時需要與避免。'; return null; }
+    if (r.constraints?.exactCombo && r.constraints.minCombo && r.constraints.exactCombo < r.constraints.minCombo) { status.textContent = '恰好 Combo 不能小於最低 Combo。'; return null; }
+    if (r.goal === 'star' && (!opts.stage?.stars?.length || r.starIndex === undefined)) { status.textContent = '目前關卡沒有星章條件。'; return null; }
+    if (!COLORS.some(([id]) => id === r.color) || !COLORS.some(([id]) => id === conditionColor.value) || !COLORS.some(([id]) => id === groupColorSelect.value)) { status.textContent = '請重新選擇珠色。'; return null; }
+    if (r.targetEnemy === undefined || !opts.state.enemies[r.targetEnemy] || opts.state.enemies[r.targetEnemy].hp <= 0) { status.textContent = '請選擇尚未倒下的敵人。'; return null; }
+    if (groupColor.checked && !r.constraints?.minGroup) { status.textContent = '限定單組珠色時，請填入「單組至少幾顆」。'; return null; }
+    return r;
+  }
+
+  async function runPlan(): Promise<void> {
+    const r = validatedRequest();
+    if (!r) return;
+    opts.onSaveRequest?.(r);
     const current = ++generation;
     plan = null;
     opts.preview(null);
