@@ -18,10 +18,21 @@ export interface NemesisView {
   status: string;
   archetypes: string[];
   stages: StageDef[];
+  /** 本週最高階關卡的每週首通裡，5★ 以上的素材卡號（例如星輝結晶），列表說明會特別提 */
+  rareRewards: string[];
 }
 
 /** 本週主題、剩餘時間、推薦流派與關卡 */
-export function nemesisView(events: EventDef[], stages: StageDef[], archetypeName: (id: string) => string, now: number): NemesisView | null {
+/** 高級關（本週最後一關）每週首通裡的稀有素材 */
+function rareRewardsOf(week: StageDef[], isRare: (cardId: string) => boolean): string[] {
+  const top = week[week.length - 1];
+  return (top?.rewards.periodFirstClear?.cards ?? []).map((c) => c.card).filter(isRare);
+}
+
+export function nemesisView(
+  events: EventDef[], stages: StageDef[], archetypeName: (id: string) => string, now: number,
+  isRareMaterial: (cardId: string) => boolean = () => false,
+): NemesisView | null {
   const cur = currentSeriesEvent(events, NEMESIS, now);
   if (!cur) return null;
   return {
@@ -30,6 +41,7 @@ export function nemesisView(events: EventDef[], stages: StageDef[], archetypeNam
     status: eventStatusText(cur.event, now),
     archetypes: (cur.event.recommendedArchetypes ?? []).map(archetypeName),
     stages: stages.filter((s) => s.event === cur.event.id),
+    rareRewards: rareRewardsOf(stages.filter((s) => s.event === cur.event.id), isRareMaterial),
   };
 }
 
