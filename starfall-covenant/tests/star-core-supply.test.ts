@@ -23,4 +23,11 @@ describe('星核供需（tools/sim/reports/2026-10-31-star-core-supply.md）', (
       expect(c.base, attr).toBeGreaterThanOrEqual(CORE_DEMAND.oneFiveStar);
     }
   });
+
+  it('流派克星週 6 個主題輪完，五種屬性的星核都拿得到', () => {
+    const themes = new Set(gameData.events.filter((e) => e.series === 'nemesis').map((e) => e.id));
+    const got = new Set(gameData.stages.filter((s) => s.event && themes.has(s.event))
+      .flatMap((s) => s.rewards.periodFirstClear?.cards ?? []).map((c) => c.card));
+    for (const id of ['c916', 'c917', 'c918', 'c919', 'c920']) expect(got.has(id), id).toBe(true);
+  });
 });
