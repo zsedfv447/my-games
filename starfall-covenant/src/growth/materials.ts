@@ -50,3 +50,37 @@ export function materialCandidates(
   }
   return out;
 }
+
+/** 星輝結晶（通用突破素材） */
+export function isLimitBreakCrystal(cardId: string, ctx: GrowthContext): boolean {
+  return ctx.rules.limitBreakMaterialIds.includes(cardId);
+}
+
+/**
+ * 突破的自動選擇：只挑同名卡（等級低、取得早的先），不放星輝結晶——結晶很珍貴，要玩家自己點。
+ * 最多選到突破滿為止。
+ */
+export function autoPickLimitBreak(save: SaveData, ctx: GrowthContext, targetUid: string): string[] {
+  const owned = save.inventory.cards.find((c) => c.uid === targetUid);
+  if (!owned) return [];
+  const need = Math.max(0, ctx.rules.maxLimitBreak - owned.limitBreak);
+  return materialCandidates(save, ctx, targetUid, 'limitBreak')
+    .filter((m) => !isLimitBreakCrystal(m.def.id, ctx))
+    .sort((a, b) => a.owned.level - b.owned.level || a.owned.obtainedAt - b.owned.obtainedAt)
+    .slice(0, need)
+    .map((m) => m.owned.uid);
+}
+
+/** 這次突破會用掉幾顆星輝結晶、用完背包還剩幾顆（確認框用） */
+export function crystalUsage(save: SaveData, ctx: GrowthContext, materialUids: string[]): { used: number; left: number } {
+  const pick = new Set(materialUids);
+  let used = 0;
+  let total = 0;
+  for (const c of save.inventory.cards) {
+    if (!isLimitBreakCrystal(c.cardId, ctx)) continue;
+    total++;
+    if (pick.has(c.uid)) used++;
+  }
+  return { used, left: total - used };
+}
+
