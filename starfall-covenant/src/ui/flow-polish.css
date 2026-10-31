@@ -65,6 +65,12 @@
 }
 .chapter-done-row strong { font-size: 14px; }
 .chapter-done-row .chev { flex: none; font-size: 12px; color: var(--gold-soft); }
+/* 展開後每章一行：章名＋星章進度 */
+.chapter-done-item {
+  position: relative; display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; text-align: left;
+  border: 1px solid var(--line); border-radius: var(--radius-s); background: rgba(6, 10, 31, 0.4); color: var(--text); font: inherit; font-size: 13px; cursor: pointer;
+}
+.chapter-done-item .stars.dim { color: var(--text-dim); }
 .chapter-done-row .badge.dot { top: 6px; right: 6px; }
 
 /* ---------- 底部導覽：分頁紅點 ---------- */

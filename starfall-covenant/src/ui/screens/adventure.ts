@@ -95,13 +95,13 @@ export const adventureScreen: ScreenDef = {
       { icon: 'sword', title: '練習場', sub: '練轉珠與敵人機制，不耗體力', to: ['battle', ['practice']], onClick: openPracticePicker },
     ];
     const endgame = [sectionTitle('終局'), h('div', { class: 'adv-tiles' }, endgameTiles.map((t) => adventureTile(t, nav)))];
-    // 全部通關而且滿星的章節收成一列，點開才展開
-    const done = unlockedChapters.filter(({ p }) => p.cleared >= p.total && p.stars >= p.maxStars);
+    // 全部通關的章節收成一列（不用等星章集滿），點開後每章一行、顯示星章進度
+    const done = unlockedChapters.filter(({ p }) => p.cleared >= p.total);
     const active = unlockedChapters.filter((x) => !done.includes(x));
     const list = h('div', { class: 'list' });
     const drawChapters = () => list.replaceChildren(...[
       done.length > 0 && completedChaptersRow(done, dots, () => { showCompleted = !showCompleted; drawChapters(); }),
-      ...(showCompleted ? done : []).map((x) => chapterCard(x, dots, nav)),
+      ...(showCompleted ? done : []).map((x) => doneChapterRow(x, dots, nav)),
       ...active.map((x) => chapterCard(x, dots, nav)),
       // 還沒開放的章節合成一列，不再各佔一整張卡
       lockedChapters.length > 0 && h('div', { class: 'chapter-locked-row' }, icon('lock'),
@@ -152,6 +152,16 @@ function chapterCard({ c, p }: ChapterEntry, dots: AdventureDots, nav: Navigator
   );
 }
 
+/** 已通關章節展開後的一行：章名＋星章進度（沒滿星的看得出來），點了到該章關卡列表 */
+function doneChapterRow({ c, p }: ChapterEntry, dots: AdventureDots, nav: Navigator): HTMLElement {
+  const full = p.stars >= p.maxStars;
+  return h('button', { type: 'button', class: 'chapter-done-item', onClick: () => { audio.play('tap'); nav.go('stages', [c.chapter]); } },
+    h('span', { class: 'grow' }, h('strong', null, `第 ${c.chapter} 章・${c.name}`)),
+    h('span', { class: ['stars small-text', !full && 'dim'] }, `★ ${p.stars}/${p.maxStars}`),
+    full && badge('滿星', 'gold'),
+    (dots.chapters.includes(c.chapter) || dots.eclipse.includes(c.chapter)) && h('span', { class: 'badge dot', 'aria-label': '有可領取的章節或星蝕獎勵' }));
+}
+
 /** 「第 1～N 章（已通關）」：點了展開／收起；收起時裡面有可領的獎勵也會亮紅點 */
 function completedChaptersRow(done: ChapterEntry[], dots: AdventureDots, toggle: () => void): HTMLElement {
   const nums = done.map((x) => x.c.chapter);
@@ -164,7 +174,7 @@ function completedChaptersRow(done: ChapterEntry[], dots: AdventureDots, toggle:
   return h('button', { type: 'button', class: ['chapter-done-row', showCompleted && 'open'], 'aria-expanded': String(showCompleted), onClick: () => { audio.play('tap'); toggle(); } },
     h('div', { class: 'grow' },
       h('strong', null, `${label}（已通關）`),
-      h('div', { class: 'small-text dim' }, `全通・★ ${stars}/${max}・星蝕獎勵 ${eclipseDone}/${done.length} 章`)),
+      h('div', { class: 'small-text dim' }, `★ ${stars}/${max}・星蝕獎勵 ${eclipseDone}/${done.length} 章`)),
     h('span', { class: 'chev' }, showCompleted ? '收起' : '展開'),
     dot && h('span', { class: 'badge dot', 'aria-label': '有可領取的章節或星蝕獎勵' }));
 }
