@@ -404,6 +404,8 @@ export interface SaveData {
   oaths?: import('../progression/oaths').OathRecord;
   /** 已收集的星骸殘頁 id（可選；讀取一律經過 progression/lore.ts 的 collectedLorePages 補預設值） */
   lorePages?: string[];
+  /** 星骸觀測錄：開戰時遇過的敵人 id（可選；讀取一律經過 progression/bestiary.ts 的 seenEnemyIds，會補上已通關關卡的敵人） */
+  seenEnemies?: string[];
   /** 流浪契印師的同行情誼：NPC id → 點數（可選；讀取一律經過 progression/helper-bond.ts 的 bondPoints 補預設值） */
   helperBond?: Record<string, number>;
   /** 角色羈絆：進化鏈的家族 id（最初型態的卡號）→ 出戰通關場數（可選；讀取一律經過 progression/card-bond.ts 補預設值） */

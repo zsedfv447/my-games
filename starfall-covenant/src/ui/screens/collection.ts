@@ -17,6 +17,7 @@ import { claimQuest, questProgress } from '../../progression/quests';
 import { questDerived } from '../economy';
 import { rewardChips } from '../components/rewards';
 import '../collection-helper.css';
+import { codexSwitch } from './bestiary';
 
 const STATUS_LABEL: Record<CollectionStatus, string> = { owned: '已取得', seen: '見過', unseen: '未發現' };
 const archetypeName = (id: string) => gameData.archetypes.find((a) => a.id === id)?.name ?? id;
@@ -119,6 +120,7 @@ export const collectionScreen: ScreenDef = {
     return h(
       'div',
       null,
+      codexSwitch('cards', nav),
       summaryHost,
       tabs<'all' | CollectionStatus>(
         [{ id: 'all', label: '全部' }, ...(['owned', 'seen', 'unseen'] as const).map((s) => ({ id: s, label: STATUS_LABEL[s] }))],
