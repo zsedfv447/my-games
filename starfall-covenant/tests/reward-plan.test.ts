@@ -110,7 +110,8 @@ describe('升級卡與首通預告', () => {
     expect(firstClearPreview({ gems: 1 }, true)).toMatchObject({ text: '首通 已領', claimed: true });
     // chip 用圖示＋數字：星晶放最前面、最多兩種，第三種以後才用「…」（#77）
     expect(firstClearPreview({ gems: 1, tokens: { 'token-beast': 20 } }, false)).toMatchObject({ parts: [{ icon: 'gem', amount: 1 }, { icon: 'token', amount: 20 }], more: false });
-    expect(firstClearPreview({ coin: 500, gems: 2, tokens: { 'token-beast': 20 } }, false)).toMatchObject({ parts: [{ icon: 'gem', amount: 2 }, { icon: 'coin', amount: 500 }], more: true });
+    // 依稀有程度排序（#102）：活動代幣比金幣稀有，排在金幣前面
+    expect(firstClearPreview({ coin: 500, gems: 2, tokens: { 'token-beast': 20 } }, false)).toMatchObject({ parts: [{ icon: 'gem', amount: 2 }, { icon: 'token', amount: 20 }], more: true });
     expect(firstClearPreview({ cards: [{ card: 'c901', count: 1 }] }, false)).toMatchObject({ parts: [{ icon: 'card', amount: 1 }], more: false });
     // 流派克星週：同一套格式，標籤換成「本週首通」
     expect(firstClearPreview({ gems: 1, tokens: { 'token-beast': 10 } }, false, '本週首通')).toMatchObject({ text: '本週首通 +1 …', full: '本週首通：星晶 +1、獸王代幣 +10', parts: [{ icon: 'gem', amount: 1 }, { icon: 'token', amount: 10 }] });
