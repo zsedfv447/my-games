@@ -13,7 +13,7 @@ import { weekKey } from './time';
 export const ABYSS_FLOORS = 30;
 /** 開放條件：主線通關 */
 export const ABYSS_UNLOCK_STAGE = 'st-5-9';
-/** 每 10 層的星輝結晶（growth 的進化素材）；資料還沒有這張卡時改發星核 */
+/** 第 30 層的星輝結晶（growth 的進化素材）：每月取得量有上限，所以每週只給 1 顆 */
 export const ABYSS_CRYSTAL = 'c921';
 const STAR_CORES: Record<Attribute, string> = { fire: 'c916', water: 'c917', wood: 'c918', light: 'c919', dark: 'c920' };
 
@@ -151,20 +151,19 @@ export function abyssFloor(week: string, floor: number, base: EnemyDef[]): Abyss
 // ---------- 獎勵 ----------
 
 /**
- * 每層本週第一次通關的獎勵：每 5 層一顆本週屬性的星核，每 10 層 3 星晶＋星輝結晶，第 30 層再加 1 星晶。
- * 一週最多：星晶 10、星核 6、星輝結晶 3。
+ * 每層本週第一次通關的獎勵：每 5 層一顆本週屬性的星核，每 10 層 3 星晶，第 30 層再加 1 星晶與 1 顆星輝結晶。
+ * 一週最多：星晶 10、星核 6、星輝結晶 1。
  */
-export function abyssFloorReward(week: string, floor: number, cards: Pick<CardDef, 'id'>[]): Reward | undefined {
+export function abyssFloorReward(week: string, floor: number, _cards: Pick<CardDef, 'id'>[] = []): Reward | undefined {
   const reward: Reward = {};
   const cardList: { card: string; count: number }[] = [];
   const core = STAR_CORES[abyssCoreAttribute(week)];
   if (floor % 5 === 0) cardList.push({ card: core, count: 1 });
-  if (floor % 10 === 0) {
-    reward.gems = 3;
-    // 星輝結晶還沒上線時先發星核代替
-    cardList.push({ card: cards.some((c) => c.id === ABYSS_CRYSTAL) ? ABYSS_CRYSTAL : core, count: 1 });
+  if (floor % 10 === 0) reward.gems = 3;
+  if (floor === ABYSS_FLOORS) {
+    reward.gems = (reward.gems ?? 0) + 1;
+    cardList.push({ card: ABYSS_CRYSTAL, count: 1 });
   }
-  if (floor === ABYSS_FLOORS) reward.gems = (reward.gems ?? 0) + 1;
   if (cardList.length) reward.cards = cardList;
   return reward.gems || reward.cards ? reward : undefined;
 }

@@ -63,15 +63,16 @@ describe('星淵回廊獎勵與進度', () => {
   it('一週的星晶不超過 10，星核每 5 層一顆', () => {
     const total = abyssWeeklyTotal(WEEK, gameData.cards);
     expect(total.gems).toBe(10);
-    expect(Object.values(total.cards).reduce((a, b) => a + b, 0)).toBe(9);
+    // 星核每 5 層一顆（6 顆），星輝結晶只在第 30 層（每週 1 顆）
+    expect(Object.values(total.cards).reduce((a, b) => a + b, 0)).toBe(7);
+    expect(total.cards.c921).toBe(1);
     expect(abyssFloorReward(WEEK, 3, gameData.cards)).toBeUndefined();
   });
 
-  it('沒有星輝結晶這張卡時改發星核，有了就發星輝結晶', () => {
-    const r = abyssFloorReward(WEEK, 10, [{ id: 'c921' }]);
-    expect(r?.cards?.map((c) => c.card)).toContain('c921');
-    const fallback = abyssFloorReward(WEEK, 10, []);
-    expect(fallback?.cards?.every((c) => /^c91[6-9]|c920$/.test(c.card))).toBe(true);
+  it('星輝結晶 c921 只在第 30 層', () => {
+    expect(abyssFloorReward(WEEK, 30, gameData.cards)?.cards?.map((c) => c.card)).toContain('c921');
+    expect(abyssFloorReward(WEEK, 10, gameData.cards)?.cards?.map((c) => c.card)).not.toContain('c921');
+    expect(abyssFloorReward(WEEK, 20, gameData.cards)?.gems).toBe(3);
   });
 
   it('主線通關才開放，只能挑戰下一層；換週重置', () => {
