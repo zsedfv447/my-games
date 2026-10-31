@@ -1,0 +1,21 @@
+/* 追卡指南：取得方式列表 */
+.acquire-list { display: flex; flex-direction: column; gap: 6px; }
+.acquire-row {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px;
+  background: rgba(6, 10, 31, 0.4); color: var(--text); font: inherit; text-align: left; cursor: pointer;
+}
+.acquire-row:active { transform: scale(0.99); }
+.acquire-row.unavailable { opacity: 0.6; }
+.acquire-row .badge { flex: none; }
+.acquire-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.acquire-title { font-size: 13px; overflow-wrap: anywhere; }
+.acquire-note { color: var(--text-dim); }
+.acquire-state { flex: none; }
+.acquire-state.ok { color: var(--gold-soft); }
+.acquire-state.ng { color: var(--text-faint); }
+.acquire-row svg { flex: none; width: 14px; height: 14px; opacity: 0.6; }
+.acquire-material { display: flex; flex-direction: column; gap: 6px; padding: 6px 0; border-top: 1px solid var(--line); }
+.acquire-material:first-of-type { border-top: 0; }
+.acquire-material .grow { flex: 1; min-width: 0; }
+.acquire-short { color: var(--danger); }

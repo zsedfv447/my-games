@@ -3,7 +3,7 @@ import { h } from '../dom';
 import { gameData } from '../../data/load';
 import { ARCHETYPE_IDS, ATTRIBUTES, RACES, type ArchetypeId, type Attribute, type Race } from '../../core/types';
 import {
-  cardSources, claimAllCollectionRewards, claimableCollection, claimCollectionReward, collectionEntries, collectionReward,
+  claimAllCollectionRewards, claimableCollection, claimCollectionReward, collectionEntries, collectionReward,
   collectionStatus, collectionSummary, ROLE_LABEL, type CollectionFilter, type CollectionStatus,
 } from '../../growth';
 import { ATTRIBUTE_NAMES, RACE_NAMES } from '../art/palette';
@@ -13,6 +13,7 @@ import { toast } from '../components/overlay';
 import { revealReward } from '../components/reward-reveal';
 import { commit, getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
+import { acquirePanel } from '../acquire-view';
 import { claimQuest, questProgress } from '../../progression/quests';
 import { questDerived } from '../economy';
 import { rewardChips } from '../components/rewards';
@@ -137,18 +138,6 @@ export const collectionScreen: ScreenDef = {
   },
 };
 
-function sourceLines(cardId: string): string[] {
-  const s = cardSources(growth, cardId);
-  const stageName = (id: string) => gameData.stages.find((x) => x.id === id)?.name ?? id;
-  const lines: string[] = [];
-  if (s.stages.length) lines.push(`關卡：${s.stages.slice(0, 4).map(stageName).join('、')}${s.stages.length > 4 ? ` 等 ${s.stages.length} 關` : ''}`);
-  if (s.gacha.length) lines.push(`召喚：${s.gacha.map((id) => gameData.gachaPools.find((p) => p.id === id)?.name ?? id).join('、')}`);
-  if (s.shop.length) lines.push('商店兌換');
-  if (s.quests.length) lines.push('任務／成就獎勵');
-  if (s.evolvesFrom) lines.push(`由「${growth.card(s.evolvesFrom)?.name ?? s.evolvesFrom}」進化`);
-  return lines;
-}
-
 export const collectionCardScreen: ScreenDef = {
   name: 'collection-card',
   title: '圖鑑資料',
@@ -159,8 +148,8 @@ export const collectionCardScreen: ScreenDef = {
     if (!def) return h('div', null, emptyState('book', '找不到這張卡片'));
     const save = getSave();
     const status = collectionStatus(save, def.id);
-    const sources = sourceLines(def.id);
-    const sourcePanel = sources.length > 0 && panel({ title: '取得途徑' }, h('ul', { class: 'small-text codex-list' }, sources.map((l) => h('li', null, l))));
+    // 追卡指南：取得方式、現在能不能拿、點了前往（acquire-guide.ts）
+    const sourcePanel = acquirePanel(def.id, nav);
 
     if (status === 'unseen') {
       return h(
