@@ -50,6 +50,34 @@ describe('sim --progress：進度估算', () => {
   });
 });
 
+describe('sim --progress：一次性獎勵', () => {
+  // 正式資料目前首通沒有星核，用改過的資料驗證
+  const stagesWithRewards = stages.map((s) => (s.id === 'st-2-9'
+    ? { ...s, rewards: { ...s.rewards, firstClear: { ...s.rewards.firstClear, coin: 1000, cards: [{ card: 'c916', count: 2 }, { card: 'c921', count: 1 }, { card: 'c901', count: 3 }] } } }
+    : s));
+  const chapters = [{ ...gameData.chapters.find((c) => c.chapter === 2)!, starReward: { cards: [{ card: 'c917', count: 1 }] } }];
+  const at = (id: string, st = stagesWithRewards, ch = chapters) => estimateProgress(order.find((s) => s.id === id)!, st, ctx, 'fire', PROGRESS_ASSUMPTIONS, ch);
+
+  it('首通獎勵的星核、結晶、經驗素材、金幣都算進去（打完那關之後才有）', () => {
+    const base = at('st-3-1', stages, []);
+    const p = at('st-3-1', stagesWithRewards, []);
+    expect(p.cores.fire - base.cores.fire).toBeCloseTo(2);
+    expect(p.crystals - base.crystals).toBeCloseTo(1);
+    expect(p.coin - base.coin).toBe(1000);
+    expect(p.cardExpPerMember - base.cardExpPerMember).toBe(Math.floor(3 * ctx.card('c901')!.expValue / 5));
+    expect(at('st-2-9', stagesWithRewards, []).cores.fire).toBe(at('st-2-9', stages, []).cores.fire);
+  });
+
+  it('章節星章獎勵在打完該章最後一關後才算', () => {
+    expect(at('st-2-9').cores.water).toBe(at('st-2-9', stagesWithRewards, []).cores.water);
+    expect(at('st-3-1').cores.water - at('st-3-1', stagesWithRewards, []).cores.water).toBeCloseTo(1);
+  });
+
+  it('獎勵給的結晶不扣商店金幣', () => {
+    expect(at('st-3-5').coin - at('st-3-5', stages, []).coin).toBe(1000);
+  });
+});
+
 describe('sim --progress：組隊', () => {
   const starter = ['c106', 'c107', 'c111', 'c109', 'c108'];
   const pool = archetypeFiveStars('mono', Object.values(gameData.gachaPools[0].cards).flat(), ctx);

@@ -1,6 +1,6 @@
 // --progress 模式：依關卡在主線中的位置，估算玩家當時的等級、卡片等級、進化、覺醒與隊伍空間，組出放得下的流派隊。
 // 全部是純函式；所有假設集中在 PROGRESS_ASSUMPTIONS，報表開頭會印出來。
-import type { ArchetypeId, Attribute, CardDef, StageDef } from '../../src/core/types';
+import type { ArchetypeId, Attribute, CardDef, ChapterDef, Reward, StageDef } from '../../src/core/types';
 import type { TeamMemberInput } from '../../src/battle/battle-state';
 import { createNewSave } from '../../src/save/save';
 import { addPlayerExp, teamCostLimit } from '../../src/progression/player';
@@ -47,6 +47,7 @@ export function describeAssumptions(a: ProgressAssumptions = PROGRESS_ASSUMPTION
     `主線依解鎖順序推進，目標關之前的每一關平均打 ${a.mainClearsPerStage} 次（首通＋重打）。`,
     `每日關卡開放後，每通過一關主線平均打 ${a.dailyRunsPerMainStage} 次每日關卡：${Math.round(a.coreDailyShare * 100)}% 打星核關，其餘打隊長屬性的經驗素材關；關卡難度取當時已開放的最高階。`,
     '玩家經驗、卡片經驗、金幣、掉落都取期望值；掉落的經驗素材' + (a.feedMaterials ? '全部平均餵給 5 位隊員（不算同屬加成）。' : '不拿來強化。'),
+    '主線首通獎勵（firstClear）與章節星章獎勵（打完該章最後一關時視為集滿星章領取）裡的星核、星輝結晶、經驗素材、金幣都算進去。',
     '強化的金幣花費不計；進化與覺醒要扣金幣與星核，金幣或星核不夠就不做。',
     '隊員滿級且有對應星核時進化，進化後多的經驗繼續算；之後有星紋覺醒的隊員依序解鎖覺醒，條件是突破階數、同屬星核與金幣都夠。',
     `星輝結晶：通過 ${a.crystalsFrom} 後每通過一關主線得 ${a.crystalsPerMainStage} 顆（約 1 天 1 關，每月 7～8 顆），其中 ${Math.round(a.crystalShopShare * 100)}% 用金幣買（每顆 ${a.crystalCoin.toLocaleString()}）。結晶優先給有星紋覺醒的隊員（稀有度高的先），每人最多突破到 +5；同名卡不估。`,
@@ -89,6 +90,7 @@ const EPS = 1e-9;
 /** 到 stage 之前，玩家的等級、金幣、卡片經驗與星核期望值 */
 export function estimateProgress(
   stage: StageDef, stages: StageDef[], ctx: GrowthContext, leaderAttr: Attribute, a: ProgressAssumptions = PROGRESS_ASSUMPTIONS,
+  chapters: ChapterDef[] = [],
 ): ProgressEstimate {
   const order = mainOrder(stages);
   const idx = Math.max(0, order.findIndex((s) => s.id === stage.id));
@@ -100,6 +102,9 @@ export function estimateProgress(
   let coin = 0;
   let battleExp = 0;
   let feedExp = 0;
+  let crystals = 0;
+  /** 依假設定期取得的結晶（只有這部分有商店購買的金幣） */
+  let periodicCrystals = 0;
   const cores = Object.fromEntries(ATTRS.map((x) => [x, 0])) as Record<Attribute, number>;
   const addDrops = (s: StageDef, runs: number) => {
     for (const d of s.drops ?? []) {
@@ -110,6 +115,19 @@ export function estimateProgress(
       else if (a.feedMaterials) feedExp += d.rate * runs * def.expValue;
     }
   };
+  // 一次性獎勵（首通、章節星章）：星核、結晶、經驗素材、金幣
+  const addReward = (r: Reward | undefined) => {
+    if (!r) return;
+    coin += r.coin ?? 0;
+    for (const c of r.cards ?? []) {
+      const def = ctx.card(c.card);
+      if (!def || def.race !== 'material') continue;
+      const coreAttr = ATTRS.find((x) => ctx.rules.awakenMaterialByAttribute[x] === def.id);
+      if (coreAttr) cores[coreAttr] += c.count;
+      else if (ctx.rules.limitBreakMaterialIds.includes(def.id)) crystals += c.count;
+      else if (a.feedMaterials) feedExp += c.count * def.expValue;
+    }
+  };
   const addRuns = (s: StageDef, runs: number) => {
     playerExp += s.rewards.playerExp * runs;
     coin += s.rewards.coin * runs;
@@ -118,11 +136,13 @@ export function estimateProgress(
   };
 
   let dailyRuns = 0;
-  let crystals = 0;
   let crystalOpen = false;
   before.forEach((s, i) => {
     addRuns(s, a.mainClearsPerStage);
-    if (crystalOpen) crystals += a.crystalsPerMainStage;
+    addReward(s.rewards.firstClear);
+    const chapterDone = s.chapter !== undefined && !order.some((x) => x.chapter === s.chapter && order.indexOf(x) > i);
+    if (chapterDone) addReward(chapters.find((c) => c.chapter === s.chapter)?.starReward);
+    if (crystalOpen) { crystals += a.crystalsPerMainStage; periodicCrystals += a.crystalsPerMainStage; }
     if (s.id === a.crystalsFrom) crystalOpen = true;
     // 這一關打完時已開放的每日關卡（同類取最高階）
     const open = new Set(before.slice(0, i + 1).map((x) => x.id));
@@ -144,7 +164,7 @@ export function estimateProgress(
     chapter: stage.chapter ?? 1,
     playerLevel: level,
     teamCostLimit: teamCostLimit(level),
-    coin: Math.floor(coin + ctx.config.newPlayer.coin - crystals * a.crystalShopShare * a.crystalCoin),
+    coin: Math.floor(coin + ctx.config.newPlayer.coin - periodicCrystals * a.crystalShopShare * a.crystalCoin),
     dailyRuns,
     cardExpPerMember: Math.floor(battleExp + feedExp / 5),
     cores,

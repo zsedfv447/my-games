@@ -34,7 +34,7 @@ export function runProgress(stages: StageDef[], runs: number, archetypeFilter?: 
     let limit = 0;
     for (const t of teams) {
       const leaderAttr = ctx.card(t.members[0].cardId)!.attribute;
-      const p = estimateProgress(stage, gameData.stages, ctx, leaderAttr);
+      const p = estimateProgress(stage, gameData.stages, ctx, leaderAttr, undefined, gameData.chapters);
       level = p.playerLevel;
       limit = p.teamCostLimit;
       const pt = buildProgressTeam(t.archetype, t.members.map((m) => m.cardId), archetypeFiveStars(t.archetype, poolIds, ctx), p, ctx);
