@@ -3,7 +3,7 @@ import type { QuestDef } from '../../core/types';
 import { gameData } from '../../data/load';
 import { claimAllQuests, claimableQuests, claimQuest, questProgress, resetQuestsIfNeeded } from '../../progression/quests';
 import { mergeRewards } from '../../progression/rewards';
-import { badge, bar, button, emptyState, panel, tabs } from '../components/basic';
+import { badge, bar, button, emptyState, icon, listItem, panel, tabs } from '../components/basic';
 import { cardThumb } from '../components/card-thumb';
 import { nurtureSteps, nurtureTarget } from '../../progression/nurture';
 import { toast } from '../components/overlay';
@@ -14,9 +14,11 @@ import { questDerived, sortQuests } from '../economy';
 import type { Navigator, ScreenDef } from '../router';
 import { questDestination } from '../quest-goto';
 import { commit, getSave } from '../state';
+import type { IconName } from '../art/icons';
+import { weeklyChecklist, type ChecklistId } from '../weekly-checklist';
 
-/** journey：養成之路（新手契約領完後出現，全部領完後隱藏） */
-type QuestTab = 'starter' | 'journey' | 'daily' | 'weekly';
+/** journey：養成之路（新手契約領完後出現，全部領完後隱藏）；contract：本週契約（各系統本週進度的總覽，不是任務） */
+type QuestTab = 'starter' | 'journey' | 'daily' | 'weekly' | 'contract';
 let questTab: QuestTab | null = null;
 
 const BANNER_SUB: Record<QuestTab, string> = {
@@ -24,6 +26,24 @@ const BANNER_SUB: Record<QuestTab, string> = {
   journey: '挑一位夥伴，走一次強化、滿級、收集素材到進化（只能領一次）',
   daily: '每日任務於午夜 00:00 重置',
   weekly: '每週任務於週一 00:00 重置',
+  contract: '克星週、星淵、遠行、誓約碑、謎題的本週進度，點一下前往',
+};
+
+/** 本週契約清單：每一列點了前往該畫面 */
+function contractList(nav: Navigator): HTMLElement[] {
+  const rows = weeklyChecklist(getSave(), Date.now(), gameData);
+  return rows.map((r) => listItem({
+    leading: icon(CONTRACT_ICON[r.id]),
+    title: h('span', { class: 'row between' }, h('span', null, r.title), h('strong', { class: ['contract-progress', r.done && 'done'] }, r.open ? r.progress : '未開放')),
+    sub: r.hint,
+    locked: !r.open,
+    trailing: r.done ? badge('完成', 'gold') : undefined,
+    onClick: () => nav.go(r.to[0], r.to[1]),
+  }));
+}
+
+const CONTRACT_ICON: Record<ChecklistId, IconName> = {
+  nemesis: 'trophy', abyss: 'tower', expedition: 'adventure', oath: 'scroll', puzzle: 'puzzle',
 };
 
 /** 養成之路：新手契約領完後出現，四步都領完後隱藏 */
@@ -120,7 +140,8 @@ export const questsScreen: ScreenDef = {
   title: '任務',
   chrome: 'sub',
   parent: 'home',
-  render({ nav }) {
+  render({ nav, route }) {
+    if (route.args[0] === 'contract') questTab = 'contract';
     const banner = h('div');
     const tabBar = h('div');
     const body = h('div', { class: 'quest-list' });
@@ -141,7 +162,12 @@ export const questsScreen: ScreenDef = {
         ...(journey ? [{ id: 'journey' as const, label: '養成之路' }] : []),
         { id: 'daily' as const, label: '每日任務' },
         { id: 'weekly' as const, label: '每週任務' },
+        { id: 'contract' as const, label: '本週' },
       ], tab, (id) => { questTab = id; refresh(); }));
+      if (tab === 'contract') {
+        body.append(...contractList(nav));
+        return;
+      }
       if (tab === 'journey') { const path = journeyPath(); if (path) body.append(path); }
       body.append(...questList([tab], refresh, nav));
       footer.append(claimAllButton([tab], refresh));

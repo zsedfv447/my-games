@@ -6,6 +6,7 @@ import { archetypesScreen } from './archetypes';
 import { settingsScreen } from './settings';
 import { galleryScreen } from './gallery';
 import { storiesScreen, storyScreen } from './story';
+import { finaleScreen } from './finale';
 import { placeholderScreens } from './placeholders';
 import { prepareScreen } from './prepare';
 import { battleScreen } from './battle';
@@ -38,6 +39,7 @@ export const SCREENS: ScreenDef[] = [
   settingsScreen,
   galleryScreen,
   storyScreen,
+  finaleScreen,
   storiesScreen,
   prepareScreen,
   battleScreen,
