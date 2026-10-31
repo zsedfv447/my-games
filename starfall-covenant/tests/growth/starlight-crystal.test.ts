@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { gameData } from '../../src/data/load';
-import { createGrowthContext, limitBreak, materialCandidates } from '../../src/growth';
+import { autoPickLimitBreak, createGrowthContext, crystalUsage, limitBreak, materialCandidates } from '../../src/growth';
 import { buyItem, remainingPurchases } from '../../src/progression/shop';
 import { createNewSave } from '../../src/save/save';
 import { makeSave, owned } from './fixtures';
@@ -11,9 +11,9 @@ const ctx = createGrowthContext(gameData);
 describe('星輝結晶（通用突破素材）', () => {
   it('可以和同名卡混用突破，上限 +5 不變', () => {
     const save = makeSave([owned('t', 'c102', { limitBreak: 2 }), owned('dup', 'c102'), owned('x1', 'c921'), owned('x2', 'c921'), owned('x3', 'c921')]);
-    const r = limitBreak(save, ctx, 't', ['dup', 'x1', 'x2']);
+    const r = limitBreak(save, ctx, 't', ['dup', 'x1', 'x2'], { confirmCrystals: true });
     expect(r.ok && r.limitBreak).toBe(5);
-    expect(limitBreak(save, ctx, 't', ['dup', 'x1', 'x2', 'x3'])).toMatchObject({ ok: false, error: { code: 'tooManyMaterials' } });
+    expect(limitBreak(save, ctx, 't', ['dup', 'x1', 'x2', 'x3'], { confirmCrystals: true })).toMatchObject({ ok: false, error: { code: 'tooManyMaterials' } });
   });
 
   it('上鎖、隊伍中的結晶照舊不能用；其他素材卡仍然不行', () => {
@@ -50,5 +50,21 @@ describe('星輝結晶（通用突破素材）', () => {
     const top = gameData.stages.filter((s) => /^nm-.+-3$/.test(s.id));
     expect(top).toHaveLength(6);
     for (const s of top) expect(s.rewards.periodFirstClear?.cards).toContainEqual({ card: 'c921', count: 1 });
+  });
+
+  it('用到結晶要先確認；只用同名卡不用確認', () => {
+    const save = makeSave([owned('t', 'c102'), owned('dup', 'c102'), owned('x1', 'c921'), owned('x2', 'c921'), owned('x3', 'c921', { locked: true })]);
+    expect(crystalUsage(save, ctx, ['dup', 'x1'])).toEqual({ used: 1, left: 2 });
+    expect(limitBreak(save, ctx, 't', ['dup', 'x1'])).toMatchObject({ ok: false, error: { code: 'confirmRequired' } });
+    expect(limitBreak(save, ctx, 't', ['dup', 'x1'], { confirmCrystals: true }).ok).toBe(true);
+    expect(limitBreak(save, ctx, 't', ['dup']).ok).toBe(true);
+  });
+
+  it('自動選擇只挑同名卡（等級低的先），不放結晶', () => {
+    const save = makeSave([
+      owned('t', 'c102', { limitBreak: 3 }), owned('x1', 'c921'), owned('hi', 'c102', { level: 30 }), owned('lo', 'c103', { level: 1 }), owned('d3', 'c102', { level: 10 }),
+    ]);
+    expect(autoPickLimitBreak(save, ctx, 't')).toEqual(['lo', 'd3']);
+    expect(autoPickLimitBreak(makeSave([owned('t', 'c102'), owned('x1', 'c921')]), ctx, 't')).toEqual([]);
   });
 });
