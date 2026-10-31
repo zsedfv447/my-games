@@ -17,6 +17,7 @@
 // | enrage          | 敵人     | 攻擊倍率                |                                    | 0／不填 = 永久 |
 // | delayImmune     | 敵人     |                         |                                    | 0／不填 = 永久 |
 // | multiHit        | 敵人     | 段數（總傷不變，拆段）  |                                    | 0／不填 = 永久 |
+// | ringShield      | 敵人     | 環還在時減傷 %（預設 75）| slots：格子（預設六色）、vulnerable：碎裂後易傷（預設 2） | 0／不填 = 永久 |
 // | attributeSeal   | 我方     |                         | attribute：「fire,water」或 leader | 封印回合       |
 //
 // 觸發時機 trigger：onStart（出場時）、onAttack（每次攻擊之後）、
@@ -35,6 +36,7 @@ import {
 import type { Rng } from '../../core/rng';
 import { applyInterference, clearInterference, type Board } from '../board';
 import type { DefenseProfile } from '../damage';
+import { ringDefense } from './ring';
 import type { BattleState, EnemyState, MemberState, StatusInstance } from '../runtime';
 
 export type StatusSide = 'team' | 'board' | 'enemy';
@@ -55,6 +57,7 @@ export const STATUS_INFO: Record<StatusId, { name: string; side: StatusSide }> =
   enrage: { name: '狂暴', side: 'enemy' },
   delayImmune: { name: '不受延遲', side: 'enemy' },
   multiHit: { name: '連擊', side: 'enemy' },
+  ringShield: { name: '七曜環', side: 'enemy' },
   attributeSeal: { name: '星紋封印', side: 'team' },
 };
 
@@ -99,7 +102,8 @@ function parseOrb(v: number | string | undefined): OrbType | undefined {
 // ---------- 敵人身上的狀態 ----------
 
 export function defenseProfile(enemy: EnemyState): DefenseProfile {
-  const profile: DefenseProfile = { attribute: enemy.def.attribute, def: enemy.def.def };
+  // 七曜環（skills/ring.ts）：環還在減傷、碎裂後易傷
+  const profile: DefenseProfile = { attribute: enemy.def.attribute, def: enemy.def.def, ...ringDefense(enemy) };
   for (const s of enemy.statuses) {
     switch (s.id) {
       case 'shield':

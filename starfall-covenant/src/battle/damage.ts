@@ -162,6 +162,10 @@ export interface DefenseProfile {
   comboShield?: number;
   /** 傷害吸收：一回合內受到的傷害超過此值的部分改為回復敵人（固定傷害不受影響），由 applyHits 結算 */
   damageAbsorb?: number;
+  /** 七曜環還在：所有傷害減少 percent%（和護盾一樣，ignoreShield 可穿透） */
+  ringReduction?: number;
+  /** 七曜環碎裂後的易傷：屬性攻擊 ×vulnerable（固定與百分比傷害不吃） */
+  vulnerable?: number;
 }
 
 export interface DamageContext {
@@ -176,11 +180,13 @@ export function damageAgainst(hit: Hit, enemy: DefenseProfile, ctx: DamageContex
   if (!hit.ignoreShield) {
     if (!hit.fixed && enemy.comboShield !== undefined && ctx.combo < enemy.comboShield) return 0;
     if (enemy.shieldPercent) amount *= 1 - enemy.shieldPercent / 100;
+    if (enemy.ringReduction) amount *= 1 - enemy.ringReduction / 100;
     const as = enemy.attributeShield;
     if (as && hit.attribute && as.attributes.includes(hit.attribute)) amount *= 1 - as.percent / 100;
     // 被護盾完全擋下
     if (amount <= 0) return 0;
   }
+  if (enemy.vulnerable && !hit.fixed) amount *= enemy.vulnerable;
   if (!hit.ignoreDefense && !hit.fixed) amount -= enemy.def;
   // 加一點容差，避免 0.2 這類小數相乘後少 1 點
   amount = Math.floor(amount + 1e-9);

@@ -160,12 +160,30 @@ function chipCardName(cardId: string): string {
   return def?.race === 'material' ? def.name : '卡';
 }
 
+/**
+ * 首通標籤的排序（數字小的先顯示）：星晶 → 戰鬥卡與 5★ 以上素材（星輝結晶）→ 星核（4★ 素材）
+ * → 其他素材與代幣 → 金幣 → 體力
+ */
+export function chipRank(part: { icon: ResourceIcon | 'card' }, item: RevealItem): number {
+  if (part.icon === 'gem') return 0;
+  if (item.kind === 'card') {
+    const def = gameData.cards.find((c) => c.id === item.cardId);
+    if (!def || def.race !== 'material' || def.rarity >= 5) return 1;
+    return def.rarity === 4 ? 2 : 3;
+  }
+  if (part.icon === 'token') return 3;
+  if (part.icon === 'coin') return 4;
+  return 5;
+}
+
 function chipParts(items: RevealItem[]): { parts: { icon: ResourceIcon | 'card'; amount: number; name?: string }[]; more: boolean } {
   const all = items.map((it) => (it.kind === 'count'
     ? { icon: (it.icon === 'exp' ? 'gem' : it.icon) as ResourceIcon, amount: it.amount }
     : { icon: 'card' as const, amount: it.kind === 'card' ? it.count : 1, name: it.kind === 'card' ? chipCardName(it.cardId) : '卡' }));
-  // 星晶在 rewardItems 裡排最後（演出壓軸），chip 上放最前面
-  const ordered = [...all.filter((p) => p.icon === 'gem'), ...all.filter((p) => p.icon !== 'gem')];
+  // chip 只放得下兩種：依稀有程度排序（星晶在 rewardItems 裡排最後當演出壓軸，chip 上放最前面）
+  const ranked = all.map((p, i) => ({ p, i, r: chipRank(p, items[i]) }));
+  ranked.sort((a, b) => a.r - b.r || a.i - b.i);
+  const ordered = ranked.map((x) => x.p);
   return { parts: ordered.slice(0, MAX_CHIP_PARTS), more: ordered.length > MAX_CHIP_PARTS };
 }
 

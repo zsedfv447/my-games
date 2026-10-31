@@ -80,6 +80,9 @@ function chapterReward(info: ChapterDef, nav: Navigator): HTMLElement {
   return el;
 }
 
+const cardName = (id: string) => gameData.cards.find((c) => c.id === id)?.name ?? id;
+/** 5★ 以上的素材（星輝結晶等）：克星週說明特別提 */
+const isRareMaterial = (id: string) => { const c = gameData.cards.find((x) => x.id === id); return c?.race === 'material' && c.rarity >= 5; };
 const archetypeName = (id: string) => gameData.archetypes.find((a) => a.id === id)?.name ?? id;
 
 // ---------- 星蝕難度 ----------
@@ -162,7 +165,7 @@ export const stagesScreen: ScreenDef = {
     const group = GROUPS[key];
 
     if (group) {
-      const week = key === 'nemesis' ? nemesisView(gameData.events, gameData.stages, archetypeName, now) : null;
+      const week = key === 'nemesis' ? nemesisView(gameData.events, gameData.stages, archetypeName, now, isRareMaterial) : null;
       // 限時活動不含系列活動（流派克星週）；克星週只列本週主題的 3 關
       let list = key === 'nemesis'
         ? (week?.stages ?? [])
@@ -188,7 +191,7 @@ export const stagesScreen: ScreenDef = {
         h('h2', { class: 'section-title' }, group.title),
         key === 'event' && events.map((e) => eventBanner(e, { nav, onLeave })),
         week && eventBanner(week.event, { nav, onLeave }),
-        week && panel(null, h('p', { class: 'small-text', style: { margin: '0' } }, `本週推薦流派：${week.archetypes.join('、')}。每週一 00:00 換主題，每關每週第一次通關都有星晶，中級以上另有星核。`)),
+        week && panel(null, h('p', { class: 'small-text', style: { margin: '0' } }, `本週推薦流派：${week.archetypes.join('、')}。每週一 00:00 換主題，每關每週第一次通關都有星晶，中級以上另有星核${week.rareRewards.length ? `，高級關每週首通可得${[...new Set(week.rareRewards.map(cardName))].join('、')}` : ''}。`)),
         group.kind === 'side' && panel(null, h('p', { class: 'small-text dim', style: { margin: '0' } }, '第一部開始前的那個晚上，灰燈港的燈一盞一盞熄滅。港口的海豹提米和鐵匠赫姆，度過了漫長的一夜。')),
         group.kind === 'tower' && panel(null, h('p', { class: 'small-text dim' }, `目前到達第 ${save.progress.towerFloor} 層，共 ${gameData.stages.filter((s) => s.kind === 'tower').length} 層。每 10 層有星晶獎勵。`)),
         rows.length ? h('div', { class: 'list' }, rows.map((r) => row(r, nav, group.icon, fresh))) : emptyState(group.icon, '目前沒有關卡'),

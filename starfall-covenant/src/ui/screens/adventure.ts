@@ -18,6 +18,7 @@ import { audio } from '../audio';
 import { solvedToday } from '../../progression/puzzle';
 import { openLimitedEvents } from '../event-order';
 import '../flow-polish.css';
+import { ABYSS_FLOORS, ABYSS_UNLOCK_STAGE, abyssProgress, isAbyssOpen } from '../../progression/abyss';
 
 /** 冒險頁「其他」區的小卡（兩欄）；新增入口時用同一個格式 */
 export interface AdventureTile {
@@ -69,6 +70,7 @@ export const adventureScreen: ScreenDef = {
       { icon: 'puzzle', title: '星紋謎題', sub: puzzleEntrySub(now), to: ['puzzle', []], dot: !solvedToday(save, now) },
       ...(nemesis ? [nemesis] : []),
       { icon: 'tower', title: '挑戰之塔', sub: `不耗體力・第 ${save.progress.towerFloor} 層`, to: ['stages', ['tower']] },
+      abyssTile(save, now),
       {
         icon: 'scroll', title: '外傳・灰燈港夜話',
         sub: side.open ? `劇情小章・通關 ${side.cleared}/${side.total}` : side.lock,
@@ -115,6 +117,16 @@ export const adventureScreen: ScreenDef = {
     );
   },
 };
+
+/** 「其他」區的星淵回廊小卡：每週重置的 30 層塔，主線通關後開放 */
+function abyssTile(save: SaveData, now: number): AdventureTile {
+  if (!isAbyssOpen(save)) {
+    const name = gameData.stages.find((s) => s.id === ABYSS_UNLOCK_STAGE)?.name ?? ABYSS_UNLOCK_STAGE;
+    return { icon: 'tower', title: '星淵回廊', sub: `通過「${name}」後開放`, to: ['abyss', []], locked: true };
+  }
+  const p = abyssProgress(save, now);
+  return { icon: 'tower', title: '星淵回廊', sub: `每週重置・本週 ${p.best}/${ABYSS_FLOORS} 層`, to: ['abyss', []], dot: p.best < ABYSS_FLOORS };
+}
 
 /** 「其他」區的流派克星週小卡：本週主題、剩餘時間、推薦流派；還沒開放時寫開放條件並變灰 */
 function nemesisTile(save: SaveData, ctx: StageContext, now: number): AdventureTile | null {

@@ -1,4 +1,4 @@
-// 用法：npm run sim -- [--set bench|main|daily|event|tower|trial] [--runs 20] [--stage id] [--archetype id] [--team newbie] [--teams starter|veteran] [--json out.json]
+// 用法：npm run sim -- [--set bench|main|daily|event|tower|trial|abyss] [--week 2026-11-02] [--runs 20] [--stage id] [--archetype id] [--team newbie] [--teams starter|veteran] [--json out.json]
 //                     [--progress] [--chapter-stages 1,5,9]（--progress 只用於 --set main，見 progress.ts）
 // bench＝基準關卡；其他＝data/stages.json 對應種類的關卡（敵人用 data/enemies.json）
 // teams：starter＝免抽入門隊（預設）；veteran＝同一批卡進化到最終型態、滿等、覺醒全開
@@ -9,6 +9,8 @@ import type { StageDef } from '../../src/core/types';
 import { benchmarkStages, fixedTeamOf, fixtureData, gameStageData, newbieTeams, starterTeams, veteranTeams } from './fixtures';
 import { formatReport, simulateMatrix, type CellResult } from './simulate';
 import { runProgress } from './progress-run';
+import { ABYSS_FLOORS, abyssFloor } from '../../src/progression/abyss';
+import { weekKey } from '../../src/progression/time';
 import { eclipseEnemies, eclipseStage } from '../../src/progression/eclipse';
 
 const args = process.argv.slice(2);
@@ -21,17 +23,33 @@ const set = flag('set') ?? 'bench';
 const runs = Number(flag('runs') ?? 20);
 const stageFilter = flag('stage');
 const archetypeFilter = flag('archetype');
-const pool: StageDef[] = set === 'bench' ? benchmarkStages : gameData.stages.filter((s) => s.kind === set);
+// abyss：星淵回廊每 5 層（--week 指定週，預設本週），敵人由產生器依週種子產生
+const abyssWeek = flag('week') ?? weekKey(Date.now());
+const abyssFloors = set === 'abyss' ? Array.from({ length: ABYSS_FLOORS / 5 }, (_, i) => abyssFloor(abyssWeek, (i + 1) * 5, gameData.enemies)) : [];
+const pool: StageDef[] = set === 'bench' ? benchmarkStages
+  : set === 'abyss' ? abyssFloors.map((f) => f.stage)
+  : gameData.stages.filter((s) => s.kind === set);
 // --chapter-stages 1,5,9：只跑每章第 1、5、9 關（依關卡 id 的最後一段）
 const chapterStages = flag('chapter-stages')?.split(',').map(Number);
 const stages = pool.filter((s) => (!stageFilter || s.id === stageFilter)
   && (!chapterStages || chapterStages.includes(Number(s.id.split('-').pop()))));
-const data = set === 'bench' ? fixtureData : gameStageData;
+const data = set === 'bench' ? fixtureData
+  : set === 'abyss' ? { ...gameStageData, enemies: [...gameStageData.enemies, ...abyssFloors.flatMap((f) => f.enemies)] }
+  : gameStageData;
 const teamSet = flag('teams') ?? 'starter';
 const teams = (teamSet === 'veteran' ? veteranTeams() : starterTeams()).filter((t) => !archetypeFilter || t.archetype === archetypeFilter);
 
 const started = Date.now();
 let results: CellResult[];
+if (args.includes('--cores')) {
+  // 星核供需：npm run sim -- --cores（見 core-supply.ts）
+  const { coreSupplyReport } = await import('./core-supply');
+  const { createGrowthContext } = await import('../../src/growth');
+  const lines = coreSupplyReport(gameData.stages, gameData.events, createGrowthContext(gameData), ['st-3-9', 'st-4-9', 'st-5-1', 'st-5-3']);
+  console.log(lines.join('\n'));
+  process.exit(0);
+}
+
 if (args.includes('--progress')) {
   // 依關卡位置估算玩家當時的養成程度，每個流派組出放得下隊伍空間的隊伍
   if (set !== 'main') throw new Error('--progress 只支援 --set main');

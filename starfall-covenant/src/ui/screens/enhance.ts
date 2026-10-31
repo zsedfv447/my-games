@@ -2,7 +2,7 @@
 import { h, type Child } from '../dom';
 import type { CardDef, OwnedCard } from '../../core/types';
 import {
-  awaken, computeStats, enhance, enhanceRiskyMaterials, expToNextLevel, limitBreak, maxSkillLevel, nextAwakening, previewEnhance,
+  autoPickLimitBreak, awaken, computeStats, crystalUsage, enhance, enhanceRiskyMaterials, expToNextLevel, limitBreak, maxSkillLevel, nextAwakening, previewEnhance,
   skillCooldown, skillUp, type GrowthResult,
 } from '../../growth';
 import { userAsset } from '../assets';
@@ -59,10 +59,10 @@ interface ModeView {
   blocked?: string;
   coin: number;
   canRun: boolean;
-  /** confirmed：玩家已在確認框同意吃掉高星角色卡 */
+  /** confirmed：玩家已在確認框同意（強化吃高星角色卡、突破用星輝結晶） */
   run: (confirmed: boolean) => GrowthResult<object>;
-  /** 需要先確認的素材（強化吃 4★ 以上角色卡） */
-  risky?: string[];
+  /** 執行前要先確認的內容；沒有就直接執行 */
+  confirm?: { title: string; body: Child; ok: string };
   /** 成功後的演出內容；畫面等演出關閉後才更新，避免先看到結果 */
   onSuccess: (before: OwnedCard, after: OwnedCard) => Celebration;
   autoPick: () => string[];
@@ -88,18 +88,8 @@ export const enhanceScreen: ScreenDef = {
       btn.disabled = true;
       let celebrating = false;
       try {
-        const save = getSave();
-        const risky = view.risky ?? [];
-        if (risky.length) {
-          const ok = await confirmDialog('確認素材', h('div', null,
-            h('p', { style: { margin: '0 0 8px' } }, `素材裡有 ${risky.length} 張 ${growth.rules.enhanceConfirmRarity}★ 以上的角色卡，強化後會消失。確定要用嗎？`),
-            h('div', { class: 'row wrap', style: { gap: '6px' } }, risky.map((m) => {
-              const c = save.inventory.cards.find((x) => x.uid === m)!;
-              return cardThumb(growth.card(c.cardId)!, { level: c.level, size: 44 });
-            }))), '確定強化');
-          if (!ok) return;
-        }
-        const r = view.run(risky.length > 0);
+        if (view.confirm && !await confirmDialog(view.confirm.title, view.confirm.body, view.confirm.ok)) return;
+        const r = view.run(!!view.confirm);
         if (!r.ok) return toast(r.error.message);
         commit(r.save);
         const after = r.save.inventory.cards.find((c) => c.uid === uid)!;
@@ -182,6 +172,28 @@ export const enhanceScreen: ScreenDef = {
   },
 };
 
+/** 強化吃到高星角色卡時的確認 */
+function riskyConfirm(risky: string[]): ModeView['confirm'] {
+  if (!risky.length) return undefined;
+  const save = getSave();
+  return {
+    title: '確認素材',
+    ok: '確定強化',
+    body: h('div', null,
+      h('p', { style: { margin: '0 0 8px' } }, `素材裡有 ${risky.length} 張 ${growth.rules.enhanceConfirmRarity}★ 以上的角色卡，強化後會消失。確定要用嗎？`),
+      h('div', { class: 'row wrap', style: { gap: '6px' } }, risky.map((m) => {
+        const c = save.inventory.cards.find((x) => x.uid === m)!;
+        return cardThumb(growth.card(c.cardId)!, { level: c.level, size: 44 });
+      }))),
+  };
+}
+
+/** 突破用到星輝結晶時的確認：寫出會用掉幾顆、剩幾顆 */
+function crystalConfirm(usage: { used: number; left: number }): ModeView['confirm'] {
+  if (!usage.used) return undefined;
+  return { title: '使用星輝結晶', ok: '確定突破', body: `這次突破會用掉 ${usage.used} 顆星輝結晶，用完後剩 ${usage.left} 顆。確定要用嗎？` };
+}
+
 function modeView(mode: GrowthMode, owned: OwnedCard, def: CardDef, selected: string[]): ModeView {
   const save = getSave();
   const stats = computeStats(def, owned, growth.rules);
@@ -211,7 +223,7 @@ function modeView(mode: GrowthMode, owned: OwnedCard, def: CardDef, selected: st
       coin: p?.ok ? p.coin : 0,
       canRun: !!p?.ok,
       run: (confirmed) => enhance(getSave(), growth, owned.uid, selected, { confirmRisky: confirmed }),
-      risky: enhanceRiskyMaterials(save, growth, selected),
+      confirm: riskyConfirm(enhanceRiskyMaterials(save, growth, selected)),
       onSuccess: (before, after) => ({
         headline: after.level > before.level ? '等級提升！' : '強化完成',
         detail: h('div', null,
@@ -252,21 +264,23 @@ function modeView(mode: GrowthMode, owned: OwnedCard, def: CardDef, selected: st
     return {
       info: h('div', null,
         h('div', { class: 'limit-pips' }, Array.from({ length: max }, (_, i) => h('span', { class: ['pip', i < owned.limitBreak && 'on', i >= owned.limitBreak && i < next && 'next'] }))),
-        h('p', { class: 'small-text dim', style: { margin: '6px 0 0' } }, `放入同名卡突破，每階基礎數值 +${Math.round(growth.rules.limitBreakStatBonus * 100)}%，最多 +${max}。突破也是星紋覺醒的條件。`)),
+        h('p', { class: 'small-text dim', style: { margin: '6px 0 0' } }, `放入同名卡或星輝結晶突破（可以混用），每階基礎數值 +${Math.round(growth.rules.limitBreakStatBonus * 100)}%，最多 +${max}。突破也是星紋覺醒的條件。`)),
       preview: !selected.length ? noPick : h('div', null,
         h('div', { class: 'growth-level-jump' }, h('span', null, `+${owned.limitBreak}`), h('span', { class: 'arrow' }, '→'), h('strong', { class: 'up' }, `+${next}`)),
         statTable(statLines(stats, computeStats(def, { ...owned, limitBreak: next }, growth.rules)))),
       blocked: owned.limitBreak >= max ? `已經突破到 +${max}` : undefined,
       coin: 0,
       canRun: selected.length > 0,
-      run: () => limitBreak(getSave(), growth, owned.uid, selected),
+      run: (confirmed) => limitBreak(getSave(), growth, owned.uid, selected, { confirmCrystals: confirmed }),
+      confirm: crystalConfirm(crystalUsage(save, growth, selected)),
       onSuccess: (before, after) => ({
         headline: '突破成功！',
         detail: h('div', null,
           h('div', { class: 'growth-level-jump big' }, h('span', null, `+${before.limitBreak}`), h('span', { class: 'arrow' }, '→'), h('strong', { class: 'up' }, `+${after.limitBreak}`)),
           statTable(statLines(computeStats(def, before, growth.rules), computeStats(def, after, growth.rules)))),
       }),
-      autoPick: () => autoPickCount(materialOptions(getSave(), growth, owned.uid, 'limit'), max - owned.limitBreak),
+      // 自動選擇只放同名卡；星輝結晶要玩家自己點
+      autoPick: () => autoPickLimitBreak(getSave(), growth, owned.uid),
     };
   }
 

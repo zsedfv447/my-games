@@ -9,6 +9,7 @@ import { openDialog } from '../components/overlay';
 import { h, svg } from '../dom';
 import { statusName } from '../status-labels';
 import { floatLabel } from './effects';
+import { ringSummary } from './ring';
 import { isMemberSealed } from '../../battle/skills/status';
 
 // ---------- 屬性剋制 ----------
@@ -102,6 +103,7 @@ function showEnemyInfo(state: BattleState, i: number, config: BattleConfig): voi
   const dlg = openDialog(e.def.name, h('div', { class: 'list' },
     h('div', { class: 'row between' }, h('span', null, '屬性'), h('strong', null, `${ATTRIBUTE_NAMES[e.def.attribute]}（弱：${weakText(e, config)}）`)),
     h('div', { class: 'row between' }, h('span', null, '下次攻擊'), h('strong', null, next)),
+    ringSummary(e) && h('div', { class: 'small-text' }, h('strong', null, '七曜環：'), ringSummary(e)),
     h('p', { class: 'small-text dim' }, '預估傷害已計入目前的減傷效果，隊長技減傷另計。'),
     list.length
       ? list.map((a) => h('div', { class: ['row between small-text', a.done && 'dim'] }, h('span', null, TRIGGER_TEXT[a.trigger](a)), h('span', null, `${abilityText(a)}${a.done ? '（已觸發）' : ''}`)))

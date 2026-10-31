@@ -3728,6 +3728,35 @@
     "flavor": "內部有星座紋路緩緩轉動的水晶球。蝕屬卡片進化與星紋覺醒的素材。"
   },
   {
+    "id": "c921",
+    "name": "星輝結晶",
+    "attribute": "light",
+    "race": "material",
+    "rarity": 5,
+    "maxLevel": 1,
+    "stats": {
+      "hp": [
+        1,
+        1
+      ],
+      "atk": [
+        1,
+        1
+      ],
+      "rcv": [
+        1,
+        1
+      ]
+    },
+    "growthCurve": 1,
+    "cost": 1,
+    "expValue": 100,
+    "sellValue": 100,
+    "archetypes": [],
+    "art": {},
+    "flavor": "墜落的星骸冷卻千年後，核心凝成的透明結晶。握在掌心時會映出持有者契約的星紋，能代替一張同名卡完成突破。"
+  },
+  {
     "id": "c701",
     "name": "苔蹄小鹿・芽芽",
     "attribute": "wood",

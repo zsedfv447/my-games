@@ -19,7 +19,13 @@ export const tokenName = (id: string) => TOKEN_NAMES.get(id) ?? id;
 
 const stageKind = new Map(gameData.stages.map((s) => [s.id, s.kind]));
 const evolvedForms = new Set(gameData.cards.flatMap((c) => (c.evolution ? [c.evolution.to] : [])));
-export const questDerived = (save: SaveData): DerivedCounters => derivedCounters(save, (id) => stageKind.get(id), evolvedForms);
+const nemesisEvents = new Set(gameData.events.filter((e) => e.series === 'nemesis').map((e) => e.id));
+const derivedData = {
+  evolvedForms,
+  nemesisStages: new Set(gameData.stages.filter((s) => s.event && nemesisEvents.has(s.event)).map((s) => s.id)),
+  cardTotal: gameData.cards.length,
+};
+export const questDerived = (save: SaveData): DerivedCounters => derivedCounters(save, (id) => stageKind.get(id), derivedData);
 
 // ---------- 獎勵 ----------
 export interface RewardPart {
@@ -58,7 +64,7 @@ export function shopPrice(item: ShopItemDef): { icon: ResourceIcon; amount: numb
   return { icon: 'token', amount, token };
 }
 
-const PER_TEXT = { day: '每日', week: '每週', forever: '限購', event: '活動限購' } as const;
+const PER_TEXT = { day: '每日', week: '每週', month: '每月', forever: '限購', event: '活動限購' } as const;
 
 export function limitText(item: ShopItemDef, remaining: number): string {
   if (!item.limit) return '不限次數';

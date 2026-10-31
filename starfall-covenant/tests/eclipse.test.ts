@@ -119,6 +119,21 @@ describe('星蝕：解鎖、結算、星章獎勵', () => {
     expect(eclipseLockReason(first.save, eclipseChapterStages(1, gameData)[1], gameData.stages, gameData.chapters)).toBeNull();
   });
 
+  it('c921 已上線：章節最後一關的星蝕首通真的會發星輝結晶', () => {
+    expect(gameData.cards.some((c) => c.id === 'c921')).toBe(true);
+    const stages = eclipseChapterStages(1, gameData);
+    const last = stages.at(-1)!;
+    // 前面的星蝕關都通過了，才能打最後一關
+    const save = { ...starredChapter1(), eclipse: { cleared: ch1.slice(0, -1).map((s) => s.id), stars: {} } };
+    expect(eclipseLockReason(save, last, gameData.stages, gameData.chapters)).toBeNull();
+    const done = completeEclipseStage(save, last, summary, { stages: gameData.stages }, config, createRng(1), NOW);
+    const owned = (sv: SaveData) => sv.inventory.cards.filter((c) => c.cardId === 'c921').length;
+    expect(owned(done.save) - owned(save)).toBe(ECLIPSE.finalBossCrystal);
+    // 再打一次不會再發
+    const again = completeEclipseStage(done.save, last, summary, { stages: gameData.stages }, config, createRng(1), NOW);
+    expect(owned(again.save)).toBe(owned(done.save));
+  });
+
   it('星蝕星章全滿可以領一次章節獎勵', () => {
     let save = starredChapter1();
     expect(eclipseRewardStatus(save, 1, gameData.stages)).toBe('incomplete');

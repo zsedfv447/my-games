@@ -4,7 +4,7 @@ import { gameData } from '../src/data/load';
 import { createNewSave } from '../src/save/save';
 import { dateKey } from '../src/progression/time';
 import {
-  PUZZLE_COIN, STREAK_GEMS, claimPuzzle, currentStreak, dailyPuzzle, dayNumber, judgePuzzle, previousDay, puzzleOf, solvedToday,
+  PUZZLE_COIN, claimPuzzle, currentStreak, dailyPuzzle, dayNumber, judgePuzzle, previousDay, puzzleOf, solvedToday,
 } from '../src/progression/puzzle';
 
 const config = { ...gameData.config, newPlayer: { ...gameData.config.newPlayer, starterCards: [] } };
@@ -92,7 +92,7 @@ describe('獎勵與連續天數', () => {
     expect(claimPuzzle(s0, old, old.solution, config, now)).toEqual({ ok: false, reason: 'wrongDay' });
   });
 
-  it('連續 7 天送 1 星晶，第 14 天再送；中斷後重新計算', () => {
+  it('連續 7 天送 3 星晶、第 14 天送 5（里程碑）；中斷後重新計算', () => {
     let s = createNewSave(config, at(2026, 11, 1));
     const gems0 = s.player.gems;
     const gemDays: number[] = [];
@@ -103,7 +103,7 @@ describe('獎勵與連續天數', () => {
       s = r.save;
     }
     expect(gemDays).toEqual([7, 14]);
-    expect(s.player.gems).toBe(gems0 + 2 * STREAK_GEMS);
+    expect(s.player.gems).toBe(gems0 + 3 + 5);
     // 跳過 11/15，11/16 重新從 1 開始
     expect(currentStreak(s, at(2026, 11, 16))).toBe(0);
     expect(solve(s, at(2026, 11, 16)).streak).toBe(1);

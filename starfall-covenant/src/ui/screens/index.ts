@@ -10,6 +10,7 @@ import { placeholderScreens } from './placeholders';
 import { prepareScreen } from './prepare';
 import { battleScreen } from './battle';
 import { stagesScreen } from './stages';
+import { abyssScreen } from './abyss';
 import { teamScreen } from './team';
 import { cardScreen, cardsScreen } from './cards';
 import { summonScreen, summonRatesScreen, summonHistoryScreen } from './summon';
@@ -22,6 +23,7 @@ import { achievementsScreen, questsScreen } from './quests';
 import { collectionCardScreen, collectionScreen } from './collection';
 import { helperScreen } from './helper';
 import { notebookScreen } from './notebook';
+import { titlesScreen } from './titles';
 import { puzzleScreen } from './puzzle';
 
 /** GDD 2.5 全部畫面；正式畫面完成後取代同名的建置中畫面 */
@@ -38,6 +40,7 @@ export const SCREENS: ScreenDef[] = [
   prepareScreen,
   battleScreen,
   stagesScreen,
+  abyssScreen,
   teamScreen,
   cardsScreen,
   cardScreen,
@@ -55,5 +58,6 @@ export const SCREENS: ScreenDef[] = [
   collectionCardScreen,
   helperScreen,
   notebookScreen,
+  titlesScreen,
   puzzleScreen,
 ];

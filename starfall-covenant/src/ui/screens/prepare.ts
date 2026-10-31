@@ -1,4 +1,5 @@
 // 出戰確認：關卡情報、推薦流派、隊伍限制或借用隊伍、星章條件，確認後扣體力進入戰鬥
+import { battleDataFor, findStage } from '../stage-lookup';
 import { h, svg } from '../dom';
 import { gameData } from '../../data/load';
 import '../flow-polish.css';
@@ -22,11 +23,11 @@ import { enemyArtUrl } from '../art/enemy-art';
 import { ATTRIBUTE_NAMES, ORB_COLORS } from '../art/palette';
 import { stageIntel } from '../stage-intel';
 import { recordsOf } from '../../progression/records';
-import { battleDataFor, stageById, stageCleared, stageStars } from '../eclipse-view';
+import { stageCleared, stageStars } from '../eclipse-view';
 import { eclipseScale, enterEclipseStage, isEclipseId } from '../../progression/eclipse';
 import '../convenience.css';
 
-const KIND_LABEL: Record<StageDef['kind'], string> = { main: '主線', daily: '每日', event: '活動', tower: '挑戰之塔', trial: '流派試煉', side: '外傳' };
+const KIND_LABEL: Record<StageDef['kind'], string> = { main: '主線', daily: '每日', event: '活動', tower: '挑戰之塔', trial: '流派試煉', side: '外傳', abyss: '星淵回廊' };
 
 const ENTER_ERRORS: Record<string, string> = {
   locked: '還沒解鎖這一關',
@@ -93,7 +94,7 @@ export const prepareScreen: ScreenDef = {
   chrome: 'sub',
   parent: 'adventure',
   render({ route, nav }) {
-    const stage = stageById(route.args[0] ?? '');
+    const stage = findStage(route.args[0] ?? '');
     if (!stage) return h('div', null, emptyState('adventure', '找不到這一關'));
     const eclipse = isEclipseId(stage.id);
 

@@ -18,6 +18,8 @@ import { buzz, flashClass, skillCutin } from '../battle-fx/effects';
 import { openPauseMenu, type PauseHandle } from '../battle-fx/pause';
 import { clearCombo, finishCombo, flashReadySkills, markMatchups, markSeals, renderCombo, renderIntent, weakHint } from '../battle-fx/readability';
 import { playStrikes } from '../battle-fx/strikes';
+import { ringBadge } from '../battle-fx/ring';
+import { ringOf } from '../../battle/skills/ring';
 import { userAsset } from '../assets';
 import { audio } from '../audio';
 import { badge, bar, button, emptyState, iconButton } from '../components/basic';
@@ -50,7 +52,9 @@ import { canAct, reenableAfterCancel } from '../battle-guard';
 import { battlePolicy, type BattlePolicy } from '../battle-policy';
 import { grantClearExp, nextStageButton, unlockNotice } from '../stage-clear';
 import { endBattle, openStageBattle, saveBattle } from '../battle-session';
-import { battleDataFor, stageById, stageCleared } from '../eclipse-view';
+import { battleDataFor, findStage } from '../stage-lookup';
+import { completeAbyssFloor } from '../../progression/abyss';
+import { stageCleared } from '../eclipse-view';
 import { completeEclipseStage, isEclipseId } from '../../progression/eclipse';
 import { collectedDrops } from '../../progression/active-battle';
 import type { CardExpGain } from '../../growth';
@@ -116,7 +120,7 @@ function setup(stageId: string, nav: Navigator, variant?: string): Setup | strin
     const { stage, data } = practiceSetup(mode);
     return { stage, data, practice: true, practiceMode: mode, battle: startBattle(stage, DEMO_TEAM, DEMO_HELPER, createRng(), data) };
   }
-  const stage = stageById(stageId);
+  const stage = findStage(stageId);
   if (!stage) return '找不到這一關';
   const opened = openStageBattle(stage);
   return typeof opened === 'string' ? opened : { stage, data: battleDataFor(stage), practice: false, ...opened };
@@ -277,6 +281,7 @@ class BattleView {
         h('div', { class: 'enemy-art' }, enemyArt(e, boss)),
         h('div', { class: 'enemy-name' }, badge(ATTRIBUTE_NAMES[e.def.attribute], `attr-${e.def.attribute}`), e.def.name),
         weakHint(e, this.s.data.config.battle),
+        h('div', { class: 'ring-host', dataset: { broken: (ringOf(e)?.broken ?? []).join(',') } }, ringBadge(e)),
         chipRow(enemyChips(e), 'enemy-chips'),
         bar({ value: e.hp, max: e.maxHp, variant: 'hp' }),
       );
@@ -301,6 +306,14 @@ class BattleView {
     el.classList.toggle('dead', e.hp <= 0);
     el.classList.toggle('targeted', i === this.state.target);
     el.querySelector('.enemy-chips')!.replaceWith(chipRow(enemyChips(e), 'enemy-chips'));
+    // 七曜環：比對上次畫的已破格子，新點掉的那幾格播一下破裂
+    const ringHost = el.querySelector<HTMLElement>('.ring-host');
+    if (ringHost) {
+      const broken = ringOf(e)?.broken ?? [];
+      const was = (ringHost.dataset.broken ?? '').split(',').filter(Boolean);
+      ringHost.replaceChildren(...[ringBadge(e, broken.filter((o) => !was.includes(o)))].filter((x): x is HTMLElement => !!x));
+      ringHost.dataset.broken = broken.join(',');
+    }
     // 減傷狀態會變（護盾到期、輪替），弱點跟著更新
     el.querySelector('.weak-hint')?.replaceWith(weakHint(e, this.s.data.config.battle));
   }
@@ -659,9 +672,12 @@ class BattleView {
     if (this.policy.grantsRewards) {
       const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
       const ctx = stageContext(gameData.stages, gameData.events);
+      // 星淵回廊：每週的關卡不寫進 clearedStages，首通改成「本週首通」（progression/abyss.ts）
       // 星蝕版的通關與星章記在 save.eclipse（progression/eclipse.ts）
-      const done = eclipse
-        ? completeEclipseStage(getSave(), this.s.stage, { ...result, team: teamUnits }, ctx, gameData.config, createRng(this.s.dropSeed), Date.now())
+      const done = this.s.stage.kind === 'abyss'
+        ? completeAbyssFloor(getSave(), this.s.stage, { ...result, team: teamUnits }, ctx, gameData.config, Date.now(), gameData.cards)
+        : eclipse
+          ? completeEclipseStage(getSave(), this.s.stage, { ...result, team: teamUnits }, ctx, gameData.config, createRng(this.s.dropSeed), Date.now())
         : completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, ctx, gameData.config, createRng(this.s.dropSeed), Date.now(), this.s.drops && plannedCards(this.s.drops));
       const exp = grantClearExp(done.save, this.s.memberUids ?? [], done.result.cardExp);
       expGains = exp.gains;
