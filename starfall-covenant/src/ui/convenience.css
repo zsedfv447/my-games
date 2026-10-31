@@ -103,3 +103,12 @@
 /* ---------- 契約週報 ---------- */
 .weekly-report { text-align: left; }
 .weekly-leader { gap: 10px; align-items: flex-start; margin-top: 10px; }
+
+/* ---------- 隊伍能力檢查、章節先展示獎勵 ---------- */
+.team-caps { margin-top: 8px; }
+.cap-chip { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 10px; font-size: 11px; font-weight: 700; border: 1px solid var(--line-strong); }
+.cap-chip.have { border-color: #35b877; color: #7ff0b2; }
+.cap-chip.missing { color: var(--text-faint); }
+.preview-cards { gap: 10px; }
+.preview-card { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 10px; }
+.preview-unlocks { margin: 8px 0 0; padding-left: 18px; }
