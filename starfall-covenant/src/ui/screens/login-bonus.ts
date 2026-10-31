@@ -56,15 +56,17 @@ export function shouldAutoShowLogin(save: SaveData, now: number, shownFor: strin
   return !isTutorialActive(save) && canClaimLogin(save, now) && shownFor !== dateKey(now);
 }
 
-export function maybeShowLoginPopup(onClaimed?: () => void): void {
+/** 回傳這次有沒有跳出（主城用來決定要不要接著跳契約週報） */
+export function maybeShowLoginPopup(onClaimed?: () => void): boolean {
   const now = Date.now();
-  if (!shouldAutoShowLogin(getSave(), now, popupShownFor)) return;
+  if (!shouldAutoShowLogin(getSave(), now, popupShownFor)) return false;
   popupShownFor = dateKey(now);
   const body = h('div', { class: 'login-popup' }, loginGrid());
   const dlg = openDialog('七日星約', body, [
     button('稍後', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
     button('領取', { variant: 'primary', icon: 'gift', sound: false, onClick: () => { if (claimToday()) { dlg.close(); onClaimed?.(); } } }),
   ], { scope: 'route' });
+  return true;
 }
 
 export const loginBonusScreen: ScreenDef = {

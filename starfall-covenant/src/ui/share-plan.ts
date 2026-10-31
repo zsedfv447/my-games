@@ -27,6 +27,8 @@ export interface ShareInput {
   /** 通關時間（毫秒） */
   at: number;
   firstClear: boolean;
+  /** 使用中的契印師稱號（選填） */
+  title?: string;
 }
 
 export interface ShareStat {
@@ -82,7 +84,46 @@ export function sharePlan(input: ShareInput): SharePlan {
     starLine: input.stars.map((g) => (g ? '★' : '☆')).join(''),
     starRows: input.starTexts.map((text, i) => ({ text, got: !!input.stars[i] })),
     slots: memberSlots(input.team, 408),
-    footer: `${input.playerName}・契印師 Lv.${input.playerLevel}・${shareDate(input.at)}`,
+    footer: `${input.title ? `「${input.title}」` : ''}${input.playerName}・契印師 Lv.${input.playerLevel}・${shareDate(input.at)}`,
     fileName: `starfall-${input.stageName.replace(/[\\/:*?"<>|\s]/g, '')}-${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}.png`,
+  };
+}
+
+// ---------- 契約週報（提案 110） ----------
+
+export interface WeeklyShareInput {
+  /** 週一日期 */
+  week: string;
+  /** 10/26～11/01 */
+  range: string;
+  wins: number;
+  battles: number;
+  maxCombo: number;
+  puzzleDays: number;
+  /** 回顧卡的文字列（最常並肩的隊長、星淵最高層…），最多 4 列 */
+  lines: string[];
+  /** 最常並肩的隊長＋新收的星靈 */
+  members: ShareMember[];
+  playerName: string;
+  playerLevel: number;
+  title?: string;
+}
+
+export function weeklySharePlan(input: WeeklyShareInput): SharePlan {
+  return {
+    title: '契約週報',
+    stageName: '上週回顧',
+    place: input.range,
+    badge: input.title ? `「${input.title}」` : undefined,
+    stats: [
+      { label: '勝場', value: `${input.wins}` },
+      { label: '最高 Combo', value: input.maxCombo ? `${input.maxCombo}` : '—' },
+      { label: '謎題', value: `${input.puzzleDays} 天` },
+    ],
+    starLine: '',
+    starRows: input.lines.slice(0, 4).map((text) => ({ text, got: true })),
+    slots: memberSlots(input.members.slice(0, 5), 408),
+    footer: `${input.title ? `「${input.title}」` : ''}${input.playerName}・契印師 Lv.${input.playerLevel}・出戰 ${input.battles} 場`,
+    fileName: `starfall-weekly-${input.week.replace(/-/g, '')}.png`,
   };
 }
