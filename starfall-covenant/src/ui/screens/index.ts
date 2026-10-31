@@ -25,6 +25,7 @@ import { helperScreen } from './helper';
 import { notebookScreen } from './notebook';
 import { titlesScreen } from './titles';
 import { puzzleScreen } from './puzzle';
+import { bestiaryEnemyScreen, bestiaryScreen } from './bestiary';
 
 /** GDD 2.5 全部畫面；正式畫面完成後取代同名的建置中畫面 */
 export const SCREENS: ScreenDef[] = [
@@ -60,4 +61,6 @@ export const SCREENS: ScreenDef[] = [
   notebookScreen,
   titlesScreen,
   puzzleScreen,
+  bestiaryScreen,
+  bestiaryEnemyScreen,
 ];

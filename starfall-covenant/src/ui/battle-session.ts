@@ -8,10 +8,15 @@ import {
   abandonActiveBattle, activeBattleFor, beginActiveBattle, clearActiveBattle, dropSeed, recordBattleSnapshot,
 } from '../progression/active-battle';
 import { planDrops, planMatches, type DropPlan } from '../progression/drops';
+import { codexEnemies, markEnemiesSeen } from '../progression/bestiary';
+import { gameData } from '../data/load';
 import { confirmDialog, confirmOnScreen } from './components/overlay';
 import type { Navigator } from './router';
 import { buildSortieTeam } from './sortie';
 import { commit, getSave, growth } from './state';
+
+let codexIds: Set<string> | undefined;
+const codexEnemyIds = () => (codexIds ??= new Set(codexEnemies(gameData.enemies, gameData.stages).map((e) => e.id)));
 
 /** 出戰確認扣過體力後呼叫：把隊伍、亂數種子與骰好的掉落寫進存檔，當作這一關的入場券 */
 export function armBattle(stageId: string, drops?: DropPlan): void {
@@ -20,7 +25,9 @@ export function armBattle(stageId: string, drops?: DropPlan): void {
   const team = buildSortieTeam(stage, getSave(), growth.card);
   const seed = Math.floor(Math.random() * 2 ** 32);
   const plan = drops && planMatches(drops, stage) ? drops : planDrops(stage, createRng(dropSeed({ seed })));
-  commit(beginActiveBattle(getSave(), { stageId, seed, members: team.members, helper: team.helper, drops: plan }, Date.now()));
+  const armed = beginActiveBattle(getSave(), { stageId, seed, members: team.members, helper: team.helper, drops: plan }, Date.now());
+  // 星骸觀測錄：開戰就記下這一關的敵人
+  commit(markEnemiesSeen(armed, stage, codexEnemyIds()));
 }
 
 export interface StageBattle {
