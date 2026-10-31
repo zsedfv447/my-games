@@ -5,6 +5,8 @@ import { gameData } from '../data/load';
 import { clearConstellation } from './components/constellation-view';
 import { openShareCard } from './components/share-card';
 import { getSave } from './state';
+import { equippedTitle } from '../progression/titles';
+import { titleContext } from './economy';
 import type { ShareMember } from './share-plan';
 
 const KIND_PLACE: Record<StageDef['kind'], string> = { main: '主線', daily: '每日關卡', event: '限時活動', tower: '挑戰之塔', trial: '流派試煉', side: '外傳', abyss: '星淵回廊' };
@@ -47,5 +49,6 @@ export function shareClear(
     playerLevel: save.player.level,
     at: Date.now(),
     firstClear,
+    title: equippedTitle(save, titleContext(save))?.name,
   }, info?.chapter);
 }

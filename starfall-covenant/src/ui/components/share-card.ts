@@ -9,6 +9,7 @@ import { button } from './basic';
 import { cardIconUrl, cardPortraitUrl } from './card-thumb';
 import { chapterLayout } from './constellation-view';
 import { overlayRoot, toast } from './overlay';
+import { endOnRouteChange } from '../route-scope';
 import '../constellation.css';
 
 const cardById = new Map(gameData.cards.map((c) => [c.id, c]));
@@ -209,7 +210,11 @@ export async function renderShareCard(plan: SharePlan, chapter?: number): Promis
 
 /** 產生分享圖並顯示預覽，可儲存或用系統分享 */
 export async function openShareCard(input: ShareInput, chapter?: number): Promise<void> {
-  const plan = sharePlan(input);
+  return openSharePreview(sharePlan(input), chapter);
+}
+
+/** 依版面畫出分享圖並顯示預覽（結算的契約回憶、契約週報共用） */
+export async function openSharePreview(plan: SharePlan, chapter?: number): Promise<void> {
   let blob: Blob;
   try {
     blob = await renderShareCard(plan, chapter);
@@ -220,21 +225,22 @@ export async function openShareCard(input: ShareInput, chapter?: number): Promis
   const url = URL.createObjectURL(blob);
   const file = new File([blob], plan.fileName, { type: 'image/png' });
   const canShare = typeof navigator.canShare === 'function' && navigator.canShare({ files: [file] });
-  const layer = h('div', { class: 'overlay rv-overlay', role: 'dialog', 'aria-modal': 'true', 'aria-label': '契約回憶' });
-  const close = () => {
+  const layer = h('div', { class: 'overlay rv-overlay', role: 'dialog', 'aria-modal': 'true', 'aria-label': plan.title });
+  // 換畫面時自動關閉（route-scope）
+  const close = endOnRouteChange(() => {
     layer.classList.add('closing');
     setTimeout(() => { layer.remove(); URL.revokeObjectURL(url); }, 140);
-  };
+  });
   const save = () => {
     const a = h('a', { href: url, download: plan.fileName });
     document.body.appendChild(a);
     a.click();
     a.remove();
   };
-  const share = () => void navigator.share({ files: [file], title: '星骸契約・契約回憶', text: `${plan.stageName}　${plan.stats.map((s) => `${s.label} ${s.value}`).join('・')}` }).catch(() => {});
+  const share = () => void navigator.share({ files: [file], title: `星骸契約・${plan.title}`, text: `${plan.stageName}　${plan.stats.map((s) => `${s.label} ${s.value}`).join('・')}` }).catch(() => {});
   layer.appendChild(h('section', { class: 'panel gold rv-panel share-preview' },
-    h('h2', { class: 'rv-title' }, '契約回憶'),
-    h('img', { src: url, alt: `${plan.stageName} 的契約回憶` }),
+    h('h2', { class: 'rv-title' }, plan.title),
+    h('img', { src: url, alt: `${plan.stageName} 的${plan.title}` }),
     h('div', { class: 'rv-actions' },
       button('關閉', { variant: 'ghost', sound: 'back', onClick: close }),
       button('儲存圖片', { variant: canShare ? undefined : 'primary', onClick: save }),

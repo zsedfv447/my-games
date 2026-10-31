@@ -99,3 +99,7 @@
 .note-title > span:first-child { flex: 1; font-size: 15px; font-weight: 700; }
 .home-title { display: block; margin-top: 2px; padding: 0; border: none; background: none; color: var(--gold-soft); font: inherit; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; }
 .puzzle-reward { white-space: pre-line; }
+
+/* ---------- 契約週報 ---------- */
+.weekly-report { text-align: left; }
+.weekly-leader { gap: 10px; align-items: flex-start; margin-top: 10px; }

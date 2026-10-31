@@ -1,5 +1,7 @@
 // 契印師手札：個人戰績（最高 Combo、單回合最高傷害、最快通關、隊長與流派的通關次數）。純邏輯，操作 SaveData。
 import type { SaveData } from '../core/types';
+import { parseAbyssId } from './abyss';
+import { weekKey } from './time';
 
 /** 契印師手札：個人戰績（存在 SaveData.records，選填） */
 export interface PlayerRecords {
@@ -15,6 +17,53 @@ export interface PlayerRecords {
   leaderClears: Record<string, number>;
   /** 流派 id → 通關次數（依出戰隊伍的主流派） */
   archetypeClears: Record<string, number>;
+  /** 每週累計（週一日期 → 該週戰績），給「契約週報」用；只保留最近 WEEKS_KEPT 週（選填） */
+  weeks?: Record<string, WeekStats>;
+  /** 已經自動跳出過週報的那一週（週一日期）（選填） */
+  reportShownFor?: string;
+}
+
+/** 一週的戰績 */
+export interface WeekStats {
+  battles: number;
+  wins: number;
+  maxCombo: number;
+  maxTurnDamage: number;
+  /** 隊長卡號 → 本週通關次數 */
+  leaderClears: Record<string, number>;
+  /** 本週通關過的星淵回廊最高層（0＝沒打） */
+  abyssBest: number;
+  /** 本週流派克星週關卡的通關次數 */
+  nemesisClears: number;
+}
+
+export const WEEKS_KEPT = 6;
+
+export function emptyWeek(): WeekStats {
+  return { battles: 0, wins: 0, maxCombo: 0, maxTurnDamage: 0, leaderClears: {}, abyssBest: 0, nemesisClears: 0 };
+}
+
+/** 把一場戰鬥加進該週的累計，並只保留最近 WEEKS_KEPT 週 */
+function addToWeek(weeks: Record<string, WeekStats> | undefined, e: BattleRecordEntry & { at: number }): Record<string, WeekStats> {
+  const key = weekKey(e.at);
+  const w = { ...emptyWeek(), ...weeks?.[key] };
+  const next: WeekStats = {
+    ...w,
+    battles: w.battles + 1,
+    wins: w.wins + (e.won ? 1 : 0),
+    maxCombo: Math.max(w.maxCombo, e.maxCombo),
+    maxTurnDamage: Math.max(w.maxTurnDamage, Math.round(e.maxTurnDamage)),
+    leaderClears: { ...w.leaderClears },
+  };
+  if (e.won) {
+    if (e.leaderCardId) next.leaderClears[e.leaderCardId] = (next.leaderClears[e.leaderCardId] ?? 0) + 1;
+    const abyss = parseAbyssId(e.stageId);
+    if (abyss) next.abyssBest = Math.max(next.abyssBest, abyss.floor);
+    if (e.stageId.startsWith('nm-')) next.nemesisClears++;
+  }
+  const all = { ...weeks, [key]: next };
+  const keep = Object.keys(all).sort().slice(-WEEKS_KEPT);
+  return Object.fromEntries(keep.map((k) => [k, all[k]]));
 }
 
 export type RecordKind = 'maxCombo' | 'maxTurnDamage' | 'fastest';
@@ -27,6 +76,8 @@ export interface BattleRecordEntry {
   maxTurnDamage: number;
   leaderCardId?: string;
   archetype?: string | null;
+  /** 戰鬥結束的時間；有給才記進每週累計 */
+  at?: number;
 }
 
 export function emptyRecords(): PlayerRecords {
@@ -66,6 +117,7 @@ export function applyBattleRecord(save: SaveData, e: BattleRecordEntry): { save:
     if (e.leaderCardId) next.leaderClears[e.leaderCardId] = (next.leaderClears[e.leaderCardId] ?? 0) + 1;
     if (e.archetype) next.archetypeClears[e.archetype] = (next.archetypeClears[e.archetype] ?? 0) + 1;
   }
+  if (e.at !== undefined) next.weeks = addToWeek(r.weeks, { ...e, at: e.at });
   return { save: { ...save, records: next }, newRecords };
 }
 

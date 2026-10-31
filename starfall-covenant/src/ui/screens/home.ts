@@ -17,6 +17,7 @@ import '../flow-polish.css';
 import { maybeOfferResume } from '../battle-session';
 import { equippedTitle } from '../../progression/titles';
 import { titleContext } from '../title-context';
+import { maybeShowWeeklyReport } from '../weekly-popup';
 
 /** 捷徑上的紅點：有可領的登入、任務、成就或圖鑑收集獎勵 */
 const BADGE_OF: Record<string, keyof HomeBadges> = { 'login-bonus': 'login', quests: 'quests', achievements: 'achievements', collection: 'collection', notebook: 'titles' };
@@ -42,7 +43,10 @@ export const homeScreen: ScreenDef = {
     audio.playBgm('home');
     // 每天第一次回到主城自動跳出登入獎勵（等畫面掛上後再開）
     // 有沒打完的戰鬥時先問要不要繼續，這次就不跳登入獎勵
-    const popup = maybeOfferResume(nav) ? undefined : setTimeout(() => maybeShowLoginPopup(() => root.querySelectorAll('[data-badge="login"]').forEach((el) => el.remove())), 350);
+    // 登入獎勵這次沒跳出時，接著看要不要跳上週的契約週報（每週一次）
+    const popup = maybeOfferResume(nav) ? undefined : setTimeout(() => {
+      if (!maybeShowLoginPopup(() => root.querySelectorAll('[data-badge="login"]').forEach((el) => el.remove()))) maybeShowWeeklyReport();
+    }, 350);
     onLeave(() => clearTimeout(popup));
     const bg = userAsset('backgrounds', 'home');
     const save = getSave();
