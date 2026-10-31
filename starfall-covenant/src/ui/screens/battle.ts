@@ -47,6 +47,7 @@ import { advanceTutorial } from '../tutorial/flow';
 import { skipTutorialNow } from '../tutorial/skip';
 import { BattleHud, liveSummary } from '../components/battle-hud';
 import { canAct, reenableAfterCancel } from '../battle-guard';
+import { battlePolicy, type BattlePolicy } from '../battle-policy';
 import { grantClearExp, nextStageButton, unlockNotice } from '../stage-clear';
 import { endBattle, openStageBattle, saveBattle } from '../battle-session';
 import { collectedDrops } from '../../progression/active-battle';
@@ -170,7 +171,11 @@ class BattleView {
     return { phase: this.state.phase, resolving: this.resolving };
   }
 
+  /** 練習場與新手教學不扣體力、不給獎勵、不寫手札與任務（battle-policy.ts） */
+  private readonly policy: BattlePolicy;
+
   constructor(private s: Setup, private nav: Navigator) {
+    this.policy = battlePolicy({ practice: s.practice, tutorial: !!s.guide });
     this.state = s.battle.getState();
     this.shownHp = this.state.hp;
     this.speed = getSettings().battleSpeed;
@@ -208,7 +213,7 @@ class BattleView {
       ev.on('poisonTick', (e) => this.queue.push({ kind: 'poison', damage: e.damage })),
       ev.on('enemyDefeated', (e) => this.fallen.push(e.enemy)),
     );
-    if (!s.practice && !s.guide) {
+    if (this.policy.recordsNotebook) {
       this.records = trackBattleRecords(s.battle, s.stage.id, s.memberUids ?? []);
       this.offs.push(this.records.dispose);
     }
@@ -235,7 +240,7 @@ class BattleView {
 
   /** 正式關卡每次行動結算後存檔 */
   private persist(): void {
-    if (!this.s.practice) saveBattle(this.s.battle);
+    if (this.policy.savesProgress) saveBattle(this.s.battle);
   }
 
   destroy(): void {
@@ -450,7 +455,7 @@ class BattleView {
     this.boardView.setEnabled(false);
     if (await confirmDialog('撤退', this.s.practice ? '要離開練習場嗎？' : '撤退會視為失敗，已消耗的體力不會退還。')) {
       this.s.battle.forfeit();
-      if (!this.s.practice) bus.emit('stageFailed', { stageId: this.s.stage.id });
+      if (this.policy.emitsStageEvents) bus.emit('stageFailed', { stageId: this.s.stage.id });
       this.leaveDefeated();
     } else if (reenableAfterCancel(wasEnabled, this.guard)) {
       this.boardView.setEnabled(true);
@@ -648,7 +653,7 @@ class BattleView {
     let loreGained: ResultNote[] = [];
     // 結算前的圖鑑：掉落卡是不是第一次獲得（NEW）
     const ownedBefore = [...getSave().collection.owned];
-    if (!this.s.practice) {
+    if (this.policy.grantsRewards) {
       const teamUnits = this.state.team.map((m) => ({ attribute: m.card.attribute, race: m.card.race }));
       const done = completeStage(getSave(), this.s.stage, { ...result, team: teamUnits }, stageContext(gameData.stages, gameData.events), gameData.config, createRng(this.s.dropSeed), Date.now(), this.s.drops && plannedCards(this.s.drops));
       const exp = grantClearExp(done.save, this.s.memberUids ?? [], done.result.cardExp);
@@ -704,7 +709,7 @@ class BattleView {
       share: () => shareClear(this.s.stage, this.state.team, this.s.memberUids ?? [], result, clear, firstClear, (this.s.stage.stars ?? []).map(starText)),
       leaderLine: bond?.thanks ?? leaderLineOf(this.state),
       actions: [
-        button(next ? '再戰' : '再戰一次', { variant: next ? 'ghost' : undefined, onClick: () => { this.dialog?.close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', [this.s.stage.id]); } }),
+        button(next ? '再戰' : '再戰一次', { variant: next ? 'ghost' : undefined, onClick: () => { this.dialog?.close(); this.nav.replace(this.s.practice ? 'battle' : 'prepare', this.s.practiceMode ? ['practice', this.s.practiceMode] : [this.s.stage.id]); } }),
         button('返回', { variant: next ? undefined : 'primary', onClick: () => leave() }),
         next,
       ],
@@ -728,14 +733,14 @@ class BattleView {
   private onLose(): void {
     audio.play('lose');
     const gems = getSave().player.gems;
-    const cost = this.s.practice ? 0 : CONTINUE_COST_GEMS;
+    const cost = this.policy.paidContinue ? CONTINUE_COST_GEMS : 0;
     const giveUp = () => {
       this.dialog?.close();
-      if (!this.s.practice) bus.emit('stageFailed', { stageId: this.s.stage.id });
+      if (this.policy.emitsStageEvents) bus.emit('stageFailed', { stageId: this.s.stage.id });
       this.leaveDefeated();
     };
     const doContinue = () => {
-      if (!this.s.practice) {
+      if (this.policy.paidContinue) {
         const paid = payContinue(getSave());
         if (!paid.ok) return toast('星晶不足');
         commit(paid.save);

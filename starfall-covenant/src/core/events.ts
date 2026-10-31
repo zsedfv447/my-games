@@ -17,7 +17,8 @@ export class EventBus<Events extends Record<string, unknown>> {
 
 /** 全遊戲共用事件（任務、成就、音效都靠這些事件計數） */
 export interface GameEvents extends Record<string, unknown> {
-  comboResolved: { combo: number; orbsCleared: number };
+  /** stageId：哪一關的戰鬥（練習場、教學也會發，任務計數只算正式關卡） */
+  comboResolved: { combo: number; orbsCleared: number; stageId?: string };
   stageCleared: { stageId: string; turns: number; stars: boolean[] };
   stageFailed: { stageId: string };
   cardObtained: { cardId: string; uid: string; source: 'gacha' | 'drop' | 'reward' };

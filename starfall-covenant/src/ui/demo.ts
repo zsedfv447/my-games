@@ -79,14 +79,20 @@ export const DEMO_HELPER: TeamMemberInput = { cardId: 'demo-c6', level: 40 };
 
 export type PracticeMode = 'normal' | 'darkOrbs' | 'attributeSeal' | 'percentFollowUp';
 
-/** 練習用的機制敵人：正式資料裡的示範敵人（e0046 幕紗星蛾、e0047 封紋司祭，不在任何關卡），生命與攻擊調低方便看效果 */
+/** 練習用的機制敵人：正式資料裡的示範敵人（e0046 幕紗星蛾、e0047 封紋司祭，不在任何關卡），生命與攻擊在練習場另外調整 */
 const MECHANIC_ENEMIES: Record<Exclude<PracticeMode, 'normal' | 'percentFollowUp'>, string> = { darkOrbs: 'e0046', attributeSeal: 'e0047' };
 
-export const PRACTICE_MODES: { id: PracticeMode; label: string }[] = [
-  { id: 'normal', label: '一般' },
-  { id: 'darkOrbs', label: '隱藏珠' },
-  { id: 'attributeSeal', label: '星紋封印' },
-  { id: 'percentFollowUp', label: '百分比追打' },
+/**
+ * 機制示範敵人在練習場的生命：開場觸發一次、之後每 3 回合再觸發。
+ * tools/practice-sim.ts 模擬示範隊伍：打得好的一回合約 1～3 萬，12 萬生命大約撐 4～12 回合，至少看得到 2～3 次機制。
+ */
+export const PRACTICE_MECHANIC_HP = 120_000;
+
+export const PRACTICE_MODES: { id: PracticeMode; label: string; description: string }[] = [
+  { id: 'normal', label: '一般', description: '三波示範敵人，熟悉轉珠、Combo 與主動技。' },
+  { id: 'darkOrbs', label: '隱藏珠', description: '敵人用星幕蓋住部分珠子，看不到顏色但照常消除；每 3 回合再蓋一次。' },
+  { id: 'attributeSeal', label: '星紋封印', description: '敵人封印隊長的屬性：被封印的隊員轉珠攻擊無效、不能施放主動技。' },
+  { id: 'percentFollowUp', label: '百分比追打', description: '隊長每次轉珠追打 Boss 最大生命 3%（上限 60,000），對上 400 萬生命的巨像。' },
 ];
 
 export const isPracticeMode = (v: string | undefined): v is PracticeMode => PRACTICE_MODES.some((m) => m.id === v);
@@ -98,7 +104,7 @@ export function practiceSetup(mode: PracticeMode = 'normal'): { stage: StageDef;
   if (!def) return { stage: DEMO_STAGE, data: DEMO_DATA };
   return {
     stage: { ...DEMO_STAGE, name: `練習場・${PRACTICE_MODES.find((m) => m.id === mode)!.label}`, waves: [{ enemies: [def.id], boss: true }] },
-    data: { ...DEMO_DATA, enemies: [...DEMO_DATA.enemies, { ...def, hp: 60000, atk: 300 }] },
+    data: { ...DEMO_DATA, enemies: [...DEMO_DATA.enemies, { ...def, hp: PRACTICE_MECHANIC_HP, atk: 300 }] },
   };
 }
 
