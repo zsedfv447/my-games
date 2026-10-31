@@ -77,10 +77,10 @@ export const DEMO_HELPER: TeamMemberInput = { cardId: 'demo-c6', level: 40 };
 
 // ---------- 練習場：敵人機制（隱藏珠、星紋封印） ----------
 
-export type PracticeMode = 'normal' | 'darkOrbs' | 'attributeSeal' | 'percentFollowUp';
+export type PracticeMode = 'normal' | 'darkOrbs' | 'attributeSeal' | 'percentFollowUp' | 'ringShield';
 
 /** 練習用的機制敵人：正式資料裡的示範敵人（e0046 幕紗星蛾、e0047 封紋司祭，不在任何關卡），生命與攻擊在練習場另外調整 */
-const MECHANIC_ENEMIES: Record<Exclude<PracticeMode, 'normal' | 'percentFollowUp'>, string> = { darkOrbs: 'e0046', attributeSeal: 'e0047' };
+const MECHANIC_ENEMIES: Record<Exclude<PracticeMode, 'normal' | 'percentFollowUp' | 'ringShield'>, string> = { darkOrbs: 'e0046', attributeSeal: 'e0047' };
 
 /**
  * 機制示範敵人在練習場的生命：開場觸發一次、之後每 3 回合再觸發。
@@ -93,6 +93,7 @@ export const PRACTICE_MODES: { id: PracticeMode; label: string; description: str
   { id: 'darkOrbs', label: '隱藏珠', description: '敵人用星幕蓋住部分珠子，看不到顏色但照常消除；每 3 回合再蓋一次。' },
   { id: 'attributeSeal', label: '星紋封印', description: '敵人封印隊長的屬性：被封印的隊員轉珠攻擊無效、不能施放主動技。' },
   { id: 'percentFollowUp', label: '百分比追打', description: '隊長每次轉珠追打 Boss 最大生命 3%（上限 60,000），對上 400 萬生命的巨像。' },
+  { id: 'ringShield', label: '七曜環', description: '環心帶著六色的環：用各屬性攻擊、消除心珠點掉格子，全部點掉後環碎、傷害加倍。' },
 ];
 
 export const isPracticeMode = (v: string | undefined): v is PracticeMode => PRACTICE_MODES.some((m) => m.id === v);
@@ -100,6 +101,7 @@ export const isPracticeMode = (v: string | undefined): v is PracticeMode => PRAC
 /** 練習場的關卡與資料；機制模式換成一隻會放該機制的示範敵人 */
 export function practiceSetup(mode: PracticeMode = 'normal'): { stage: StageDef; data: BattleData } {
   if (mode === 'percentFollowUp') return percentFollowUpPractice();
+  if (mode === 'ringShield') return ringShieldPractice();
   const def = mode === 'normal' ? undefined : gameData.enemies.find((e) => e.id === MECHANIC_ENEMIES[mode]);
   if (!def) return { stage: DEMO_STAGE, data: DEMO_DATA };
   return {
@@ -128,3 +130,19 @@ function percentFollowUpPractice(): { stage: StageDef; data: BattleData } {
     },
   };
 }
+
+/**
+ * 七曜環示範（第 7 章「環心」的機制）：示範敵人開場帶六色環（減傷 75%），全部點掉後易傷 ×2。
+ * 只在練習場使用，不在任何正式關卡。示範隊伍五屬齊全，正好練「七彩齊攻」。
+ */
+function ringShieldPractice(): { stage: StageDef; data: BattleData } {
+  const core: EnemyDef = {
+    ...enemy('demo-ring', '示範・環心之影', 'light', 150_000, 300, 3),
+    abilities: [{ status: 'ringShield', trigger: 'onStart', value: 75, params: { slots: 'fire,water,wood,light,dark,heart', vulnerable: 2 } }],
+  };
+  return {
+    stage: { ...DEMO_STAGE, name: '練習場・七曜環', waves: [{ enemies: [core.id], boss: true }] },
+    data: { ...DEMO_DATA, enemies: [...DEMO_DATA.enemies, core] },
+  };
+}
+

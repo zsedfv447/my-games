@@ -76,7 +76,7 @@ describe('練習與教學不影響存檔', () => {
 
 describe('練習模式', () => {
   it('每種模式都有說明', () => {
-    expect(PRACTICE_MODES.map((m) => m.id)).toEqual(['normal', 'darkOrbs', 'attributeSeal', 'percentFollowUp']);
+    expect(PRACTICE_MODES.map((m) => m.id)).toEqual(['normal', 'darkOrbs', 'attributeSeal', 'percentFollowUp', 'ringShield']);
     for (const m of PRACTICE_MODES) expect(m.description.length).toBeGreaterThan(8);
   });
 
