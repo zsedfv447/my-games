@@ -124,6 +124,8 @@ export class BoardView {
       this.boardTexture.src = texture;
     }
 
+    // 視窗大小或舞台縮放改變時重新量畫布縮放
+    window.addEventListener('resize', this.invalidateScale);
     this.canvas.addEventListener('pointerdown', this.onDown);
     this.canvas.addEventListener('pointermove', this.onMovePointer);
     this.canvas.addEventListener('pointerup', this.onUp);
@@ -138,6 +140,7 @@ export class BoardView {
     const resized = !this.board || this.board.cols !== board.cols || this.board.rows !== board.rows;
     this.board = board;
     if (resized) {
+      this.scaleCache = null;
       this.canvas.style.width = `${board.cols * this.opts.cellSize}px`;
       this.canvas.style.height = `${board.rows * this.opts.cellSize}px`;
     }
@@ -153,6 +156,7 @@ export class BoardView {
   destroy(): void {
     this.destroyed = true;
     this.playback?.abort();
+    window.removeEventListener('resize', this.invalidateScale);
     cancelAnimationFrame(this.raf);
     this.cancelDrag();
   }
@@ -411,10 +415,21 @@ export class BoardView {
     this.timerFill.parentElement!.classList.toggle('critical', ratio < 0.3);
   }
 
+  /** 畫布的實際縮放（舞台縮放 × 裝置像素比）；每幀量版面在低階手機上很貴，只在尺寸可能改變時重算 */
+  private scaleCache: number | null = null;
+  private invalidateScale = (): void => {
+    this.scaleCache = null;
+  };
+
   private ensureResolution(): number {
-    const cssW = this.canvas.offsetWidth || this.board!.cols * this.opts.cellSize;
-    const rect = this.canvas.getBoundingClientRect();
-    const scale = (rect.width ? rect.width / cssW : 1) * (window.devicePixelRatio || 1);
+    if (this.scaleCache === null) {
+      const cssW = this.canvas.offsetWidth || this.board!.cols * this.opts.cellSize;
+      const rect = this.canvas.getBoundingClientRect();
+      // 還沒排進畫面（寬度 0）時不快取，下一次再量
+      if (rect.width) this.scaleCache = (rect.width / cssW) * (window.devicePixelRatio || 1);
+      else return window.devicePixelRatio || 1;
+    }
+    const scale = this.scaleCache;
     const w = Math.round(this.board!.cols * this.opts.cellSize * scale);
     const h = Math.round(this.board!.rows * this.opts.cellSize * scale);
     if (this.canvas.width !== w || this.canvas.height !== h) {

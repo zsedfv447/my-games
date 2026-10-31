@@ -3,7 +3,7 @@ import type { BattleState, EnemyState } from '../../battle/battle-state';
 import type { BattleConfig, HitResult } from '../../battle/damage';
 import { strikesByMember, type MemberStrike } from '../../battle/feedback';
 import { getSettings } from '../state';
-import { damageText, flashClass, floatLabel, fly } from './effects';
+import { damageText, flashClass, floatLabel, flyBetween, measureCenters } from './effects';
 
 const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
@@ -45,16 +45,21 @@ export async function playStrikes(stage: StrikeStage, before: BattleState, hits:
   const stagger = 120 / stage.speed;
   const flight = 240 / stage.speed;
   const flights: Promise<void>[] = [];
-  for (const st of strikes) {
+  // 先把所有出手的頭像與目標位置一次量好，之後的演出只寫不讀（每顆光點都量會一直強制重排，低階手機上卡成長任務）
+  const plan = strikes.map((st) => {
     const thumb = st.member >= 0 ? (stage.teamRow.children[st.member] as HTMLElement | undefined) : undefined;
+    const target = st.sweep ? stage.enemyZone.querySelector<HTMLElement>('.enemy-line') : stage.enemyEls[st.targets[0]?.enemy ?? -1];
+    return { st, thumb, target: target ?? stage.enemyZone };
+  });
+  const centers = measureCenters(stage.root, plan.flatMap((p) => (p.thumb ? [p.thumb, p.target] : [])));
+  for (const { st, thumb, target } of plan) {
     if (!thumb) {
       land(st);
       continue;
     }
     flashClass(thumb, 'striking', 300);
     floatLabel(thumb, st.total.toLocaleString(), `member-dmg attr-${st.attribute ?? 'none'}`);
-    const target = st.sweep ? stage.enemyZone.querySelector<HTMLElement>('.enemy-line') : stage.enemyEls[st.targets[0]?.enemy ?? -1];
-    flights.push(fly(stage.root, thumb, target ?? stage.enemyZone, st.attribute, flight).then(() => land(st)));
+    flights.push(flyBetween(stage.root, centers.get(thumb)!, centers.get(target)!, st.attribute, flight).then(() => land(st)));
     await wait(stagger);
   }
   await Promise.all(flights);

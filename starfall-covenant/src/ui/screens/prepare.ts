@@ -14,7 +14,7 @@ import { buildSortieTeam, chosenHelper, describeTeamRule, ensureHelper, sortiePr
 import { commit, getSave, growth } from '../state';
 import { armBattle } from './battle';
 import { applyOathTeam, oathEligible, oathTeamProblem } from '../../progression/oaths';
-import { chosenOaths, oathStelePanel } from '../oath-stele';
+import { chosenOaths, oathSortieChip, oathStelePanel } from '../oath-stele';
 import { confirmNewBattle } from '../battle-session';
 import { npcAvatar, rosterFor } from './helper';
 import { HELPER_NPCS, stageAllowsHelper } from '../../progression/helpers';
@@ -200,6 +200,8 @@ export const prepareScreen: ScreenDef = {
       h('div', { class: 'sortie-bar' },
         problem && h('p', { class: 'small-text sortie-problem' }, VIOLATION_TEXT[problem]),
         oathProblem && h('p', { class: 'small-text sortie-problem' }, oathProblem),
+        // 誓約碑排在頁面最底，出發列上給一個捷徑（提案 126）
+        oathEligible(stage, save) && oathSortieChip(stage, () => nav.replace('prepare', [stage.id])),
         // data-tut：新手教學用來指向出發鈕
         h('div', { 'data-tut': 'sortie' }, button('出發', { variant: 'primary', block: true, icon: 'sword', disabled: !!problem || !!oathProblem, cost: { kind: 'stamina', amount: stage.stamina }, onClick: start }))),
     );

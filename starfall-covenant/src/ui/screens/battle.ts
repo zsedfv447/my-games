@@ -22,7 +22,7 @@ import { ringBadge } from '../battle-fx/ring';
 import { ringOf } from '../../battle/skills/ring';
 import { userAsset } from '../assets';
 import { audio } from '../audio';
-import { badge, bar, button, emptyState, iconButton } from '../components/basic';
+import { badge, bar, button, emptyState, iconButton, updateBar } from '../components/basic';
 import { cardThumb } from '../components/card-thumb';
 import { confirmDialog, openDialog, toast, type DialogHandle } from '../components/overlay';
 import { DEMO_HELPER, DEMO_TEAM, PRACTICE_MODES, isPracticeMode, practiceSetup, type PracticeMode } from '../demo';
@@ -349,10 +349,19 @@ class BattleView {
     if (!el) return;
     el.querySelector('.enemy-cd')!.textContent = `${e.cooldown}`;
     el.querySelector('.enemy-cd')!.classList.toggle('urgent', e.cooldown <= 1);
-    el.querySelector('.bar')!.replaceWith(bar({ value: e.hp, max: e.maxHp, variant: 'hp', previous: previousHp }));
+    // 原地更新血條，不重建 DOM（每次命中都會呼叫）
+    updateBar(el.querySelector('.bar')!, { value: e.hp, max: e.maxHp, variant: 'hp', previous: previousHp });
     el.classList.toggle('dead', e.hp <= 0);
     el.classList.toggle('targeted', i === this.state.target);
-    el.querySelector('.enemy-chips')!.replaceWith(chipRow(enemyChips(e), 'enemy-chips'));
+    // 狀態標籤沒變就不重畫
+    const chips = enemyChips(e);
+    const chipKey = chips.map((c) => c.text).join('|');
+    const chipHost = el.querySelector<HTMLElement>('.enemy-chips')!;
+    if (chipHost.dataset.key !== chipKey) {
+      const next = chipRow(chips, 'enemy-chips');
+      next.dataset.key = chipKey;
+      chipHost.replaceWith(next);
+    }
     // 七曜環：比對上次畫的已破格子，新點掉的那幾格播一下破裂
     const ringHost = el.querySelector<HTMLElement>('.ring-host');
     if (ringHost) {

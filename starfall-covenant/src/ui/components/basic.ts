@@ -113,6 +113,27 @@ export function bar(opts: BarOptions): HTMLElement {
   );
 }
 
+/** 更新現有的進度條（不重建 DOM）：戰鬥中每次命中都會呼叫，重建整條在低階手機上很貴 */
+export function updateBar(el: Element, opts: BarOptions): void {
+  const pct = clampPct(opts.value, opts.max);
+  const ghost = opts.previous !== undefined ? clampPct(opts.previous, opts.max) : pct;
+  const bar = el as HTMLElement;
+  bar.style.setProperty('--pct', `${pct}%`);
+  bar.style.setProperty('--ghost', `${ghost}%`);
+  bar.setAttribute('aria-valuenow', String(opts.value));
+  bar.setAttribute('aria-valuemax', String(opts.max));
+  if (opts.variant === 'hp') {
+    bar.classList.toggle('critical', pct <= 20);
+    bar.classList.toggle('low', pct > 20 && pct <= 50);
+  }
+  const ghostFill = bar.querySelector('.ghost-fill');
+  if (opts.previous !== undefined && !ghostFill) bar.insertBefore(h('div', { class: 'ghost-fill' }), bar.firstChild);
+  if (opts.label === true) {
+    const label = bar.querySelector('.label');
+    if (label) label.textContent = `${Math.round(opts.value).toLocaleString()} / ${opts.max.toLocaleString()}`;
+  }
+}
+
 export function tabs<T extends string>(items: { id: T; label: string }[], active: T, onChange: (id: T) => void): HTMLElement {
   const el = h('div', { class: 'tabs', role: 'tablist' });
   for (const it of items) {
