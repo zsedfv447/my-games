@@ -126,13 +126,13 @@ function eclipseReward(chapter: number): HTMLElement {
   const el: HTMLElement = h('div', { class: ['chapter-reward', status] },
     h('div', { class: 'chapter-reward-bar' }, bar({ value: stars.got, max: stars.total, variant: 'gold', label: `星蝕星章 ${stars.got}/${stars.total}` })),
     h('div', { class: 'row between' },
-      rewardChips(eclipseChapterReward(gameData.cards)),
+      rewardChips(eclipseChapterReward()),
       status === 'claimable'
         ? button('領取', { small: true, variant: 'primary', sound: false, onClick: () => claim() })
         : badge(status === 'claimed' ? '已領取' : '集滿可領', status === 'claimed' ? undefined : 'gold')),
   );
   const claim = () => {
-    const r = claimEclipseChapterReward(getSave(), chapter, gameData.stages, gameData.cards, gameData.config, Date.now());
+    const r = claimEclipseChapterReward(getSave(), chapter, gameData.stages, gameData.config, Date.now());
     if (!r.ok) return toast(r.reason === 'alreadyClaimed' ? '已經領過了' : '星蝕星章還沒集滿');
     commit(r.save);
     void revealReward('星蝕星章獎勵', r.reward!, `第 ${chapter} 章・星蝕`);

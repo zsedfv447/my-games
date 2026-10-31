@@ -65,6 +65,17 @@ describe('星蝕：轉換', () => {
     // Boss 關首通給星核
     const boss = eclipseChapterStages(1, gameData).find((s) => s.waves.some((w) => w.boss))!;
     expect(boss.rewards.firstClear?.cards?.some((c) => ['c916', 'c917', 'c918', 'c919', 'c920'].includes(c.card))).toBe(true);
+    // 星輝結晶只在章節最後一關（Boss）首通給 1 顆；中 Boss 與一般關不給（c921 上線前自動略過）
+    const crystals = (st: { rewards: { firstClear?: { cards?: { card: string; count: number }[] } } }) =>
+      st.rewards.firstClear?.cards?.find((c) => c.card === 'c921')?.count ?? 0;
+    const all = eclipseChapterStages(1, gameData);
+    const hasCrystal = gameData.cards.some((c) => c.id === 'c921');
+    expect(all.map(crystals)).toEqual(all.map((_, i) => (hasCrystal && i === all.length - 1 ? ECLIPSE.finalBossCrystal : 0)));
+    // c921 上線後：第 1 章只有 1-9 給 1 顆
+    const withCrystal = { ...gameData, cards: [...gameData.cards, { ...gameData.cards[0], id: 'c921' }] };
+    const counts = eclipseChapterStages(1, withCrystal).map(crystals);
+    expect(counts.reduce((a, b) => a + b, 0)).toBe(ECLIPSE.finalBossCrystal);
+    expect(counts.at(-1)).toBe(ECLIPSE.finalBossCrystal);
     // 只有主線有星蝕版；原版 id 照常找到原關卡
     expect(resolveStage('tw-01@eclipse', gameData)).toBeUndefined();
     expect(resolveStage(base.id, gameData)).toBe(base);
@@ -111,10 +122,10 @@ describe('星蝕：解鎖、結算、星章獎勵', () => {
   it('星蝕星章全滿可以領一次章節獎勵', () => {
     let save = starredChapter1();
     expect(eclipseRewardStatus(save, 1, gameData.stages)).toBe('incomplete');
-    expect(claimEclipseChapterReward(save, 1, gameData.stages, gameData.cards, config, NOW).ok).toBe(false);
+    expect(claimEclipseChapterReward(save, 1, gameData.stages, config, NOW).ok).toBe(false);
     save = { ...save, eclipse: { cleared: ch1.map((s) => s.id), stars: Object.fromEntries(ch1.map((s) => [s.id, (s.stars ?? []).map(() => true)])) } };
     expect(eclipseRewardStatus(save, 1, gameData.stages)).toBe('claimable');
-    const r = claimEclipseChapterReward(save, 1, gameData.stages, gameData.cards, config, NOW);
+    const r = claimEclipseChapterReward(save, 1, gameData.stages, config, NOW);
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(r.save.player.gems).toBe(save.player.gems + ECLIPSE.chapterReward.gems);

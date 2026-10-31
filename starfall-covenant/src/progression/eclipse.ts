@@ -29,17 +29,19 @@ export const ECLIPSE = {
   stamina: 1.5,
   /** 每次通關的金幣、玩家經驗、卡片經驗倍率 */
   rewards: 1.5,
-  /** 首通獎勵：一般關／Boss 關；core 是星核張數（依 Boss 波第一隻敵人的屬性），c921 是星輝結晶 */
+  /** 首通獎勵：一般關／Boss 關；core 是星核張數（依 Boss 波第一隻敵人的屬性） */
   firstClear: {
-    normal: { gems: 1, core: 1, crystal: 0 },
-    boss: { gems: 3, core: 2, crystal: 1 },
+    normal: { gems: 1, core: 1 },
+    boss: { gems: 3, core: 2 },
   },
-  /** 星蝕版章節星章全滿的獎勵 */
-  chapterReward: { gems: 10, crystal: 2 },
+  /** 星輝結晶 c921：每章只有最後一關（章節 Boss）首通給，一次性，不能重複刷 */
+  finalBossCrystal: 1,
+  /** 星蝕版章節星章全滿的獎勵（只給星晶） */
+  chapterReward: { gems: 10 },
 } as const;
 
 export const ECLIPSE_SUFFIX = '@eclipse';
-/** 星輝結晶（growth-screens 新增；資料裡還沒有這張卡時，獎勵會自動略過） */
+/** 星輝結晶（growth-screens 新增；資料裡還沒有這張卡時，獎勵會自動略過）。只當一次性首通獎勵 */
 export const ECLIPSE_CRYSTAL = 'c921';
 const STAR_CORE: Record<Attribute, string> = { fire: 'c916', water: 'c917', wood: 'c918', light: 'c919', dark: 'c920' };
 
@@ -90,13 +92,17 @@ function bossAttribute(stage: StageDef, enemies: EnemyDef[]): Attribute | undefi
   return enemies.find((e) => e.id === wave?.enemies[0])?.attribute;
 }
 
-function eclipseFirstClear(stage: StageDef, enemies: EnemyDef[], cardIds: ReadonlySet<string>): Reward {
+/** 章節最後一關：同章沒有其他關卡以它為解鎖條件 */
+const isChapterFinal = (stage: StageDef, stages: StageDef[]) =>
+  !stages.some((s) => s.kind === 'main' && s.chapter === stage.chapter && s.unlockAfter === stage.id);
+
+function eclipseFirstClear(stage: StageDef, stages: StageDef[], enemies: EnemyDef[], cardIds: ReadonlySet<string>): Reward {
   const boss = stage.waves.some((w) => w.boss);
   const r = boss ? ECLIPSE.firstClear.boss : ECLIPSE.firstClear.normal;
   const attr = bossAttribute(stage, enemies);
   const cards: { card: string; count: number }[] = [];
   if (attr && r.core > 0) cards.push({ card: STAR_CORE[attr], count: r.core });
-  if (r.crystal > 0) cards.push({ card: ECLIPSE_CRYSTAL, count: r.crystal });
+  if (boss && isChapterFinal(stage, stages)) cards.push({ card: ECLIPSE_CRYSTAL, count: ECLIPSE.finalBossCrystal });
   const owned = cards.filter((c) => cardIds.has(c.card));
   return { gems: r.gems, ...(owned.length ? { cards: owned } : {}) };
 }
@@ -120,7 +126,7 @@ export function eclipseStage(stage: StageDef, stages: StageDef[], enemies: Enemy
       coin: mul(stage.rewards.coin),
       playerExp: mul(stage.rewards.playerExp),
       ...(stage.rewards.cardExp ? { cardExp: mul(stage.rewards.cardExp) } : {}),
-      firstClear: eclipseFirstClear(stage, enemies, cardIds),
+      firstClear: eclipseFirstClear(stage, stages, enemies, cardIds),
     },
     drops: [],
     story: undefined,
@@ -225,9 +231,9 @@ export function eclipseChapterStars(save: SaveData, chapter: number, stages: Sta
   return { got, total };
 }
 
-export function eclipseChapterReward(cards: CardDef[]): Reward {
-  const has = cards.some((c) => c.id === ECLIPSE_CRYSTAL);
-  return { gems: ECLIPSE.chapterReward.gems, ...(has ? { cards: [{ card: ECLIPSE_CRYSTAL, count: ECLIPSE.chapterReward.crystal }] } : {}) };
+/** 星蝕星章全滿的章節獎勵；星輝結晶只放在章節 Boss 首通，這裡不給 */
+export function eclipseChapterReward(): Reward {
+  return { gems: ECLIPSE.chapterReward.gems };
 }
 
 export type EclipseRewardStatus = 'claimable' | 'claimed' | 'incomplete';
@@ -239,12 +245,12 @@ export function eclipseRewardStatus(save: SaveData, chapter: number, stages: Sta
 }
 
 export function claimEclipseChapterReward(
-  save: SaveData, chapter: number, stages: StageDef[], cards: CardDef[], config: GameConfig, now: number,
+  save: SaveData, chapter: number, stages: StageDef[], config: GameConfig, now: number,
 ): SaveResult<'alreadyClaimed' | 'notComplete'> & { reward?: Reward } {
   const status = eclipseRewardStatus(save, chapter, stages);
   if (status === 'claimed') return fail('alreadyClaimed');
   if (status === 'incomplete') return fail('notComplete');
-  const reward = eclipseChapterReward(cards);
+  const reward = eclipseChapterReward();
   const granted = grantReward(save, reward, config, now).save;
   const record = eclipseOf(granted);
   return { ...ok({ ...granted, eclipse: { ...record, chapterRewardsClaimed: [...record.chapterRewardsClaimed, chapter] } }), reward };
