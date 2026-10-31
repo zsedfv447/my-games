@@ -24,5 +24,18 @@
   { "id": "t-page-finder", "name": "殘頁拾遺者", "description": "收集 3 張星骸殘頁。", "condition": { "type": "lorePages", "atLeast": 3 } },
   { "id": "t-historian", "name": "星骸史官", "description": "收集全部星骸殘頁。", "condition": { "type": "lorePages", "atLeast": "all" } },
   { "id": "t-puzzle-master", "name": "謎題大師", "description": "星紋謎題連續解開 30 天。", "condition": { "type": "puzzleStreak", "atLeast": 30 } },
-  { "id": "t-puzzle-sage", "name": "星紋解讀者", "description": "星紋謎題連續解開 60 天。", "condition": { "type": "puzzleStreak", "atLeast": 60 } }
+  { "id": "t-puzzle-sage", "name": "星紋解讀者", "description": "星紋謎題連續解開 60 天。", "condition": { "type": "puzzleStreak", "atLeast": 60 } },
+  { "id": "t-ch6-clear", "name": "穹頂外環的守誓者", "description": "通過第 6 章最後一關「6-9」。", "condition": { "type": "stageCleared", "id": "st-6-9" } },
+  { "id": "t-ch7-clear", "name": "七曜守燈人", "description": "通過第 7 章最後一關「7-9」，守住七曜最後的燈。", "condition": { "type": "stageCleared", "id": "st-7-9" } },
+  { "id": "t-eclipse-9", "name": "初窺星蝕", "description": "任一章的星蝕關卡拿到 9 顆星章。", "condition": { "type": "eclipseChapter", "atLeast": 9 } },
+  { "id": "t-eclipse-27", "name": "蝕中見星", "description": "任一章的星蝕關卡拿滿 27 顆星章。", "condition": { "type": "eclipseChapter", "atLeast": 27 } },
+  { "id": "t-abyss-30", "name": "回廊的盡頭", "description": "星淵回廊歷來最高到達第 30 層。", "condition": { "type": "abyssBest", "atLeast": 30 } },
+  { "id": "t-abyss-40", "name": "深淵行者", "description": "星淵回廊無盡層歷來最高到達第 40 層。", "condition": { "type": "abyssBest", "atLeast": 40 } },
+  { "id": "t-abyss-50", "name": "無底星淵的旅人", "description": "星淵回廊無盡層歷來最高到達第 50 層。", "condition": { "type": "abyssBest", "atLeast": 50 } },
+  { "id": "t-oath-5", "name": "立誓之人", "description": "在誓約碑以 5 點以上的誓約通關。", "condition": { "type": "oathHighest", "atLeast": 5 } },
+  { "id": "t-oath-7", "name": "刻碑者", "description": "在誓約碑以最高的 7 點誓約通關。", "condition": { "type": "oathHighest", "atLeast": 7 } },
+  { "id": "t-expedition-10", "name": "遠行的送行者", "description": "星靈遠行累計歸來 10 次。", "condition": { "type": "expeditions", "atLeast": 10 } },
+  { "id": "t-expedition-50", "name": "萬里星途", "description": "星靈遠行累計歸來 50 次。", "condition": { "type": "expeditions", "atLeast": 50 } },
+  { "id": "t-bestiary-50", "name": "星骸觀測者", "description": "星骸觀測錄記下 50 種敵人。", "condition": { "type": "bestiary", "atLeast": 50 } },
+  { "id": "t-bestiary-all", "name": "觀星台的主人", "description": "星骸觀測錄全部收齊。", "condition": { "type": "bestiary", "atLeast": "all" } }
 ]
