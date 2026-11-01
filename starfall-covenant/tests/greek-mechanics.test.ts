@@ -15,10 +15,10 @@ describe('希臘同色強化連鎖機制',()=>{
     expect(generated(boardFromStrings(['fff','fff','whd']),[fire])).toHaveLength(2);
     expect(generated(boardFromStrings(['www','fhd']),[fire])).toHaveLength(0);
   });
-  it('同色雙隊長取當段較高產量，不疊加；不同屬可分別觸發',()=>{
+  it('同色雙隊長產量相加；不同屬可分別觸發',()=>{
     const b=boardFromStrings(['fff','www','hld']);
-    expect(generated(b,[fire,fire])).toHaveLength(1);
-    expect(generated(b,[fire,{...fire,spawn:2}])).toHaveLength(2);
+    expect(generated(b,[fire,fire])).toHaveLength(2);
+    expect(generated(b,[fire,{...fire,spawn:2}])).toHaveLength(3);
     const mixed=generated(b,[fire,{orb:'water',count:3,spawn:1}]);
     expect(mixed.map(o=>o.type).sort()).toEqual(['fire','water']);
   });

@@ -398,9 +398,17 @@ export function resolveBoard(board: Board, rng: Rng, options: ResolveOptions = {
     const forcedEnhancedOrbs: OrbType[] = [];
     for (const orb of ORB_TYPES) {
       const count = found.filter(g=>g.orb===orb).reduce((n,g)=>n+g.cells.length,0);
-      const generated = Math.max(0,...(options.matchedOrbSkyfall??[])
-        .filter(e=>e.orb===orb && Number.isFinite(e.count) && e.count>=1 && Number.isFinite(e.spawn) && e.spawn>=1)
-        .map(e=>Math.floor(count/Math.floor(e.count))*Math.floor(e.spawn)));
+      const available = cleared.length - forcedEnhancedOrbs.length;
+      let generated = 0;
+      for (const effect of options.matchedOrbSkyfall ?? []) {
+        if (generated >= available) break;
+        if (effect.orb !== orb || !Number.isFinite(effect.count) || effect.count < 1 || !Number.isFinite(effect.spawn) || effect.spawn < 1) continue;
+        const groups = Math.floor(count / Math.floor(effect.count));
+        const spawn = Math.floor(effect.spawn);
+        const remaining = available - generated;
+        // Sum each leader's contribution, saturating before multiplication can overflow.
+        generated += groups >= remaining / spawn ? remaining : groups * spawn;
+      }
       // 一段補珠最多替換本段空格數；整回合仍受 MAX_CASCADES 限制。
       const quota = Math.min(generated, cleared.length-forcedEnhancedOrbs.length);
       for(let n=0;n<quota;n++) forcedEnhancedOrbs.push(orb);

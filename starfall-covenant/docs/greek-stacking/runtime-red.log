@@ -1,0 +1,90 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-greek-production/starfall-covenant
+
+ ❯ tests/greek-stacking-board.test.ts (5 tests | 3 failed) 107ms
+   × same-color duplicate3→2 and6→4; individual spawn1+2→3 and floors apply per contribution 17ms
+     → expected [ { type: 'fire', …(4) } ] to have a length of 2 but got 1
+   × mixed colors sum independently and use existing deterministic color-order slot allocation 5ms
+     → expected [ 'fire', 'water' ] to deeply equal [ 'fire', 'fire', 'water', 'water' ]
+   × invalid values add zero, finite overflow and long effect lists saturate slots without allocation blowup 79ms
+     → Maximum call stack size exceeded
+ ❯ tests/greek-mechanics.test.ts (13 tests | 1 failed) 48ms
+   × 希臘同色強化連鎖機制 > 同色雙隊長產量相加；不同屬可分別觸發 15ms
+     → expected [ { type: 'fire', …(4) } ] to have a length of 2 but got 1
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/greek-mechanics.test.ts > 希臘同色強化連鎖機制 > 同色雙隊長產量相加；不同屬可分別觸發
+AssertionError: expected [ { type: 'fire', …(4) } ] to have a length of 2 but got 1
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ tests/greek-mechanics.test.ts:20:38
+     18|   it('同色雙隊長產量相加；不同屬可分別觸發',()=>{
+     19|     const b=boardFromStrings(['fff','www','hld']);
+     20|     expect(generated(b,[fire,fire])).toHaveLength(2);
+       |                                      ^
+     21|     expect(generated(b,[fire,{...fire,spawn:2}])).toHaveLength(3);
+     22|     const mixed=generated(b,[fire,{orb:'water',count:3,spawn:1}]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/greek-stacking-board.test.ts > same-color duplicate3→2 and6→4; individual spawn1+2→3 and floors apply per contribution
+AssertionError: expected [ { type: 'fire', …(4) } ] to have a length of 2 but got 1
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ tests/greek-stacking-board.test.ts:8:47
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/greek-stacking-board.test.ts > mixed colors sum independently and use existing deterministic color-order slot allocation
+AssertionError: expected [ 'fire', 'water' ] to deeply equal [ 'fire', 'fire', 'water', 'water' ]
+
+- Expected
++ Received
+
+  Array [
+    "fire",
+-   "fire",
+-   "water",
+    "water",
+  ]
+
+ ❯ tests/greek-stacking-board.test.ts:15:38
+     13| it('mixed colors sum independently and use existing deterministic colo…
+     14|  const mixed = enhanced(['fff','www','hld'], [fire,fire,{orb:'water',c…
+     15|  expect(mixed.map(o=>o.type).sort()).toEqual(['fire','fire','water','w…
+       |                                      ^
+     16|  // Six slots total: fire fills them first even if water effects prece…
+     17|  const saturated = enhanced(['fff','www','hld'], [{orb:'water',count:1…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/greek-stacking-board.test.ts > invalid values add zero, finite overflow and long effect lists saturate slots without allocation blowup
+RangeError: Maximum call stack size exceeded
+ ❯ Module.resolveBoard src/battle/board.ts:401:30
+    399|     for (const orb of ORB_TYPES) {
+    400|       const count = found.filter(g=>g.orb===orb).reduce((n,g)=>n+g.cel…
+    401|       const generated = Math.max(0,...(options.matchedOrbSkyfall??[])
+       |                              ^
+    402|         .filter(e=>e.orb===orb && Number.isFinite(e.count) && e.count>…
+    403|         .map(e=>Math.floor(count/Math.floor(e.count))*Math.floor(e.spa…
+ ❯ tests/greek-stacking-board.test.ts:27:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 14 passed (18)
+   Start at  13:46:54
+   Duration  1.14s (transform 471ms, setup 0ms, collect 706ms, tests 155ms, environment 1ms, prepare 279ms)
+

@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-greek-production/starfall-covenant
+
+ ✓ tests/greek-mechanics.test.ts (13 tests) 26ms
+ ✓ tests/greek-stacking-engine.test.ts (16 tests) 117ms
+
+ Test Files  2 passed (2)
+      Tests  29 passed (29)
+   Start at  13:47:42
+   Duration  867ms (transform 466ms, setup 0ms, collect 790ms, tests 143ms, environment 1ms, prepare 174ms)
+

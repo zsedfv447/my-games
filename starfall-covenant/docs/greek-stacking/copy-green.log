@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-greek-production/starfall-covenant
+
+ ✓ tests/greek-stacking-copy.test.ts (6 tests) 258ms
+ ✓ tests/e05-display.test.ts (9 tests) 138ms
+ ✓ tests/helper-support-view.test.ts (6 tests) 3643ms
+   ✓ first12 only plus actual NPC rows become seen, never ownership or all91; focused search remains mounted 1802ms
+   ✓ show all exposes exact91 without choosing or granting; selected summary survives search 872ms
+
+ Test Files  3 passed (3)
+      Tests  21 passed (21)
+   Start at  13:46:52
+   Duration  4.32s (transform 1.76s, setup 0ms, collect 4.51s, tests 4.04s, environment 934ms, prepare 311ms)
+

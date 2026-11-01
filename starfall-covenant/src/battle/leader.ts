@@ -49,7 +49,7 @@ export interface LeaderStaticResult {
   allyCooldownPerTurn: number;
   /** 天降強化珠機率（0–1），多個取最高 */
   enhancedSkyfall: number;
-  /** 同色消除生成強化珠；同色雙隊長在各段補珠時取最多顆，不相加。 */
+  /** 同色消除生成強化珠；各隊長與助戰的產量相加，補珠仍受當段空格上限限制。 */
   matchedOrbSkyfall: MatchedOrbSkyfall[];
 }
 

@@ -1,0 +1,172 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-greek-production/starfall-covenant
+
+ ❯ tests/greek-stacking-engine.test.ts (16 tests | 10 failed) 110ms
+   × actual c806 leader+helper add first-cascade forced orbs for 3 same-color while ATK remains2.5/6.25 30ms
+     → expected [ { type: 'water', …(4) } ] to have a length of 2 but got 1
+   × actual c807 leader+helper add first-cascade forced orbs for 3 same-color while ATK remains2.5/6.25 8ms
+     → expected [ { type: 'fire', …(4) } ] to have a length of 2 but got 1
+   × actual c808 leader+helper add first-cascade forced orbs for 3 same-color while ATK remains2.5/6.25 7ms
+     → expected [ { type: 'wood', …(4) } ] to have a length of 2 but got 1
+   × actual c809 leader+helper add first-cascade forced orbs for 3 same-color while ATK remains2.5/6.25 8ms
+     → expected [ { type: 'light', …(4) } ] to have a length of 2 but got 1
+   × actual c810 leader+helper add first-cascade forced orbs for 3 same-color while ATK remains2.5/6.25 9ms
+     → expected [ { type: 'dark', …(4) } ] to have a length of 2 but got 1
+   × actual c806 leader+helper add first-cascade forced orbs for 6 same-color while ATK remains2.5/6.25 7ms
+     → expected [ { type: 'water', …(4) }, …(1) ] to have a length of 4 but got 2
+   × actual c807 leader+helper add first-cascade forced orbs for 6 same-color while ATK remains2.5/6.25 6ms
+     → expected [ { type: 'fire', …(4) }, …(1) ] to have a length of 4 but got 2
+   × actual c808 leader+helper add first-cascade forced orbs for 6 same-color while ATK remains2.5/6.25 7ms
+     → expected [ { type: 'wood', …(4) }, …(1) ] to have a length of 4 but got 2
+   × actual c809 leader+helper add first-cascade forced orbs for 6 same-color while ATK remains2.5/6.25 7ms
+     → expected [ { type: 'light', …(4) }, …(1) ] to have a length of 4 but got 2
+   × actual c810 leader+helper add first-cascade forced orbs for 6 same-color while ATK remains2.5/6.25 8ms
+     → expected [ { type: 'dark', …(4) }, …(1) ] to have a length of 4 but got 2
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/greek-stacking-engine.test.ts > actual c806 leader+helper add first-cascade forced orbs for 3 same-color while ATK remains2.5/6.25
+AssertionError: expected [ { type: 'water', …(4) } ] to have a length of 2 but got 1
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ tests/greek-stacking-engine.test.ts:40:84
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  tests/greek-stacking-engine.test.ts > actual c807 leader+helper add first-cascade forced orbs for 3 same-color while ATK remains2.5/6.25
+AssertionError: expected [ { type: 'fire', …(4) } ] to have a length of 2 but got 1
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ tests/greek-stacking-engine.test.ts:40:84
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  tests/greek-stacking-engine.test.ts > actual c808 leader+helper add first-cascade forced orbs for 3 same-color while ATK remains2.5/6.25
+AssertionError: expected [ { type: 'wood', …(4) } ] to have a length of 2 but got 1
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ tests/greek-stacking-engine.test.ts:40:84
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  tests/greek-stacking-engine.test.ts > actual c809 leader+helper add first-cascade forced orbs for 3 same-color while ATK remains2.5/6.25
+AssertionError: expected [ { type: 'light', …(4) } ] to have a length of 2 but got 1
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ tests/greek-stacking-engine.test.ts:40:84
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  tests/greek-stacking-engine.test.ts > actual c810 leader+helper add first-cascade forced orbs for 3 same-color while ATK remains2.5/6.25
+AssertionError: expected [ { type: 'dark', …(4) } ] to have a length of 2 but got 1
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ tests/greek-stacking-engine.test.ts:40:84
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  tests/greek-stacking-engine.test.ts > actual c806 leader+helper add first-cascade forced orbs for 6 same-color while ATK remains2.5/6.25
+AssertionError: expected [ { type: 'water', …(4) }, …(1) ] to have a length of 4 but got 2
+
+- Expected
++ Received
+
+- 4
++ 2
+
+ ❯ tests/greek-stacking-engine.test.ts:40:84
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  tests/greek-stacking-engine.test.ts > actual c807 leader+helper add first-cascade forced orbs for 6 same-color while ATK remains2.5/6.25
+AssertionError: expected [ { type: 'fire', …(4) }, …(1) ] to have a length of 4 but got 2
+
+- Expected
++ Received
+
+- 4
++ 2
+
+ ❯ tests/greek-stacking-engine.test.ts:40:84
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  tests/greek-stacking-engine.test.ts > actual c808 leader+helper add first-cascade forced orbs for 6 same-color while ATK remains2.5/6.25
+AssertionError: expected [ { type: 'wood', …(4) }, …(1) ] to have a length of 4 but got 2
+
+- Expected
++ Received
+
+- 4
++ 2
+
+ ❯ tests/greek-stacking-engine.test.ts:40:84
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  tests/greek-stacking-engine.test.ts > actual c809 leader+helper add first-cascade forced orbs for 6 same-color while ATK remains2.5/6.25
+AssertionError: expected [ { type: 'light', …(4) }, …(1) ] to have a length of 4 but got 2
+
+- Expected
++ Received
+
+- 4
++ 2
+
+ ❯ tests/greek-stacking-engine.test.ts:40:84
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+ FAIL  tests/greek-stacking-engine.test.ts > actual c810 leader+helper add first-cascade forced orbs for 6 same-color while ATK remains2.5/6.25
+AssertionError: expected [ { type: 'dark', …(4) }, …(1) ] to have a length of 4 but got 2
+
+- Expected
++ Received
+
+- 4
++ 2
+
+ ❯ tests/greek-stacking-engine.test.ts:40:84
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯
+
+ Test Files  1 failed (1)
+      Tests  10 failed | 6 passed (16)
+   Start at  13:47:03
+   Duration  1.07s (transform 399ms, setup 0ms, collect 538ms, tests 110ms, environment 0ms, prepare 100ms)
+

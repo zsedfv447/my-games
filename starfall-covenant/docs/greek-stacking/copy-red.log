@@ -1,0 +1,123 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-greek-production/starfall-covenant
+
+ ❯ tests/greek-stacking-copy.test.ts (6 tests | 6 failed) 105ms
+   × exact five description substitutions reconstruct original entire file bytes, including all rules and formatting 12ms
+     → expected +0 to be 5 // Object.is equality
+   × l806 corrected full description reaches unowned card detail and actual helper search without grants or read writes 57ms
+     → expected '海神波塞頓★★★★★★見過潮屬性神族Cost 13希臘同色連鎖・隊長強化珠…' to contain '水屬性成員攻擊力 2.5 倍；每段消除每 3 顆水珠，該段補珠產生 1 顆…'
+   × l807 corrected full description reaches unowned card detail and actual helper search without grants or read writes 10ms
+     → expected '奧林火神赫淮斯托斯★★★★★★見過焰屬性神族Cost 13希臘同色連鎖・隊…' to contain '火屬性成員攻擊力 2.5 倍；每段消除每 3 顆火珠，該段補珠產生 1 顆…'
+   × l808 corrected full description reaches unowned card detail and actual helper search without grants or read writes 9ms
+     → expected '智慧女神雅典娜★★★★★★見過森屬性神族Cost 13希臘同色連鎖・隊長強…' to contain '木屬性成員攻擊力 2.5 倍；每段消除每 3 顆木珠，該段補珠產生 1 顆…'
+   × l809 corrected full description reaches unowned card detail and actual helper search without grants or read writes 7ms
+     → expected '光明之神阿波羅★★★★★★見過輝屬性神族Cost 13希臘同色連鎖・隊長強…' to contain '光屬性成員攻擊力 2.5 倍；每段消除每 3 顆光珠，該段補珠產生 1 顆…'
+   × l810 corrected full description reaches unowned card detail and actual helper search without grants or read writes 7ms
+     → expected '月之狩獵女神阿提密斯★★★★★★見過蝕屬性神族Cost 13希臘同色連鎖・…' to contain '暗屬性成員攻擊力 2.5 倍；每段消除每 3 顆暗珠，該段補珠產生 1 顆…'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/greek-stacking-copy.test.ts > exact five description substitutions reconstruct original entire file bytes, including all rules and formatting
+AssertionError: expected +0 to be 5 // Object.is equality
+
+- Expected
++ Received
+
+- 5
++ 0
+
+ ❯ tests/greek-stacking-copy.test.ts:16:45
+     14| it('exact five description substitutions reconstruct original entire f…
+     15|   const raw = readFileSync('data/leader-skills.json', 'utf8');
+     16|   expect(raw.split(replacement).length - 1).toBe(5); expect(raw).not.t…
+       |                                             ^
+     17|   for (const [id, , color] of cases) expect(gameData.leaderSkills.find…
+     18|   const restored = raw.replaceAll(replacement, old);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/greek-stacking-copy.test.ts > l806 corrected full description reaches unowned card detail and actual helper search without grants or read writes
+AssertionError: expected '海神波塞頓★★★★★★見過潮屬性神族Cost 13希臘同色連鎖・隊長強化珠…' to contain '水屬性成員攻擊力 2.5 倍；每段消除每 3 顆水珠，該段補珠產生 1 顆…'
+
+Expected: "水屬性成員攻擊力 2.5 倍；每段消除每 3 顆水珠，該段補珠產生 1 顆水強化珠（以可補空格為上限；隊長與助戰的連動產量相加）。"
+Received: "海神波塞頓★★★★★★見過潮屬性神族Cost 13希臘同色連鎖・隊長強化珠增幅・隊長單屬爆發・核心最大等級99生命3,550Lv1 1,136攻擊1,780Lv1 570回復490Lv1 157主動技・水屬印記水屬性攻擊力先提升至 1.4 倍；每回合有造成水屬性傷害，下一回合再增加 0.2 倍，最高 2.2 倍。若該回合沒有造成水屬性傷害，印記消失。冷卻 19 回合（最短 10）隊長技・水之連動水屬性成員攻擊力 2.5 倍；每段消除每 3 顆水珠，該段補珠產生 1 顆水強化珠（以可補空格為上限；相同連動不疊加）。星紋覺醒以下為可解鎖效果，需取得卡片後逐項覺醒；上方數值為未突破、未覺醒的滿級基礎值。潮珠傷害 +10%生命 +250轉珠時間 +0.5 秒背景故事經典希臘神。以水之連動補出本色強化珠，持續造成水屬性傷害才能維持印記增幅。取得方式隨機掉落的機率照實標示，不保證一定會掉。點一下前往對應的入口。兌換經典角色・波塞頓・50,000 金幣還能換 1 次現在可取得卡池經典封印現在可取得首通必得流派試煉・希臘同色連鎖通過第 1 章「蟾鳴泥沼」後開放暫時無法首次取得獎勵每個卡號首次取得後限領一次星晶 ×5。尚未取得5"
+
+ ❯ tests/greek-stacking-copy.test.ts:30:60
+     28|   const nav = { go: vi.fn(), replace: vi.fn(), back: vi.fn(), backTo: …
+     29|   const detail = collectionCardScreen.render({ nav, route: { name: 'co…
+     30|   document.body.append(detail); expect(detail.textContent).toContain(d…
+       |                                                            ^
+     31|   leave.splice(0).forEach(fn => fn());
+     32|   const helper = helperScreen.render({ nav, route: { name: 'helper', a…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/greek-stacking-copy.test.ts > l807 corrected full description reaches unowned card detail and actual helper search without grants or read writes
+AssertionError: expected '奧林火神赫淮斯托斯★★★★★★見過焰屬性神族Cost 13希臘同色連鎖・隊…' to contain '火屬性成員攻擊力 2.5 倍；每段消除每 3 顆火珠，該段補珠產生 1 顆…'
+
+Expected: "火屬性成員攻擊力 2.5 倍；每段消除每 3 顆火珠，該段補珠產生 1 顆火強化珠（以可補空格為上限；隊長與助戰的連動產量相加）。"
+Received: "奧林火神赫淮斯托斯★★★★★★見過焰屬性神族Cost 13希臘同色連鎖・隊長強化珠增幅・隊長單屬爆發・核心最大等級99生命3,650Lv1 1,168攻擊1,880Lv1 602回復440Lv1 141主動技・火屬印記火屬性攻擊力先提升至 1.4 倍；每回合有造成火屬性傷害，下一回合再增加 0.2 倍，最高 2.2 倍。若該回合沒有造成火屬性傷害，印記消失。冷卻 19 回合（最短 10）隊長技・火之連動火屬性成員攻擊力 2.5 倍；每段消除每 3 顆火珠，該段補珠產生 1 顆火強化珠（以可補空格為上限；相同連動不疊加）。星紋覺醒以下為可解鎖效果，需取得卡片後逐項覺醒；上方數值為未突破、未覺醒的滿級基礎值。焰珠傷害 +10%生命 +250轉珠時間 +0.5 秒背景故事經典希臘神。以火之連動補出本色強化珠，持續造成火屬性傷害才能維持印記增幅。取得方式隨機掉落的機率照實標示，不保證一定會掉。點一下前往對應的入口。兌換經典角色・赫淮斯托斯・50,000 金幣還能換 1 次現在可取得卡池經典封印現在可取得首次取得獎勵每個卡號首次取得後限領一次星晶 ×5。尚未取得5"
+
+ ❯ tests/greek-stacking-copy.test.ts:30:60
+     28|   const nav = { go: vi.fn(), replace: vi.fn(), back: vi.fn(), backTo: …
+     29|   const detail = collectionCardScreen.render({ nav, route: { name: 'co…
+     30|   document.body.append(detail); expect(detail.textContent).toContain(d…
+       |                                                            ^
+     31|   leave.splice(0).forEach(fn => fn());
+     32|   const helper = helperScreen.render({ nav, route: { name: 'helper', a…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  tests/greek-stacking-copy.test.ts > l808 corrected full description reaches unowned card detail and actual helper search without grants or read writes
+AssertionError: expected '智慧女神雅典娜★★★★★★見過森屬性神族Cost 13希臘同色連鎖・隊長強…' to contain '木屬性成員攻擊力 2.5 倍；每段消除每 3 顆木珠，該段補珠產生 1 顆…'
+
+Expected: "木屬性成員攻擊力 2.5 倍；每段消除每 3 顆木珠，該段補珠產生 1 顆木強化珠（以可補空格為上限；隊長與助戰的連動產量相加）。"
+Received: "智慧女神雅典娜★★★★★★見過森屬性神族Cost 13希臘同色連鎖・隊長強化珠增幅・隊長單屬爆發・核心最大等級99生命3,950Lv1 1,264攻擊1,640Lv1 525回復460Lv1 147主動技・木屬印記木屬性攻擊力先提升至 1.4 倍；每回合有造成木屬性傷害，下一回合再增加 0.2 倍，最高 2.2 倍。若該回合沒有造成木屬性傷害，印記消失。冷卻 19 回合（最短 10）隊長技・木之連動木屬性成員攻擊力 2.5 倍；每段消除每 3 顆木珠，該段補珠產生 1 顆木強化珠（以可補空格為上限；相同連動不疊加）。星紋覺醒以下為可解鎖效果，需取得卡片後逐項覺醒；上方數值為未突破、未覺醒的滿級基礎值。森珠傷害 +10%生命 +250轉珠時間 +0.5 秒背景故事經典希臘神。以木之連動補出本色強化珠，持續造成木屬性傷害才能維持印記增幅。取得方式隨機掉落的機率照實標示，不保證一定會掉。點一下前往對應的入口。兌換經典角色・雅典娜・50,000 金幣還能換 1 次現在可取得卡池經典封印現在可取得首次取得獎勵每個卡號首次取得後限領一次星晶 ×5。尚未取得5"
+
+ ❯ tests/greek-stacking-copy.test.ts:30:60
+     28|   const nav = { go: vi.fn(), replace: vi.fn(), back: vi.fn(), backTo: …
+     29|   const detail = collectionCardScreen.render({ nav, route: { name: 'co…
+     30|   document.body.append(detail); expect(detail.textContent).toContain(d…
+       |                                                            ^
+     31|   leave.splice(0).forEach(fn => fn());
+     32|   const helper = helperScreen.render({ nav, route: { name: 'helper', a…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  tests/greek-stacking-copy.test.ts > l809 corrected full description reaches unowned card detail and actual helper search without grants or read writes
+AssertionError: expected '光明之神阿波羅★★★★★★見過輝屬性神族Cost 13希臘同色連鎖・隊長強…' to contain '光屬性成員攻擊力 2.5 倍；每段消除每 3 顆光珠，該段補珠產生 1 顆…'
+
+Expected: "光屬性成員攻擊力 2.5 倍；每段消除每 3 顆光珠，該段補珠產生 1 顆光強化珠（以可補空格為上限；隊長與助戰的連動產量相加）。"
+Received: "光明之神阿波羅★★★★★★見過輝屬性神族Cost 13希臘同色連鎖・隊長強化珠增幅・隊長單屬爆發・核心最大等級99生命3,650Lv1 1,168攻擊1,650Lv1 528回復510Lv1 163主動技・光屬印記光屬性攻擊力先提升至 1.4 倍；每回合有造成光屬性傷害，下一回合再增加 0.2 倍，最高 2.2 倍。若該回合沒有造成光屬性傷害，印記消失。冷卻 19 回合（最短 10）隊長技・光之連動光屬性成員攻擊力 2.5 倍；每段消除每 3 顆光珠，該段補珠產生 1 顆光強化珠（以可補空格為上限；相同連動不疊加）。星紋覺醒以下為可解鎖效果，需取得卡片後逐項覺醒；上方數值為未突破、未覺醒的滿級基礎值。輝珠傷害 +10%生命 +250轉珠時間 +0.5 秒背景故事經典希臘神。以光之連動補出本色強化珠，持續造成光屬性傷害才能維持印記增幅。取得方式隨機掉落的機率照實標示，不保證一定會掉。點一下前往對應的入口。兌換經典角色・阿波羅・50,000 金幣還能換 1 次現在可取得卡池經典封印現在可取得首次取得獎勵每個卡號首次取得後限領一次星晶 ×5。尚未取得5"
+
+ ❯ tests/greek-stacking-copy.test.ts:30:60
+     28|   const nav = { go: vi.fn(), replace: vi.fn(), back: vi.fn(), backTo: …
+     29|   const detail = collectionCardScreen.render({ nav, route: { name: 'co…
+     30|   document.body.append(detail); expect(detail.textContent).toContain(d…
+       |                                                            ^
+     31|   leave.splice(0).forEach(fn => fn());
+     32|   const helper = helperScreen.render({ nav, route: { name: 'helper', a…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  tests/greek-stacking-copy.test.ts > l810 corrected full description reaches unowned card detail and actual helper search without grants or read writes
+AssertionError: expected '月之狩獵女神阿提密斯★★★★★★見過蝕屬性神族Cost 13希臘同色連鎖・…' to contain '暗屬性成員攻擊力 2.5 倍；每段消除每 3 顆暗珠，該段補珠產生 1 顆…'
+
+Expected: "暗屬性成員攻擊力 2.5 倍；每段消除每 3 顆暗珠，該段補珠產生 1 顆暗強化珠（以可補空格為上限；隊長與助戰的連動產量相加）。"
+Received: "月之狩獵女神阿提密斯★★★★★★見過蝕屬性神族Cost 13希臘同色連鎖・隊長強化珠增幅・隊長單屬爆發・核心最大等級99生命3,450Lv1 1,104攻擊1,950Lv1 624回復450Lv1 144主動技・暗屬印記暗屬性攻擊力先提升至 1.4 倍；每回合有造成暗屬性傷害，下一回合再增加 0.2 倍，最高 2.2 倍。若該回合沒有造成暗屬性傷害，印記消失。冷卻 19 回合（最短 10）隊長技・暗之連動暗屬性成員攻擊力 2.5 倍；每段消除每 3 顆暗珠，該段補珠產生 1 顆暗強化珠（以可補空格為上限；相同連動不疊加）。星紋覺醒以下為可解鎖效果，需取得卡片後逐項覺醒；上方數值為未突破、未覺醒的滿級基礎值。蝕珠傷害 +10%生命 +250轉珠時間 +0.5 秒背景故事經典希臘神。以暗之連動補出本色強化珠，持續造成暗屬性傷害才能維持印記增幅。取得方式隨機掉落的機率照實標示，不保證一定會掉。點一下前往對應的入口。兌換經典角色・阿提密斯・50,000 金幣還能換 1 次現在可取得卡池經典封印現在可取得首次取得獎勵每個卡號首次取得後限領一次星晶 ×5。尚未取得5"
+
+ ❯ tests/greek-stacking-copy.test.ts:30:60
+     28|   const nav = { go: vi.fn(), replace: vi.fn(), back: vi.fn(), backTo: …
+     29|   const detail = collectionCardScreen.render({ nav, route: { name: 'co…
+     30|   document.body.append(detail); expect(detail.textContent).toContain(d…
+       |                                                            ^
+     31|   leave.splice(0).forEach(fn => fn());
+     32|   const helper = helperScreen.render({ nav, route: { name: 'helper', a…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+ Test Files  1 failed (1)
+      Tests  6 failed (6)
+   Start at  13:46:42
+   Duration  2.79s (transform 1.11s, setup 0ms, collect 1.94s, tests 105ms, environment 340ms, prepare 100ms)
+
