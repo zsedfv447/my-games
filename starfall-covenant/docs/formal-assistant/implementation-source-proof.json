@@ -1,0 +1,30 @@
+[
+  {
+    "path": "src/battle/assistant/planner.ts",
+    "sourceSha256": "e28862aad0ba1251997c3e4bffbb9bf50ce26623313048457352d3fb8f704722"
+  },
+  {
+    "path": "src/battle/assistant/types.ts",
+    "sourceSha256": "2a11f76f22dcb9608c874972677d80b6b14af736fd3154532ecc21c423131906"
+  },
+  {
+    "path": "src/battle/assistant/preferences.ts",
+    "sourceSha256": "1ac232e8afc3dc47d71afbd595fc15400b7a28314bf90deaab9163d355f81937"
+  },
+  {
+    "path": "src/ui/components/orb-assistant.ts",
+    "sourceSha256": "da880a353220f2eb891da32bca91a14a78d3944140ed9543dccc717e9b9f5673"
+  },
+  {
+    "path": "src/ui/screens/battle.ts",
+    "sourceSha256": "8de4f51140c97737bd7f1a7daeda385c1a9eadef36888ed0b3a505b6e37bd759"
+  },
+  {
+    "path": "tests/assistant-greek-reserve.test.ts",
+    "sourceSha256": "2bee625e020dd19f6c31b0cafc090c2c8d247ca6b66d2340fdbd7eefa4ed0781"
+  },
+  {
+    "path": "tests/assistant-greek-options.test.ts",
+    "sourceSha256": "f0755f99ae939c97fdb2a84d87eba650f357513b0b484f49bfc9d8be56d80b70"
+  }
+]

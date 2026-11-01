@@ -1,0 +1,114 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-assistant-production/starfall-covenant
+
+ ❯ tests/assistant-greek-reserve-independent.test.ts (17 tests | 7 failed) 249ms
+   × real one-step Greek search reserves two of five when neither candidate changes safety or kills 30ms
+     → expected 5 to be 3 // Object.is equality
+   × auto receives the same real five-orb conservation only on an effective Greek team 5ms
+     → expected 5 to be 3 // Object.is equality
+   × one known-survivor gravity pass distinguishes a certain group from an unknown-cell hook 2ms
+     → expected undefined to be 1 // Object.is equality
+   × hidden or no-skyfall boards conservatively omit analysis and keep legacy output 11ms
+     → expected [ '僅估算首消；天降與後續連鎖可能改變結果。', …(4) ] to include '隱藏珠或禁止天降連消期間，不套用希臘留珠／接點選項。'
+   × analysis aggregates real disconnected six and saturates only actual cleared slots 2ms
+     → expected undefined to be 4 // Object.is equality
+   × real evaluated candidate ordering and within-search ordinal score agree with replayed first-step candidates 29ms
+     → assistantBoardPriority is not a function
+   × real same-board candidate pairs show setup and joint setup/reserve affect ordering, not merely reported metrics 3ms
+     → Cannot read properties of undefined (reading 'knownCascadeGroups')
+ ❯ tests/assistant-greek-reserve-app-independent.test.ts (1 test | 1 failed) 4054ms
+   × actual Greek battle options default off, persist only formal prefs and retain exact battle/save; stale closed checkbox/save cannot overwrite 4053ms
+     → 同配額優先留珠: expected null not to be null
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/assistant-greek-reserve-app-independent.test.ts > actual Greek battle options default off, persist only formal prefs and retain exact battle/save; stale closed checkbox/save cannot overwrite
+AssertionError: 同配額優先留珠: expected null not to be null
+ ❯ checkbox tests/assistant-greek-reserve-app-independent.test.ts:27:149
+
+ ❯ tests/assistant-greek-reserve-app-independent.test.ts:29:68
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  tests/assistant-greek-reserve-independent.test.ts > real one-step Greek search reserves two of five when neither candidate changes safety or kills
+AssertionError: expected 5 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 5
+
+ ❯ tests/assistant-greek-reserve-independent.test.ts:20:531
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  tests/assistant-greek-reserve-independent.test.ts > auto receives the same real five-orb conservation only on an effective Greek team
+AssertionError: expected 5 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 5
+
+ ❯ tests/assistant-greek-reserve-independent.test.ts:35:293
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  tests/assistant-greek-reserve-independent.test.ts > one known-survivor gravity pass distinguishes a certain group from an unknown-cell hook
+AssertionError: expected undefined to be 1 // Object.is equality
+
+- Expected: 
+1
+
++ Received: 
+undefined
+
+ ❯ tests/assistant-greek-reserve-independent.test.ts:38:419
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  tests/assistant-greek-reserve-independent.test.ts > hidden or no-skyfall boards conservatively omit analysis and keep legacy output
+AssertionError: expected [ '僅估算首消；天降與後續連鎖可能改變結果。', …(4) ] to include '隱藏珠或禁止天降連消期間，不套用希臘留珠／接點選項。'
+ ❯ tests/assistant-greek-reserve-independent.test.ts:42:706
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  tests/assistant-greek-reserve-independent.test.ts > analysis aggregates real disconnected six and saturates only actual cleared slots
+AssertionError: expected undefined to be 4 // Object.is equality
+
+- Expected: 
+4
+
++ Received: 
+undefined
+
+ ❯ tests/assistant-greek-reserve-independent.test.ts:43:338
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  tests/assistant-greek-reserve-independent.test.ts > real evaluated candidate ordering and within-search ordinal score agree with replayed first-step candidates
+TypeError: assistantBoardPriority is not a function
+ ❯ tests/assistant-greek-reserve-independent.test.ts:48:370
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  tests/assistant-greek-reserve-independent.test.ts > real same-board candidate pairs show setup and joint setup/reserve affect ordering, not merely reported metrics
+TypeError: Cannot read properties of undefined (reading 'knownCascadeGroups')
+ ❯ tests/assistant-greek-reserve-independent.test.ts:55:331
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+ Test Files  2 failed (2)
+      Tests  8 failed | 10 passed (18)
+   Start at  21:33:32
+   Duration  4.99s (transform 3.00s, setup 0ms, collect 712ms, tests 4.30s, environment 438ms, prepare 186ms)
+

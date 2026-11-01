@@ -8,6 +8,7 @@ import '../orb-assistant.css';
 
 export interface OrbAssistantOptions {
   state: BattleState;
+  greekAvailable?: boolean;
   stage?: Pick<StageDef, 'stars'>;
   initialRequest?: AssistantRequest;
   onSaveRequest?(request: AssistantRequest): void;
@@ -60,6 +61,13 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
   const colorField = field('指定珠色', color);
   const enemyField = field('指定敵人', enemy);
   const starField = field('星章條件', star);
+  const greekReserve = h('input', { type: 'checkbox', 'aria-label': '同配額優先留珠' });
+  const greekSetup = h('input', { type: 'checkbox', 'aria-label': '已知落珠疊珠／缺口分析' });
+  const greekField = h('section', { 'data-greek-options': '' },
+    h('h3', null, '希臘進階選項（自行勾選）'),
+    h('label', { class: 'orb-assistant-check' }, greekReserve, '同配額優先留珠'),
+    h('label', { class: 'orb-assistant-check' }, greekSetup, '已知落珠疊珠／缺口分析'),
+    h('p', { class: 'small-text dim' }, '僅智慧／希臘模式與實際生效的希臘隊長技適用；生存、條件、擊殺、護盾與回復優先。未知補珠不作保證；隱藏珠或禁止天降時不採用此分析。'));
   const minCombo = numberInput();
   const exactCombo = numberInput();
   const minGroup = numberInput();
@@ -98,12 +106,14 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
     colorField.hidden = !['color', 'avoidcolor', 'mono', 'clearcolor'].includes(goal.value);
     enemyField.hidden = goal.value !== 'target';
     starField.hidden = goal.value !== 'star';
+    greekField.hidden = !opts.greekAvailable || !['auto', 'greek'].includes(goal.value);
 
   };
   syncGoal();
   const parseNumber = (input: HTMLInputElement): number | undefined => input.value === '' ? undefined : Number(input.value);
   const request = (): AssistantRequest => ({
     goal: goal.value as AssistantGoalId,
+    greek: greekReserve.checked || greekSetup.checked ? { reserve: greekReserve.checked, setup: greekSetup.checked } : undefined,
     color: color.value as OrbType,
     targetEnemy: Number(enemy.value),
     starIndex: star.value === '' ? undefined : Number(star.value),
@@ -112,6 +122,8 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
   });
   const saved = opts.initialRequest;
   if (saved) {
+    greekReserve.checked = saved.greek?.reserve === true;
+    greekSetup.checked = saved.greek?.setup === true;
     if (listed.has(saved.goal)) { goal.value = saved.goal; syncGoal(); }
     if (saved.color) color.value = saved.color;
     if (saved.targetEnemy !== undefined && opts.state.enemies[saved.targetEnemy]?.hp > 0) enemy.value = String(saved.targetEnemy);
@@ -149,6 +161,7 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
     h('p', { class: 'small-text dim' }, '預估只看首消，不保證天降與最終戰果。'),
     h('p', { class: 'small-text dim' }, '設定會在規劃或儲存後記住，下次可從上方按「▶」使用；每次只執行一回合。'),
     h('div', { class: 'orb-assistant-grid' }, field('轉珠模式（點選可切換所有模式）', goal), colorField, enemyField, starField),
+    greekField,
     h('details', { class: 'orb-assistant-conditions' }, h('summary', null, '附加條件'),
       h('div', { class: 'orb-assistant-grid' }, field('至少幾 Combo', minCombo), field('恰好幾 Combo', exactCombo), field('單組至少幾顆', minGroup), field('至少幾組心珠', minHeartGroups), field('至少幾顆強化珠', minEnhanced), field('至少破幾格七曜環', minRingBreaks), field('附加條件珠色', conditionColor), field('此色至少消幾顆', colorCount)),
       h('label', { class: 'orb-assistant-check' }, enhanced, '需要消除強化珠'),
@@ -221,6 +234,11 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
         h('dl', { class: 'orb-assistant-stats' }, h('dt', null, 'Combo'), h('dd', null, number(f.combo)), h('dt', null, '傷害'), h('dd', null, number(f.damage)), h('dt', null, '補血'), h('dd', null, number(f.heal)), h('dt', null, '敵方傷害'), h('dd', null, number(f.incomingDamage)), h('dt', null, '毒傷害'), h('dd', null, number(f.poisonDamage)), h('dt', null, '回合後生命'), h('dd', null, number(f.hpAfter))),
         h('p', null, `目標：${f.goalAchieved ? '預估達成' : '尚未達成'}；附加條件：${f.constraintsMet ? '預估符合' : '尚未符合'}。`),
         h('p', { class: 'small-text' }, f.hpAfter <= 0 ? '風險：預估生命歸零。' : '風險：仍可能受天降與敵方機制影響。'),
+        ...(f.greekAnalysis && opts.greekAvailable && ['auto', 'greek'].includes(r.goal) && (r.greek?.reserve || r.greek?.setup) ? [h('section', { 'data-greek-analysis': '' },
+          h('h3', null, '希臘留珠／已知落珠分析（非戰果預測）'),
+          h('p', null, `首消理論配額：${COLORS.filter(([id]) => (f.greekAnalysis!.quotaByColor[id] ?? 0) > 0).map(([id, name]) => `${name} ${number(f.greekAnalysis!.quotaByColor[id]!)}`).join('、') || '0'}；保留珠：${COLORS.filter(([id]) => (f.greekAnalysis!.retainedByColor[id] ?? 0) > 0).map(([id, name]) => `${name} ${number(f.greekAnalysis!.retainedByColor[id]!)}`).join('、') || '0'}`),
+          r.greek?.setup ? h('p', null, `已知存活珠落下後可成組：${number(f.greekAnalysis.knownCascadeGroups)}；需未知補珠配合的缺口：${number(f.greekAnalysis.conditionalHooks)}。`) : null,
+          h('p', { class: 'small-text dim' }, '只分析已知存活珠與空格；未知補珠可能改變結果，不保證連消，也未加入上方首消傷害／Combo。'))] : []),
         ...f.warnings.map(w => h('p', { class: 'small-text orb-assistant-warning' }, w)),
         next.timedOut ? h('p', { class: 'small-text dim' }, '已達規劃時間上限，顯示目前找到的路線，不代表最佳解。') : h('p', { class: 'small-text dim' }, '這是目前找到的路線，不保證最佳解。'),
         h('p', { class: 'small-text dim' }, '可直接執行一次，或顯示路線後自行轉珠。'),

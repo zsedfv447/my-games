@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-enemy-guide/starfall-covenant
+
+ ✓ tests/e10-shop.test.ts (5 tests) 5938ms
+   ✓ route departure revokes pending confirmation and detached purchase entry 4040ms
+   ✓ approval followed by synchronous departure before await continuation never purchases 445ms
+   ✓ single pending dialog, cancellation then fresh retry purchases once and respects sold out 584ms
+   ✓ insufficient resources remain unchanged and cancellation does not poison retry 511ms
+   ✓ test-only unlimited item permits a second legitimate purchase after pending settles 358ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  21:41:51
+   Duration  6.71s (transform 2.33s, setup 0ms, collect 43ms, tests 5.94s, environment 333ms, prepare 87ms)
+

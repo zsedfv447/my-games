@@ -1,0 +1,63 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-assistant-production/starfall-covenant
+
+ ✓ audit/e13/c-navigation.test.ts (17 tests) 10834ms
+   ✓ controller: normal skip grants gift once; actual restart then skip never grants again 3996ms
+   ✓ controller: normal cancel preserves tutorial/gift/currency and writes nothing 482ms
+   ✓ controller: route departure revokes old skip confirmation instead of granting gift or changing route 660ms
+   ✓ battle-guide: normal skip grants gift once; actual restart then skip never grants again 469ms
+   ✓ battle-guide: normal cancel preserves tutorial/gift/currency and writes nothing 365ms
+   ✓ battle-guide: route departure revokes old skip confirmation instead of granting gift or changing route 525ms
+   ✓ abyss default branch: first challenge remains free and starts real first-floor battle 365ms
+   ✓ abyss default different-stage cancel retains ticket and zero cost 343ms
+   ✓ abyss alias same-stage resume preserves full snapshot and is free 359ms
+   ✓ abyss same-stage explicit restart remains free and records one deliberate abandonment 390ms
+   ✓ abyss main branch route departure revokes pending approval without clearing or redirecting 520ms
+   ✓ abyss abyss branch route departure revokes pending approval without clearing or redirecting 612ms
+   ✓ abyss main pending default confirmation cannot abandon a replacement same-stage ticket 347ms
+   ✓ abyss abyss pending default confirmation cannot abandon a replacement same-stage ticket 408ms
+   ✓ home same-page replacement: old Abandon must not clear a newer same-stage ticket 381ms
+   ✓ home answer 繼續 then same-task leave must not redirect or mutate the newer route 331ms
+ ✓ audit/e13/b-team.test.ts (24 tests) 10160ms
+   ✓ rename button normal updates only intended team 778ms
+   ✓ rename button cancel rejects retained callback 484ms
+   ✓ rename button leave rejects retained callback 619ms
+   ✓ rename button replaceTeam rejects retained callback 416ms
+   ✓ rename Enter normal updates only intended team 332ms
+   ✓ rename Enter cancel rejects retained callback 427ms
+   ✓ rename Enter leave rejects retained callback 562ms
+   ✓ rename Enter replaceTeam rejects retained callback 370ms
+   ✓ team picker preview is read-only, locked card remains legal to equip, removal preserves leader 375ms
+   ✓ team picker cancel rejects old equip/remove 341ms
+   ✓ team picker leave rejects old equip/remove 574ms
+   ✓ team picker switchTeam rejects old equip/remove 349ms
+   ✓ team picker replaceLineup rejects old equip/remove 369ms
+   ✓ Cost suggestion normal respects 33 limit and retains leader 637ms
+   ✓ Cost suggestion cancel cannot commit captured lineup 365ms
+   ✓ Cost suggestion leave cannot commit captured lineup 509ms
+   ✓ cards material-target picker cancel navigation 305ms
+   ✓ cards material-target picker leave navigation 439ms
+   ✓ oath cancel: module-memory selection lifecycle, not save 300ms
+   ✓ oath leave: module-memory selection lifecycle, not save 484ms
+   ✓ oath replacePicker: module-memory selection lifecycle, not save 311ms
+ ✓ audit/e13/a-resource.test.ts (16 tests) 8119ms
+   ✓ ritual again normal: real first pull and result, stale approval must not spend 740ms
+   ✓ ritual again cancel: real first pull and result, stale approval must not spend 409ms
+   ✓ ritual again leave: real first pull and result, stale approval must not spend 588ms
+   ✓ ritual again replacement: real first pull and result, stale approval must not spend 397ms
+   ✓ expedition picker normal: closed selection must not change later chosen members 316ms
+   ✓ expedition picker cancel: closed selection must not change later chosen members 372ms
+   ✓ expedition picker leave: closed selection must not change later chosen members 463ms
+   ✓ expedition picker replacement: closed selection must not change later chosen members 329ms
+   ✓ expedition recall leave: no stale recall may remove active party 471ms
+   ✓ expedition recall replacement: no stale recall may remove active party 312ms
+   ✓ login popup normal: daily guard and closed popup authority 624ms
+   ✓ login popup cancel: daily guard and closed popup authority 696ms
+   ✓ login popup leave: daily guard and closed popup authority 876ms
+   ✓ login popup replacement: daily guard and closed popup authority 951ms
+
+ Test Files  3 passed (3)
+      Tests  57 passed (57)
+   Start at  21:51:45
+   Duration  31.21s (transform 2.40s, setup 0ms, collect 114ms, tests 29.11s, environment 926ms, prepare 249ms)
+

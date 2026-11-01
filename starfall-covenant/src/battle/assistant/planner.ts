@@ -1,7 +1,8 @@
+import { ORB_TYPES, type OrbType } from '../../core/types';
 /** Visible first-clear only: never reads RNG or predicts unknown skyfall. */
 import { findMatches, type Board, type Pos } from '../board';
 import { applyHits, computeAttacks, computeHeal, incomingDamage, poisonOrbDamage } from '../damage';
-import { evaluateLeaderTurn, matchesFilter } from '../leader';
+import { evaluateLeaderStatic, evaluateLeaderTurn, matchesFilter } from '../leader';
 import { buffAttackMultipliers, buffDamageReductions, teamWithRcvToAtk } from '../skills/buffs';
 import { attributeSealMultipliers, defenseProfile, enemyAtkMultiplier, enemyHitCount, isHeartSealed, poisonPercent, sealedOrbs } from '../skills/status';
 import { breakRingSlots, ringOf } from '../skills/ring';
@@ -10,7 +11,7 @@ export type { AssistantInput, AssistantPlan, AssistantForecast, PlannerOptions }
 const ATTRS = ['fire', 'water', 'wood', 'light', 'dark'] as const;
 const DIRS = [-1, 0, 1].flatMap(r => [-1, 0, 1].filter(c => r || c).map(c => [r, c]));
 
-export function evaluateAssistantBoard(board: Board, input: AssistantInput): AssistantForecast {
+export function evaluateAssistantBoard(board: Board, input: AssistantInput, context:GreekContext | null | undefined = greekContext(input)): AssistantForecast {
   const { state: s, config, request } = input;
   const groups = findMatches(board, 0, sealedOrbs(s));
   const combo = groups.length, colors = [...new Set(groups.map(g => g.orb))];
@@ -74,10 +75,12 @@ export function evaluateAssistantBoard(board: Board, input: AssistantInput): Ass
     else if(!(s.wave===s.waveCount-1&&f.enemyHp.length>0&&f.enemyHp.every(h=>h<=0)&&f.hpAfter>0))warnings.push('星章須待整場通關才會正式判定；這裡僅評估目前條件。');
   }
   if(['race','control','skillcycle','fixed','classicbeast'].includes(request.goal))warnings.push('流派效果依目前隊伍、隊長技與狀態結算；轉珠本身不會改變種族、施放技能或賦予追打。');
-  if(request.goal==='greek')warnings.push('希臘策略只最佳化首消主屬珠；後續同色強化天降與連鎖不作保證。');
+  if(request.goal==='greek')warnings.push(context?'希臘策略以首消目標為基礎；勾選時考慮配額、留珠或已知接點，後續天降與連鎖不作保證。':'希臘策略只最佳化首消主屬珠；後續同色強化天降與連鎖不作保證。');
   if(request.goal==='exactcombo'&&c.exactCombo===undefined)warnings.push('請先設定指定 Combo 數。');
   if(!f.goalAchieved) warnings.push('這條路徑尚未達成所有目標；不代表其他路徑一定不可行。');
   if(enemies.some(e=>ringOf(e)?.shattered)) warnings.push('已按攻擊批次後破環，再計算持續傷害。');
+  if(context)f.greekAnalysis=greekAnalysis(board,f,input,context);
+  else if(greekEffects(input)&&(board.cells.some(o=>o.hidden)||s.buffs.some(b=>b.kind==='noSkyfallCombo')))warnings.push('隱藏珠或禁止天降連消期間，不套用希臘留珠／接點選項。');
   return f;
 }
 
@@ -135,12 +138,70 @@ function score(f:AssistantForecast,input:AssistantInput):number {
   const extraDeficit = (c.clearColors??[]).reduce((n,o)=>n+Math.max(0,input.state.board.cells.filter(v=>v.type===o).length-f.groups.filter(g=>g.orb===o).reduce((a,g)=>a+g.cells.length,0))*20,0) + Math.max(0,(c.minRingBreaks??0)-f.ringBroken.flat().length)*40 + (c.avoidAbsorb?f.absorbedDamage/Math.max(1,input.state.maxHp)*100:0) + Math.max(0,(c.minHeartGroups??0)-f.groups.filter(g=>g.orb==='heart').length)*40 + Math.max(0,(c.minEnhanced??0)-f.groups.reduce((n,g)=>n+g.enhancedCount,0))*15 + (!c.minColorOrbs?0:Math.max(0,c.minColorOrbs.count-f.groups.filter(g=>g.orb===c.minColorOrbs!.color).reduce((n,g)=>n+g.cells.length,0))*10);
   return Math.max(-500,Math.min(500,goalProgress(f,input).value)) + (f.constraintsMet?10000:0) + (f.goalAchieved?1000:0) - deficit - extraDeficit + f.combo*.3 + (input.request.goal==='auto'?f.hpAfter/Math.max(1,input.state.maxHp)*60:0) - (f.hpAfter<=0?20000:0);
 }
+type GreekContext = ReturnType<typeof evaluateLeaderStatic>['matchedOrbSkyfall'];
+function greekEffects(input:AssistantInput):GreekContext | undefined {
+  const r=input.request;
+  if(!['auto','greek'].includes(r.goal)||!(r.greek?.reserve||r.greek?.setup))return;
+  const effects=evaluateLeaderStatic(input.leaders,input.state.team).matchedOrbSkyfall.filter(e=>Number.isFinite(e.count)&&e.count>=1&&Number.isFinite(e.spawn)&&e.spawn>=1);
+  return effects.length?effects:undefined;
+}
+function greekContext(input:AssistantInput):GreekContext | undefined {
+  if(input.state.board.cells.some(o=>o.hidden)||input.state.buffs.some(b=>b.kind==='noSkyfallCombo'))return;
+  return greekEffects(input);
+}
+/** Visible survivors only. Unknown refill slots never acquire a predicted color. */
+function greekAnalysis(board:Board,f:AssistantForecast,input:AssistantInput,effects:GreekContext):NonNullable<AssistantForecast['greekAnalysis']> {
+  const removed=new Set(f.groups.flatMap(g=>g.cells)),quotaByColor:Partial<Record<OrbType,number>>={},retainedByColor:Partial<Record<OrbType,number>>={};
+  let allocated=0;
+  for(const orb of ORB_TYPES){
+    const count=f.groups.filter(g=>g.orb===orb).reduce((n,g)=>n+g.cells.length,0),available=removed.size-allocated;
+    let generated=0;
+    for(const effect of effects){if(generated>=available)break;if(effect.orb!==orb)continue;const groups=Math.floor(count/Math.floor(effect.count)),spawn=Math.floor(effect.spawn),remaining=available-generated;generated+=groups>=remaining/spawn?remaining:groups*spawn;}
+    quotaByColor[orb]=generated;allocated+=generated;
+    if(effects.some(e=>e.orb===orb))retainedByColor[orb]=board.cells.filter((o,i)=>o.type===orb&&!removed.has(i)).length;
+  }
+  const known:(OrbType|null)[]=Array(board.cells.length).fill(null);
+  for(let col=0;col<board.cols;col++){let row=board.rows-1;for(let old=board.rows-1;old>=0;old--){const i=old*board.cols+col;if(!removed.has(i))known[row--*board.cols+col]=board.cells[i].type;}}
+  return{quotaByColor,retainedByColor,...analyzeGreekSurvivors(known,board.cols,board.rows,sealedOrbs(input.state),effects.map(e=>e.orb))};
+}
+/** Pure visible-grid diagnostic: null is an unknown refill slot, never a fake color. */
+export function analyzeGreekSurvivors(known:readonly(OrbType|null)[],cols:number,rows:number,sealed:readonly OrbType[],effectiveColors:readonly OrbType[]):{knownCascadeGroups:number;conditionalHooks:number} {
+  const windows:number[][]=[];
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const i=r*cols+c;if(c+2<cols)windows.push([i,i+1,i+2]);if(r+2<rows)windows.push([i,i+cols,i+cols*2]);}
+  const marked=new Set<number>(),hooks=new Set<string>();
+  for(const window of windows){const colors=window.map(i=>known[i]);const color=colors.find(c=>c!==null);
+    if(!color||sealed.includes(color))continue;
+    if(colors.every(c=>c===color))window.forEach(i=>marked.add(i));
+    else if(colors.filter(c=>c===null).length===1&&colors.filter(c=>c===color).length===2&&effectiveColors.includes(color))hooks.add(`${window[colors.indexOf(null)]}:${color}`);
+  }
+  let count=0;
+  while(marked.size){const first=marked.values().next().value!;marked.delete(first);const queue=[first];count++;
+    for(let k=0;k<queue.length;k++){const i=queue[k],r=Math.floor(i/cols),c=i%cols;for(const [dr,dc]of [[-1,0],[1,0],[0,-1],[0,1]]){const row=r+dr,col=c+dc,n=row*cols+col;if(row>=0&&row<rows&&col>=0&&col<cols&&marked.has(n)&&known[n]===known[first]){marked.delete(n);queue.push(n);}}}
+  }
+  return{knownCascadeGroups:count,conditionalHooks:hooks.size};
+}
+/** Descending total order, shared by beam pruning and final selection. */
+export function compareAssistantPriority(a:readonly number[],b:readonly number[]):number {
+  for(let i=0;i<a.length;i++){if(a[i]>b[i])return 1;if(a[i]<b[i])return -1;}return 0;
+}
+export function assistantBoardPriority(f:AssistantForecast,input:AssistantInput):number[]|undefined {
+  const a=f.greekAnalysis;if(!a)return;
+  const alive=input.state.enemies.map((e,i)=>e.hp>0?i:-1).filter(i=>i>=0),target=input.request.targetEnemy??input.state.target;
+  const killed=alive.filter(i=>f.enemyHp[i]<=0).length;
+  const consumed=Object.keys(a.retainedByColor).reduce((n,color)=>n+f.groups.filter(g=>g.orb===color).reduce((m,g)=>m+g.cells.length,0),0);
+  return [Number(f.hpAfter>0),Number(f.constraintsMet),-f.absorbedDamage,Number(f.goalAchieved),Number(alive.length>0&&killed===alive.length),killed,Number(alive.includes(target)&&f.enemyHp[target]<=0),f.ringBroken.flat().length,
+    alive.filter(i=>{const shield=defenseProfile(input.state.enemies[i]).comboShield;return shield!==undefined&&shield>0&&f.combo>=shield;}).length,
+    Math.min(Math.max(0,f.heal),Math.max(0,input.state.maxHp-input.state.hp)),input.request.greek?.setup?a.knownCascadeGroups:0,
+    ORB_TYPES.reduce((n,c)=>n+(a.quotaByColor[c]??0),0),...ORB_TYPES.map(c=>a.quotaByColor[c]??0),input.request.greek?.reserve?-consumed:0,input.request.greek?.setup?a.conditionalHooks:0,score(f,input)];
+}
 export function planAssistantMove(input:AssistantInput,options:PlannerOptions={}):AssistantPlan {
   const s=input.state, board=s.board, start=performance.now(), budget=Math.max(1,options.timeBudgetMs??1200);
   const maxSteps=Math.max(0,Math.min(60,Math.floor(options.maxSteps??24),input.puzzle?.maxSteps??Infinity,Math.floor(s.moveTimeSeconds*(options.stepsPerSecond??4))));
-  type Node={cells:Board['cells'];path:Pos[];forecast:AssistantForecast;score:number};
+  type Node={cells:Board['cells'];path:Pos[];forecast:AssistantForecast;score:number;priority?:number[]};
+  const context=greekContext(input),ranks:number[][]=[];
+  const compare=(a:Node,b:Node)=>context?compareAssistantPriority(a.priority!,b.priority!):a.score-b.score;
   let examined=0,timedOut=false;
-  const make=(cells:Board['cells'],path:Pos[]):Node=>{const forecast=evaluateAssistantBoard({...board,cells},input);examined++;return{cells,path,forecast,score:score(forecast,input)};};
+  const make=(cells:Board['cells'],path:Pos[]):Node=>{const forecast=evaluateAssistantBoard({...board,cells},input,context??null);const priority=assistantBoardPriority(forecast,input);if(priority)ranks.push(priority);examined++;return{cells,path,forecast,priority,score:score(forecast,input)};};
   const original=make(board.cells,[]);
   let beam:Node[]=board.cells.flatMap((o,i)=>o.locked?[]:[{...original,path:[{row:Math.floor(i/board.cols),col:i%board.cols}]}]);
   let best:Node|undefined;
@@ -157,16 +218,17 @@ export function planAssistantMove(input:AssistantInput,options:PlannerOptions={}
         const key=b+':'+cells.map(o=>o.type+Number(o.enhanced)+Number(o.poison)).join(',');
         if(seen.has(key))continue;seen.add(key);
         const child=make(cells,[...node.path,to]);next.push(child);
-        if(!best||child.score>best.score)best=child;
+        if(!best||compare(child,best)>0)best=child;
         if(performance.now()-start>=budget){timedOut=true;break;}
       }
       if(timedOut)break;
     }
     if(!next.length||timedOut)break;
-    next.sort((a,b)=>b.score-a.score);beam=next.slice(0,Math.max(1,Math.min(128,options.beamWidth??36)));
+    next.sort((a,b)=>compare(b,a));beam=next.slice(0,Math.max(1,Math.min(128,options.beamWidth??36)));
   }
   const chosen=best??beam[0]??original;
   if(chosen.path.length<2)chosen.forecast.warnings.push('目前沒有可用的移動路徑，請檢查鎖珠與轉珠步數。');
   if(timedOut)chosen.forecast.warnings.push('已達搜尋時間上限，這是目前找到的最佳路徑。');
-  return{path:chosen.path,forecast:chosen.forecast,score:chosen.score,examined,timedOut};
+  // Activated score is an ordinal among this search's evaluated candidates, not a cross-search utility.
+  return{path:chosen.path,forecast:chosen.forecast,score:context?1+ranks.filter(r=>compareAssistantPriority(r,chosen.priority!)<0).length:chosen.score,examined,timedOut};
 }

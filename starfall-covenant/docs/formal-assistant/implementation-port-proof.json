@@ -1,0 +1,29 @@
+[
+  {
+    "file": "src/battle/assistant/planner.ts",
+    "method": "exact R31 bytes; pre-R31 source equals formal baseline",
+    "sha256": "e28862aad0ba1251997c3e4bffbb9bf50ce26623313048457352d3fb8f704722"
+  },
+  {
+    "file": "src/battle/assistant/types.ts",
+    "method": "exact R31 bytes; pre-R31 source equals formal baseline",
+    "sha256": "2a11f76f22dcb9608c874972677d80b6b14af736fd3154532ecc21c423131906"
+  },
+  {
+    "file": "src/ui/components/orb-assistant.ts",
+    "method": "exact R31 bytes; pre-R31 source equals formal baseline",
+    "sha256": "da880a353220f2eb891da32bca91a14a78d3944140ed9543dccc717e9b9f5673"
+  },
+  {
+    "file": "src/battle/assistant/preferences.ts",
+    "method": "six-line opt-in block only; inverse equals whole baseline",
+    "sha256": "3c3d732b785a1184b6f2c1d9099db81d628095769c69aefe8312780e4db8f789",
+    "baselineSha256": "3af513e8010ca71012a0af72d370ff093716c25ac4e7c47f4515e0bdb238e6bb"
+  },
+  {
+    "file": "src/ui/screens/battle.ts",
+    "method": "one import, four-line availability, option only; inverse equals whole baseline",
+    "sha256": "b9551562a9dc0750c5e4c90109e2af4c40bc45a0b3f57cc2c01fe119e98fbda8",
+    "baselineSha256": "268fadf56a7639edbff6956ba2e91807ff7f18f9491eeb10deb6b4173a526d74"
+  }
+]

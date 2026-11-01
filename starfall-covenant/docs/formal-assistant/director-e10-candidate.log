@@ -1,0 +1,15 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-assistant-production/starfall-covenant
+
+ ✓ tests/e10-shop.test.ts (5 tests) 4886ms
+   ✓ route departure revokes pending confirmation and detached purchase entry 3424ms
+   ✓ approval followed by synchronous departure before await continuation never purchases 342ms
+   ✓ single pending dialog, cancellation then fresh retry purchases once and respects sold out 431ms
+   ✓ insufficient resources remain unchanged and cancellation does not poison retry 336ms
+   ✓ test-only unlimited item permits a second legitimate purchase after pending settles 351ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  21:42:10
+   Duration  5.48s (transform 2.03s, setup 0ms, collect 37ms, tests 4.89s, environment 266ms, prepare 71ms)
+

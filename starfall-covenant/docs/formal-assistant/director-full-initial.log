@@ -1,0 +1,561 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-assistant-production/starfall-covenant
+
+ ✓ tests/battle-skills.test.ts (44 tests) 83ms
+ ✓ tests/assistant-greek-reserve-independent.test.ts (17 tests) 230ms
+ ✓ tests/battle-leader.test.ts (24 tests) 18ms
+ ✓ tests/stages.test.ts (20 tests) 35ms
+ ✓ tests/save.test.ts (19 tests) 18ms
+ ✓ tests/tutorial.test.ts (25 tests) 34ms
+ ✓ tests/oaths.test.ts (20 tests) 36ms
+ ✓ tests/economy-screens.test.ts (21 tests) 61ms
+ ✓ tests/ring-shield.test.ts (12 tests) 26ms
+ ✓ tests/greek-mechanics.test.ts (13 tests) 34ms
+ ✓ tests/mechanics-resume.test.ts (9 tests) 126ms
+ ✓ tests/economy.test.ts (16 tests) 16ms
+ ✓ tests/percent-damage.test.ts (16 tests) 31ms
+ ✓ tests/eclipse.test.ts (9 tests) 28ms
+ ✓ tests/outside-battle.test.ts (19 tests) 71ms
+ ✓ tests/abyss.test.ts (12 tests) 67ms
+ ✓ tests/reward-plan.test.ts (13 tests) 35ms
+ ✓ tests/growth/inventory.test.ts (13 tests) 20ms
+ ✓ tests/sim-progress.test.ts (15 tests) 53ms
+ ✓ tests/expedition.test.ts (11 tests) 27ms
+ ✓ tests/orb-assistant.test.ts (13 tests) 96ms
+ ✓ tests/sim.test.ts (13 tests) 495ms
+ ✓ tests/battle-feedback.test.ts (12 tests) 17ms
+ ✓ tests/stages-data.test.ts (10 tests) 20ms
+ ✓ tests/helper-support-data.test.ts (12 tests) 75ms
+ ✓ tests/economy-followups.test.ts (13 tests) 32ms
+ ✓ tests/helpers.test.ts (15 tests) 19ms
+ ✓ tests/e05-engine-descriptions.test.ts (10 tests) 51ms
+ ✓ tests/battle-board.test.ts (20 tests) 56ms
+ ✓ tests/helper-support.test.ts (6 tests) 43ms
+ ✓ tests/ui-battle.test.ts (15 tests) 39ms
+ ✓ tests/battle-damage.test.ts (16 tests) 12ms
+ ✓ tests/battle-state.test.ts (9 tests) 29ms
+ ✓ tests/enemy-guide-engine.test.ts (12 tests) 47ms
+ ✓ tests/matchup-reduction.test.ts (8 tests) 21ms
+ ✓ tests/gacha.test.ts (12 tests) 443ms
+ ✓ tests/classic-integration.test.ts (23 tests) 83ms
+ ✓ tests/newbie-contract.test.ts (10 tests) 42ms
+ ✓ tests/pwa-events.test.ts (13 tests) 20ms
+ ✓ tests/e24-active-resume.test.ts (2 tests) 76ms
+ ✓ tests/nemesis-week.test.ts (12 tests) 123ms
+ ✓ tests/battle-resume.test.ts (6 tests) 45ms
+ ✓ tests/newbie-flow.test.ts (10 tests) 1996ms
+   ✓ 第一章前兩關：入門隊長的屬性剋制第一波 > 入門隊（Lv1）不論帶哪位助戰，st-1-1 都在 5 回合左右通關 1959ms
+ ✓ tests/e04-data-conversion.test.ts (10 tests) 115ms
+ ✓ tests/e19-capability-model.test.ts (9 tests) 9ms
+ ✓ tests/constellation-share.test.ts (10 tests) 74ms
+ ✓ tests/notebook.test.ts (14 tests) 51ms
+ ✓ tests/summon.test.ts (9 tests) 21ms
+ ✓ tests/e19-capability-engine.test.ts (7 tests) 13ms
+ ✓ tests/titles.test.ts (10 tests) 18ms
+ ✓ tests/e03-engine-fixed.test.ts (17 tests) 25ms
+ ✓ tests/stamina.test.ts (16 tests) 14ms
+ ✓ tests/ui-growth.test.ts (11 tests) 37ms
+ ✓ tests/e03-content.test.ts (8 tests) 55ms
+ ✓ tests/e24-greek-resume.test.ts (1 test) 54ms
+ ✓ tests/e18-chain-engine.test.ts (14 tests) 27ms
+ ✓ tests/enemy-guide-model.test.ts (8 tests) 42ms
+ ✓ tests/puzzle.test.ts (11 tests) 1581ms
+   ✓ 每日謎題出題 > 同一天題目固定，不同天盤面不同 393ms
+   ✓ 每日謎題出題 > 每一題都有解：參考解在步數內、判定為解開；開場盤面不會自己消除 338ms
+   ✓ 每日謎題出題 > 題目門檻不會太簡單 309ms
+   ✓ 判定 > 清色題：剩下的顆數為 0 才算解開 327ms
+ ✓ tests/e25-period-acquire.test.ts (6 tests) 30ms
+ ✓ tests/drills.test.ts (9 tests) 25ms
+ ✓ tests/weekly-report.test.ts (6 tests) 16ms
+ ✓ tests/achievement-expand.test.ts (7 tests) 16ms
+ ✓ tests/e21-berserk-engine.test.ts (5 tests) 27ms
+ ✓ tests/e25-period-acquire-data.test.ts (8 tests) 1055ms
+ ✓ tests/active-battle.test.ts (8 tests) 30ms
+ ✓ tests/records-backfill.test.ts (7 tests) 39ms
+ ✓ tests/e22-archetype-engine.test.ts (7 tests) 33ms
+ ✓ tests/status-descriptions.test.ts (8 tests) 24ms
+ ✓ tests/orb-assistant-preferences.test.ts (6 tests) 44ms
+ ✓ tests/practice-modes.test.ts (7 tests) 103ms
+ ✓ tests/acquire-guide.test.ts (7 tests) 29ms
+ ✓ tests/lore.test.ts (9 tests) 20ms
+ ✓ tests/ui.test.ts (15 tests) 14ms
+stdout | tests/assistant-greek-reserve.test.ts > bounded opt-in timing comparison reports measured work without wall-clock assertions
+{"greek":{},"elapsedMs":23.21400699999998,"examined":557,"timedOut":false}
+{"greek":{"reserve":true},"elapsedMs":30.619507,"examined":550,"timedOut":false}
+{"greek":{"setup":true},"elapsedMs":26.071500000000015,"examined":557,"timedOut":false}
+{"greek":{"reserve":true,"setup":true},"elapsedMs":20.206356000000028,"examined":550,"timedOut":false}
+
+ ✓ tests/assistant-greek-reserve.test.ts (6 tests) 156ms
+ ✓ tests/greek-stacking-engine.test.ts (16 tests) 124ms
+ ✓ tests/story-wiring.test.ts (11 tests) 11ms
+ ✓ tests/wording-hints.test.ts (7 tests) 38ms
+ ✓ tests/nurture-journey.test.ts (6 tests) 8ms
+ ✓ tests/growth/skill-limit-awaken.test.ts (8 tests) 10ms
+ ✓ tests/pool-polish.test.ts (6 tests) 28ms
+ ✓ tests/e04-query.test.ts (7 tests) 8ms
+ ✓ tests/board-ops.test.ts (7 tests) 10ms
+stdout | tests/e24-oath-resume.test.ts > actual st-1-4 shield expiry and sealLeader oath countdown match across JSON resume for three fixed empty turns
+E24 oath fixed trace {"seed":62423,"stage":"st-1-4","oaths":["sealLeader"],"trace":[{"step":1,"enemyShield":false,"sealTurns":2,"events":["turnResolved","statusExpired"]},{"step":2,"enemyShield":false,"sealTurns":1,"events":["turnResolved","enemyAttack"]},{"step":3,"enemyShield":false,"sealTurns":null,"events":["turnResolved","enemyAttack","statusExpired"]}],"events":["turnResolved","statusExpired","turnResolved","enemyAttack","turnResolved","enemyAttack","statusExpired"],"rng":1887993133}
+
+ ✓ tests/e24-oath-resume.test.ts (1 test) 56ms
+ ✓ tests/e18-chain-model.test.ts (11 tests) 61ms
+ ✓ tests/greek-stacking-board.test.ts (5 tests) 21ms
+ ✓ tests/growth/enhance.test.ts (7 tests) 20ms
+ ✓ tests/drops.test.ts (8 tests) 20ms
+stdout | tests/greek-stacking-resume.test.ts > real dual c807 same-version JSON resume preserves nonempty forced-enhanced suffix, RNG, complete events and results
+GREEK_JSON_RESUME_TRACE {"seed":30071,"stage":"st-1-1","trace":[{"index":0,"turn":1,"combo":1,"steps":1,"rngBefore":56394968,"rngAfter":2455855254,"phase":"player"},{"index":1,"turn":2,"combo":0,"steps":0,"rngBefore":2455855254,"rngAfter":2455855254,"phase":"player"}],"eventTypes":["enemyDefeated","turnResolved","waveCleared","statusApplied","waveStart","turnResolved","statusExpired"],"result":null}
+
+ ✓ tests/greek-stacking-resume.test.ts (1 test) 44ms
+ ✓ tests/growth/starlight-crystal.test.ts (7 tests) 10ms
+ ✓ tests/title-notice.test.ts (7 tests) 22ms
+ ✓ tests/side-story.test.ts (7 tests) 11ms
+ ✓ tests/bestiary.test.ts (8 tests) 27ms
+ ✓ tests/card-bond.test.ts (8 tests) 16ms
+ ✓ tests/team-gaps.test.ts (6 tests) 12ms
+ ✓ tests/team-compare.test.ts (7 tests) 26ms
+ ✓ tests/audio-manager.test.ts (6 tests) 9ms
+ ✓ tests/flow-polish.test.ts (7 tests) 8ms
+ ✓ tests/classic-characters-data.test.ts (4 tests) 41ms
+ ✓ tests/encyclopedia-coverage.test.ts (3 tests) 97ms
+ ✓ tests/growth/archetype.test.ts (6 tests) 17ms
+ ✓ tests/new-cards.test.ts (6 tests) 13ms
+ ✓ tests/growth/normalize-exp.test.ts (5 tests) 18ms
+ ✓ tests/helper-bond.test.ts (7 tests) 6ms
+ ✓ tests/weekly-checklist.test.ts (4 tests) 13ms
+ ✓ tests/quest-goto.test.ts (5 tests) 16ms
+ ✓ tests/growth/cards-data.test.ts (6 tests) 30ms
+ ✓ tests/route-scope.test.ts (4 tests) 48ms
+ ✓ tests/e05-active-copy.test.ts (11 tests) 6ms
+ ✓ tests/material-art.test.ts (5 tests) 29ms
+ ✓ tests/growth/level.test.ts (7 tests) 11ms
+ ✓ tests/growth/evolve.test.ts (3 tests) 10ms
+ ✓ tests/router-back-to.test.ts (2 tests) 4ms
+ ✓ tests/endgame-nav.test.ts (3 tests) 20ms
+ ✓ tests/finale.test.ts (3 tests) 5ms
+ ✓ tests/growth/collection.test.ts (4 tests) 15ms
+ ✓ tests/companion-light.test.ts (4 tests) 14ms
+ ✓ tests/e22-archetype-copy.test.ts (6 tests) 5ms
+ ✓ tests/chip-priority.test.ts (4 tests) 28ms
+ ✓ tests/data.test.ts (4 tests) 24ms
+ ✓ tests/exp-curve.test.ts (4 tests) 16ms
+ ✓ tests/growth/battle-exp.test.ts (3 tests) 4ms
+ ✓ tests/growth/materials.test.ts (2 tests) 7ms
+ ✓ tests/awaken-balance.test.ts (3 tests) 42ms
+ ✓ tests/ui-nav.test.ts (4 tests) 4ms
+ ❯ tests/promotion-boundary.test.ts (2 tests | 1 failed) 31ms
+   × protected formal save/parser/PWA/build and every baseline asset remain byte-exact 14ms
+     → src/battle/assistant/preferences.ts: expected '3c3d732b785a1184b6f2c1d9099db81d62809…' to be '3af513e8010ca71012a0af72d370ff093716c…' // Object.is equality
+ ✓ tests/star-core-supply.test.ts (4 tests) 12ms
+ ✓ tests/summon-ritual.test.ts (4 tests) 13ms
+ ✓ tests/ui-bag.test.ts (3 tests) 9ms
+ ✓ tests/ui-team-cost.test.ts (3 tests) 6ms
+stdout | tests/enemy-art.test.ts > 敵人共用圖清單（提案 48） > 列出圖片被共用的敵人，交給美術補圖
+圖片被共用的敵人（7 隻改用程式產生的圖）：
+e0001（灰燼狼） 的圖也被 e0002（苔牙野豬）、e0004（鳴角鹿影）、e0005（夜爪貓妖） 使用（相似度 1）
+e0013（雲海水母） 的圖也被 demo-e3（潮沫水母） 使用（相似度 1）
+e0019（潮鱗龍兵） 的圖也被 demo-e2（苔背蜥） 使用（相似度 0.974）
+e0026（叛牙狼首・赫克） 的圖也被 e0012（枯羽鴞） 使用（相似度 0.992）
+e0038（碎星古龍・維爾肯） 的圖也被 demo-e5（墜域之影） 使用（相似度 1）
+
+ ✓ tests/enemy-art.test.ts (2 tests) 7ms
+ ✓ tests/e01-fit-classification.test.ts (6 tests) 7ms
+ ✓ tests/orb-art.test.ts (2 tests) 4ms
+ ✓ tests/e21-berserk-copy.test.ts (2 tests) 4ms
+ ✓ tests/battle-guard.test.ts (2 tests) 3ms
+ ✓ tests/status-labels-seal.test.ts (2 tests) 6ms
+ ✓ tests/pause-retreat.test.ts (2 tests) 4ms
+ ✓ tests/rng.test.ts (1 test) 3ms
+ ✓ tests/codex-quickview.test.ts (9 tests) 1109ms
+   ✓ 圖鑑與流派共用只讀快速介紹 > 推薦名字和全部流派卡片入口均可開，關閉/切頁會清理 346ms
+ ✓ tests/e14-team-picker.test.ts (26 tests) 12354ms
+   ✓ rename button normal updates only intended team 1143ms
+   ✓ rename button cancel rejects retained callback 484ms
+   ✓ rename button leave rejects retained callback 630ms
+   ✓ rename button replaceTeam rejects retained callback 331ms
+   ✓ rename Enter normal updates only intended team 384ms
+   ✓ rename Enter cancel rejects retained callback 368ms
+   ✓ rename Enter leave rejects retained callback 558ms
+   ✓ rename Enter replaceTeam rejects retained callback 380ms
+   ✓ team picker preview is read-only, locked card remains legal to equip, removal preserves leader 421ms
+   ✓ team picker cancel rejects old equip/remove 388ms
+   ✓ team picker leave rejects old equip/remove 627ms
+   ✓ team picker switchTeam rejects old equip/remove 394ms
+   ✓ team picker replaceLineup rejects old equip/remove 440ms
+   ✓ Cost suggestion normal respects 33 limit and retains leader 362ms
+   ✓ Cost suggestion cancel cannot commit captured lineup 398ms
+   ✓ Cost suggestion leave cannot commit captured lineup 912ms
+   ✓ Cost suggestion replaceLineup cannot commit captured lineup 508ms
+   ✓ cards material-target picker cancel navigation 429ms
+   ✓ cards material-target picker leave navigation 566ms
+   ✓ new picker revokes old equip/remove and old close cannot dismiss replacement 379ms
+   ✓ picker same-page changed lineup rejects without relying on route disposal 550ms
+   ✓ cost same-page changed lineup rejects without relying on route disposal 313ms
+   ✓ unrelated preference save does not revoke valid picker and normal Cost handoff stays usable 388ms
+   ✓ rename invalid input can retry; new dialog and same-page newer name revoke prior approval 400ms
+   ✓ stale candidate removed from inventory cannot be previewed or equipped 304ms
+ ✓ tests/helper-support-app.test.ts (5 tests) 6007ms
+   ✓ previously unavailable c815 support selected, oath suppression=false, paid ticket and module reload preserve helper without second charge 1622ms
+   ✓ previously unavailable c815 support selected, oath suppression=true, paid ticket and module reload preserve helper without second charge 1533ms
+   ✓ all/search only expose exact seen IDs; old search rows and departed callbacks cannot choose or navigate 1222ms
+   ✓ actual fixed-team trial does not expose selectable permanent support 706ms
+   ✓ synthetic stage filter disables incompatible support without selection; fixture is restored 922ms
+stdout | tests/e08-defeat-recovery.test.ts > re-entering recovered won battle during finisher must not settle the same ticket twice
+E08_SETTLEMENT_EVIDENCE {"coinDelta":240,"playerExpDelta":18,"levelBefore":1,"levelAfter":1,"cardExpDelta":60,"added":[{"id":"c901","uid":"u6"}],"stageCleared":1,"gemsDelta":-4}
+
+ ✓ tests/e08-defeat-recovery.test.ts (5 tests) 8575ms
+   ✓ paid revival→real victory→resumed result grants once; noContinue star stays false and settled re-entry cannot reward again 2426ms
+   ✓ re-entering recovered won battle during finisher must not settle the same ticket twice 2117ms
+   ✓ leaving recovered win during finisher defers settlement until a live resume, without background rewards 1782ms
+   ✓ same-stage replacement ticket at 0ms survives an older winning view without reward or accidental clear 1080ms
+   ✓ same-stage replacement ticket at 50ms survives an older winning view without reward or accidental clear 1167ms
+ ✓ tests/enemy-guide-app.test.ts (4 tests) 2951ms
+   ✓ real boiler current guide reads15k HP/20k permanent absorb; close/Escape leave target board RNG save and skills unchanged 939ms
+   ✓ route leave closes owned info and detached old entry cannot reopen 593ms
+   ✓ pending actual turn refuses connected info callback; completed view uses fresh live entry 729ms
+   ✓ real c305 advances wave; old boiler entry cannot open stale guide while current enemy entry is correct 688ms
+ ✓ tests/encyclopedia-screen.test.ts (6 tests) 1219ms
+   ✓ 圖鑑全開只開放資訊，不授予卡片 > 所有未取得卡都有完整名稱、數值、技能、流派、覺醒和進化資料 597ms
+   ✓ 圖鑑全開只開放資訊，不授予卡片 > 流派頁列出每個流派與全部所屬卡，卡片入口可查看未取得資料 318ms
+ ✓ tests/e10-economy-crossflow.test.ts (3 tests) 2528ms
+   ✓ high-star sale second confirmation revoked by real route departure; later legitimate sale removes exactly that UID once 1239ms
+   ✓ shop pending purchase revoked after route departure; fresh valid purchase creates one UID and one purchase count 680ms
+   ✓ summon cancelled fade ordinary click cannot spend; old cancel cannot close newer dialog; new approval commits one pull before actual ritual 608ms
+ ✓ tests/e08-saved-battle.test.ts (1 test) 2389ms
+   ✓ unanswered home prompt → route departure → module reload → resume → real skill persisted → reload preserves full battle and rewards 2386ms
+ ✓ tests/e12-backup-restore.test.ts (3 tests) 2877ms
+   ✓ real settings export textarea → cancel reset → confirmed reset → UI import → reload home resume restores whole battle without rewards/cost 1715ms
+   ✓ reset route revocation preserves production and inactive experiment storage; answer-before-leave=false 587ms
+   ✓ reset route revocation preserves production and inactive experiment storage; answer-before-leave=true 574ms
+ ✓ tests/e11-growth-modes.test.ts (9 tests) 4205ms
+   ✓ real c102 skill duplicate costs zero, increments once, then celebration close permits another operation 851ms
+   ✓ same-name limit break remains immediate/no-confirm/zero-coin and exactly one duplicate consumed 345ms
+   ✓ c921 limit break requires crystal confirmation; cancel consumes nothing, retry succeeds exactly once 484ms
+   ✓ ordinary enhancement follows real exp/coin preview, and closing success permits a second enhancement 511ms
+   ✓ detached no-confirm skill action after real route leave cannot consume anything 445ms
+   ✓ detached no-confirm limit action after real route leave cannot consume anything 430ms
+   ✓ detached no-confirm enhance action after real route leave cannot consume anything 432ms
+   ✓ detached no-confirm awaken action after real route leave cannot consume anything 433ms
+ ✓ tests/e07-departure.test.ts (11 tests) 164ms
+ ✓ tests/e08-new-player.test.ts (2 tests) 2571ms
+   ✓ fresh title→prologue→real tutorial battle→skip gift→restart/skip→reload grants the lifetime gift only once 1481ms
+   ✓ explicit post-team checkpoint→real summon gift/defer→first departure→before-story reload→battle reload keeps one paid ticket; stage tutorial finishes only at battle 1089ms
+ ✓ tests/e04-navigation.test.ts (3 tests) 1698ms
+   ✓ real Router c710 detail→Back and codex replace tabs retain conversion, existing filters, results and scroll without writes 907ms
+   ✓ fresh module load resets conversion query and disclosure instead of persisting either 503ms
+stdout | tests/e20-helper-selection.test.ts > actual npc-chain choice survives prepare and one paid departure into the real battle roster
+E20_HELPER_MARK_SEEN {"npc":"npc-chain","added":["c405","c404","c604","c102","c103","c204","c205","c501","c509","c510","c104","c110","c206","c306"],"writes":1}
+
+stdout | tests/e20-helper-selection.test.ts > actual npc-chain choice survives prepare and one paid departure into the real battle roster
+E20_HELPER {"npc":"npc-chain","helper":"c509","staminaDelta":-3,"coinDelta":0,"gemsDelta":0,"roster":["c405","c107","c509"],"l405Reduction":[20],"savePayloads":3}
+
+stdout | tests/e20-helper-selection.test.ts > actual npc-combo choice survives prepare and one paid departure into the real battle roster
+E20_HELPER_MARK_SEEN {"npc":"npc-combo","added":["c405","c404","c604","c102","c103","c204","c205","c501","c509","c510","c104","c110","c206","c306"],"writes":1}
+
+stdout | tests/e20-helper-selection.test.ts > actual npc-combo choice survives prepare and one paid departure into the real battle roster
+E20_HELPER {"npc":"npc-combo","helper":"c206","staminaDelta":-3,"coinDelta":0,"gemsDelta":0,"roster":["c405","c107","c206"],"l405Reduction":[],"savePayloads":3}
+
+stdout | tests/e20-helper-selection.test.ts > actual none choice survives prepare and one paid departure into the real battle roster
+E20_HELPER_MARK_SEEN {"npc":"none","added":["c405","c404","c604","c102","c103","c204","c205","c501","c509","c510","c104","c110","c206","c306"],"writes":1}
+
+stdout | tests/e20-helper-selection.test.ts > actual none choice survives prepare and one paid departure into the real battle roster
+E20_HELPER {"npc":"none","helper":null,"staminaDelta":-3,"coinDelta":0,"gemsDelta":0,"roster":["c405","c107"],"l405Reduction":[20],"savePayloads":3}
+
+ ✓ tests/e20-helper-selection.test.ts (3 tests) 1830ms
+   ✓ actual npc-chain choice survives prepare and one paid departure into the real battle roster 848ms
+   ✓ actual npc-combo choice survives prepare and one paid departure into the real battle roster 487ms
+   ✓ actual none choice survives prepare and one paid departure into the real battle roster 493ms
+ ✓ tests/e08-acquire-team.test.ts (1 test) 1854ms
+   ✓ real app conversion codex→acquire→coin shop→cancel/buy once→team preview cancel/confirm→codex retains context and ownership 1852ms
+ ✓ tests/e07-departure-app.test.ts (7 tests) 4168ms
+   ✓ replacement active ticket while confirming is never abandoned even with identical stageId 970ms
+   ✓ same-stage resume restores complete HP/board/CD/RNG snapshot and costs no stamina or persistence 560ms
+   ✓ different-stage cancel keeps original ticket and stamina, then can retry confirmation 450ms
+   ✓ leaving unanswered prepare st-1-1 and triggering old modal callback never abandons or charges 454ms
+   ✓ leaving unanswered prepare st-1-2 and triggering old modal callback never abandons or charges 622ms
+   ✓ explicit same-stage restart abandons once and charges one entry despite repeated synchronous clicks 569ms
+   ✓ failed insufficient-stamina departure releases pending guard and later valid retry starts normally 542ms
+ ✓ tests/e20-oath-helper.test.ts (2 tests) 1795ms
+   ✓ noHelper overrides remembered non-dragon helper and reselect; genuine paid ticket and engine keep helper absent 1181ms
+   ✓ clearing noHelper restores remembered helper and normal paid roster without granting oath rewards 613ms
+stdout | tests/e17-pause.test.ts > stale mode after close cannot redirect current route or replace engine
+pause stale mode close { connected: true }
+
+stdout | tests/e17-pause.test.ts > stale setting after close cannot change prefs; engine/save independently unchanged
+pause stale setting close { connected: true }
+
+stdout | tests/e17-pause.test.ts > stale mode after leave cannot redirect current route or replace engine
+pause stale mode leave { connected: false }
+
+stdout | tests/e17-pause.test.ts > stale setting after leave cannot change prefs; engine/save independently unchanged
+pause stale setting leave { connected: false }
+
+stdout | tests/e17-pause.test.ts > stale mode after replacement cannot redirect current route or replace engine
+pause stale mode replacement { connected: true }
+
+stdout | tests/e17-pause.test.ts > stale setting after replacement cannot change prefs; engine/save independently unchanged
+pause stale setting replacement { connected: true }
+
+ ✓ tests/e17-pause.test.ts (10 tests) 8513ms
+   ✓ normal resume restores enabled board without changing real engine/save/preferences 1560ms
+   ✓ normal mode switch uses real new practice engine and no ticket/resource debit 1432ms
+   ✓ normal speed and volume persist while engine state and game resources remain unchanged 912ms
+   ✓ stale mode after close cannot redirect current route or replace engine 397ms
+   ✓ stale setting after close cannot change prefs; engine/save independently unchanged 448ms
+   ✓ stale mode after leave cannot redirect current route or replace engine 930ms
+   ✓ stale setting after leave cannot change prefs; engine/save independently unchanged 832ms
+   ✓ stale mode after replacement cannot redirect current route or replace engine 856ms
+   ✓ stale setting after replacement cannot change prefs; engine/save independently unchanged 593ms
+   ✓ old resume cannot enable board beneath newer pause 553ms
+ ✓ tests/e09-retreat-app.test.ts (5 tests) 2820ms
+   ✓ route departure cancels unanswered retreat; detached old confirm cannot clear a later same-stage ticket 980ms
+   ✓ same-stage replacement while confirmation remains open cannot be forfeited by the old session 379ms
+   ✓ normal cancel restores enabled board and skill access without saving or recording defeat 499ms
+   ✓ normal retreat clears its own ticket and emits one failure; repeated stale confirmation cannot settle twice 494ms
+   ✓ practice retreat returns through actual Router history with no stamina/save or formal failure event 467ms
+ ✓ tests/e17-navigation.test.ts (9 tests) 4652ms
+   ✓ stamina normal: actual Shell link only navigates to shop; Back restores team without purchase 752ms
+   ✓ stamina close50: old shop/close cannot take over new route or dialog 449ms
+   ✓ stamina leave200: old shop/close cannot take over new route or dialog 549ms
+   ✓ stamina replacement: old shop/close cannot take over new route or dialog 321ms
+   ✓ defeat normal: real lost snapshot and UI abandon produce helper shortcut; Back returns to prepare with no new rewards or costs 409ms
+   ✓ defeat return50: stale advice/return cannot redirect newer navigation 671ms
+   ✓ defeat leave200: stale advice/return cannot redirect newer navigation 685ms
+   ✓ defeat replacement: stale advice/return cannot redirect newer navigation 438ms
+   ✓ stamina repeated opener replaces consent: old shop cannot navigate, current shop remains usable once 375ms
+ ✓ tests/e09-action-dialogs.test.ts (4 tests) 3331ms
+   ✓ true ticket-free practice preview/cancel settles dialog: delayed fade cast cannot alter engine/save/RNG 1252ms
+   ✓ opening another member replaces ownership; old cast cannot act on the new live dialog 676ms
+   ✓ normal ready practice cast works exactly once without ticket/persistence; subsequent cooldown rejects stale/disabled buttons 846ms
+   ✓ real resumed sealed-ready member remains uncastable and no save debit/persist occurs on forced disabled click 555ms
+ ✓ tests/e14-expedition-login.test.ts (15 tests) 8978ms
+   ✓ expedition picker normal: closed selection must not change later chosen members 869ms
+   ✓ expedition picker cancel: closed selection must not change later chosen members 476ms
+   ✓ expedition picker leave: closed selection must not change later chosen members 730ms
+   ✓ expedition picker replacement: closed selection must not change later chosen members 413ms
+   ✓ expedition recall normal: no stale recall may remove active party 319ms
+   ✓ expedition recall cancel: no stale recall may remove active party 384ms
+   ✓ expedition recall leave: no stale recall may remove active party 531ms
+   ✓ expedition recall replacement: no stale recall may remove active party 380ms
+   ✓ login popup normal: daily guard and closed popup authority 913ms
+   ✓ login popup cancel: daily guard and closed popup authority 832ms
+   ✓ login popup leave: daily guard and closed popup authority 907ms
+   ✓ login popup replacement: daily guard and closed popup authority 767ms
+   ✓ recall approval followed by same-task route departure does not change expedition 413ms
+   ✓ dismissed login popup does not prevent a legitimate daily screen claim 702ms
+   ✓ cancelled recall permits a fresh approval without losing expedition before that approval 339ms
+ ✓ tests/assistant-greek-reserve-app-independent.test.ts (1 test) 2143ms
+   ✓ actual Greek battle options default off, persist only formal prefs and retain exact battle/save; stale closed checkbox/save cannot overwrite 2142ms
+ ✓ tests/e09-stale-skill-app.test.ts (5 tests) 3781ms
+   ✓ real skill preview open/cancel never changes save, full engine snapshot or RNG and old cancelled callback stays inert 1631ms
+   ✓ real app settings departure closes skill dialog after fade and stale cast cannot alter former battle 716ms
+   ✓ same-stage Router replacement creates a new view that old skill callback cannot mutate or overwrite 586ms
+   ✓ same-stage new ticket fixture without navigation invalidates old skill authorization 426ms
+   ✓ normal ready skill still performs its real conversion once and persists the actual cooldown/board 418ms
+ ✓ tests/e07-continue-app.test.ts (5 tests) 4175ms
+   ✓ real resumed loss:50ms duplicate/detached Continue and stale GiveUp settle once; next genuine loss can pay again 1488ms
+   ✓ insufficient gems: even dispatched disabled-button event cannot debit, revive or persist a changed snapshot 686ms
+   ✓ actual player phase rejects stale defeat Continue without charging or committing 689ms
+   ✓ GiveUp first cannot be undone by stale Continue callback 907ms
+   ✓ real Router departure destroys view: detached defeat callbacks cannot mutate save or engine 404ms
+ ✓ tests/e08-pool-route.test.ts (3 tests) 2429ms
+   ✓ c710 named source covenant-seal overrides remembered unrelated pool; banner/tab/rates/confirmation agree, cancellation is read-only 1182ms
+   ✓ c710 named source pool-standard overrides remembered unrelated pool; banner/tab/rates/confirmation agree, cancellation is read-only 799ms
+   ✓ synthetic closed named pool remains inspectable but normal summon gates stay disabled and cannot debit 446ms
+ ✓ tests/e02-conversion-preview.test.ts (7 tests) 51ms
+ ✓ tests/e07-continue.test.ts (5 tests) 2099ms
+   ✓ one lost dialog double click50ms apart charges5 only once and commits paid successful snapshot atomically 809ms
+   ✓ real engine already in player phase rejects stale continue without payment or save writes 421ms
+   ✓ insufficient current gems rechecked at click without debit, and destroyed view old callback cannot act 375ms
+   ✓ second genuine loss has a new transaction; previous dialog callbacks cannot spend or abandon it 488ms
+ ✓ tests/e15-tutorial-app.test.ts (10 tests) 6629ms
+   ✓ controller: cancel leaves exact save and storage untouched; retry skip grants gift once across real settings replay 1031ms
+   ✓ controller: leave revokes old skip without save/storage/route change 729ms
+   ✓ controller: answerThenLeave revokes old skip without save/storage/route change 738ms
+   ✓ controller: sameRouteReplacement revokes old skip without save/storage/route change 635ms
+   ✓ controller: cancel fade old approval does not settle a newly opened skip 475ms
+   ✓ battle-guide: cancel leaves exact save and storage untouched; retry skip grants gift once across real settings replay 541ms
+   ✓ battle-guide: leave revokes old skip without save/storage/route change 636ms
+   ✓ battle-guide: answerThenLeave revokes old skip without save/storage/route change 629ms
+   ✓ battle-guide: sameRouteReplacement revokes old skip without save/storage/route change 633ms
+   ✓ battle-guide: cancel fade old approval does not settle a newly opened skip 581ms
+ ✓ tests/e14-session.test.ts (8 tests) 4436ms
+   ✓ abyss main: answer then same-task departure cannot abandon or navigate 876ms
+   ✓ abyss abyss: answer then same-task departure cannot abandon or navigate 455ms
+   ✓ abyss no-ticket await handoff never overwrites a newly installed ticket 643ms
+   ✓ abyss singleflight creates only one pending consent, and cancel permits retry 496ms
+   ✓ abyss abandonment listener installing new ticket survives handoff 572ms
+   ✓ home old Continue cannot redirect into a replacement same-stage battle 494ms
+   ✓ home normal 繼續 remains functional 487ms
+   ✓ home normal 放棄 remains functional 412ms
+ ✓ tests/assistant-greek-options.test.ts (3 tests) 205ms
+ ✓ tests/helper-support-view.test.ts (6 tests) 1796ms
+   ✓ first12 only plus actual NPC rows become seen, never ownership or all91; focused search remains mounted 445ms
+   ✓ filtering away the selected support keeps its summary and choice; clear restores first12 381ms
+ ✓ tests/e20-helper-resume.test.ts (2 tests) 2569ms
+   ✓ paid selected helper with noHelper=false resumes from ticket after module/UI reload, not reset choice memory 1510ms
+   ✓ paid selected helper with noHelper=true resumes from ticket after module/UI reload, not reset choice memory 1058ms
+ ✓ tests/e12-save-recovery.test.ts (4 tests) 3949ms
+   ✓ checksum corruption survives deferred warning, settings commit and invalid imports; valid production backup recovers through real module reload 1864ms
+   ✓ cancelled import during 50ms fade cannot overwrite through retained normal click or forced callback 440ms
+   ✓ route departure closes import and retained callback cannot overwrite the current save 684ms
+   ✓ invalid import can be corrected in the same dialog and successful old callback cannot replay over newer progress 959ms
+ ✓ tests/e25-period-acquire-navigation.test.ts (5 tests) 3364ms
+   ✓ c921 detail exposes active periodic guaranteed source then real prepare and Back without reward/ownership/save writes 1507ms
+   ✓ claimed but playable source remains navigable without promising another current reward 438ms
+   ✓ closed source preserves restriction and navigates existing nemesis list, not departure 610ms
+   ✓ locked source preserves restriction and navigates existing nemesis list, not departure 348ms
+   ✓ actual evolution material source reaches same periodic stage without consuming material or evolving 459ms
+ ✓ tests/e11-enhance.test.ts (7 tests) 3170ms
+   ✓ leaving the risky-material confirmation closes it and makes a retained approval inert 978ms
+   ✓ approval then same-task navigation cannot consume material or coin 562ms
+   ✓ cancel permits retry, while repeated confirmation commits the intended material only once 356ms
+   ✓ latest inTeam material protection survives an already-open confirmation 399ms
+ ✓ tests/e03-view.test.ts (5 tests) 341ms
+ ✓ tests/e19-capability-navigation.test.ts (3 tests) 1885ms
+   ✓ actual mixed c405 team sources expand/close and route back read-only without unconditional defense claim 943ms
+   ✓ actual team tabs update blocked→helper-pending→ordinary-member without stale leader source 466ms
+   ✓ real remove member redraws composition sources; cancellation and subsequent reading never write 474ms
+ ✓ tests/e15-oath-app.test.ts (5 tests) 2880ms
+   ✓ real prepare oath preview/MAX3/confirm redraw and stage-aware memory; clear is only committed on approval 801ms
+   ✓ oath cancel revokes stale clear/confirm and permits a valid retry without save writes 432ms
+   ✓ oath leave revokes stale clear/confirm and permits a valid retry without save writes 791ms
+   ✓ same-page new picker revokes old callbacks before and after replacement approval 439ms
+   ✓ consumed confirmation cannot redraw or overwrite a newer same-stage selection 415ms
+ ✓ tests/e11-evolve.test.ts (8 tests) 4613ms
+   ✓ leaving revokes pending evolution, stale confirmation and stale entry 901ms
+   ✓ approve then leave in same task cancels transaction before await continuation 345ms
+   ✓ cancel and retry retain busy guard; valid evolution commits once then celebrates on card route 388ms
+   ✓ latest save lock change rejects previously available evolution 921ms
+   ✓ latest save coin change rejects previously available evolution 578ms
+   ✓ latest save level change rejects previously available evolution 793ms
+   ✓ initial insufficient coin/level disables entry (49999/90) 324ms
+   ✓ initial insufficient coin/level disables entry (100000/1) 360ms
+ ❯ tests/e10-shop.test.ts (5 tests | 1 failed) 7816ms
+   ✓ route departure revokes pending confirmation and detached purchase entry 1084ms
+   ✓ approval followed by synchronous departure before await continuation never purchases 456ms
+   ✓ single pending dialog, cancellation then fresh retry purchases once and respects sold out 507ms
+   ✓ insufficient resources remain unchanged and cancellation does not poison retry 750ms
+   × test-only unlimited item permits a second legitimate purchase after pending settles 5014ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ✓ tests/e05-display.test.ts (9 tests) 134ms
+ ✓ tests/e04-view.test.ts (5 tests) 953ms
+   ✓ default collapsed accessible six-orb selects leave all112 original results unchanged when inactive 487ms
+ ✓ tests/e08-win-lifecycle.test.ts (3 tests) 4289ms
+   ✓ leaving a real recovered victory during finisher grants nothing; the won ticket remains recoverable 1910ms
+   ✓ a same-stage newer ticket installed during finisher cannot receive old rewards or be cleared 1458ms
+   ✓ same-session snapshot persistence after view creation still permits exactly one settlement 920ms
+ ✓ tests/e25-period-acquire-view.test.ts (6 tests) 1386ms
+   ✓ actual periodic card source states completion required and retains the original explicit navigation only 397ms
+ ✓ tests/e10-summon.test.ts (6 tests) 3578ms
+   ✓ cancel revokes old normal confirm during the 50ms connected fade without any save write 798ms
+   ✓ old cancel and old confirm cannot close or consume a newer confirmation 492ms
+   ✓ normal 1 summon commits exactly once despite retained callback 652ms
+   ✓ normal 10 summon commits exactly once despite retained callback 529ms
+   ✓ insufficient gems consume no save and a fresh dialog can retry once funds exist 505ms
+   ✓ route departure disposes session and old dialog callbacks cannot spend 601ms
+ ✓ tests/e01-team-fit.test.ts (5 tests) 136ms
+ ✓ tests/promotion-save-compat.test.ts (3 tests) 719ms
+   ✓ real production state reopens already-paid old ticket with full snapshot/RNG and no second stamina payment 330ms
+   ✓ corrupt formal raw is not overwritten until a valid old backup recovers it; reload retains recovery and isolated sentinels 376ms
+ ✓ tests/e11-growth-app.test.ts (6 tests) 3136ms
+   ✓ enhance: route leave closes pending confirmation and old callback cannot consume resources or navigate 884ms
+   ✓ enhance: answer then leave in the same task revokes pending async continuation 509ms
+   ✓ enhance: cancel is read-only and new confirmation performs exactly the real growth result once 395ms
+   ✓ evolve: route leave closes pending confirmation and old callback cannot consume resources or navigate 510ms
+   ✓ evolve: answer then leave in the same task revokes pending async continuation 493ms
+   ✓ evolve: cancel is read-only and new confirmation performs exactly the real growth result once 344ms
+ ✓ tests/e14-ritual.test.ts (4 tests) 2076ms
+   ✓ canceled again consent and old cancellation cannot consume or close its replacement 786ms
+   ✓ normal repeat 1 pull commits once without changing existing pricing 376ms
+   ✓ normal repeat 10 pull commits once without changing existing pricing 459ms
+   ✓ an insufficient-funds repeat fails without spending and can be retried after a legitimate balance update 455ms
+ ✓ tests/e12-settings-lifecycle.test.ts (6 tests) 2588ms
+   ✓ reset approval after leaving cannot clear the experiment save 914ms
+   ✓ reset approval then same-task navigation is canceled before reset 396ms
+   ✓ import cancel revokes retained confirmation even during fade-out 369ms
+   ✓ import leave revokes retained confirmation even during fade-out 336ms
+ ✓ tests/e10-sale.test.ts (6 tests) 3605ms
+   ✓ leaving at confirmation 1 makes the retained approval inert 966ms
+   ✓ leaving at confirmation 2 makes the retained approval inert 651ms
+   ✓ approval then same-task navigation at confirmation 1 cannot sell or open another dialog 547ms
+   ✓ approval then same-task navigation at confirmation 2 cannot sell or open another dialog 554ms
+   ✓ cancel at each step permits retry; both approvals sell the high-rarity card exactly once 459ms
+   ✓ the final commit revalidates the latest lock state rather than selling the preview snapshot 425ms
+ ✓ tests/e15-oath.test.ts (5 tests) 4366ms
+   ✓ oath normal: module-memory selection lifecycle, not save 1218ms
+   ✓ oath cancel: module-memory selection lifecycle, not save 812ms
+   ✓ oath leave: module-memory selection lifecycle, not save 918ms
+   ✓ oath replacePicker: module-memory selection lifecycle, not save 745ms
+   ✓ replacement revokes old clear/toggle/confirm; MAX3 and valid clear/retry preserve stage memory without save 671ms
+ ✓ tests/codex-opening-gift.test.ts (3 tests) 296ms
+ ✓ tests/e21-berserk-view.test.ts (2 tests) 2276ms
+   ✓ unowned berserk central copy is readable through actual codex/prepare; locked departure and Back do not write 1378ms
+   ✓ unlocked original prepare remains borrowed and read-only, without starting or giving cards 894ms
+ ✓ tests/e17-assistant.test.ts (5 tests) 359ms
+ ✓ tests/e13-warning.test.ts (4 tests) 2822ms
+   ✓ Later revokes a still-connected warning reset without overwriting broken bytes 1102ms
+   ✓ an open warning cannot reset a backup restored after it was created 552ms
+   ✓ a live explicit reset succeeds once and its fading callback cannot reset later progress 556ms
+   ✓ Later still permits recovery using the settings import dialog 611ms
+ ✓ tests/e18-chain-view.test.ts (5 tests) 330ms
+ ✓ tests/e18-chain-navigation.test.ts (2 tests) 1653ms
+   ✓ unowned locked chain guide and all quickviews preserve actual Router context/scroll/save with Back 1068ms
+   ✓ existing unlocked trial entry reaches normal prepare without auto-start or guide rewards 582ms
+ ✓ tests/e22-archetype-view.test.ts (3 tests) 2623ms
+   ✓ 'heart' existing codex/prepare share precise text; unowned locked reading and Back are zero-write 1252ms
+   ✓ 'race' existing codex/prepare share precise text; unowned locked reading and Back are zero-write 673ms
+   ✓ 'skillcycle' existing codex/prepare share precise text; unowned locked reading and Back are zero-write 696ms
+ ✓ tests/e23-card-image-dom.test.ts (3 tests) 2050ms
+   ✓ collection actual DOM uses selected card URLs and lazy images, with no navigation save effects 917ms
+   ✓ collection-card actual DOM uses selected card URLs and lazy images, with no navigation save effects 596ms
+   ✓ team actual DOM uses selected card URLs and lazy images, with no navigation save effects 536ms
+ ✓ tests/e09-action-lifecycle.test.ts (2 tests) 1170ms
+   ✓ cancel revokes a still-connected fading skill button 792ms
+   ✓ reopening the skill dialog revokes its previous button without revoking the new one 377ms
+ ✓ tests/e19-capability-view.test.ts (6 tests) 97ms
+ ✓ tests/enemy-guide-view.test.ts (2 tests) 56ms
+ ✓ tests/greek-stacking-copy.test.ts (6 tests) 162ms
+ ✓ tests/e02-skill-dialog.test.ts (1 test) 247ms
+ ✓ tests/e17-practice.test.ts (2 tests) 1247ms
+   ✓ opening a replacement picker revokes the unclosed old picker and old cancel cannot close the new one 765ms
+   ✓ actual dismissible backdrop closes consent; retry can enter normal practice and Back returns to adventure 481ms
+ ✓ tests/e15-tutorial.test.ts (5 tests) 2907ms
+   ✓ controller answer-then-leave microtask cannot skip or grant the first gift 1044ms
+   ✓ controller cancel then retry keeps old approval inert and live approval valid 542ms
+   ✓ battle guide answer-then-leave microtask cannot skip or grant the first gift 452ms
+   ✓ battle guide cancel then retry keeps old approval inert and live approval valid 403ms
+   ✓ controller invalidates a pending answer even when replacing the same route 463ms
+ ✓ tests/e05-display-battle.test.ts (5 tests) 922ms
+ ✓ tests/e05-tutorial-fit.test.ts (3 tests) 971ms
+   ✓ installed team tutorial agrees with neutral c811+c710 tag-only result; reading does not grant or advance 511ms
+ ✓ tests/e03-prepare.test.ts (1 test) 53ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/e10-shop.test.ts > test-only unlimited item permits a second legitimate purchase after pending settles
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/promotion-boundary.test.ts > protected formal save/parser/PWA/build and every baseline asset remain byte-exact
+AssertionError: src/battle/assistant/preferences.ts: expected '3c3d732b785a1184b6f2c1d9099db81d62809…' to be '3af513e8010ca71012a0af72d370ff093716c…' // Object.is equality
+
+Expected: "3af513e8010ca71012a0af72d370ff093716c25ac4e7c47f4515e0bdb238e6bb"
+Received: "3c3d732b785a1184b6f2c1d9099db81d628095769c69aefe8312780e4db8f789"
+
+ ❯ tests/promotion-boundary.test.ts:10:93
+      8| it('protected formal save/parser/PWA/build and every baseline asset re…
+      9|   for (const [path, sha] of Object.entries(pinned.files)) {
+     10|     expect(createHash('sha256').update(readFileSync(join(root, path)))…
+       |                                                                                             ^
+     11|   }
+     12|   const assets = Object.keys(pinned.files).filter(p => p.startsWith('a…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  2 failed | 206 passed (208)
+      Tests  2 failed | 1579 passed (1581)
+   Start at  21:35:41
+   Duration  328.67s (transform 6.68s, setup 0ms, collect 41.46s, tests 202.11s, environment 26.04s, prepare 16.12s)
+

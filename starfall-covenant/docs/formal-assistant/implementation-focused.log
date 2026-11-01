@@ -1,0 +1,19 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-assistant-production/starfall-covenant
+
+ ✓ tests/orb-assistant-preferences.test.ts (6 tests) 122ms
+stdout | tests/assistant-greek-reserve.test.ts > bounded opt-in timing comparison reports measured work without wall-clock assertions
+{"greek":{},"elapsedMs":27.810834999999997,"examined":557,"timedOut":false}
+{"greek":{"reserve":true},"elapsedMs":32.93909999999994,"examined":550,"timedOut":false}
+{"greek":{"setup":true},"elapsedMs":21.907357000000047,"examined":557,"timedOut":false}
+{"greek":{"reserve":true,"setup":true},"elapsedMs":27.459170000000086,"examined":550,"timedOut":false}
+
+ ✓ tests/assistant-greek-reserve.test.ts (6 tests) 156ms
+ ✓ tests/orb-assistant.test.ts (13 tests) 98ms
+ ✓ tests/assistant-greek-options.test.ts (3 tests) 196ms
+
+ Test Files  4 passed (4)
+      Tests  28 passed (28)
+   Start at  21:33:57
+   Duration  2.37s (transform 1.52s, setup 0ms, collect 2.79s, tests 572ms, environment 344ms, prepare 408ms)
+

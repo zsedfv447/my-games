@@ -1,0 +1,113 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-assistant-production/starfall-covenant
+
+stdout | tests/assistant-greek-reserve.test.ts > bounded opt-in timing comparison reports measured work without wall-clock assertions
+{"greek":{},"elapsedMs":30.27200300000004,"examined":557,"timedOut":false}
+{"greek":{"reserve":true},"elapsedMs":19.636021999999684,"examined":557,"timedOut":false}
+{"greek":{"setup":true},"elapsedMs":11.789404999999988,"examined":557,"timedOut":false}
+{"greek":{"reserve":true,"setup":true},"elapsedMs":9.47082599999976,"examined":557,"timedOut":false}
+
+ ❯ tests/assistant-greek-reserve.test.ts (6 tests | 4 failed) 128ms
+   × opt-in reserves two of five; default off preserves old five and no analysis 37ms
+     → expected 5 to be 3 // Object.is equality
+   × known survivor gravity and unknown hooks remain distinct without mutating input 3ms
+     → expected undefined to be defined
+   × known matches join adjacent same-color marked runs but keep disconnected groups separate 1ms
+     → analyzeGreekSurvivors is not a function
+   × a single total tuple prioritizes survival, constraints, absorption, goal and kills before conservation 1ms
+     → assistantBoardPriority is not a function
+ ❯ tests/assistant-greek-options.test.ts (3 tests | 3 failed) 98ms
+   × normalizes only boolean opt-ins, preserves legacy fields, and uses existing formal preference key 15ms
+     → expected { goal: 'greek', color: 'fire', …(1) } to deeply equal { goal: 'greek', color: 'fire', …(2) }
+   × options default off, only effective auto/greek exposes them, remembered choices restore 67ms
+     → expected null not to be null
+   × each checkbox invalidates pending/completed plans immediately and closed callbacks remain inert 14ms
+     → expected null not to be null
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/assistant-greek-options.test.ts > normalizes only boolean opt-ins, preserves legacy fields, and uses existing formal preference key
+AssertionError: expected { goal: 'greek', color: 'fire', …(1) } to deeply equal { goal: 'greek', color: 'fire', …(2) }
+
+- Expected
++ Received
+
+  Object {
+    "color": "fire",
+    "constraints": Object {
+      "minCombo": 4,
+    },
+    "goal": "greek",
+-   "greek": Object {
+-     "reserve": true,
+-     "setup": false,
+-   },
+  }
+
+ ❯ tests/assistant-greek-options.test.ts:19:137
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  tests/assistant-greek-options.test.ts > options default off, only effective auto/greek exposes them, remembered choices restore
+AssertionError: expected null not to be null
+ ❯ check tests/assistant-greek-options.test.ts:16:148
+
+ ❯ tests/assistant-greek-options.test.ts:27:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  tests/assistant-greek-options.test.ts > each checkbox invalidates pending/completed plans immediately and closed callbacks remain inert
+AssertionError: expected null not to be null
+ ❯ check tests/assistant-greek-options.test.ts:16:148
+
+ ❯ tests/assistant-greek-options.test.ts:35:34
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  tests/assistant-greek-reserve.test.ts > opt-in reserves two of five; default off preserves old five and no analysis
+AssertionError: expected 5 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 5
+
+ ❯ tests/assistant-greek-reserve.test.ts:15:88
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  tests/assistant-greek-reserve.test.ts > known survivor gravity and unknown hooks remain distinct without mutating input
+AssertionError: expected undefined to be defined
+ ❯ tests/assistant-greek-reserve.test.ts:22:26
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  tests/assistant-greek-reserve.test.ts > known matches join adjacent same-color marked runs but keep disconnected groups separate
+TypeError: analyzeGreekSurvivors is not a function
+ ❯ tests/assistant-greek-reserve.test.ts:29:9
+     27| 
+     28| it('known matches join adjacent same-color marked runs but keep discon…
+     29|  expect(analyzeGreekSurvivors(['fire','fire','fire','fire','fire','fir…
+       |         ^
+     30|  expect(analyzeGreekSurvivors(['fire','fire','fire','water','wood','wa…
+     31|  expect(analyzeGreekSurvivors([null,'fire','fire'],3,1,[],['fire'])).t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  tests/assistant-greek-reserve.test.ts > a single total tuple prioritizes survival, constraints, absorption, goal and kills before conservation
+TypeError: assistantBoardPriority is not a function
+ ❯ rank tests/assistant-greek-reserve.test.ts:39:30
+
+ ❯ tests/assistant-greek-reserve.test.ts:40:252
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+ Test Files  2 failed (2)
+      Tests  7 failed | 2 passed (9)
+   Start at  21:33:27
+   Duration  4.53s (transform 3.22s, setup 0ms, collect 4.10s, tests 226ms, environment 520ms, prepare 1.23s)
+

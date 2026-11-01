@@ -22,6 +22,12 @@ export function normalizeAssistantRequest(raw: unknown): AssistantRequest {
   if (orb(source.color)) request.color = source.color;
   if (index(source.targetEnemy)) request.targetEnemy = source.targetEnemy;
   if (index(source.starIndex)) request.starIndex = source.starIndex;
+  const rawGreek = object(source.greek);
+  if (rawGreek) {
+    const greek: NonNullable<AssistantRequest['greek']> = {};
+    for (const key of ['reserve', 'setup'] as const) if (typeof rawGreek[key] === 'boolean') greek[key] = rawGreek[key];
+    if (Object.keys(greek).length) request.greek = greek;
+  }
   const rawConstraints = object(source.constraints);
   if (!rawConstraints) return request;
   const constraints: AssistantConstraints = {};

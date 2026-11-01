@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-assistant-production/starfall-covenant
+
+ ✓ tests/assistant-greek-reserve-independent.test.ts (17 tests) 275ms
+ ✓ tests/assistant-greek-reserve-app-independent.test.ts (1 test) 3951ms
+   ✓ actual Greek battle options default off, persist only formal prefs and retain exact battle/save; stale closed checkbox/save cannot overwrite 3950ms
+
+ Test Files  2 passed (2)
+      Tests  18 passed (18)
+   Start at  21:34:25
+   Duration  4.77s (transform 2.49s, setup 0ms, collect 703ms, tests 4.23s, environment 335ms, prepare 217ms)
+

@@ -1,0 +1,14 @@
+[
+  {
+    "path": "tests/assistant-greek-reserve-independent.test.ts",
+    "sourceSHA": "6e64f91d371901089d02bd8ec05cc88309fb3ac5a9e13f7adcbd3a8cf0f0ee72",
+    "candidateSHA": "6e64f91d371901089d02bd8ec05cc88309fb3ac5a9e13f7adcbd3a8cf0f0ee72",
+    "exactSourceCopy": true
+  },
+  {
+    "path": "tests/assistant-greek-reserve-app-independent.test.ts",
+    "sourceSHA": "064af873797cc8193a30520bd9be21cc12210a2876361ebb9095ed4618d0662c",
+    "candidateSHA": "b1776ecbb8512de2ccc7e177aad09297ca82dd739dfe17cf1fd4ce029dae035b",
+    "exactSourceCopy": false
+  }
+]

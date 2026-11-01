@@ -1,3 +1,4 @@
+import { evaluateLeaderStatic } from '../../battle/leader';
 import { conversionPreviewView } from '../skill-conversion-preview';
 // 戰鬥畫面：上方敵人區、中間隊伍與生命條、下方 6×5 盤面（GDD 2.5 第 4 項）
 import { h, svg, clear } from '../dom';
@@ -569,8 +570,12 @@ class BattleView {
     if (this.s.guide || this.destroyed || this.paused || this.assistant || !canAct(this.guard) || !this.boardView.canInteract) return;
     const state = this.s.battle.getState();
     this.boardView.setEnabled(false);
+    const leaders = [state.team[0]?.card, state.team.find(member => member.isHelper)?.card]
+      .map(card => this.s.data.leaderSkills.find(skill => skill.id === card?.leaderSkill));
+    const greekAvailable = evaluateLeaderStatic(leaders, state.team).matchedOrbSkyfall
+      .some(effect => Number.isFinite(effect.count) && effect.count >= 1 && Number.isFinite(effect.spawn) && effect.spawn >= 1);
     this.assistant = openOrbAssistant({
-      state, stage: this.s.stage,
+      state, stage: this.s.stage, greekAvailable,
       cancelPlan: () => this.assistantClient.cancel(),
       initialRequest: resolveAssistantRequest(loadAssistantRequest(), state, this.s.stage),
       onSaveRequest: request => { saveAssistantRequest(request); this.refreshAssistantButton(); },
