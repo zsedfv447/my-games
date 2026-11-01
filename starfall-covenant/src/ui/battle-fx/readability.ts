@@ -1,12 +1,13 @@
 // 戰鬥可讀性：屬性剋制提示（提案 25）、敵人下一招預告（提案 5）、Combo 演出（提案 6）、技能就緒（提案 15）
-import { enemyStatRows } from '../enemy-info';
+import { enemyGuide } from '../enemy-info';
+import type { ActiveSkillDef } from '../../core/types';
 import type { BattleState, EnemyState } from '../../battle/battle-state';
 import type { BattleConfig } from '../../battle/damage';
 import { comboBonusText, comboTier, effectiveMatchup, effectiveWeakTo, enemyAbilityList, liveReductions, newlyReadySkills, predictEnemyIntent, reducedWeaknesses, weakTo, type IntentAbility } from '../../battle/feedback';
 import { ATTRIBUTE_NAMES } from '../art/palette';
 import { audio } from '../audio';
 import { button } from '../components/basic';
-import { openDialog } from '../components/overlay';
+import { openDialog, type DialogHandle } from '../components/overlay';
 import { h, svg } from '../dom';
 import { statusName } from '../status-labels';
 import { floatLabel } from './effects';
@@ -79,8 +80,8 @@ const TRIGGER_TEXT: Record<IntentAbility['trigger'], (a: IntentAbility) => strin
   everyNTurns: (a) => `每 ${Math.max(1, Number(a.params?.n ?? 3))} 回合`,
 };
 
-/** 敵人頭上的預告泡泡：下回合會攻擊或觸發技能時顯示內容，其他時候只留 ⓘ；點了看完整技能 */
-export function renderIntent(host: Element, state: BattleState, i: number, config: BattleConfig): void {
+/** 明顯的情報入口與行動預告；畫面擁有者驗證生命週期後才開啟。 */
+export function renderIntent(host: Element, state: BattleState, i: number, _config: BattleConfig, onOpen?: (trigger: HTMLButtonElement) => void): void {
   const e = state.enemies[i];
   if (!e || e.hp <= 0) return void host.replaceChildren();
   const intent = predictEnemyIntent(state, i);
@@ -88,30 +89,48 @@ export function renderIntent(host: Element, state: BattleState, i: number, confi
   if (intent?.locked) parts.push('定身中');
   if (intent?.attack) parts.push(`⚔ ${intent.attack.damage.toLocaleString()}${intent.attack.hits > 1 ? ` ×${intent.attack.hits}` : ''}`);
   for (const a of intent?.abilities ?? []) parts.push(abilityText(a));
-  host.replaceChildren(h('button', {
+  const entry = h('button', {
     type: 'button',
     class: ['intent-bubble', intent?.attack && 'danger', !parts.length && 'quiet'],
-    'aria-label': `${e.def.name}的行動`,
-    onClick: (ev: Event) => { ev.stopPropagation(); showEnemyInfo(state, i, config); },
-  }, parts.length ? parts.join('・') : 'ⓘ'));
+    'aria-label': `${e.def.name}・查看情報與攻略`,
+    onClick: (ev: Event) => { ev.stopPropagation(); if (entry.isConnected && host.contains(entry)) onOpen?.(entry); },
+  }, '情報／攻略', parts.length ? `・${parts.join('・')}` : '');
+  host.replaceChildren(entry);
 }
 
-function showEnemyInfo(state: BattleState, i: number, config: BattleConfig): void {
+export function showEnemyInfo(state: BattleState, i: number, config: BattleConfig, skills: Record<string, ActiveSkillDef>, trigger: HTMLElement, onClose: () => void): DialogHandle | undefined {
   const e = state.enemies[i];
   const intent = predictEnemyIntent(state, i);
   if (!e || !intent) return;
   const list = enemyAbilityList(e);
   const next = intent.locked ? `定身中，${intent.turnsUntilAttack} 回合後` : intent.attack ? `下回合 ⚔ ${intent.attack.damage.toLocaleString()}` : `${intent.turnsUntilAttack} 回合後`;
-  const dlg = openDialog(e.def.name, h('div', { class: 'list' },
+  let closed = false;
+  const closeButton = button(LABEL.close, { variant: 'ghost', sound: 'back', onClick: () => dlg.close() });
+  const keydown = (event: KeyboardEvent) => {
+    if (closed) return;
+    if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); dlg.close(); }
+    if (event.key === 'Tab') {
+      const body = closeButton.closest('[role=dialog]')?.querySelector<HTMLElement>('[data-enemy-guide]');
+      event.preventDefault();
+      if (document.activeElement === closeButton && body) body.focus(); else closeButton.focus();
+    }
+  };
+  const dlg = openDialog(e.def.name, h('div', { class: 'list enemy-guide-body', 'data-enemy-guide': '', tabindex: '0', role: 'region', 'aria-label': '敵人情報與攻略內容' },
+    ...enemyGuide(state, i, skills).sections.map(section => h('section', null, h('h3', null, section.title), ...section.lines.map(line => h('p', { class: 'small-text' }, line)))),
     h('div', { class: 'row between' }, h('span', null, '屬性'), h('strong', null, `${ATTRIBUTE_NAMES[e.def.attribute]}（弱：${weakText(e, config)}）`)),
     h('div', { class: 'row between' }, h('span', null, '下次攻擊'), h('strong', null, next)),
-    ...enemyStatRows(e).map((r) => h('div', { class: 'row between' }, h('span', null, r.label), h('strong', null, r.value))),
     ringSummary(e) && h('div', { class: 'small-text' }, h('strong', null, '七曜環：'), ringSummary(e)),
     h('p', { class: 'small-text dim' }, '預估傷害已計入目前的減傷效果，隊長技減傷另計。'),
     list.length
       ? list.map((a) => h('div', { class: ['row between small-text', a.done && 'dim'] }, h('span', null, TRIGGER_TEXT[a.trigger](a)), h('span', null, `${abilityText(a)}${a.done ? '（已觸發）' : ''}`)))
       : h('p', { class: 'small-text dim' }, '沒有特殊技能'),
-  ), [button(LABEL.close, { variant: 'ghost', sound: 'back', onClick: () => dlg.close() })]);
+  ), [closeButton], { scope: 'route', onClose: () => {
+    closed = true; document.removeEventListener('keydown', keydown); onClose();
+    if (trigger.isConnected) trigger.focus();
+  } });
+  document.addEventListener('keydown', keydown);
+  closeButton.focus();
+  return dlg;
 }
 
 // ---------- Combo ----------

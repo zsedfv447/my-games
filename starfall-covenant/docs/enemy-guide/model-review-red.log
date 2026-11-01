@@ -1,0 +1,83 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-enemy-guide/starfall-covenant
+
+ ❯ tests/enemy-guide-model.test.ts (8 tests | 2 failed) 121ms
+   × bounded ordinary counterplay and permanent duration do not promise safe combos or waiting expiry 38ms
+     → expected '目前敵人狀態\n生命：15,000 / 15,000\n防禦：200\n攻…' to contain '避免增傷爆發'
+   × known omitted shield value follows actual100 default and ring heart advice discloses heart seal 7ms
+     → expected '目前敵人狀態\n生命：15,000 / 15,000\n防禦：200\n攻…' to contain '目前護盾減傷：100%'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/enemy-guide-model.test.ts > bounded ordinary counterplay and permanent duration do not promise safe combos or waiting expiry
+AssertionError: expected '目前敵人狀態\n生命：15,000 / 15,000\n防禦：200\n攻…' to contain '避免增傷爆發'
+
+- Expected
++ Received
+
+- 避免增傷爆發
++ 目前敵人狀態
++ 生命：15,000 / 15,000
++ 防禦：200
++ 攻擊間隔：每 3 回合
++ 攻擊對象：我方全隊（共用生命）
++ 下次攻擊倒數：3 回合。
++ 能力曾經「已觸發」不代表已失效；是否仍生效以目前狀態為準。
++ 目前狀態與對策
++ 傷害吸收・永久（直到被解除）
++ 門檻：20,000。每個敵人分別計算本回合累積的適用傷害（防禦與其他減傷結算後）；門檻內扣血，超過的部分改為回復該敵人，不是復活。
++ 固定傷害、最大生命百分比傷害，以及明確無視護盾的傷害不走這個吸收分支；只有無視防禦並不能避開吸收。
++ 固定傷害仍可能受一般護盾、屬性減傷或七曜環影響；避開吸收不等於穿透所有防禦，也不保證擊殺。
++ 此畫面沒有本回合吸收剩餘額度，不能由這些資訊推算安全傷害或保證安全的 Combo 數。
++ 可參考的隊伍技能（只針對吸收）
++ 以下只列含可避開吸收之直接傷害段的技能；同一技能的其他傷害段另判。CD、封印與其他防禦仍須確認，不保證現在可施放或擊殺。
++ 位置 1・毒藤刺客・絲蔓：定量・CD 9・目前未被技能／星紋封印
++ 對單體敵人造成 15000 固定傷害（無視防禦）。
+
+ ❯ tests/enemy-guide-model.test.ts:47:111
+     45| });
+     46| it('bounded ordinary counterplay and permanent duration do not promise…
+     47|  const t=text();for(const part of ['避免增傷爆發','分回合削血','希臘天…
+       |                                                                                                               ^
+     48| });
+     49| it('known omitted shield value follows actual100 default and ring hear…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/enemy-guide-model.test.ts > known omitted shield value follows actual100 default and ring heart advice discloses heart seal
+AssertionError: expected '目前敵人狀態\n生命：15,000 / 15,000\n防禦：200\n攻…' to contain '目前護盾減傷：100%'
+
+- Expected
++ Received
+
+- 目前護盾減傷：100%
++ 目前敵人狀態
++ 生命：15,000 / 15,000
++ 防禦：200
++ 攻擊間隔：每 3 回合
++ 攻擊對象：我方全隊（共用生命）
++ 下次攻擊倒數：3 回合。
++ 能力曾經「已觸發」不代表已失效；是否仍生效以目前狀態為準。
++ 目前狀態與對策
++ 護盾・剩餘 2 回合
++ 目前護盾減傷：未知%。可檢查技能是否明確標示無視護盾；只有固定或無視防禦不代表能穿透此盾。
++ 目前狀態與對策
++ 七曜環・永久（直到被解除）
++ 尚未破除：心；減傷 75%。
++ 對應屬性的攻擊須實際造成傷害才破該屬性格；心格要消除心珠。固定與百分比傷害不能破環，且仍會被環減傷。
+
+ ❯ tests/enemy-guide-model.test.ts:51:70
+     49| it('known omitted shield value follows actual100 default and ring hear…
+     50|  const s=state();s.enemies[0].statuses=[{id:'shield',turns:2},{id:'rin…
+     51|  s.teamStatuses=[{id:'heartSeal',turns:1}];const t=text(s);expect(t).t…
+       |                                                                      ^
+     52| });
+     53| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 6 passed (8)
+   Start at  14:21:15
+   Duration  2.08s (transform 742ms, setup 0ms, collect 1.01s, tests 121ms, environment 0ms, prepare 201ms)
+

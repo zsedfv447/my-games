@@ -1,0 +1,41 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-enemy-guide/starfall-covenant
+
+ ✓ tests/battle-feedback.test.ts (12 tests) 16ms
+ ✓ tests/pause-retreat.test.ts (2 tests) 4ms
+stdout | tests/e17-pause.test.ts > stale mode after close cannot redirect current route or replace engine
+pause stale mode close { connected: true }
+
+stdout | tests/e17-pause.test.ts > stale setting after close cannot change prefs; engine/save independently unchanged
+pause stale setting close { connected: true }
+
+stdout | tests/e17-pause.test.ts > stale mode after leave cannot redirect current route or replace engine
+pause stale mode leave { connected: false }
+
+stdout | tests/e17-pause.test.ts > stale setting after leave cannot change prefs; engine/save independently unchanged
+pause stale setting leave { connected: false }
+
+stdout | tests/e17-pause.test.ts > stale mode after replacement cannot redirect current route or replace engine
+pause stale mode replacement { connected: true }
+
+stdout | tests/e17-pause.test.ts > stale setting after replacement cannot change prefs; engine/save independently unchanged
+pause stale setting replacement { connected: true }
+
+ ✓ tests/e17-pause.test.ts (10 tests) 6324ms
+   ✓ normal resume restores enabled board without changing real engine/save/preferences 2903ms
+   ✓ normal mode switch uses real new practice engine and no ticket/resource debit 369ms
+   ✓ normal speed and volume persist while engine state and game resources remain unchanged 343ms
+   ✓ stale mode after close cannot redirect current route or replace engine 361ms
+   ✓ stale setting after close cannot change prefs; engine/save independently unchanged 357ms
+   ✓ stale mode after leave cannot redirect current route or replace engine 484ms
+   ✓ stale setting after leave cannot change prefs; engine/save independently unchanged 479ms
+   ✓ stale mode after replacement cannot redirect current route or replace engine 360ms
+   ✓ stale setting after replacement cannot change prefs; engine/save independently unchanged 343ms
+   ✓ old resume cannot enable board beneath newer pause 322ms
+ ✓ tests/enemy-guide-view.test.ts (2 tests) 70ms
+
+ Test Files  4 passed (4)
+      Tests  26 passed (26)
+   Start at  14:22:22
+   Duration  11.20s (transform 3.21s, setup 0ms, collect 2.97s, tests 6.41s, environment 758ms, prepare 308ms)
+

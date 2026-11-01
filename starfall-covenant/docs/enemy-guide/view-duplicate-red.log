@@ -1,0 +1,33 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-enemy-guide/starfall-covenant
+
+ ❯ tests/enemy-guide-view.test.ts (2 tests | 1 failed) 58ms
+   × live model sections are read-only, keyboard focus remains local and Escape/route revoke dialog 37ms
+     → 生命: expected [ <p class="small-text"></p>, …(1) ] to have a length of 1 but got 2
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/enemy-guide-view.test.ts > live model sections are read-only, keyboard focus remains local and Escape/route revoke dialog
+AssertionError: 生命: expected [ <p class="small-text"></p>, …(1) ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ tests/enemy-guide-view.test.ts:39:30
+     37|   for (const label of ['生命', '防禦', '攻擊間隔', '攻擊對象']) {
+     38|     const statNodes = [...dialog.querySelectorAll('p, span')].filter(n…
+     39|     expect(statNodes, label).toHaveLength(1);
+       |                              ^
+     40|   }
+     41|   expect(dialog.textContent).toContain('20,000');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  14:22:11
+   Duration  2.45s (transform 952ms, setup 0ms, collect 1.72s, tests 58ms, environment 282ms, prepare 108ms)
+

@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "base": "f3c15a38690431ba730af193218dd07da7c9b0e7",
+  "changedExisting": [
+    "starfall-covenant/src/ui/battle-fx/battle-fx.css",
+    "starfall-covenant/src/ui/battle-fx/readability.ts",
+    "starfall-covenant/src/ui/defeat-advice.ts",
+    "starfall-covenant/src/ui/enemy-info.ts",
+    "starfall-covenant/src/ui/screens/battle.ts",
+    "starfall-covenant/src/ui/stage-intel.ts"
+  ],
+  "protectedFiles": 473,
+  "originalAssets": 456,
+  "cards": 112,
+  "allDataAndEngineUnchanged": true,
+  "pagesBase": "/my-games/starfall-covenant/",
+  "manifestSha256": "bf85b4abbdc9033488598a88f738387b3e99300c1998322621493205df10423c",
+  "scope": "read-only live enemy guide and corrected cumulative absorption descriptions; no enemy rebalance, Greek placement, data, engine, save or PWA change"
+}

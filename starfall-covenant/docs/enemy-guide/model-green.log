@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-enemy-guide/starfall-covenant
+
+ ✓ tests/enemy-guide-model.test.ts (6 tests) 51ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  14:20:01
+   Duration  1.44s (transform 572ms, setup 0ms, collect 798ms, tests 51ms, environment 0ms, prepare 153ms)
+

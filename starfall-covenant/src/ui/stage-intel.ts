@@ -40,7 +40,7 @@ function abilityName(a: EnemyAbility): string {
       const slots = typeof a.params?.slots === 'string' ? a.params.slots.split(',').length : 6;
       return `七曜環（${slots} 格，破環前減傷 ${a.value ?? 75}%，碎裂後易傷 ×${a.params?.vulnerable ?? 2}）`;
     }
-    case 'damageAbsorb': return a.value ? `傷害吸收（單次超過 ${a.value.toLocaleString()}）` : STATUS_NAMES.damageAbsorb;
+    case 'damageAbsorb': return a.value ? `傷害吸收（本回合累積超過 ${a.value.toLocaleString()} 的適用傷害轉為回復）` : STATUS_NAMES.damageAbsorb;
     case 'enrage': return a.value ? `狂怒（攻擊 ×${a.value}）` : STATUS_NAMES.enrage;
     case 'lockedOrbs': return `${attrName(a.params?.orb) ? `${attrName(a.params?.orb)}珠` : ''}${STATUS_NAMES.lockedOrbs}`;
     default: return STATUS_NAMES[a.status] ?? a.status;

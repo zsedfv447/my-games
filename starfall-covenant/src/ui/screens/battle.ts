@@ -17,7 +17,7 @@ import { enemyArtUrl } from '../art/enemy-art';
 import { ATTRIBUTE_NAMES } from '../art/palette';
 import { buzz, flashClass, skillCutin } from '../battle-fx/effects';
 import { openPauseMenu, type PauseHandle } from '../battle-fx/pause';
-import { clearCombo, finishCombo, flashReadySkills, markMatchups, markSeals, renderCombo, renderIntent, weakHint } from '../battle-fx/readability';
+import { clearCombo, finishCombo, flashReadySkills, markMatchups, markSeals, renderCombo, renderIntent, showEnemyInfo, weakHint } from '../battle-fx/readability';
 import { playStrikes } from '../battle-fx/strikes';
 import { ringBadge } from '../battle-fx/ring';
 import { ringOf } from '../../battle/skills/ring';
@@ -182,6 +182,7 @@ class BattleView {
   private shownHp: number;
   private dialog?: DialogHandle;
   private skillDialog?: DialogHandle;
+  private enemyInfoDialog?: DialogHandle;
   /** 契印師手札的戰績紀錄（練習與教學不記） */
   private drill?: { log: () => DrillLog; dispose: () => void };
   private records?: BattleRecordTracker;
@@ -304,6 +305,7 @@ class BattleView {
 
   destroy(): void {
     this.destroyed = true;
+    this.enemyInfoDialog?.close();
     this.stopAssistant();
     document.removeEventListener('visibilitychange', this.onVisibility);
     this.offs.forEach((off) => off());
@@ -321,6 +323,7 @@ class BattleView {
   // ---------- 畫面 ----------
 
   private renderEnemies(): void {
+    this.enemyInfoDialog?.close();
     clear(this.enemyZone);
     const boss = !!this.s.stage.waves[this.state.wave]?.boss;
     this.waveLabel.textContent = `WAVE ${this.state.wave + 1}/${this.state.waveCount}`;
@@ -329,13 +332,14 @@ class BattleView {
     const row = h('div', { class: ['enemy-line', boss && 'boss'] });
     this.enemyEls = this.state.enemies.map((e, i) => {
       const el = h(
-        'button',
-        { type: 'button', class: ['enemy', i === this.state.target && 'targeted', e.hp <= 0 && 'dead'], 'aria-label': `${e.def.name}，設為目標`, onClick: () => this.setTarget(i) },
+        'div',
+        { class: ['enemy', i === this.state.target && 'targeted', e.hp <= 0 && 'dead'] },
         h('div', { class: 'enemy-cd' }, `${e.cooldown}`),
         h('div', { class: 'enemy-intent' }),
         e.hp > 0 && chestBadge(this.s.drops, this.state.wave, i),
-        h('div', { class: 'enemy-art' }, enemyArt(e, boss)),
-        h('div', { class: 'enemy-name' }, badge(ATTRIBUTE_NAMES[e.def.attribute], `attr-${e.def.attribute}`), e.def.name),
+        h('button', { type: 'button', class: 'enemy-target', 'aria-label': `${e.def.name}，設為目標`, onClick: () => this.setTarget(i) },
+          h('div', { class: 'enemy-art' }, enemyArt(e, boss)),
+          h('div', { class: 'enemy-name' }, badge(ATTRIBUTE_NAMES[e.def.attribute], `attr-${e.def.attribute}`), e.def.name)),
         weakHint(e, this.s.data.config.battle),
         h('div', { class: 'ring-host', dataset: { broken: (ringOf(e)?.broken ?? []).join(',') } }, ringBadge(e)),
         chipRow(enemyChips(e), 'enemy-chips'),
@@ -350,7 +354,21 @@ class BattleView {
   }
 
   private renderIntents(): void {
-    this.enemyEls.forEach((el, i) => renderIntent(el.querySelector('.enemy-intent')!, this.state, i, this.s.data.config.battle));
+    this.enemyInfoDialog?.close();
+    const wave = this.state.wave;
+    this.enemyEls.forEach((el, i) => {
+      const enemy = this.state.enemies[i];
+      renderIntent(el.querySelector('.enemy-intent')!, this.state, i, this.s.data.config.battle, trigger => {
+        const live = this.s.battle.getState();
+        if (!this.ownsSession() || !canAct(this.guard) || this.paused || live.phase !== 'player'
+          || live.wave !== wave || live.enemies[i]?.def.id !== enemy.def.id || live.enemies[i].hp <= 0 || !trigger.isConnected || !el.contains(trigger)) return;
+        this.enemyInfoDialog?.close();
+        const dlg = showEnemyInfo(live, i, this.s.data.config.battle, Object.fromEntries(this.s.data.skills.map(skill => [skill.id, skill])), trigger, () => {
+          if (this.enemyInfoDialog === dlg) this.enemyInfoDialog = undefined;
+        });
+        this.enemyInfoDialog = dlg;
+      });
+    });
   }
 
   private updateEnemy(i: number, e: EnemyState, previousHp?: number): void {
@@ -434,6 +452,7 @@ class BattleView {
   };
 
   private openPause(): void {
+    this.enemyInfoDialog?.close();
     if (this.paused || this.state.phase !== 'player') return;
     this.stopAssistant();
     const wasEnabled = this.assistantPlaying || !this.boardView.element.classList.contains('disabled');
@@ -638,6 +657,7 @@ class BattleView {
   /** 點隊員頭像：顯示主動技說明，確認後施放 */
   private useSkill(i: number): void {
     if (!this.ownsSession() || !canAct(this.guard)) return;
+    this.enemyInfoDialog?.close();
     this.skillDialog?.close();
     this.assistant?.close();
     this.boardView.previewPath(null);
@@ -670,6 +690,7 @@ class BattleView {
     const r = this.s.battle.useSkill(i);
     if (!r.ok) return toast(r.reason);
     this.persist();
+    this.enemyInfoDialog?.close();
     this.resolving = true;
     try {
       await this.playSkill(i, before, r);
@@ -746,6 +767,7 @@ class BattleView {
       return;
     }
     this.persist();
+    this.enemyInfoDialog?.close();
     this.resolving = true;
     try {
       await this.playTurn(before, res);

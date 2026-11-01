@@ -1,0 +1,14 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-enemy-guide/starfall-covenant
+
+ ✓ tests/enemy-guide-app.test.ts (4 tests) 4506ms
+   ✓ real boiler current guide reads15k HP/20k permanent absorb; close/Escape leave target board RNG save and skills unchanged 3151ms
+   ✓ route leave closes owned info and detached old entry cannot reopen 383ms
+   ✓ pending actual turn refuses connected info callback; completed view uses fresh live entry 495ms
+   ✓ real c305 advances wave; old boiler entry cannot open stale guide while current enemy entry is correct 475ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  14:21:35
+   Duration  5.27s (transform 1.99s, setup 0ms, collect 71ms, tests 4.51s, environment 260ms, prepare 105ms)
+

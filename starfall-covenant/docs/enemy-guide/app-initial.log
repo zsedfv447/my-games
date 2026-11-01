@@ -1,0 +1,36 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-enemy-guide/starfall-covenant
+
+ ❯ tests/enemy-guide-app.test.ts (4 tests | 2 failed) 7931ms
+   × real boiler current guide reads15k HP/20k permanent absorb; close/Escape leave target board RNG save and skills unchanged 5502ms
+     → expected '失控鍋爐目前敵人狀態生命：15,000 / 15,000防禦：200攻擊間…' to contain '累計'
+   ✓ route leave closes owned info and detached old entry cannot reopen 767ms
+   × pending actual turn refuses connected info callback; completed view uses fresh live entry 839ms
+     → expected null not to be null
+   ✓ real c305 advances wave; old boiler entry cannot open stale guide while current enemy entry is correct 822ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/enemy-guide-app.test.ts > real boiler current guide reads15k HP/20k permanent absorb; close/Escape leave target board RNG save and skills unchanged
+AssertionError: expected '失控鍋爐目前敵人狀態生命：15,000 / 15,000防禦：200攻擊間…' to contain '累計'
+
+Expected: "累計"
+Received: "失控鍋爐目前敵人狀態生命：15,000 / 15,000防禦：200攻擊間隔：每 3 回合攻擊對象：我方全隊（共用生命）下次攻擊倒數：3 回合。能力曾經「已觸發」不代表已失效；是否仍生效以目前狀態為準。目前狀態與對策傷害吸收・永久（直到被解除）門檻：20,000。每個敵人分別計算本回合累積的適用傷害（防禦與其他減傷結算後）；門檻內扣血，超過的部分改為回復該敵人，不是復活。固定傷害、最大生命百分比傷害，以及明確無視護盾的傷害不走這個吸收分支；只有無視防禦並不能避開吸收。固定傷害仍可能受一般護盾、屬性減傷或七曜環影響；避開吸收不等於穿透所有防禦，也不保證擊殺。此畫面沒有本回合吸收剩餘額度，不能由這些資訊推算安全傷害或保證安全的 Combo 數。可參考的隊伍技能（只針對吸收）以下只列含可避開吸收之直接傷害段的技能；同一技能的其他傷害段另判。CD、封印與其他防禦仍須確認，不保證現在可施放或擊殺。位置 1・荊冠藥聖・薇妮：荊冠藥方・CD 0・目前未被技能／星紋封印對全體敵人造成 50000 固定傷害（無視防禦與護盾），回復生命上限 15%，並把蝕珠轉為心珠。位置 2・毒藤刺客・絲蔓：定量・CD 0・目前未被技能／星紋封印對單體敵人造成 15000 固定傷害（無視防禦）。屬性焰（弱：潮）下次攻擊3 回合後生命15,000 / 15,000防禦200攻擊間隔每 3 回合攻擊對象我方全隊（共用生命）預估傷害已計入目前的減傷效果，隊長技減傷另計。登場時傷害吸收（已觸發）關閉"
+
+ ❯ tests/enemy-guide-app.test.ts:27:308
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/enemy-guide-app.test.ts > pending actual turn refuses connected info callback; completed view uses fresh live entry
+AssertionError: expected null not to be null
+ ❯ tests/enemy-guide-app.test.ts:35:356
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  14:19:59
+   Duration  8.93s (transform 3.29s, setup 0ms, collect 93ms, tests 7.93s, environment 482ms, prepare 139ms)
+

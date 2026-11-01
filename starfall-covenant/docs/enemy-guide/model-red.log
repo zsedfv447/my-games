@@ -1,0 +1,95 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-enemy-guide/starfall-covenant
+
+ ❯ tests/enemy-guide-model.test.ts (6 tests | 5 failed) 42ms
+   × actual permanent absorption uses20000 per-enemy cumulative post-defense rule and explicit no budget/no guaranteed kill 17ms
+     → expected '' to contain '20,000'
+   × current active defense values/durations, rotating attribute and ring state are factual 1ms
+     → expected '' to contain '6 Combo'
+   × only direct fixed/percent/ignoreShield damage methods appear with original descriptions, cooldowns and actual seals 2ms
+     → expected '' to contain '原文test0'
+   × missing/nonfinite thresholds and unknown statuses remain explicitly unknown; no invented source method 1ms
+     → expected '' to contain '未知'
+   × stage and defeat copy describe cumulative turn absorption, not single-hit safe damage 18ms
+     → expected '開場：傷害吸收（單次超過 20,000）' to contain '本回合累積'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/enemy-guide-model.test.ts > actual permanent absorption uses20000 per-enemy cumulative post-defense rule and explicit no budget/no guaranteed kill
+AssertionError: expected '' to contain '20,000'
+
+- Expected
++ Received
+
+- 20,000
+
+ ❯ tests/enemy-guide-model.test.ts:15:12
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/enemy-guide-model.test.ts > current active defense values/durations, rotating attribute and ring state are factual
+AssertionError: expected '' to contain '6 Combo'
+
+- Expected
++ Received
+
+- 6 Combo
+
+ ❯ tests/enemy-guide-model.test.ts:27:116
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/enemy-guide-model.test.ts > only direct fixed/percent/ignoreShield damage methods appear with original descriptions, cooldowns and actual seals
+AssertionError: expected '' to contain '原文test0'
+
+- Expected
++ Received
+
+- 原文test0
+
+ ❯ tests/enemy-guide-model.test.ts:33:75
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/enemy-guide-model.test.ts > missing/nonfinite thresholds and unknown statuses remain explicitly unknown; no invented source method
+AssertionError: expected '' to contain '未知'
+
+- Expected
++ Received
+
+- 未知
+
+ ❯ tests/enemy-guide-model.test.ts:38:31
+     36| it('missing/nonfinite thresholds and unknown statuses remain explicitl…
+     37|  const s=state();s.enemies[0].statuses=[{id:'damageAbsorb',turns:null}…
+     38|  const t=text(s,{});expect(t).toContain('未知'); expect(t).not.toConta…
+       |                               ^
+     39| });
+     40| it('stage and defeat copy describe cumulative turn absorption, not sin…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tests/enemy-guide-model.test.ts > stage and defeat copy describe cumulative turn absorption, not single-hit safe damage
+AssertionError: expected '開場：傷害吸收（單次超過 20,000）' to contain '本回合累積'
+
+Expected: "本回合累積"
+Received: "開場：傷害吸收（單次超過 20,000）"
+
+ ❯ tests/enemy-guide-model.test.ts:41:100
+     39| });
+     40| it('stage and defeat copy describe cumulative turn absorption, not sin…
+     41|  const ability=gameData.enemies.find(e=>e.id==='e0008')!.abilities[0];…
+       |                                                                                                    ^
+     42|  const intel=stageIntel(stage,gameData.enemies,gameData.config.battle);
+     43|  const tips=defeatAdvice({stage,intel,members:[],hasHelper:true,helper…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 1 passed (6)
+   Start at  14:19:19
+   Duration  993ms (transform 425ms, setup 0ms, collect 563ms, tests 42ms, environment 0ms, prepare 104ms)
+

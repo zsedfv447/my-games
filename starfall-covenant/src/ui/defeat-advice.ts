@@ -29,7 +29,7 @@ const names = (attrs: Attribute[]) => attrs.map((a) => ATTRIBUTE_NAMES[a]).join(
 /** 敵人能力 → 對策；同一種只提一次 */
 const COUNTERS: { match: RegExp; text: string }[] = [
   { match: /Combo 盾/, text: '有敵人帶 Combo 盾，Combo 不夠時傷害無效，先練習湊多組再出手。' },
-  { match: /傷害吸收/, text: '有敵人會吸收過高的單次傷害，打到上限附近就好，不要一次爆發太多。' },
+  { match: /傷害吸收/, text: '有敵人按本回合累積的適用傷害吸收超額部分，並非單次判斷。可查看敵人情報與技能原文，確認固定、百分比或明確無視護盾的傷害方法；其他防禦仍須另行處理。' },
   { match: /技能封印/, text: '有敵人會封印主動技，重要的技能在被封印前先放。' },
   { match: /心珠封印/, text: '有敵人會封印心珠回復，帶減傷或高生命的隊伍比較穩。' },
   { match: /屬性減傷/, text: '有敵人會減少特定屬性的傷害，多帶一種屬性的隊員分散輸出。' },

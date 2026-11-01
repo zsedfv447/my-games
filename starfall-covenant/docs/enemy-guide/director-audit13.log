@@ -1,0 +1,68 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-enemy-guide/starfall-covenant
+
+ ✓ audit/e13/c-navigation.test.ts (17 tests) 12520ms
+   ✓ controller: normal skip grants gift once; actual restart then skip never grants again 3423ms
+   ✓ controller: normal cancel preserves tutorial/gift/currency and writes nothing 942ms
+   ✓ controller: route departure revokes old skip confirmation instead of granting gift or changing route 1168ms
+   ✓ battle-guide: normal skip grants gift once; actual restart then skip never grants again 666ms
+   ✓ battle-guide: normal cancel preserves tutorial/gift/currency and writes nothing 694ms
+   ✓ battle-guide: route departure revokes old skip confirmation instead of granting gift or changing route 685ms
+   ✓ abyss default branch: first challenge remains free and starts real first-floor battle 392ms
+   ✓ abyss default different-stage cancel retains ticket and zero cost 397ms
+   ✓ abyss alias same-stage resume preserves full snapshot and is free 364ms
+   ✓ abyss same-stage explicit restart remains free and records one deliberate abandonment 377ms
+   ✓ abyss main branch route departure revokes pending approval without clearing or redirecting 572ms
+   ✓ abyss abyss branch route departure revokes pending approval without clearing or redirecting 646ms
+   ✓ abyss main pending default confirmation cannot abandon a replacement same-stage ticket 451ms
+   ✓ abyss abyss pending default confirmation cannot abandon a replacement same-stage ticket 388ms
+   ✓ home same-page replacement: old Abandon must not clear a newer same-stage ticket 428ms
+   ✓ home answer 繼續 then same-task leave must not redirect or mutate the newer route 412ms
+   ✓ home answer 放棄 then same-task leave must not redirect or mutate the newer route 513ms
+ ✓ audit/e13/a-resource.test.ts (16 tests) 12964ms
+   ✓ ritual again normal: real first pull and result, stale approval must not spend 3348ms
+   ✓ ritual again cancel: real first pull and result, stale approval must not spend 553ms
+   ✓ ritual again leave: real first pull and result, stale approval must not spend 680ms
+   ✓ ritual again replacement: real first pull and result, stale approval must not spend 914ms
+   ✓ expedition picker normal: closed selection must not change later chosen members 562ms
+   ✓ expedition picker cancel: closed selection must not change later chosen members 642ms
+   ✓ expedition picker leave: closed selection must not change later chosen members 585ms
+   ✓ expedition picker replacement: closed selection must not change later chosen members 376ms
+   ✓ expedition recall normal: no stale recall may remove active party 429ms
+   ✓ expedition recall cancel: no stale recall may remove active party 461ms
+   ✓ expedition recall leave: no stale recall may remove active party 534ms
+   ✓ expedition recall replacement: no stale recall may remove active party 410ms
+   ✓ login popup normal: daily guard and closed popup authority 807ms
+   ✓ login popup cancel: daily guard and closed popup authority 841ms
+   ✓ login popup leave: daily guard and closed popup authority 905ms
+   ✓ login popup replacement: daily guard and closed popup authority 914ms
+ ✓ audit/e13/b-team.test.ts (24 tests) 14376ms
+   ✓ rename button normal updates only intended team 3267ms
+   ✓ rename button cancel rejects retained callback 603ms
+   ✓ rename button leave rejects retained callback 905ms
+   ✓ rename button replaceTeam rejects retained callback 776ms
+   ✓ rename Enter normal updates only intended team 577ms
+   ✓ rename Enter cancel rejects retained callback 719ms
+   ✓ rename Enter leave rejects retained callback 658ms
+   ✓ rename Enter replaceTeam rejects retained callback 394ms
+   ✓ team picker preview is read-only, locked card remains legal to equip, removal preserves leader 378ms
+   ✓ team picker cancel rejects old equip/remove 382ms
+   ✓ team picker leave rejects old equip/remove 544ms
+   ✓ team picker switchTeam rejects old equip/remove 363ms
+   ✓ team picker replaceLineup rejects old equip/remove 448ms
+   ✓ Cost suggestion normal respects 33 limit and retains leader 388ms
+   ✓ Cost suggestion cancel cannot commit captured lineup 456ms
+   ✓ Cost suggestion leave cannot commit captured lineup 517ms
+   ✓ Cost suggestion replaceLineup cannot commit captured lineup 318ms
+   ✓ cards material-target picker normal navigation 384ms
+   ✓ cards material-target picker cancel navigation 376ms
+   ✓ cards material-target picker leave navigation 537ms
+   ✓ oath normal: module-memory selection lifecycle, not save 320ms
+   ✓ oath cancel: module-memory selection lifecycle, not save 364ms
+   ✓ oath leave: module-memory selection lifecycle, not save 448ms
+
+ Test Files  3 passed (3)
+      Tests  57 passed (57)
+   Start at  14:24:43
+   Duration  15.33s (transform 2.30s, setup 0ms, collect 224ms, tests 39.86s, environment 1.19s, prepare 273ms)
+

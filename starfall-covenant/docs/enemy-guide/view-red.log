@@ -1,0 +1,44 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-enemy-guide/starfall-covenant
+
+ ❯ tests/enemy-guide-view.test.ts (2 tests | 2 failed) 29ms
+   × visible information entry calls owner only while its exact button remains mounted 25ms
+     → expected 'ⓘ' to contain '情報／攻略'
+   × live model sections are read-only, keyboard focus remains local and Escape/route revoke dialog 3ms
+     → showEnemyInfo is not a function
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/enemy-guide-view.test.ts > visible information entry calls owner only while its exact button remains mounted
+AssertionError: expected 'ⓘ' to contain '情報／攻略'
+
+Expected: "情報／攻略"
+Received: "ⓘ"
+
+ ❯ tests/enemy-guide-view.test.ts:20:27
+     18|   readability.renderIntent(f.host, f.state, 0, f.data.config.battle, o…
+     19|   const old = f.host.querySelector<HTMLButtonElement>('button')!;
+     20|   expect(old.textContent).toContain('情報／攻略');
+       |                           ^
+     21|   expect(old.getAttribute('aria-label')).toContain('查看情報與攻略'); …
+     22|   readability.renderIntent(f.host, f.state, 0, f.data.config.battle, o…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/enemy-guide-view.test.ts > live model sections are read-only, keyboard focus remains local and Escape/route revoke dialog
+TypeError: showEnemyInfo is not a function
+ ❯ tests/enemy-guide-view.test.ts:28:30
+     26|   const f = fixture(), trigger = document.createElement('button'); f.h…
+     27|   const before = JSON.stringify(f.state), closed = vi.fn();
+     28|   const handle = readability.showEnemyInfo(f.state, 0, f.data.config.b…
+       |                              ^
+     29|   const dialog = f.host.querySelector<HTMLElement>('[role="dialog"]')!;
+     30|   expect(dialog.querySelector('[data-enemy-guide]')).not.toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  14:19:06
+   Duration  3.44s (transform 1.10s, setup 0ms, collect 2.15s, tests 29ms, environment 412ms, prepare 99ms)
+

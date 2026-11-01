@@ -1,0 +1,50 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-enemy-guide/starfall-covenant
+
+ ✓ tests/battle-feedback.test.ts (12 tests) 44ms
+ ✓ tests/enemy-guide-view.test.ts (2 tests) 73ms
+ ✓ tests/pause-retreat.test.ts (2 tests) 3ms
+stdout | tests/e17-pause.test.ts > stale mode after close cannot redirect current route or replace engine
+pause stale mode close { connected: true }
+
+stdout | tests/e17-pause.test.ts > stale setting after close cannot change prefs; engine/save independently unchanged
+pause stale setting close { connected: true }
+
+stdout | tests/e17-pause.test.ts > stale mode after leave cannot redirect current route or replace engine
+pause stale mode leave { connected: false }
+
+stdout | tests/e17-pause.test.ts > stale setting after leave cannot change prefs; engine/save independently unchanged
+pause stale setting leave { connected: false }
+
+stdout | tests/e17-pause.test.ts > stale mode after replacement cannot redirect current route or replace engine
+pause stale mode replacement { connected: true }
+
+stdout | tests/e17-pause.test.ts > stale setting after replacement cannot change prefs; engine/save independently unchanged
+pause stale setting replacement { connected: true }
+
+ ❯ tests/e17-pause.test.ts (10 tests | 1 failed) 9186ms
+   × normal resume restores enabled board without changing real engine/save/preferences 5015ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ normal mode switch uses real new practice engine and no ticket/resource debit 640ms
+   ✓ normal speed and volume persist while engine state and game resources remain unchanged 337ms
+   ✓ stale mode after close cannot redirect current route or replace engine 349ms
+   ✓ stale setting after close cannot change prefs; engine/save independently unchanged 341ms
+   ✓ stale mode after leave cannot redirect current route or replace engine 612ms
+   ✓ stale setting after leave cannot change prefs; engine/save independently unchanged 697ms
+   ✓ stale mode after replacement cannot redirect current route or replace engine 453ms
+   ✓ stale setting after replacement cannot change prefs; engine/save independently unchanged 397ms
+   ✓ old resume cannot enable board beneath newer pause 344ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/e17-pause.test.ts > normal resume restores enabled board without changing real engine/save/preferences
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 25 passed (26)
+   Start at  14:21:15
+   Duration  10.73s (transform 7.24s, setup 0ms, collect 9.63s, tests 9.31s, environment 1.27s, prepare 1.16s)
+
