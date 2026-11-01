@@ -1,0 +1,10 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-helper-production/starfall-covenant
+
+ ✓ tests/helper-support-data.test.ts (12 tests) 157ms
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  13:12:05
+   Duration  1.23s (transform 449ms, setup 0ms, collect 645ms, tests 157ms, environment 0ms, prepare 116ms)
+

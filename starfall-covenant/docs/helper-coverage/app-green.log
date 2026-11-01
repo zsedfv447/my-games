@@ -1,0 +1,18 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-helper-production/starfall-covenant
+
+ ✓ tests/e20-helper-resume.test.ts (2 tests) 4199ms
+   ✓ paid selected helper with noHelper=false resumes from ticket after module/UI reload, not reset choice memory 3268ms
+   ✓ paid selected helper with noHelper=true resumes from ticket after module/UI reload, not reset choice memory 930ms
+ ✓ tests/helper-support-app.test.ts (5 tests) 5978ms
+   ✓ previously unavailable c815 support selected, oath suppression=false, paid ticket and module reload preserve helper without second charge 3302ms
+   ✓ previously unavailable c815 support selected, oath suppression=true, paid ticket and module reload preserve helper without second charge 960ms
+   ✓ all/search only expose exact seen IDs; old search rows and departed callbacks cannot choose or navigate 513ms
+   ✓ actual fixed-team trial does not expose selectable permanent support 575ms
+   ✓ synthetic stage filter disables incompatible support without selection; fixture is restored 627ms
+
+ Test Files  2 passed (2)
+      Tests  7 passed (7)
+   Start at  13:12:15
+   Duration  6.68s (transform 1.82s, setup 0ms, collect 72ms, tests 10.18s, environment 577ms, prepare 171ms)
+

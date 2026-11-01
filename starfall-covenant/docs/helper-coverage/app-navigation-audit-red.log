@@ -1,0 +1,901 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-helper-production/starfall-covenant
+
+ ❯ audit/e16/navigation.test.ts (8 tests | 2 failed) 5885ms
+   ✓ stamina normal: actual Shell link only navigates to shop; Back restores team without purchase 2994ms
+   ✓ stamina close50: old shop/close cannot take over new route or dialog 389ms
+   ✓ stamina leave200: old shop/close cannot take over new route or dialog 530ms
+   × defeat normal: real lost snapshot and UI abandon produce helper shortcut; Back returns to prepare with no new rewards or costs 367ms
+     → expected { version: 4, player: { …(6) }, …(14) } to deeply equal { version: 4, player: { …(6) }, …(14) }
+     → expected '{"data":{"version":4,"player":{"name"…' to be '{"data":{"version":4,"player":{"name"…' // Object.is equality
+     → expected [ [ 'starfall.save', …(1) ] ] to have a length of +0 but got 1
+   ✓ defeat return50: stale advice/return cannot redirect newer navigation 392ms
+   ✓ defeat leave200: stale advice/return cannot redirect newer navigation 561ms
+   × defeat replacement: stale advice/return cannot redirect newer navigation 373ms
+     → expected { version: 4, player: { …(6) }, …(14) } to deeply equal { version: 4, player: { …(6) }, …(14) }
+     → expected '{"data":{"version":4,"player":{"name"…' to be '{"data":{"version":4,"player":{"name"…' // Object.is equality
+     → expected [ [ 'starfall.save', …(1) ] ] to have a length of +0 but got 1
+     → expected { version: 4, player: { …(6) }, …(14) } to deeply equal { version: 4, player: { …(6) }, …(14) }
+     → expected '{"data":{"version":4,"player":{"name"…' to be '{"data":{"version":4,"player":{"name"…' // Object.is equality
+     → expected [ [ 'starfall.save', …(1) ] ] to have a length of +0 but got 1
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  audit/e16/navigation.test.ts > defeat normal: real lost snapshot and UI abandon produce helper shortcut; Back returns to prepare with no new rewards or costs
+AssertionError: expected { version: 4, player: { …(6) }, …(14) } to deeply equal { version: 4, player: { …(6) }, …(14) }
+
+- Expected
++ Received
+
+  Object {
+    "activeBattle": null,
+    "activeTeam": 0,
+    "collection": Object {
+      "claimed": Array [],
+      "owned": Array [
+        "c106",
+        "c108",
+        "c208",
+        "c308",
+        "c408",
+      ],
+      "seen": Array [
+        "c106",
+        "c108",
+        "c208",
+        "c308",
+        "c408",
+        "c101",
+        "c109",
+        "c110",
+        "c206",
+        "c202",
+        "c203",
+        "c306",
+        "c301",
+        "c309",
+        "c310",
+        "c302",
+        "c303",
+        "c311",
+        "c312",
+        "c404",
+        "c405",
+        "c209",
+        "c210",
+        "c201",
+        "c409",
+        "c410",
+        "c402",
+        "c403",
+        "c509",
+        "c510",
+        "c501",
+        "c406",
+        "c401",
+        "c506",
+        "c204",
+        "c205",
+        "c307",
+        "c502",
+        "c503",
+        "c801",
+        "c806",
+        "c811",
++       "c107",
++       "c111",
++       "c112",
++       "c706",
++       "c802",
++       "c807",
++       "c102",
++       "c103",
++       "c104",
+      ],
+    },
+    "daily": Object {
+      "lastLogin": "",
+      "loginDay": 0,
+      "shopPurchases": Object {},
+    },
+    "gacha": Object {
+      "history": Array [],
+      "pityCounter": Object {},
+    },
+    "hintsSeen": Array [
+      "ringShield",
+    ],
+    "inventory": Object {
+      "capacity": 50,
+      "cards": Array [
+        Object {
+          "awakened": 0,
+          "cardId": "c106",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510183679,
+          "skillLevel": 1,
+          "uid": "u1",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c108",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510183679,
+          "skillLevel": 1,
+          "uid": "u2",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c208",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510183679,
+          "skillLevel": 1,
+          "uid": "u3",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c308",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510183679,
+          "skillLevel": 1,
+          "uid": "u4",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c408",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510183679,
+          "skillLevel": 1,
+          "uid": "u5",
+        },
+      ],
+    },
+    "player": Object {
+      "coin": 1000,
+      "exp": 0,
+      "gems": 50,
+      "level": 1,
+      "name": "契印師",
+      "tokens": Object {},
+    },
+    "progress": Object {
+      "chapterRewardsClaimed": Array [],
+      "clearedStages": Array [],
+      "stars": Object {},
+      "storySeen": Array [],
+      "towerFloor": 0,
+      "tutorialDone": true,
+    },
+    "quests": Object {
+      "claimed": Array [],
+      "counters": Object {
+        "d:stageFail": 1,
+        "stageFail": 1,
+        "w:stageFail": 1,
+      },
+      "dailyResetAt": "2026-11-01",
+      "weeklyResetAt": "2026-10-26",
+    },
+    "records": Object {
+      "archetypeClears": Object {},
+      "battles": 1,
+      "fastestTurns": Object {},
+      "leaderClears": Object {},
+      "maxCombo": 0,
+      "maxTurnDamage": 0,
+      "weeks": Object {
+        "2026-10-26": Object {
+          "abyssBest": 0,
+          "battles": 1,
+          "leaderClears": Object {},
+          "maxCombo": 0,
+          "maxTurnDamage": 0,
+          "nemesisClears": 0,
+          "wins": 0,
+        },
+      },
+      "wins": 0,
+    },
+    "settings": Object {
+      "battleSpeed": 1,
+      "bgm": 0.8,
+      "sfx": 0.8,
+    },
+    "stamina": Object {
+      "current": 30,
+      "lastUpdate": 1793510183679,
+    },
+    "teams": Array [
+      Object {
+        "members": Array [
+          "u1",
+          "u2",
+          "u3",
+          "u4",
+          "u5",
+        ],
+        "name": "隊伍1",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍2",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍3",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍4",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍5",
+      },
+    ],
+    "tutorial": Object {
+      "giftGiven": true,
+      "step": "done",
+    },
+    "version": 4,
+  }
+
+ ❯ unchanged audit/e16/navigation.test.ts:23:82
+
+ ❯ audit/e16/navigation.test.ts:36:274
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  audit/e16/navigation.test.ts > defeat normal: real lost snapshot and UI abandon produce helper shortcut; Back returns to prepare with no new rewards or costs
+AssertionError: expected '{"data":{"version":4,"player":{"name"…' to be '{"data":{"version":4,"player":{"name"…' // Object.is equality
+
+Expected: "{"data":{"version":4,"player":{"name":"契印師","level":1,"exp":0,"coin":1000,"gems":50,"tokens":{}},"stamina":{"current":30,"lastUpdate":1793510183679},"inventory":{"capacity":50,"cards":[{"uid":"u1","cardId":"c106","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510183679},{"uid":"u2","cardId":"c108","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510183679},{"uid":"u3","cardId":"c208","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510183679},{"uid":"u4","cardId":"c308","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510183679},{"uid":"u5","cardId":"c408","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510183679}]},"teams":[{"name":"隊伍1","members":["u1","u2","u3","u4","u5"]},{"name":"隊伍2","members":[null,null,null,null,null]},{"name":"隊伍3","members":[null,null,null,null,null]},{"name":"隊伍4","members":[null,null,null,null,null]},{"name":"隊伍5","members":[null,null,null,null,null]}],"activeTeam":0,"progress":{"clearedStages":[],"stars":{},"towerFloor":0,"tutorialDone":true,"storySeen":[],"chapterRewardsClaimed":[]},"tutorial":{"step":"done","giftGiven":true},"activeBattle":null,"gacha":{"pityCounter":{},"history":[]},"collection":{"seen":["c106","c108","c208","c308","c408","c101","c109","c110","c206","c202","c203","c306","c301","c309","c310","c302","c303","c311","c312","c404","c405","c209","c210","c201","c409","c410","c402","c403","c509","c510","c501","c406","c401","c506","c204","c205","c307","c502","c503","c801","c806","c811"],"owned":["c106","c108","c208","c308","c408"],"claimed":[]},"quests":{"counters":{"stageFail":1,"d:stageFail":1,"w:stageFail":1},"claimed":[],"dailyResetAt":"2026-11-01","weeklyResetAt":"2026-10-26"},"daily":{"loginDay":0,"lastLogin":"","shopPurchases":{}},"settings":{"bgm":0.8,"sfx":0.8,"battleSpeed":1},"hintsSeen":["ringShield"],"records":{"battles":1,"wins":0,"maxCombo":0,"maxTurnDamage":0,"fastestTurns":{},"leaderClears":{},"archetypeClears":{},"weeks":{"2026-10-26":{"battles":1,"wins":0,"maxCombo":0,"maxTurnDamage":0,"leaderClears":{},"abyssBest":0,"nemesisClears":0}}}},"checksum":"e68b22f3"}"
+Received: "{"data":{"version":4,"player":{"name":"契印師","level":1,"exp":0,"coin":1000,"gems":50,"tokens":{}},"stamina":{"current":30,"lastUpdate":1793510183679},"inventory":{"capacity":50,"cards":[{"uid":"u1","cardId":"c106","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510183679},{"uid":"u2","cardId":"c108","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510183679},{"uid":"u3","cardId":"c208","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510183679},{"uid":"u4","cardId":"c308","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510183679},{"uid":"u5","cardId":"c408","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510183679}]},"teams":[{"name":"隊伍1","members":["u1","u2","u3","u4","u5"]},{"name":"隊伍2","members":[null,null,null,null,null]},{"name":"隊伍3","members":[null,null,null,null,null]},{"name":"隊伍4","members":[null,null,null,null,null]},{"name":"隊伍5","members":[null,null,null,null,null]}],"activeTeam":0,"progress":{"clearedStages":[],"stars":{},"towerFloor":0,"tutorialDone":true,"storySeen":[],"chapterRewardsClaimed":[]},"tutorial":{"step":"done","giftGiven":true},"activeBattle":null,"gacha":{"pityCounter":{},"history":[]},"collection":{"seen":["c106","c108","c208","c308","c408","c101","c109","c110","c206","c202","c203","c306","c301","c309","c310","c302","c303","c311","c312","c404","c405","c209","c210","c201","c409","c410","c402","c403","c509","c510","c501","c406","c401","c506","c204","c205","c307","c502","c503","c801","c806","c811","c107","c111","c112","c706","c802","c807","c102","c103","c104"],"owned":["c106","c108","c208","c308","c408"],"claimed":[]},"quests":{"counters":{"stageFail":1,"d:stageFail":1,"w:stageFail":1},"claimed":[],"dailyResetAt":"2026-11-01","weeklyResetAt":"2026-10-26"},"daily":{"loginDay":0,"lastLogin":"","shopPurchases":{}},"settings":{"bgm":0.8,"sfx":0.8,"battleSpeed":1},"hintsSeen":["ringShield"],"records":{"battles":1,"wins":0,"maxCombo":0,"maxTurnDamage":0,"fastestTurns":{},"leaderClears":{},"archetypeClears":{},"weeks":{"2026-10-26":{"battles":1,"wins":0,"maxCombo":0,"maxTurnDamage":0,"leaderClears":{},"abyssBest":0,"nemesisClears":0}}}},"checksum":"4083f8d7"}"
+
+ ❯ unchanged audit/e16/navigation.test.ts:23:147
+
+ ❯ audit/e16/navigation.test.ts:36:274
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  audit/e16/navigation.test.ts > defeat normal: real lost snapshot and UI abandon produce helper shortcut; Back returns to prepare with no new rewards or costs
+AssertionError: expected [ [ 'starfall.save', …(1) ] ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ unchanged audit/e16/navigation.test.ts:23:186
+
+ ❯ audit/e16/navigation.test.ts:36:274
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  audit/e16/navigation.test.ts > defeat replacement: stale advice/return cannot redirect newer navigation
+AssertionError: expected { version: 4, player: { …(6) }, …(14) } to deeply equal { version: 4, player: { …(6) }, …(14) }
+
+- Expected
++ Received
+
+  Object {
+    "activeBattle": null,
+    "activeTeam": 0,
+    "collection": Object {
+      "claimed": Array [],
+      "owned": Array [
+        "c106",
+        "c108",
+        "c208",
+        "c308",
+        "c408",
+      ],
+      "seen": Array [
+        "c106",
+        "c108",
+        "c208",
+        "c308",
+        "c408",
+        "c101",
+        "c109",
+        "c110",
+        "c206",
+        "c202",
+        "c203",
+        "c306",
+        "c301",
+        "c309",
+        "c310",
+        "c302",
+        "c303",
+        "c311",
+        "c312",
+        "c404",
+        "c405",
+        "c209",
+        "c210",
+        "c201",
+        "c409",
+        "c410",
+        "c402",
+        "c403",
+        "c509",
+        "c510",
+        "c501",
+        "c406",
+        "c401",
+        "c506",
+        "c204",
+        "c205",
+        "c307",
+        "c502",
+        "c503",
+        "c801",
+        "c806",
+        "c811",
++       "c107",
++       "c111",
++       "c112",
++       "c706",
++       "c802",
++       "c807",
++       "c102",
++       "c103",
++       "c104",
+      ],
+    },
+    "daily": Object {
+      "lastLogin": "",
+      "loginDay": 0,
+      "shopPurchases": Object {},
+    },
+    "gacha": Object {
+      "history": Array [],
+      "pityCounter": Object {},
+    },
+    "hintsSeen": Array [
+      "ringShield",
+    ],
+    "inventory": Object {
+      "capacity": 50,
+      "cards": Array [
+        Object {
+          "awakened": 0,
+          "cardId": "c106",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510184978,
+          "skillLevel": 1,
+          "uid": "u1",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c108",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510184978,
+          "skillLevel": 1,
+          "uid": "u2",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c208",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510184978,
+          "skillLevel": 1,
+          "uid": "u3",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c308",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510184978,
+          "skillLevel": 1,
+          "uid": "u4",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c408",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510184978,
+          "skillLevel": 1,
+          "uid": "u5",
+        },
+      ],
+    },
+    "player": Object {
+      "coin": 1000,
+      "exp": 0,
+      "gems": 50,
+      "level": 1,
+      "name": "契印師",
+      "tokens": Object {},
+    },
+    "progress": Object {
+      "chapterRewardsClaimed": Array [],
+      "clearedStages": Array [],
+      "stars": Object {},
+      "storySeen": Array [],
+      "towerFloor": 0,
+      "tutorialDone": true,
+    },
+    "quests": Object {
+      "claimed": Array [],
+      "counters": Object {
+        "d:stageFail": 1,
+        "stageFail": 1,
+        "w:stageFail": 1,
+      },
+      "dailyResetAt": "2026-11-01",
+      "weeklyResetAt": "2026-10-26",
+    },
+    "records": Object {
+      "archetypeClears": Object {},
+      "battles": 1,
+      "fastestTurns": Object {},
+      "leaderClears": Object {},
+      "maxCombo": 0,
+      "maxTurnDamage": 0,
+      "weeks": Object {
+        "2026-10-26": Object {
+          "abyssBest": 0,
+          "battles": 1,
+          "leaderClears": Object {},
+          "maxCombo": 0,
+          "maxTurnDamage": 0,
+          "nemesisClears": 0,
+          "wins": 0,
+        },
+      },
+      "wins": 0,
+    },
+    "settings": Object {
+      "battleSpeed": 1,
+      "bgm": 0.8,
+      "sfx": 0.8,
+    },
+    "stamina": Object {
+      "current": 30,
+      "lastUpdate": 1793510184978,
+    },
+    "teams": Array [
+      Object {
+        "members": Array [
+          "u1",
+          "u2",
+          "u3",
+          "u4",
+          "u5",
+        ],
+        "name": "隊伍1",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍2",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍3",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍4",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍5",
+      },
+    ],
+    "tutorial": Object {
+      "giftGiven": true,
+      "step": "done",
+    },
+    "version": 4,
+  }
+
+ ❯ unchanged audit/e16/navigation.test.ts:23:82
+
+ ❯ audit/e16/navigation.test.ts:45:52
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  audit/e16/navigation.test.ts > defeat replacement: stale advice/return cannot redirect newer navigation
+AssertionError: expected '{"data":{"version":4,"player":{"name"…' to be '{"data":{"version":4,"player":{"name"…' // Object.is equality
+
+Expected: "{"data":{"version":4,"player":{"name":"契印師","level":1,"exp":0,"coin":1000,"gems":50,"tokens":{}},"stamina":{"current":30,"lastUpdate":1793510184978},"inventory":{"capacity":50,"cards":[{"uid":"u1","cardId":"c106","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u2","cardId":"c108","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u3","cardId":"c208","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u4","cardId":"c308","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u5","cardId":"c408","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978}]},"teams":[{"name":"隊伍1","members":["u1","u2","u3","u4","u5"]},{"name":"隊伍2","members":[null,null,null,null,null]},{"name":"隊伍3","members":[null,null,null,null,null]},{"name":"隊伍4","members":[null,null,null,null,null]},{"name":"隊伍5","members":[null,null,null,null,null]}],"activeTeam":0,"progress":{"clearedStages":[],"stars":{},"towerFloor":0,"tutorialDone":true,"storySeen":[],"chapterRewardsClaimed":[]},"tutorial":{"step":"done","giftGiven":true},"activeBattle":null,"gacha":{"pityCounter":{},"history":[]},"collection":{"seen":["c106","c108","c208","c308","c408","c101","c109","c110","c206","c202","c203","c306","c301","c309","c310","c302","c303","c311","c312","c404","c405","c209","c210","c201","c409","c410","c402","c403","c509","c510","c501","c406","c401","c506","c204","c205","c307","c502","c503","c801","c806","c811"],"owned":["c106","c108","c208","c308","c408"],"claimed":[]},"quests":{"counters":{"stageFail":1,"d:stageFail":1,"w:stageFail":1},"claimed":[],"dailyResetAt":"2026-11-01","weeklyResetAt":"2026-10-26"},"daily":{"loginDay":0,"lastLogin":"","shopPurchases":{}},"settings":{"bgm":0.8,"sfx":0.8,"battleSpeed":1},"hintsSeen":["ringShield"],"records":{"battles":1,"wins":0,"maxCombo":0,"maxTurnDamage":0,"fastestTurns":{},"leaderClears":{},"archetypeClears":{},"weeks":{"2026-10-26":{"battles":1,"wins":0,"maxCombo":0,"maxTurnDamage":0,"leaderClears":{},"abyssBest":0,"nemesisClears":0}}}},"checksum":"7b4344f7"}"
+Received: "{"data":{"version":4,"player":{"name":"契印師","level":1,"exp":0,"coin":1000,"gems":50,"tokens":{}},"stamina":{"current":30,"lastUpdate":1793510184978},"inventory":{"capacity":50,"cards":[{"uid":"u1","cardId":"c106","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u2","cardId":"c108","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u3","cardId":"c208","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u4","cardId":"c308","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u5","cardId":"c408","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978}]},"teams":[{"name":"隊伍1","members":["u1","u2","u3","u4","u5"]},{"name":"隊伍2","members":[null,null,null,null,null]},{"name":"隊伍3","members":[null,null,null,null,null]},{"name":"隊伍4","members":[null,null,null,null,null]},{"name":"隊伍5","members":[null,null,null,null,null]}],"activeTeam":0,"progress":{"clearedStages":[],"stars":{},"towerFloor":0,"tutorialDone":true,"storySeen":[],"chapterRewardsClaimed":[]},"tutorial":{"step":"done","giftGiven":true},"activeBattle":null,"gacha":{"pityCounter":{},"history":[]},"collection":{"seen":["c106","c108","c208","c308","c408","c101","c109","c110","c206","c202","c203","c306","c301","c309","c310","c302","c303","c311","c312","c404","c405","c209","c210","c201","c409","c410","c402","c403","c509","c510","c501","c406","c401","c506","c204","c205","c307","c502","c503","c801","c806","c811","c107","c111","c112","c706","c802","c807","c102","c103","c104"],"owned":["c106","c108","c208","c308","c408"],"claimed":[]},"quests":{"counters":{"stageFail":1,"d:stageFail":1,"w:stageFail":1},"claimed":[],"dailyResetAt":"2026-11-01","weeklyResetAt":"2026-10-26"},"daily":{"loginDay":0,"lastLogin":"","shopPurchases":{}},"settings":{"bgm":0.8,"sfx":0.8,"battleSpeed":1},"hintsSeen":["ringShield"],"records":{"battles":1,"wins":0,"maxCombo":0,"maxTurnDamage":0,"fastestTurns":{},"leaderClears":{},"archetypeClears":{},"weeks":{"2026-10-26":{"battles":1,"wins":0,"maxCombo":0,"maxTurnDamage":0,"leaderClears":{},"abyssBest":0,"nemesisClears":0}}}},"checksum":"fb9b6dc3"}"
+
+ ❯ unchanged audit/e16/navigation.test.ts:23:147
+
+ ❯ audit/e16/navigation.test.ts:45:52
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  audit/e16/navigation.test.ts > defeat replacement: stale advice/return cannot redirect newer navigation
+AssertionError: expected [ [ 'starfall.save', …(1) ] ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ unchanged audit/e16/navigation.test.ts:23:186
+
+ ❯ audit/e16/navigation.test.ts:45:52
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  audit/e16/navigation.test.ts > defeat replacement: stale advice/return cannot redirect newer navigation
+AssertionError: expected { version: 4, player: { …(6) }, …(14) } to deeply equal { version: 4, player: { …(6) }, …(14) }
+
+- Expected
++ Received
+
+  Object {
+    "activeBattle": null,
+    "activeTeam": 0,
+    "collection": Object {
+      "claimed": Array [],
+      "owned": Array [
+        "c106",
+        "c108",
+        "c208",
+        "c308",
+        "c408",
+      ],
+      "seen": Array [
+        "c106",
+        "c108",
+        "c208",
+        "c308",
+        "c408",
+        "c101",
+        "c109",
+        "c110",
+        "c206",
+        "c202",
+        "c203",
+        "c306",
+        "c301",
+        "c309",
+        "c310",
+        "c302",
+        "c303",
+        "c311",
+        "c312",
+        "c404",
+        "c405",
+        "c209",
+        "c210",
+        "c201",
+        "c409",
+        "c410",
+        "c402",
+        "c403",
+        "c509",
+        "c510",
+        "c501",
+        "c406",
+        "c401",
+        "c506",
+        "c204",
+        "c205",
+        "c307",
+        "c502",
+        "c503",
+        "c801",
+        "c806",
+        "c811",
++       "c107",
++       "c111",
++       "c112",
++       "c706",
++       "c802",
++       "c807",
++       "c102",
++       "c103",
++       "c104",
+      ],
+    },
+    "daily": Object {
+      "lastLogin": "",
+      "loginDay": 0,
+      "shopPurchases": Object {},
+    },
+    "gacha": Object {
+      "history": Array [],
+      "pityCounter": Object {},
+    },
+    "hintsSeen": Array [
+      "ringShield",
+    ],
+    "inventory": Object {
+      "capacity": 50,
+      "cards": Array [
+        Object {
+          "awakened": 0,
+          "cardId": "c106",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510184978,
+          "skillLevel": 1,
+          "uid": "u1",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c108",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510184978,
+          "skillLevel": 1,
+          "uid": "u2",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c208",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510184978,
+          "skillLevel": 1,
+          "uid": "u3",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c308",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510184978,
+          "skillLevel": 1,
+          "uid": "u4",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c408",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793510184978,
+          "skillLevel": 1,
+          "uid": "u5",
+        },
+      ],
+    },
+    "player": Object {
+      "coin": 1000,
+      "exp": 0,
+      "gems": 50,
+      "level": 1,
+      "name": "契印師",
+      "tokens": Object {},
+    },
+    "progress": Object {
+      "chapterRewardsClaimed": Array [],
+      "clearedStages": Array [],
+      "stars": Object {},
+      "storySeen": Array [],
+      "towerFloor": 0,
+      "tutorialDone": true,
+    },
+    "quests": Object {
+      "claimed": Array [],
+      "counters": Object {
+        "d:stageFail": 1,
+        "stageFail": 1,
+        "w:stageFail": 1,
+      },
+      "dailyResetAt": "2026-11-01",
+      "weeklyResetAt": "2026-10-26",
+    },
+    "records": Object {
+      "archetypeClears": Object {},
+      "battles": 1,
+      "fastestTurns": Object {},
+      "leaderClears": Object {},
+      "maxCombo": 0,
+      "maxTurnDamage": 0,
+      "weeks": Object {
+        "2026-10-26": Object {
+          "abyssBest": 0,
+          "battles": 1,
+          "leaderClears": Object {},
+          "maxCombo": 0,
+          "maxTurnDamage": 0,
+          "nemesisClears": 0,
+          "wins": 0,
+        },
+      },
+      "wins": 0,
+    },
+    "settings": Object {
+      "battleSpeed": 1,
+      "bgm": 0.8,
+      "sfx": 0.8,
+    },
+    "stamina": Object {
+      "current": 30,
+      "lastUpdate": 1793510184978,
+    },
+    "teams": Array [
+      Object {
+        "members": Array [
+          "u1",
+          "u2",
+          "u3",
+          "u4",
+          "u5",
+        ],
+        "name": "隊伍1",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍2",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍3",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍4",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍5",
+      },
+    ],
+    "tutorial": Object {
+      "giftGiven": true,
+      "step": "done",
+    },
+    "version": 4,
+  }
+
+ ❯ unchanged audit/e16/navigation.test.ts:23:82
+
+ ❯ audit/e16/navigation.test.ts:46:30
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  audit/e16/navigation.test.ts > defeat replacement: stale advice/return cannot redirect newer navigation
+AssertionError: expected '{"data":{"version":4,"player":{"name"…' to be '{"data":{"version":4,"player":{"name"…' // Object.is equality
+
+Expected: "{"data":{"version":4,"player":{"name":"契印師","level":1,"exp":0,"coin":1000,"gems":50,"tokens":{}},"stamina":{"current":30,"lastUpdate":1793510184978},"inventory":{"capacity":50,"cards":[{"uid":"u1","cardId":"c106","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u2","cardId":"c108","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u3","cardId":"c208","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u4","cardId":"c308","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u5","cardId":"c408","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978}]},"teams":[{"name":"隊伍1","members":["u1","u2","u3","u4","u5"]},{"name":"隊伍2","members":[null,null,null,null,null]},{"name":"隊伍3","members":[null,null,null,null,null]},{"name":"隊伍4","members":[null,null,null,null,null]},{"name":"隊伍5","members":[null,null,null,null,null]}],"activeTeam":0,"progress":{"clearedStages":[],"stars":{},"towerFloor":0,"tutorialDone":true,"storySeen":[],"chapterRewardsClaimed":[]},"tutorial":{"step":"done","giftGiven":true},"activeBattle":null,"gacha":{"pityCounter":{},"history":[]},"collection":{"seen":["c106","c108","c208","c308","c408","c101","c109","c110","c206","c202","c203","c306","c301","c309","c310","c302","c303","c311","c312","c404","c405","c209","c210","c201","c409","c410","c402","c403","c509","c510","c501","c406","c401","c506","c204","c205","c307","c502","c503","c801","c806","c811"],"owned":["c106","c108","c208","c308","c408"],"claimed":[]},"quests":{"counters":{"stageFail":1,"d:stageFail":1,"w:stageFail":1},"claimed":[],"dailyResetAt":"2026-11-01","weeklyResetAt":"2026-10-26"},"daily":{"loginDay":0,"lastLogin":"","shopPurchases":{}},"settings":{"bgm":0.8,"sfx":0.8,"battleSpeed":1},"hintsSeen":["ringShield"],"records":{"battles":1,"wins":0,"maxCombo":0,"maxTurnDamage":0,"fastestTurns":{},"leaderClears":{},"archetypeClears":{},"weeks":{"2026-10-26":{"battles":1,"wins":0,"maxCombo":0,"maxTurnDamage":0,"leaderClears":{},"abyssBest":0,"nemesisClears":0}}}},"checksum":"7b4344f7"}"
+Received: "{"data":{"version":4,"player":{"name":"契印師","level":1,"exp":0,"coin":1000,"gems":50,"tokens":{}},"stamina":{"current":30,"lastUpdate":1793510184978},"inventory":{"capacity":50,"cards":[{"uid":"u1","cardId":"c106","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u2","cardId":"c108","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u3","cardId":"c208","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u4","cardId":"c308","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978},{"uid":"u5","cardId":"c408","level":1,"exp":0,"skillLevel":1,"limitBreak":0,"awakened":0,"locked":false,"obtainedAt":1793510184978}]},"teams":[{"name":"隊伍1","members":["u1","u2","u3","u4","u5"]},{"name":"隊伍2","members":[null,null,null,null,null]},{"name":"隊伍3","members":[null,null,null,null,null]},{"name":"隊伍4","members":[null,null,null,null,null]},{"name":"隊伍5","members":[null,null,null,null,null]}],"activeTeam":0,"progress":{"clearedStages":[],"stars":{},"towerFloor":0,"tutorialDone":true,"storySeen":[],"chapterRewardsClaimed":[]},"tutorial":{"step":"done","giftGiven":true},"activeBattle":null,"gacha":{"pityCounter":{},"history":[]},"collection":{"seen":["c106","c108","c208","c308","c408","c101","c109","c110","c206","c202","c203","c306","c301","c309","c310","c302","c303","c311","c312","c404","c405","c209","c210","c201","c409","c410","c402","c403","c509","c510","c501","c406","c401","c506","c204","c205","c307","c502","c503","c801","c806","c811","c107","c111","c112","c706","c802","c807","c102","c103","c104"],"owned":["c106","c108","c208","c308","c408"],"claimed":[]},"quests":{"counters":{"stageFail":1,"d:stageFail":1,"w:stageFail":1},"claimed":[],"dailyResetAt":"2026-11-01","weeklyResetAt":"2026-10-26"},"daily":{"loginDay":0,"lastLogin":"","shopPurchases":{}},"settings":{"bgm":0.8,"sfx":0.8,"battleSpeed":1},"hintsSeen":["ringShield"],"records":{"battles":1,"wins":0,"maxCombo":0,"maxTurnDamage":0,"fastestTurns":{},"leaderClears":{},"archetypeClears":{},"weeks":{"2026-10-26":{"battles":1,"wins":0,"maxCombo":0,"maxTurnDamage":0,"leaderClears":{},"abyssBest":0,"nemesisClears":0}}}},"checksum":"fb9b6dc3"}"
+
+ ❯ unchanged audit/e16/navigation.test.ts:23:147
+
+ ❯ audit/e16/navigation.test.ts:46:30
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯
+
+ FAIL  audit/e16/navigation.test.ts > defeat replacement: stale advice/return cannot redirect newer navigation
+AssertionError: expected [ [ 'starfall.save', …(1) ] ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ unchanged audit/e16/navigation.test.ts:23:186
+
+ ❯ audit/e16/navigation.test.ts:46:30
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/9]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 6 passed (8)
+   Start at  13:16:18
+   Duration  6.57s (transform 1.90s, setup 0ms, collect 57ms, tests 5.88s, environment 256ms, prepare 71ms)
+

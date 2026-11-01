@@ -1,0 +1,42 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-helper-production/starfall-covenant
+
+stdout | tests/e20-helper-selection.test.ts > actual npc-chain choice survives prepare and one paid departure into the real battle roster
+E20_HELPER_MARK_SEEN {"npc":"npc-chain","added":["c405","c404","c604","c102","c103","c204","c205","c501","c509","c510","c104","c110","c206","c306"],"writes":1}
+
+stdout | tests/e20-helper-selection.test.ts > actual npc-chain choice survives prepare and one paid departure into the real battle roster
+E20_HELPER {"npc":"npc-chain","helper":"c509","staminaDelta":-3,"coinDelta":0,"gemsDelta":0,"roster":["c405","c107","c509"],"l405Reduction":[20],"savePayloads":3}
+
+stdout | tests/e20-helper-selection.test.ts > actual npc-combo choice survives prepare and one paid departure into the real battle roster
+E20_HELPER_MARK_SEEN {"npc":"npc-combo","added":["c405","c404","c604","c102","c103","c204","c205","c501","c509","c510","c104","c110","c206","c306"],"writes":1}
+
+stdout | tests/e20-helper-selection.test.ts > actual npc-combo choice survives prepare and one paid departure into the real battle roster
+E20_HELPER {"npc":"npc-combo","helper":"c206","staminaDelta":-3,"coinDelta":0,"gemsDelta":0,"roster":["c405","c107","c206"],"l405Reduction":[],"savePayloads":3}
+
+ ✓ tests/e20-oath-helper.test.ts (2 tests) 4132ms
+   ✓ noHelper overrides remembered non-dragon helper and reselect; genuine paid ticket and engine keep helper absent 3459ms
+   ✓ clearing noHelper restores remembered helper and normal paid roster without granting oath rewards 671ms
+stdout | tests/e20-helper-selection.test.ts > actual none choice survives prepare and one paid departure into the real battle roster
+E20_HELPER_MARK_SEEN {"npc":"none","added":["c405","c404","c604","c102","c103","c204","c205","c501","c509","c510","c104","c110","c206","c306"],"writes":1}
+
+stdout | tests/e20-helper-selection.test.ts > actual none choice survives prepare and one paid departure into the real battle roster
+E20_HELPER {"npc":"none","helper":null,"staminaDelta":-3,"coinDelta":0,"gemsDelta":0,"roster":["c405","c107"],"l405Reduction":[20],"savePayloads":3}
+
+ ✓ tests/e20-helper-selection.test.ts (3 tests) 4413ms
+   ✓ actual npc-chain choice survives prepare and one paid departure into the real battle roster 3152ms
+   ✓ actual npc-combo choice survives prepare and one paid departure into the real battle roster 698ms
+   ✓ actual none choice survives prepare and one paid departure into the real battle roster 561ms
+ ✓ tests/e20-helper-resume.test.ts (2 tests) 4728ms
+   ✓ paid selected helper with noHelper=false resumes from ticket after module/UI reload, not reset choice memory 3663ms
+   ✓ paid selected helper with noHelper=true resumes from ticket after module/UI reload, not reset choice memory 1063ms
+ ✓ tests/helper-support-app.test.ts (5 tests) 5938ms
+   ✓ previously unavailable c815 support selected, oath suppression=false, paid ticket and module reload preserve helper without second charge 3863ms
+   ✓ previously unavailable c815 support selected, oath suppression=true, paid ticket and module reload preserve helper without second charge 1063ms
+   ✓ all/search only expose exact seen IDs; old search rows and departed callbacks cannot choose or navigate 415ms
+   ✓ actual fixed-team trial does not expose selectable permanent support 301ms
+
+ Test Files  4 passed (4)
+      Tests  12 passed (12)
+   Start at  13:13:51
+   Duration  6.77s (transform 2.40s, setup 0ms, collect 301ms, tests 19.21s, environment 1.59s, prepare 413ms)
+

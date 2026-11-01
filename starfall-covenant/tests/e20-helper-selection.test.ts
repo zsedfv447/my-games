@@ -36,7 +36,9 @@ for (const [npc, expectedCard, reduction] of [['npc-chain','c509',20],['npc-comb
     const { markSeen } = await import('../src/growth');
     const { rosterFor } = await import('../src/ui/screens/helper');
     const stageDef = gameData.stages.find(stage => stage.id === 'st-1-1')!;
-    const expectedSeen = markSeen(before, rosterFor(stageDef).map(offer => offer.card.id));
+    const visibleSupports = [...host.querySelectorAll<HTMLElement>('[data-support-id]')];
+    expect(visibleSupports).toHaveLength(12);
+    const expectedSeen = markSeen(before, [...visibleSupports.map(row => row.dataset.supportId!.slice('support:'.length)), ...rosterFor(stageDef).map(offer => offer.card.id)]);
     expect(state.getSave()).toEqual(expectedSeen);
     expect(writes).toHaveBeenCalledTimes(1);
     expect(writes.mock.calls[0][0]).toBe(SAVE_KEY);

@@ -1,0 +1,36 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-helper-production/starfall-covenant
+
+ ❯ tests/helper-support-app.test.ts (4 tests | 2 failed) 4220ms
+   × previously unavailable c815 support selected, oath suppression=false, paid ticket and module reload preserve helper without second charge 2809ms
+     → 刻下誓約: expected undefined to be defined
+   ✓ previously unavailable c815 support selected, oath suppression=true, paid ticket and module reload preserve helper without second charge 800ms
+   × all/search only expose exact seen IDs; old search rows and departed callbacks cannot choose or navigate 315ms
+     → expected '#/helper/st-1-1?from=prepare' to be '#/helper/st-1-1' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/helper-support-app.test.ts > previously unavailable c815 support selected, oath suppression=false, paid ticket and module reload preserve helper without second charge
+AssertionError: 刻下誓約: expected undefined to be defined
+ ❯ btn tests/helper-support-app.test.ts:7:152
+
+ ❯ tests/helper-support-app.test.ts:30:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/helper-support-app.test.ts > all/search only expose exact seen IDs; old search rows and departed callbacks cannot choose or navigate
+AssertionError: expected '#/helper/st-1-1?from=prepare' to be '#/helper/st-1-1' // Object.is equality
+
+Expected: "#/helper/st-1-1"
+Received: "#/helper/st-1-1?from=prepare"
+
+ ❯ tests/helper-support-app.test.ts:40:184
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  13:11:51
+   Duration  4.92s (transform 1.67s, setup 0ms, collect 52ms, tests 4.22s, environment 277ms, prepare 84ms)
+

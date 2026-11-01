@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-helper-production/starfall-covenant
+
+ ✓ tests/helpers.test.ts (15 tests) 21ms
+ ✓ tests/helper-support.test.ts (6 tests) 39ms
+ ✓ tests/helper-bond.test.ts (7 tests) 11ms
+
+ Test Files  3 passed (3)
+      Tests  28 passed (28)
+   Start at  13:12:59
+   Duration  1.11s (transform 779ms, setup 0ms, collect 1.78s, tests 71ms, environment 1ms, prepare 378ms)
+

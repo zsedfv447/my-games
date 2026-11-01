@@ -11,7 +11,13 @@ async function boot(lost=false){
  if(lost)vi.spyOn(HTMLCanvasElement.prototype,'getContext').mockReturnValue(new Proxy({}, {get:(_t,k)=>k==='createLinearGradient'||k==='createRadialGradient'?()=>({addColorStop(){}}):()=>{}}) as CanvasRenderingContext2D);
  const state=await import('../src/ui/state');const {gameData}=await import('../src/data/load');const s=structuredClone(state.getSave());s.tutorial={step:'done',giftGiven:true};s.progress.tutorialDone=true;s.hintsSeen=['ringShield'];
  // Returning-player fixture: helper roster reading legitimately marks seen, not ownership/rewards.
- const {HELPER_NPCS}=await import('../src/progression/helpers');s.collection.seen=[...new Set([...s.collection.seen,...HELPER_NPCS.flatMap(n=>n.tiers.map(t=>t.card))])];state.commit(s);
+ const {HELPER_NPCS}=await import('../src/progression/helpers');
+ // Already-seen returning-player setup includes only the permanent first page
+ // that this exact save/stage will render, alongside the original NPC tiers.
+ const {leaderSupportRoster}=await import('../src/ui/helper-support');
+ const visibleSupports=leaderSupportRoster(s,gameData.stages.find(stage=>stage.id==='st-1-1')!,gameData.cards,gameData.leaderSkills,gameData.stages).slice(0,12);
+ expect(visibleSupports).toHaveLength(12);
+ s.collection.seen=[...new Set([...s.collection.seen,...HELPER_NPCS.flatMap(n=>n.tiers.map(t=>t.card)),...visibleSupports.map(offer=>offer.card.id)])];state.commit(s);
  if(lost){
   const {startBattle}=await import('../src/battle/battle-state');const {createRng}=await import('../src/core/rng');const {beginActiveBattle,recordBattleSnapshot}=await import('../src/progression/active-battle');
   const stage=gameData.stages.find(s=>s.id==='st-1-1')!,members=[{cardId:'c106',level:1,uid:'u1'}];const battle=startBattle(stage,members,null,createRng(123),gameData);for(let i=0;i<200&&battle.getState().phase==='player';i++)battle.submitMove([]);expect(battle.getState().phase).toBe('lost');

@@ -2,6 +2,7 @@
 import type { CardDef, SaveData, StageDef, TeamRule, UnitFilter } from '../core/types';
 import type { TeamMemberInput } from '../battle/battle-state';
 import { checkTeamRule, type TeamRuleViolation } from '../progression/stages';
+import type { LeaderSupportOffer } from './helper-support';
 import type { HelperOffer } from '../progression/helpers';
 import { ATTRIBUTE_NAMES, RACE_NAMES } from './art/palette';
 
@@ -33,13 +34,20 @@ export function offerToHelper(offer: HelperOffer): ChosenHelper {
   return { npcId: offer.npc.id, card: offer.card, input: { cardId: offer.card.id, level: offer.level, skillLevel: offer.skillLevel } };
 }
 
+export function supportToHelper(offer: LeaderSupportOffer): ChosenHelper {
+  return { npcId: offer.id, card: offer.card, input: { cardId: offer.card.id, level: offer.level, skillLevel: offer.skillLevel } };
+}
+
 /**
- * 出戰確認時整理助戰：已選的 NPC 換成最新等級與卡片；
+ * 出戰確認時整理助戰：明確選擇的常駐支援由完整合法名單更新並保留；
+ * 已選的 NPC 換成最新等級與卡片；
  * 還沒選過（或已選的不在名單上、不符合本關限制）就自動帶第一位符合限制的 NPC。
  */
-export function ensureHelper(stageId: string, roster: HelperOffer[]): void {
+export function ensureHelper(stageId: string, roster: HelperOffer[], supports?: readonly ChosenHelper[]): void {
   const current = chosenHelpers.get(stageId);
   if (current === null) return;
+  const support = current?.npcId.startsWith('support:') && supports?.find(o => o.npcId === current.npcId);
+  if (support) { chosenHelpers.set(stageId, support); return; }
   const same = current && roster.find((o) => o.npc.id === current.npcId && !o.problem);
   const pick = same || roster.find((o) => !o.problem);
   if (pick) chosenHelpers.set(stageId, offerToHelper(pick));

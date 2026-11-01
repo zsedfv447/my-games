@@ -1,0 +1,142 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-helper-production/starfall-covenant
+
+ ❯ tests/helper-support.test.ts (6 tests | 6 failed) 23ms
+   × all91 actual leader cards appear once without ownership/unlock and levels use existing progress curve; no writes 12ms
+     → expected [] to have a length of 91 but got +0
+   × stage restrictions alone block; fixed/noHelper return no catalog and soft conflicts retain cards 2ms
+     → expected [] to have a length of 91 but got +0
+   × ranks samecard/sameskill/real shared conditions before unrelated tags, uses attack scalar-array AND not RCV 3ms
+     → expected [] to deeply equal [ 'z-current', 'c-same-skill', …(1) ]
+   × missing slot0 never promotes later leader; missing member definitions caution but null empty slots do not 2ms
+     → expected [] to deeply equal [ 'a-tags', 'b-shared', …(4) ]
+   × teamAll checks actual current members plus helper and warns partial rule failure, not entire skill unusable 1ms
+     → Cannot read properties of undefined (reading 'warnings')
+   × explicit permanent support survives ensureHelper refresh; default NPC and deliberate null remain original behavior 3ms
+     → expected 10 to be 55 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/helper-support.test.ts > all91 actual leader cards appear once without ownership/unlock and levels use existing progress curve; no writes
+AssertionError: expected [] to have a length of 91 but got +0
+
+- Expected
++ Received
+
+- 91
++ 0
+
+ ❯ tests/helper-support.test.ts:13:15
+     11| it('all91 actual leader cards appear once without ownership/unlock and…
+     12|  const save = fresh(), before = structuredClone(save), list = roster(s…
+     13|  expect(list).toHaveLength(91); expect(new Set(list.map(o => o.id)).si…
+       |               ^
+     14|  const expected = gameData.cards.filter(c => c.race !== 'material' && …
+     15|  expect(list.map(o => o.card.id).sort()).toEqual(expected);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/helper-support.test.ts > stage restrictions alone block; fixed/noHelper return no catalog and soft conflicts retain cards
+AssertionError: expected [] to have a length of 91 but got +0
+
+- Expected
++ Received
+
+- 91
++ 0
+
+ ❯ tests/helper-support.test.ts:25:17
+     23|  expect(leaderSupportRoster(fresh(), {...stage, fixedTeam:{members:[]}…
+     24|  const offers=leaderSupportRoster(fresh(), {...stage,teamRule:{filter:…
+     25|  expect(offers).toHaveLength(91); expect(offers.filter(o=>o.card.attri…
+       |                 ^
+     26|  const blocked=offers.findIndex(o=>o.problem); expect(offers.slice(blo…
+     27| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/helper-support.test.ts > ranks samecard/sameskill/real shared conditions before unrelated tags, uses attack scalar-array AND not RCV
+AssertionError: expected [] to deeply equal [ 'z-current', 'c-same-skill', …(1) ]
+
+- Expected
++ Received
+
+- Array [
+-   "z-current",
+-   "c-same-skill",
+-   "b-shared",
+- ]
++ Array []
+
+ ❯ tests/helper-support.test.ts:44:46
+     42| it('ranks samecard/sameskill/real shared conditions before unrelated t…
+     43|  const {save,cards,leaders}=synthetic(); const offers=leaderSupportRos…
+     44|  expect(offers.slice(0,3).map(o=>o.card.id)).toEqual(['z-current','c-s…
+       |                                              ^
+     45|  expect(offers[0].reasons).toContain('同隊長'); expect(offers[1].reaso…
+     46|  expect(offers[2].reasons).toContain('具有相同類型的隊長條件（門檻仍以…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  tests/helper-support.test.ts > missing slot0 never promotes later leader; missing member definitions caution but null empty slots do not
+AssertionError: expected [] to deeply equal [ 'a-tags', 'b-shared', …(4) ]
+
+- Expected
++ Received
+
+- Array [
+-   "a-tags",
+-   "b-shared",
+-   "c-same-skill",
+-   "d-filter",
+-   "e-rcv",
+-   "z-current",
+- ]
++ Array []
+
+ ❯ tests/helper-support.test.ts:55:33
+     53|  const {save,cards,leaders}=synthetic(); save.teams[save.activeTeam].m…
+     54|  const list=leaderSupportRoster(save,stage,cards,leaders,gameData.stag…
+     55|  expect(list.map(o=>o.card.id)).toEqual(cards.map(c=>c.id).sort()); ex…
+       |                                 ^
+     56|  save.teams[save.activeTeam].members[0]='missing';
+     57|  expect(leaderSupportRoster(save,stage,cards,leaders,gameData.stages).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  tests/helper-support.test.ts > teamAll checks actual current members plus helper and warns partial rule failure, not entire skill unusable
+TypeError: Cannot read properties of undefined (reading 'warnings')
+ ❯ tests/helper-support.test.ts:61:72
+     59| it('teamAll checks actual current members plus helper and warns partia…
+     60|  const save=fresh(); save.inventory.cards=[{uid:'d',cardId:'c405',leve…
+     61|  const dragon=roster(save).find(o=>o.card.id==='c405')!; expect(dragon…
+       |                                                                        ^
+     62|  const beast=roster(save).find(o=>o.card.id==='c710')!; expect(beast.p…
+     63|  save.inventory.cards.push({uid:'h',cardId:'c101',level:1}); save.team…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  tests/helper-support.test.ts > explicit permanent support survives ensureHelper refresh; default NPC and deliberate null remain original behavior
+AssertionError: expected 10 to be 55 // Object.is equality
+
+- Expected
++ Received
+
+- 55
++ 10
+
+ ❯ tests/helper-support.test.ts:72:52
+     70|  // New optional third argument is tested before implementation withou…
+     71|  (ensureHelper as (id:string,n:typeof npcs,s?:readonly typeof support[…
+     72|  expect(chosenHelper('support-keep')?.input.level).toBe(55);
+       |                                                    ^
+     73|  ensureHelper('support-fresh',npcs); expect(chosenHelper('support-fres…
+     74|  chooseHelper('support-null',null); ensureHelper('support-null',npcs);…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+ Test Files  1 failed (1)
+      Tests  6 failed (6)
+   Start at  13:10:50
+   Duration  876ms (transform 330ms, setup 0ms, collect 444ms, tests 23ms, environment 0ms, prepare 89ms)
+

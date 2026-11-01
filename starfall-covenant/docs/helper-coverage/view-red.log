@@ -1,0 +1,253 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-helper-production/starfall-covenant
+
+ ❯ tests/helper-support-view.test.ts (4 tests | 4 failed) 2986ms
+   × first12 only plus actual NPC rows become seen, never ownership or all91; focused search remains mounted 2150ms
+     → expected [] to have a length of 12 but got +0
+   × show all exposes exact91 without choosing or granting; selected summary survives search 240ms
+     → expected undefined to be defined
+   × replaced rows and departed screen cannot choose or navigate, including queued seen; live selection consumes once 306ms
+     → expected undefined to be defined
+   × leaving before initial seen microtask blocks it and NPC old clicks 287ms
+     → expected { version: 4, player: { …(6) }, …(12) } to deeply equal { version: 4, player: { …(6) }, …(12) }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/helper-support-view.test.ts > first12 only plus actual NPC rows become seen, never ownership or all91; focused search remains mounted
+AssertionError: expected [] to have a length of 12 but got +0
+
+- Expected
++ Received
+
+- 12
++ 0
+
+ ❯ tests/helper-support-view.test.ts:19:50
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/helper-support-view.test.ts > show all exposes exact91 without choosing or granting; selected summary survives search
+AssertionError: expected undefined to be defined
+ ❯ tests/helper-support-view.test.ts:33:125
+     31| it('show all exposes exact91 without choosing or granting; selected su…
+     32|   const f = await render(); await tick();
+     33|   const show = [...f.root.querySelectorAll<HTMLButtonElement>('button'…
+       |                                                                                                                             ^
+     34|   expect(rows(f.root)).toHaveLength(91); expect(new Set(rows(f.root).m…
+     35|   expect(f.nav.replace).not.toHaveBeenCalled(); expect(f.state.getSave…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/helper-support-view.test.ts > replaced rows and departed screen cannot choose or navigate, including queued seen; live selection consumes once
+AssertionError: expected undefined to be defined
+ ❯ tests/helper-support-view.test.ts:40:70
+     38| });
+     39| it('replaced rows and departed screen cannot choose or navigate, inclu…
+     40|   const f = await render(); const old = rows(f.root)[0]; expect(old).t…
+       |                                                                      ^
+     41|   search(f.root, 'c710'); old.click(); expect(f.nav.replace).not.toHav…
+     42|   const live = rows(f.root)[0]; live.click(); live.click(); expect(f.n…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/helper-support-view.test.ts > leaving before initial seen microtask blocks it and NPC old clicks
+AssertionError: expected { version: 4, player: { …(6) }, …(12) } to deeply equal { version: 4, player: { …(6) }, …(12) }
+
+- Expected
++ Received
+
+  Object {
+    "activeBattle": null,
+    "activeTeam": 0,
+    "collection": Object {
+      "claimed": Array [],
+      "owned": Array [
+        "c106",
+        "c108",
+        "c208",
+        "c308",
+        "c408",
+      ],
+-     "seen": Array [],
++     "seen": Array [
++       "c306",
++       "c106",
++       "c109",
++       "c206",
++     ],
+    },
+    "daily": Object {
+      "lastLogin": "",
+      "loginDay": 0,
+      "shopPurchases": Object {},
+    },
+    "gacha": Object {
+      "history": Array [],
+      "pityCounter": Object {},
+    },
+    "inventory": Object {
+      "capacity": 50,
+      "cards": Array [
+        Object {
+          "awakened": 0,
+          "cardId": "c106",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793509821666,
+          "skillLevel": 1,
+          "uid": "u1",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c108",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793509821666,
+          "skillLevel": 1,
+          "uid": "u2",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c208",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793509821666,
+          "skillLevel": 1,
+          "uid": "u3",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c308",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793509821666,
+          "skillLevel": 1,
+          "uid": "u4",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c408",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793509821666,
+          "skillLevel": 1,
+          "uid": "u5",
+        },
+      ],
+    },
+    "player": Object {
+      "coin": 1000,
+      "exp": 0,
+      "gems": 50,
+      "level": 1,
+      "name": "契印師",
+      "tokens": Object {},
+    },
+    "progress": Object {
+      "chapterRewardsClaimed": Array [],
+      "clearedStages": Array [],
+      "stars": Object {},
+      "storySeen": Array [],
+      "towerFloor": 0,
+      "tutorialDone": false,
+    },
+    "quests": Object {
+      "claimed": Array [],
+      "counters": Object {},
+      "dailyResetAt": "",
+      "weeklyResetAt": "",
+    },
+    "settings": Object {
+      "battleSpeed": 1,
+      "bgm": 0.8,
+      "sfx": 0.8,
+    },
+    "stamina": Object {
+      "current": 30,
+      "lastUpdate": 1793509821666,
+    },
+    "teams": Array [
+      Object {
+        "members": Array [
+          "u1",
+          "u2",
+          "u3",
+          "u4",
+          "u5",
+        ],
+        "name": "隊伍1",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍2",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍3",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍4",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍5",
+      },
+    ],
+    "tutorial": Object {
+      "giftGiven": false,
+      "step": "battle",
+    },
+    "version": 4,
+  }
+
+ ❯ tests/helper-support-view.test.ts:48:80
+     46| });
+     47| it('leaving before initial seen microtask blocks it and NPC old clicks…
+     48|   const f = await render(); f.leave(); await tick(); expect(f.state.ge…
+       |                                                                                ^
+     49|   f.root.querySelector<HTMLButtonElement>('.helper-row')!.click();
+     50|   expect(f.nav.replace).not.toHaveBeenCalled(); expect(f.nav.back).not…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+   Start at  13:10:17
+   Duration  3.88s (transform 1.06s, setup 0ms, collect 44ms, tests 2.99s, environment 468ms, prepare 115ms)
+

@@ -1,0 +1,245 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-helper-production/starfall-covenant
+
+ ❯ tests/helper-support-data.test.ts (12 tests | 12 failed) 42ms
+   × actual91 leaders/all15 tags are permanently present independent of ownership, closing original38/53 gap 19ms
+     → expected [] to deeply equal [ 'c101', 'c102', 'c103', …(88) ]
+   × all91 retain existing level/skill curve at 0 cleared main stages 4ms
+     → expected [] to have a length of 91 but got +0
+   × all91 retain existing level/skill curve at 9 cleared main stages 1ms
+     → expected [] to have a length of 91 but got +0
+   × all91 retain existing level/skill curve at 18 cleared main stages 2ms
+     → expected [] to have a length of 91 but got +0
+   × all91 retain existing level/skill curve at 44 cleared main stages 1ms
+     → expected [] to have a length of 91 but got +0
+   × all91 retain existing level/skill curve at 45 cleared main stages 1ms
+     → expected [] to have a length of 91 but got +0
+   × all91 retain existing level/skill curve at 63 cleared main stages 1ms
+     → expected [] to have a length of 91 but got +0
+   × null/missing first leader never promotes later c405 into a fictional same-leader recommendation 1ms
+     → expected [] to have a length of 91 but got +0
+   × actual c405 retains dragon attack rules while mixed roster blocks only whole-dragon reduction; candidate is included 8ms
+     → Cannot read properties of undefined (reading 'problem')
+   × actual dual c710 and lowHP c507 remain selectable conditional leaders, not currently-activated multipliers 0ms
+     → Cannot read properties of undefined (reading 'problem')
+   × target coverage uses scalar/array attribute AND race as the actual engine, not tags or HP/RCV targets 1ms
+     → Cannot read properties of undefined (reading 'reasons')
+   × catalog preserves existing card-based NPC bond mapping and hard helper exclusions 1ms
+     → expected [] to have a length of 91 but got +0
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/helper-support-data.test.ts > actual91 leaders/all15 tags are permanently present independent of ownership, closing original38/53 gap
+AssertionError: expected [] to deeply equal [ 'c101', 'c102', 'c103', …(88) ]
+
+- Expected
++ Received
+
+- Array [
+-   "c101",
+-   "c102",
+-   "c103",
+-   "c104",
+-   "c105",
+-   "c106",
+-   "c107",
+-   "c108",
+-   "c109",
+-   "c110",
+-   "c111",
+-   "c112",
+-   "c201",
+-   "c202",
+-   "c203",
+-   "c204",
+-   "c205",
+-   "c206",
+-   "c207",
+-   "c208",
+-   "c209",
+-   "c210",
+-   "c211",
+-   "c212",
+-   "c301",
+-   "c302",
+-   "c303",
+-   "c304",
+-   "c305",
+-   "c306",
+-   "c307",
+-   "c308",
+-   "c309",
+-   "c310",
+-   "c311",
+-   "c312",
+-   "c401",
+-   "c402",
+-   "c403",
+-   "c404",
+-   "c405",
+-   "c406",
+-   "c407",
+-   "c408",
+-   "c409",
+-   "c410",
+-   "c411",
+-   "c412",
+-   "c501",
+-   "c502",
+-   "c503",
+-   "c504",
+-   "c505",
+-   "c506",
+-   "c507",
+-   "c508",
+-   "c509",
+-   "c510",
+-   "c511",
+-   "c512",
+-   "c601",
+-   "c602",
+-   "c603",
+-   "c604",
+-   "c606",
+-   "c701",
+-   "c702",
+-   "c703",
+-   "c704",
+-   "c705",
+-   "c706",
+-   "c707",
+-   "c708",
+-   "c709",
+-   "c710",
+-   "c711",
+-   "c801",
+-   "c802",
+-   "c803",
+-   "c804",
+-   "c805",
+-   "c806",
+-   "c807",
+-   "c808",
+-   "c809",
+-   "c810",
+-   "c811",
+-   "c812",
+-   "c813",
+-   "c814",
+-   "c815",
+- ]
++ Array []
+
+ ❯ tests/helper-support-data.test.ts:29:46
+     27|   expect(gameData.cards).toHaveLength(112); expect(eligible).toHaveLen…
+     28|   const offered = roster(save);
+     29|   expect(offered.map(o => o.card.id).sort()).toEqual(eligible.map(c =>…
+       |                                              ^
+     30|   expect(new Set(offered.map(o => o.id)).size).toBe(91);
+     31|   expect(offered.every(o => o.id === `support:${o.card.id}` && !o.prob…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  tests/helper-support-data.test.ts > all91 retain existing level/skill curve at 0 cleared main stages
+ FAIL  tests/helper-support-data.test.ts > all91 retain existing level/skill curve at 9 cleared main stages
+ FAIL  tests/helper-support-data.test.ts > all91 retain existing level/skill curve at 18 cleared main stages
+ FAIL  tests/helper-support-data.test.ts > all91 retain existing level/skill curve at 44 cleared main stages
+ FAIL  tests/helper-support-data.test.ts > all91 retain existing level/skill curve at 45 cleared main stages
+ FAIL  tests/helper-support-data.test.ts > all91 retain existing level/skill curve at 63 cleared main stages
+AssertionError: expected [] to have a length of 91 but got +0
+
+- Expected
++ Received
+
+- 91
++ 0
+
+ ❯ tests/helper-support-data.test.ts:43:47
+     41|   const save = fresh(); save.progress.clearedStages = gameData.stages.…
+     42|   const before = structuredClone(save);
+     43|   const offers = roster(save); expect(offers).toHaveLength(91);
+       |                                               ^
+     44|   for (const o of offers) {
+     45|     expect(o.level).toBe(helperLevel(o.card, count));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  tests/helper-support-data.test.ts > null/missing first leader never promotes later c405 into a fictional same-leader recommendation
+AssertionError: expected [] to have a length of 91 but got +0
+
+- Expected
++ Received
+
+- 91
++ 0
+
+ ❯ tests/helper-support-data.test.ts:54:20
+     52|   for (const save of [team([null, 'c405']), team(['missing-definition'…
+     53|     const offers = roster(save);
+     54|     expect(offers).toHaveLength(91);
+       |                    ^
+     55|     expect(offers.flatMap(o => o.reasons).some(r => r.includes('同隊長…
+     56|   }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  tests/helper-support-data.test.ts > actual c405 retains dragon attack rules while mixed roster blocks only whole-dragon reduction; candidate is included
+TypeError: Cannot read properties of undefined (reading 'problem')
+ ❯ tests/helper-support-data.test.ts:72:16
+     70|   const mixed = roster(team(['c405', 'c206'])).find(o => o.card.id ===…
+     71|   const all = roster(team(['c405', 'c107'])).find(o => o.card.id === '…
+     72|   expect(mixed.problem).toBeNull(); expect(all.problem).toBeNull();
+       |                ^
+     73|   expect(mixed.warnings.some(w => w.includes('全隊') || w.includes('編…
+     74|   expect(all.warnings.some(w => w.includes('未滿足') || w.includes('不…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  tests/helper-support-data.test.ts > actual dual c710 and lowHP c507 remain selectable conditional leaders, not currently-activated multipliers
+TypeError: Cannot read properties of undefined (reading 'problem')
+ ❯ tests/helper-support-data.test.ts:81:18
+     79|     const save = team([id]);
+     80|     const offer = roster(save).find(o => o.card.id === id)!;
+     81|     expect(offer.problem).toBeNull();
+       |                  ^
+     82|     expect(offer.reasons.join(' ')).toContain('同隊長');
+     83|     expect([...offer.reasons, ...offer.warnings].join(' ')).not.toMatc…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  tests/helper-support-data.test.ts > target coverage uses scalar/array attribute AND race as the actual engine, not tags or HP/RCV targets
+TypeError: Cannot read properties of undefined (reading 'reasons')
+ ❯ tests/helper-support-data.test.ts:103:28
+    101|     const expected = members.filter(c => matchesFilter({ cardId: c.id,…
+    102|     const offer = roster(save, [...gameData.cards, card], [...gameData…
+    103|     const coverage = offer.reasons.join(' ').match(/涵蓋\s*(\d+)\s*\/\…
+       |                            ^
+    104|     expect(coverage).not.toBeNull(); expect(Number(coverage![1])).toBe…
+    105|   }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  tests/helper-support-data.test.ts > catalog preserves existing card-based NPC bond mapping and hard helper exclusions
+AssertionError: expected [] to have a length of 91 but got +0
+
+- Expected
++ Received
+
+- 91
++ 0
+
+ ❯ tests/helper-support-data.test.ts:110:47
+    108| it('catalog preserves existing card-based NPC bond mapping and hard he…
+    109|   const save = fresh(), before = structuredClone(save);
+    110|   const offers = roster(save); expect(offers).toHaveLength(91);
+       |                                               ^
+    111|   for (const o of offers) {
+    112|     const originalNpc = HELPER_NPCS.find(n => n.tiers.some(t => t.card…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ Test Files  1 failed (1)
+      Tests  12 failed (12)
+   Start at  13:11:31
+   Duration  1.28s (transform 698ms, setup 0ms, collect 873ms, tests 42ms, environment 0ms, prepare 112ms)
+

@@ -1,0 +1,63 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-helper-production/starfall-covenant
+
+ ❯ tests/helper-support-view.test.ts (4 tests | 3 failed) 2730ms
+   × first12 only plus actual NPC rows become seen, never ownership or all91; focused search remains mounted 2070ms
+     → expected [] to have a length of 12 but got +0
+   × show all exposes exact91 without choosing or granting; selected summary survives search 281ms
+     → expected [] to have a length of 91 but got +0
+   × replaced rows and departed screen cannot choose or navigate, including queued seen; live selection consumes once 195ms
+     → expected undefined to be defined
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/helper-support-view.test.ts > first12 only plus actual NPC rows become seen, never ownership or all91; focused search remains mounted
+AssertionError: expected [] to have a length of 12 but got +0
+
+- Expected
++ Received
+
+- 12
++ 0
+
+ ❯ tests/helper-support-view.test.ts:20:50
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/helper-support-view.test.ts > show all exposes exact91 without choosing or granting; selected summary survives search
+AssertionError: expected [] to have a length of 91 but got +0
+
+- Expected
++ Received
+
+- 91
++ 0
+
+ ❯ tests/helper-support-view.test.ts:35:24
+     33|   const f = await render(); await tick();
+     34|   const show = [...f.root.querySelectorAll<HTMLButtonElement>('button'…
+     35|   expect(rows(f.root)).toHaveLength(91); expect(new Set(rows(f.root).m…
+       |                        ^
+     36|   expect(f.nav.replace).not.toHaveBeenCalled(); expect(f.state.getSave…
+     37|   const { chosenHelper } = await import('../src/ui/sortie'); expect(ch…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/helper-support-view.test.ts > replaced rows and departed screen cannot choose or navigate, including queued seen; live selection consumes once
+AssertionError: expected undefined to be defined
+ ❯ tests/helper-support-view.test.ts:41:70
+     39| });
+     40| it('replaced rows and departed screen cannot choose or navigate, inclu…
+     41|   const f = await render(); const old = rows(f.root)[0]; expect(old).t…
+       |                                                                      ^
+     42|   search(f.root, 'c710'); old.click(); expect(f.nav.replace).not.toHav…
+     43|   const live = rows(f.root)[0]; live.click(); live.click(); expect(f.n…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 1 passed (4)
+   Start at  13:11:29
+   Duration  3.44s (transform 1.00s, setup 0ms, collect 47ms, tests 2.73s, environment 305ms, prepare 100ms)
+

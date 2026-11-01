@@ -1,0 +1,188 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-helper-production/starfall-covenant
+
+ ❯ tests/helper-support-data.test.ts (12 tests | 5 failed) 37ms
+   × actual91 leaders/all15 tags are permanently present independent of ownership, closing original38/53 gap 19ms
+     → expected [] to deeply equal [ 'c101', 'c102', 'c103', …(88) ]
+   × null/missing first leader never promotes later c405 into a fictional same-leader recommendation 3ms
+     → expected [] to have a length of 91 but got +0
+   × actual c405 retains dragon attack rules while mixed roster blocks only whole-dragon reduction; candidate is included 7ms
+     → Cannot read properties of undefined (reading 'problem')
+   × actual dual c710 and lowHP c507 remain selectable conditional leaders, not currently-activated multipliers 1ms
+     → Cannot read properties of undefined (reading 'problem')
+   × target coverage uses scalar/array attribute AND race as the actual engine, not tags or HP/RCV targets 1ms
+     → Cannot read properties of undefined (reading 'reasons')
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/helper-support-data.test.ts > actual91 leaders/all15 tags are permanently present independent of ownership, closing original38/53 gap
+AssertionError: expected [] to deeply equal [ 'c101', 'c102', 'c103', …(88) ]
+
+- Expected
++ Received
+
+- Array [
+-   "c101",
+-   "c102",
+-   "c103",
+-   "c104",
+-   "c105",
+-   "c106",
+-   "c107",
+-   "c108",
+-   "c109",
+-   "c110",
+-   "c111",
+-   "c112",
+-   "c201",
+-   "c202",
+-   "c203",
+-   "c204",
+-   "c205",
+-   "c206",
+-   "c207",
+-   "c208",
+-   "c209",
+-   "c210",
+-   "c211",
+-   "c212",
+-   "c301",
+-   "c302",
+-   "c303",
+-   "c304",
+-   "c305",
+-   "c306",
+-   "c307",
+-   "c308",
+-   "c309",
+-   "c310",
+-   "c311",
+-   "c312",
+-   "c401",
+-   "c402",
+-   "c403",
+-   "c404",
+-   "c405",
+-   "c406",
+-   "c407",
+-   "c408",
+-   "c409",
+-   "c410",
+-   "c411",
+-   "c412",
+-   "c501",
+-   "c502",
+-   "c503",
+-   "c504",
+-   "c505",
+-   "c506",
+-   "c507",
+-   "c508",
+-   "c509",
+-   "c510",
+-   "c511",
+-   "c512",
+-   "c601",
+-   "c602",
+-   "c603",
+-   "c604",
+-   "c606",
+-   "c701",
+-   "c702",
+-   "c703",
+-   "c704",
+-   "c705",
+-   "c706",
+-   "c707",
+-   "c708",
+-   "c709",
+-   "c710",
+-   "c711",
+-   "c801",
+-   "c802",
+-   "c803",
+-   "c804",
+-   "c805",
+-   "c806",
+-   "c807",
+-   "c808",
+-   "c809",
+-   "c810",
+-   "c811",
+-   "c812",
+-   "c813",
+-   "c814",
+-   "c815",
+- ]
++ Array []
+
+ ❯ tests/helper-support-data.test.ts:29:46
+     27|   expect(gameData.cards).toHaveLength(112); expect(eligible).toHaveLen…
+     28|   const offered = roster(save);
+     29|   expect(offered.map(o => o.card.id).sort()).toEqual(eligible.map(c =>…
+       |                                              ^
+     30|   expect(new Set(offered.map(o => o.id)).size).toBe(91);
+     31|   expect(offered.every(o => o.id === `support:${o.card.id}` && !o.prob…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/helper-support-data.test.ts > null/missing first leader never promotes later c405 into a fictional same-leader recommendation
+AssertionError: expected [] to have a length of 91 but got +0
+
+- Expected
++ Received
+
+- 91
++ 0
+
+ ❯ tests/helper-support-data.test.ts:53:20
+     51|   for (const save of [team([null, 'c405']), team(['missing-definition'…
+     52|     const offers = roster(save);
+     53|     expect(offers).toHaveLength(91);
+       |                    ^
+     54|     expect(offers.flatMap(o => o.reasons).some(r => r.includes('同隊長…
+     55|   }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/helper-support-data.test.ts > actual c405 retains dragon attack rules while mixed roster blocks only whole-dragon reduction; candidate is included
+TypeError: Cannot read properties of undefined (reading 'problem')
+ ❯ tests/helper-support-data.test.ts:71:16
+     69|   const mixed = roster(team(['c405', 'c206'])).find(o => o.card.id ===…
+     70|   const all = roster(team(['c405', 'c107'])).find(o => o.card.id === '…
+     71|   expect(mixed.problem).toBeNull(); expect(all.problem).toBeNull();
+       |                ^
+     72|   expect(mixed.warnings.some(w => w.includes('全隊') || w.includes('編…
+     73|   expect(all.warnings.some(w => w.includes('未滿足') || w.includes('不…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/helper-support-data.test.ts > actual dual c710 and lowHP c507 remain selectable conditional leaders, not currently-activated multipliers
+TypeError: Cannot read properties of undefined (reading 'problem')
+ ❯ tests/helper-support-data.test.ts:80:18
+     78|     const save = team([id]);
+     79|     const offer = roster(save).find(o => o.card.id === id)!;
+     80|     expect(offer.problem).toBeNull();
+       |                  ^
+     81|     expect(offer.reasons.join(' ')).toContain('同隊長');
+     82|     expect([...offer.reasons, ...offer.warnings].join(' ')).not.toMatc…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tests/helper-support-data.test.ts > target coverage uses scalar/array attribute AND race as the actual engine, not tags or HP/RCV targets
+TypeError: Cannot read properties of undefined (reading 'reasons')
+ ❯ tests/helper-support-data.test.ts:102:28
+    100|     const expected = members.filter(c => matchesFilter({ cardId: c.id,…
+    101|     const offer = roster(save, [...gameData.cards, card], [...gameData…
+    102|     const coverage = offer.reasons.join(' ').match(/涵蓋\s*(\d+)\s*\/\…
+       |                            ^
+    103|     expect(coverage).not.toBeNull(); expect(Number(coverage![1])).toBe…
+    104|   }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 7 passed (12)
+   Start at  13:11:07
+   Duration  1.15s (transform 487ms, setup 0ms, collect 665ms, tests 37ms, environment 0ms, prepare 110ms)
+

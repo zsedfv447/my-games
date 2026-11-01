@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-helper-production/starfall-covenant
+
+ ✓ audit/e16/navigation.test.ts (8 tests) 6366ms
+   ✓ stamina normal: actual Shell link only navigates to shop; Back restores team without purchase 2974ms
+   ✓ stamina close50: old shop/close cannot take over new route or dialog 392ms
+   ✓ stamina leave200: old shop/close cannot take over new route or dialog 518ms
+   ✓ defeat normal: real lost snapshot and UI abandon produce helper shortcut; Back returns to prepare with no new rewards or costs 362ms
+   ✓ defeat return50: stale advice/return cannot redirect newer navigation 408ms
+   ✓ defeat leave200: stale advice/return cannot redirect newer navigation 690ms
+   ✓ defeat replacement: stale advice/return cannot redirect newer navigation 723ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  13:16:41
+   Duration  7.06s (transform 1.85s, setup 0ms, collect 43ms, tests 6.37s, environment 280ms, prepare 87ms)
+

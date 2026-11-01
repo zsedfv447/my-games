@@ -1,0 +1,563 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-helper-production/starfall-covenant
+
+ ✓ tests/helpers.test.ts (15 tests) 37ms
+ ✓ tests/helper-support.test.ts (6 tests) 60ms
+ ✓ tests/helper-bond.test.ts (7 tests) 7ms
+ ❯ tests/e20-oath-helper.test.ts (2 tests | 2 failed) 3386ms
+   × noHelper overrides remembered non-dragon helper and reselect; genuine paid ticket and engine keep helper absent 2763ms
+     → expected { version: 4, player: { …(6) }, …(12) } to deeply equal { version: 4, player: { …(6) }, …(12) }
+   × clearing noHelper restores remembered helper and normal paid roster without granting oath rewards 622ms
+     → expected { version: 4, player: { …(6) }, …(12) } to deeply equal { version: 4, player: { …(6) }, …(12) }
+ ❯ tests/e20-helper-selection.test.ts (3 tests | 3 failed) 4245ms
+   × actual npc-chain choice survives prepare and one paid departure into the real battle roster 2800ms
+     → expected { version: 4, player: { …(6) }, …(12) } to deeply equal { version: 4, player: { …(6) }, …(12) }
+   × actual npc-combo choice survives prepare and one paid departure into the real battle roster 597ms
+     → expected { version: 4, player: { …(6) }, …(12) } to deeply equal { version: 4, player: { …(6) }, …(12) }
+   × actual none choice survives prepare and one paid departure into the real battle roster 848ms
+     → expected { version: 4, player: { …(6) }, …(12) } to deeply equal { version: 4, player: { …(6) }, …(12) }
+ ✓ tests/e20-helper-resume.test.ts (2 tests) 4976ms
+   ✓ paid selected helper with noHelper=false resumes from ticket after module/UI reload, not reset choice memory 3312ms
+   ✓ paid selected helper with noHelper=true resumes from ticket after module/UI reload, not reset choice memory 1662ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/e20-helper-selection.test.ts > actual npc-chain choice survives prepare and one paid departure into the real battle roster
+ FAIL  tests/e20-helper-selection.test.ts > actual npc-combo choice survives prepare and one paid departure into the real battle roster
+ FAIL  tests/e20-helper-selection.test.ts > actual none choice survives prepare and one paid departure into the real battle roster
+AssertionError: expected { version: 4, player: { …(6) }, …(12) } to deeply equal { version: 4, player: { …(6) }, …(12) }
+
+- Expected
++ Received
+
+  Object {
+    "activeBattle": null,
+    "activeTeam": 0,
+    "collection": Object {
+      "claimed": Array [],
+      "owned": Array [
+        "c106",
+        "c108",
+        "c208",
+        "c308",
+        "c408",
+      ],
+      "seen": Array [
+        "c106",
+        "c108",
+        "c208",
+        "c308",
+        "c408",
++       "c405",
++       "c404",
++       "c604",
++       "c102",
++       "c103",
++       "c204",
++       "c205",
++       "c501",
+        "c509",
++       "c510",
++       "c104",
+        "c110",
+        "c206",
+        "c306",
+      ],
+    },
+    "daily": Object {
+      "lastLogin": "",
+      "loginDay": 0,
+      "shopPurchases": Object {},
+    },
+    "gacha": Object {
+      "history": Array [],
+      "pityCounter": Object {},
+    },
+    "inventory": Object {
+      "capacity": 50,
+      "cards": Array [
+        Object {
+          "awakened": 0,
+          "cardId": "c405",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793509943268,
+          "skillLevel": 1,
+          "uid": "dragon-leader",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c107",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793509943268,
+          "skillLevel": 1,
+          "uid": "dragon-member",
+        },
+      ],
+    },
+    "player": Object {
+      "coin": 1000,
+      "exp": 0,
+      "gems": 50,
+      "level": 1,
+      "name": "契印師",
+      "tokens": Object {},
+    },
+    "progress": Object {
+      "chapterRewardsClaimed": Array [],
+      "clearedStages": Array [
+        "st-2-9",
+      ],
+      "stars": Object {},
+      "storySeen": Array [
+        "ch1-open",
+      ],
+      "towerFloor": 0,
+      "tutorialDone": true,
+    },
+    "quests": Object {
+      "claimed": Array [],
+      "counters": Object {},
+      "dailyResetAt": "",
+      "weeklyResetAt": "",
+    },
+    "settings": Object {
+      "battleSpeed": 1,
+      "bgm": 0.8,
+      "sfx": 0.8,
+    },
+    "stamina": Object {
+      "current": 30,
+      "lastUpdate": 1793509943268,
+    },
+    "teams": Array [
+      Object {
+        "members": Array [
+          "dragon-leader",
+          "dragon-member",
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍1",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍2",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍3",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍4",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍5",
+      },
+    ],
+    "tutorial": Object {
+      "giftGiven": true,
+      "step": "done",
+    },
+    "version": 4,
+  }
+
+ ❯ tests/e20-helper-selection.test.ts:40:29
+     38|     const stageDef = gameData.stages.find(stage => stage.id === 'st-1-…
+     39|     const expectedSeen = markSeen(before, rosterFor(stageDef).map(offe…
+     40|     expect(state.getSave()).toEqual(expectedSeen);
+       |                             ^
+     41|     expect(writes).toHaveBeenCalledTimes(1);
+     42|     expect(writes.mock.calls[0][0]).toBe(SAVE_KEY);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/e20-oath-helper.test.ts > noHelper overrides remembered non-dragon helper and reselect; genuine paid ticket and engine keep helper absent
+AssertionError: expected { version: 4, player: { …(6) }, …(12) } to deeply equal { version: 4, player: { …(6) }, …(12) }
+
+- Expected
++ Received
+
+  Object {
+    "activeBattle": null,
+    "activeTeam": 0,
+    "collection": Object {
+      "claimed": Array [],
+      "owned": Array [
+        "c106",
+        "c108",
+        "c208",
+        "c308",
+        "c408",
+      ],
+      "seen": Array [
+        "c106",
+        "c108",
+        "c208",
+        "c308",
+        "c408",
++       "c405",
++       "c404",
++       "c604",
++       "c102",
++       "c103",
++       "c204",
++       "c205",
++       "c501",
+        "c509",
++       "c510",
++       "c104",
+        "c110",
+        "c206",
+        "c306",
+      ],
+    },
+    "daily": Object {
+      "lastLogin": "",
+      "loginDay": 0,
+      "shopPurchases": Object {},
+    },
+    "gacha": Object {
+      "history": Array [],
+      "pityCounter": Object {},
+    },
+    "inventory": Object {
+      "capacity": 50,
+      "cards": Array [
+        Object {
+          "awakened": 0,
+          "cardId": "c405",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793509943273,
+          "skillLevel": 1,
+          "uid": "d",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c107",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793509943273,
+          "skillLevel": 1,
+          "uid": "x",
+        },
+      ],
+    },
+    "player": Object {
+      "coin": 1000,
+      "exp": 0,
+      "gems": 50,
+      "level": 1,
+      "name": "契印師",
+      "tokens": Object {},
+    },
+    "progress": Object {
+      "chapterRewardsClaimed": Array [],
+      "clearedStages": Array [
+        "st-1-1",
+        "st-2-9",
+      ],
+      "stars": Object {},
+      "storySeen": Array [
+        "ch1-open",
+      ],
+      "towerFloor": 0,
+      "tutorialDone": true,
+    },
+    "quests": Object {
+      "claimed": Array [],
+      "counters": Object {},
+      "dailyResetAt": "",
+      "weeklyResetAt": "",
+    },
+    "settings": Object {
+      "battleSpeed": 1,
+      "bgm": 0.8,
+      "sfx": 0.8,
+    },
+    "stamina": Object {
+      "current": 30,
+      "lastUpdate": 1793509943273,
+    },
+    "teams": Array [
+      Object {
+        "members": Array [
+          "d",
+          "x",
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍1",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍2",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍3",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍4",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍5",
+      },
+    ],
+    "tutorial": Object {
+      "giftGiven": true,
+      "step": "done",
+    },
+    "version": 4,
+  }
+
+ ❯ tests/e20-oath-helper.test.ts:26:305
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/e20-oath-helper.test.ts > clearing noHelper restores remembered helper and normal paid roster without granting oath rewards
+AssertionError: expected { version: 4, player: { …(6) }, …(12) } to deeply equal { version: 4, player: { …(6) }, …(12) }
+
+- Expected
++ Received
+
+  Object {
+    "activeBattle": null,
+    "activeTeam": 0,
+    "collection": Object {
+      "claimed": Array [],
+      "owned": Array [
+        "c106",
+        "c108",
+        "c208",
+        "c308",
+        "c408",
+      ],
+      "seen": Array [
+        "c106",
+        "c108",
+        "c208",
+        "c308",
+        "c408",
++       "c405",
++       "c404",
++       "c604",
++       "c102",
++       "c103",
++       "c204",
++       "c205",
++       "c501",
+        "c509",
++       "c510",
++       "c104",
+        "c110",
+        "c206",
+        "c306",
+      ],
+    },
+    "daily": Object {
+      "lastLogin": "",
+      "loginDay": 0,
+      "shopPurchases": Object {},
+    },
+    "gacha": Object {
+      "history": Array [],
+      "pityCounter": Object {},
+    },
+    "inventory": Object {
+      "capacity": 50,
+      "cards": Array [
+        Object {
+          "awakened": 0,
+          "cardId": "c405",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793509945090,
+          "skillLevel": 1,
+          "uid": "d",
+        },
+        Object {
+          "awakened": 0,
+          "cardId": "c107",
+          "exp": 0,
+          "level": 1,
+          "limitBreak": 0,
+          "locked": false,
+          "obtainedAt": 1793509945090,
+          "skillLevel": 1,
+          "uid": "x",
+        },
+      ],
+    },
+    "player": Object {
+      "coin": 1000,
+      "exp": 0,
+      "gems": 50,
+      "level": 1,
+      "name": "契印師",
+      "tokens": Object {},
+    },
+    "progress": Object {
+      "chapterRewardsClaimed": Array [],
+      "clearedStages": Array [
+        "st-1-1",
+        "st-2-9",
+      ],
+      "stars": Object {},
+      "storySeen": Array [
+        "ch1-open",
+      ],
+      "towerFloor": 0,
+      "tutorialDone": true,
+    },
+    "quests": Object {
+      "claimed": Array [],
+      "counters": Object {},
+      "dailyResetAt": "",
+      "weeklyResetAt": "",
+    },
+    "settings": Object {
+      "battleSpeed": 1,
+      "bgm": 0.8,
+      "sfx": 0.8,
+    },
+    "stamina": Object {
+      "current": 30,
+      "lastUpdate": 1793509945090,
+    },
+    "teams": Array [
+      Object {
+        "members": Array [
+          "d",
+          "x",
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍1",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍2",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍3",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍4",
+      },
+      Object {
+        "members": Array [
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
+        "name": "隊伍5",
+      },
+    ],
+    "tutorial": Object {
+      "giftGiven": true,
+      "step": "done",
+    },
+    "version": 4,
+  }
+
+ ❯ tests/e20-oath-helper.test.ts:34:305
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ Test Files  2 failed | 4 passed (6)
+      Tests  5 failed | 30 passed (35)
+   Start at  13:12:21
+   Duration  5.91s (transform 2.80s, setup 0ms, collect 1.94s, tests 12.71s, environment 1.22s, prepare 736ms)
+

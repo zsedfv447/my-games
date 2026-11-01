@@ -1,0 +1,12 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-helper-production/starfall-covenant
+
+ ✓ tests/helpers.test.ts (15 tests) 18ms
+ ✓ tests/helper-support-view.test.ts (6 tests) 2406ms
+   ✓ first12 only plus actual NPC rows become seen, never ownership or all91; focused search remains mounted 1464ms
+
+ Test Files  2 passed (2)
+      Tests  21 passed (21)
+   Start at  13:12:53
+   Duration  3.15s (transform 1.19s, setup 0ms, collect 603ms, tests 2.42s, environment 286ms, prepare 184ms)
+

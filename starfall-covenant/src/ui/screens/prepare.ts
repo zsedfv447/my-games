@@ -11,12 +11,13 @@ import { badge, button, emptyState, panel } from '../components/basic';
 import { cardThumb, emptySlot } from '../components/card-thumb';
 import { toast } from '../components/overlay';
 import { stageContext } from '../stage-nav';
-import { buildSortieTeam, chosenHelper, describeTeamRule, ensureHelper, sortieProblem, VIOLATION_TEXT } from '../sortie';
+import { buildSortieTeam, chosenHelper, describeTeamRule, ensureHelper, supportToHelper, sortieProblem, VIOLATION_TEXT } from '../sortie';
 import { commit, getSave, growth } from '../state';
 import { armBattle } from './battle';
 import { applyOathTeam, oathEligible, oathTeamProblem } from '../../progression/oaths';
 import { chosenOaths, oathSortieChip, oathStelePanel } from '../oath-stele';
 import { confirmNewBattle } from '../battle-session';
+import { leaderSupportRoster } from '../helper-support';
 import { npcAvatar, rosterFor } from './helper';
 import { HELPER_NPCS, stageAllowsHelper } from '../../progression/helpers';
 import type { ScreenDef } from '../router';
@@ -103,7 +104,7 @@ export const prepareScreen: ScreenDef = {
 
     const save = getSave();
     const helperAllowed = stageAllowsHelper(stage);
-    if (helperAllowed) ensureHelper(stage.id, rosterFor(stage));
+    if (helperAllowed) ensureHelper(stage.id, rosterFor(stage), leaderSupportRoster(save, stage, gameData.cards, gameData.leaderSkills, gameData.stages).filter(offer => !offer.problem).map(supportToHelper));
     // 誓約碑（已通關的主線關卡）：不帶助戰、只帶 4 人會改變出戰隊伍
     const oaths = oathEligible(stage, save) ? chosenOaths(stage.id) : [];
     const baseTeam = buildSortieTeam(stage, save, growth.card);

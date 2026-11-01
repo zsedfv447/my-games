@@ -1,3 +1,4 @@
+import { leaderSupportRoster, type LeaderSupportOffer } from '../helper-support';
 // 選擇助戰（GDD 2.5 關卡列表 → 選助戰 → 戰鬥前確認）：NPC「流浪契印師」名單，顯示助戰卡的隊長技
 import { findStage } from '../stage-lookup';
 import { h } from '../dom';
@@ -5,13 +6,13 @@ import { gameData } from '../../data/load';
 import type { StageDef } from '../../core/types';
 import { HELPER_NPCS, helperRoster, stageAllowsHelper, type HelperNpcDef, type HelperOffer } from '../../progression/helpers';
 import { bondDef, bondLevel, bondPoints, hasBondFrame, nextBondTier } from '../../progression/helper-bond';
-import { ATTRIBUTE_NAMES } from '../art/palette';
+import { ATTRIBUTE_NAMES, RACE_NAMES } from '../art/palette';
 import { userAsset } from '../assets';
 import { audio } from '../audio';
 import { badge, button, emptyState, listItem, panel } from '../components/basic';
 import { closeBondStories, playBondStory } from '../bond-story';
 import { cardThumb } from '../components/card-thumb';
-import { chooseHelper, chosenHelper, offerToHelper, VIOLATION_TEXT } from '../sortie';
+import { chooseHelper, chosenHelper, offerToHelper, supportToHelper, VIOLATION_TEXT } from '../sortie';
 import { markSeen } from '../../growth';
 import { commit, getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
@@ -81,7 +82,7 @@ function offerRow(offer: HelperOffer, selected: boolean, pick: () => void): HTML
         h('div', { class: 'helper-name' }, offer.npc.name),
         h('div', { class: 'small-text dim' }, offer.npc.title),
         h('div', { class: 'row wrap', style: { gap: '4px', marginTop: '4px' } },
-          offer.recommended && badge('推薦', 'gold'),
+          offer.recommended && badge('本關推薦', 'gold'),
           badge(archetypeName(offer.npc.archetype)),
           selected && badge('出戰中', 'gold')),
         bondText(offer.npc)),
@@ -108,25 +109,77 @@ export const helperScreen: ScreenDef = {
         button('回到出戰確認', { block: true, onClick: () => nav.replace('prepare', [stage.id]) }));
     }
 
+    let disposed = false, settled = false, generation = 0;
+    onLeave(() => { disposed = true; generation++; });
     const roster = rosterFor(stage);
-    // 在助戰名單上看到的卡登錄為圖鑑「見過」
-    // 畫面建好後才寫入存檔，不在 render 裡觸發狀態更新
-    queueMicrotask(() => {
-      const seen = markSeen(getSave(), roster.map((o) => o.card.id));
-      if (seen !== getSave()) commit(seen);
-    });
+    const supports = () => leaderSupportRoster(getSave(), stage, gameData.cards, gameData.leaderSkills, gameData.stages);
     const current = chosenHelper(stage.id);
     const done = (helper: ReturnType<typeof offerToHelper> | null) => {
+      if (disposed || settled || !root.isConnected) return;
+      settled = true;
       chooseHelper(stage.id, helper);
-      // 從出戰確認過來就退回去；直接開網址時改成出戰確認，避免返回鍵又回到這裡
       if (route.query.from === 'prepare') nav.back();
       else nav.replace('prepare', [stage.id]);
     };
+    const selectedText = current === null ? '不帶助戰' : current ? current.card.name : '尚未選擇（出戰確認沿用原 NPC 預設）';
+    const save = getSave();
+    const uid = (save.teams[save.activeTeam] ?? save.teams[0])?.members[0];
+    const owned = uid ? save.inventory.cards.find(c => c.uid === uid) : undefined;
+    const leader = owned ? growth.card(owned.cardId) : undefined;
+    const list = h('div', { class: 'list' });
+    const count = h('span', { class: 'small-text dim' });
+    let showAll = false;
+    const input = h('input', { type: 'search', class: 'text-input', 'aria-label': '搜尋常駐助戰名稱或卡號', placeholder: '名稱或卡號' });
+    const show = button('顯示全部', { small: true, onClick: () => { if (!disposed && !settled) { showAll = true; draw(); } } });
+    const clear = button('清除搜尋', { small: true, variant: 'ghost', onClick: () => { if (!disposed && !settled) { input.value = ''; showAll = false; draw(); } } });
+    const supportRow = (offer: LeaderSupportOffer, token: number) => {
+      const skill = offer.card.leaderSkill ? growth.leaderSkill(offer.card.leaderSkill) : undefined;
+      const thumb = cardThumb(offer.card, { level: offer.level, size: 56 });
+      const row = h('button', { type: 'button', class: ['helper-row', 'support-row', current?.npcId === offer.id && 'selected', offer.problem && 'blocked'],
+        'data-support-id': offer.id, disabled: !!offer.problem,
+        onClick: () => {
+          if (disposed || settled || token !== generation || !row.isConnected) return;
+          const fresh = supports().find(o => o.id === offer.id);
+          if (!fresh || fresh.problem) return;
+          done(supportToHelper(fresh));
+        } },
+        h('div', { class: 'row' }, h('span', { class: thumb.className, style: { '--thumb': '56px' } }, ...Array.from(thumb.childNodes)),
+          h('strong', null, offer.card.name)),
+        h('div', { class: 'small-text dim' }, `${offer.card.id}・${ATTRIBUTE_NAMES[offer.card.attribute]}・${RACE_NAMES[offer.card.race]}・Lv.${offer.level}・技能 Lv.${offer.skillLevel}`),
+        skill && h('div', { class: 'helper-leader' }, h('strong', null, `隊長技・${skill.name}`), h('p', null, skill.description)),
+        offer.reasons.map(reason => h('p', { class: 'small-text dim' }, reason)),
+        offer.warnings.map(warning => h('p', { class: 'small-text' }, warning)),
+        offer.problem && h('p', { class: 'small-text', style: { color: 'var(--danger)' } }, VIOLATION_TEXT[offer.problem]));
+      return row;
+    };
+    const draw = () => {
+      if (disposed || settled) return;
+      const token = ++generation, query = input.value.trim().toLocaleLowerCase();
+      const filtered = supports().filter(o => !query || o.card.id.toLocaleLowerCase().includes(query) || o.card.name.toLocaleLowerCase().includes(query));
+      const visible = showAll ? filtered : filtered.slice(0, 12);
+      list.replaceChildren(...visible.map(o => supportRow(o, token)));
+      count.textContent = `顯示 ${visible.length} / ${filtered.length}`;
+      show.hidden = visible.length >= filtered.length;
+      if (!visible.length) list.append(emptyState('team', '沒有符合名稱或卡號的常駐支援'));
+      queueMicrotask(() => {
+        if (disposed || settled || token !== generation || !root.isConnected) return;
+        const seen = markSeen(getSave(), [...visible.map(o => o.card.id), ...roster.map(o => o.card.id)]);
+        if (seen !== getSave()) commit(seen);
+      });
+    };
+    input.addEventListener('input', () => { showAll = false; draw(); });
     const total = HELPER_NPCS.length;
 
-    return h(
+    const root = h(
       'div',
       null,
+      panel({ title: '常駐隊長支援' },
+        h('p', { class: 'small-text' }, `目前隊長：${leader?.name ?? '無有效隊長'}。`),
+        h('p', { class: 'small-text dim' }, '排序依隊長技與目前編成作參考；生命、消珠等條件仍以實戰及技能原文為準。借用不代表持有。'),
+        h('p', { class: 'small-text dim' }, '既有情誼仍依卡片對應 NPC 的規則計算；常駐借用既有 NPC 關聯卡片也可能累積該 NPC 情誼。'),
+        h('p', { 'data-current-helper': '', class: 'small-text' }, `目前選擇：${selectedText}`),
+        input, h('div', { class: 'row between' }, clear, count, show), list),
+      h('h2', { class: 'section-title' }, '流浪契印師'),
       panel(
         null,
         h('div', { class: 'row between' }, h('strong', null, stage.name), h('span', { class: 'small-text dim' }, `契印師 ${roster.length} / ${total}`)),
@@ -136,10 +189,19 @@ export const helperScreen: ScreenDef = {
           : null,
       ),
       roster.length
-        ? h('div', { class: 'list' }, roster.map((o) => offerRow(o, current?.npcId === o.npc.id, () => done(offerToHelper(o)))))
+        ? h('div', { class: 'list' }, roster.map((o) => {
+          const row = offerRow(o, current?.npcId === o.npc.id, () => {
+            if (disposed || settled || !row.isConnected) return;
+            const fresh = rosterFor(stage).find(n => n.npc.id === o.npc.id);
+            if (fresh && !fresh.problem) done(offerToHelper(fresh));
+          });
+          return row;
+        }))
         : emptyState('team', '目前沒有契印師可以同行'),
       button('不帶助戰', { variant: 'ghost', block: true, sound: 'back', onClick: () => done(null) }),
       bondMemories(onLeave),
     );
+    draw();
+    return root;
   },
 };
