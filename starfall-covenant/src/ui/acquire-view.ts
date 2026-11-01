@@ -19,7 +19,8 @@ function priceText(item: ShopItemDef): string {
 
 function routeTitle(r: AcquireRoute): string {
   switch (r.kind) {
-    case 'firstClear': return r.stage.name;
+    case 'firstClear':
+    case 'periodFirstClear': return r.stage.name;
     case 'drop': return `${r.stage.name}・掉落率 ${rateText(r.rate)}`;
     case 'shop': return `${r.item.name}・${priceText(r.item)}`;
     case 'evolve': return `由「${r.from.name}」進化`;
@@ -34,7 +35,7 @@ function routeRow(r: AcquireRoute, nav: Navigator): HTMLElement {
     h('span', { class: 'acquire-main' },
       h('span', { class: 'acquire-title' }, routeTitle(r)),
       r.note && h('span', { class: 'acquire-note small-text' }, r.note)),
-    h('span', { class: ['acquire-state', 'small-text', r.available ? 'ok' : 'ng'] }, r.available ? '現在可取得' : '暫時無法'),
+    h('span', { class: ['acquire-state', 'small-text', r.available ? 'ok' : 'ng'] }, r.available ? (r.kind === 'periodFirstClear' ? '可挑戰取得' : '現在可取得') : '暫時無法'),
     icon('chevron'));
 }
 

@@ -3,6 +3,7 @@
 import type { CardDef, GachaPoolDef, QuestDef, SaveData, ShopItemDef, StageDef } from '../core/types';
 import { eventWindow, type EventDef } from '../progression/events';
 import { isPoolOpen } from '../progression/gacha';
+import { periodFirstClearClaimed } from '../progression/stages';
 import { remainingPurchases } from '../progression/shop';
 import { isPlayable, lockText, stageContext, stageListPath, stageRow } from './stage-nav';
 
@@ -19,6 +20,7 @@ export interface GuideData {
 export type GoTo = [string, string[]];
 
 export type AcquireRoute =
+  | { kind: 'periodFirstClear'; stage: StageDef; available: boolean; note: string; go: GoTo }
   | { kind: 'firstClear'; stage: StageDef; available: boolean; note: string; go: GoTo }
   | { kind: 'drop'; stage: StageDef; rate: number; available: boolean; note: string; go: GoTo }
   | { kind: 'shop'; item: ShopItemDef; remaining: number; available: boolean; note: string; go: GoTo }
@@ -30,6 +32,7 @@ export type AcquireKind = AcquireRoute['kind'];
 
 export const KIND_LABEL: Record<AcquireKind, string> = {
   firstClear: '首通必得',
+  periodFirstClear: '本期首通必得（須通關）',
   drop: '隨機掉落',
   shop: '兌換',
   evolve: '進化',
@@ -80,6 +83,13 @@ export function acquireRoutes(save: SaveData, cardId: string, data: GuideData, n
       const done = save.progress.clearedStages.includes(stage.id);
       routes.push({ kind: 'firstClear', stage, ...r, available: r.available && !done, note: done ? '已經通關領過了' : r.note });
     }
+    if (hasCard(stage.rewards.periodFirstClear, cardId)) {
+      const r = stageRoute(save, stage, data, now);
+      const claimed = periodFirstClearClaimed(save, stage, data.events, now);
+      const note = claimed ? [r.note, '本期已領取'].filter(Boolean).join('；')
+        : r.available ? '通關後領取本期首通獎勵' : r.note;
+      routes.push({ kind: 'periodFirstClear', stage, ...r, available: r.available && !claimed, note });
+    }
     const drop = stage.drops.find((d) => d.card === cardId);
     if (drop) routes.push({ kind: 'drop', stage, rate: drop.rate, ...stageRoute(save, stage, data, now) });
   }
@@ -97,7 +107,7 @@ export function acquireRoutes(save: SaveData, cardId: string, data: GuideData, n
   for (const pool of data.gachaPools) {
     if (!Object.values(pool.cards).some((list) => list?.includes(cardId))) continue;
     const open = isPoolOpen(pool, now);
-    routes.push({ kind: 'gacha', pool, available: open, note: open ? '' : '卡池未開放', go: ['summon', []] });
+    routes.push({ kind: 'gacha', pool, available: open, note: open ? '' : '卡池未開放', go: ['summon', [pool.id]] });
   }
   for (const quest of data.quests) {
     if (!hasCard(quest.reward, cardId)) continue;
@@ -120,7 +130,7 @@ export function materialGuide(save: SaveData, needs: { id: string; need: number;
   return needs.flatMap(({ id, need, have }) => {
     const card = data.cards.find((c) => c.id === id);
     if (!card) return [];
-    const routes = acquireRoutes(save, id, data, now).filter((r) => r.kind === 'drop' || r.kind === 'firstClear' || r.kind === 'shop');
+    const routes = acquireRoutes(save, id, data, now).filter((r) => r.kind === 'drop' || r.kind === 'firstClear' || r.kind === 'periodFirstClear' || r.kind === 'shop');
     return [{ card, need, have, routes }];
   });
 }

@@ -9,7 +9,7 @@ import { userAsset } from '../assets';
 import { audio } from '../audio';
 import { badge, bar, button, emptyState, panel, stars, tabs } from '../components/basic';
 import { cardPortrait, cardThumb } from '../components/card-thumb';
-import { confirmDialog, openDialog, toast } from '../components/overlay';
+import { confirmOnScreen, openDialog, toast } from '../components/overlay';
 import { commit, getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
 import {
@@ -74,7 +74,9 @@ export const enhanceScreen: ScreenDef = {
   title: '卡片養成',
   chrome: 'sub',
   parent: 'cards',
-  render({ route, nav }) {
+  render({ route, nav, onLeave }) {
+    let disposed = false;
+    onLeave(() => { disposed = true; });
     const uid = route.args[0];
     let mode: GrowthMode = parseMode(route.query.mode);
     // 從素材卡詳情「去強化」過來時，先放好那張素材
@@ -84,21 +86,26 @@ export const enhanceScreen: ScreenDef = {
     const root = h('div', { class: 'growth-screen', style: growthBackdrop() });
 
     const runMode = async (btn: HTMLButtonElement, view: ModeView, owned: OwnedCard, def: CardDef) => {
-      if (busy) return;
+      if (busy || disposed) return;
       busy = true;
       btn.disabled = true;
       let celebrating = false;
       try {
-        if (view.confirm && !await confirmDialog(view.confirm.title, view.confirm.body, view.confirm.ok)) return;
+        if (view.confirm) {
+          const approved = await confirmOnScreen(view.confirm.title, view.confirm.body, view.confirm.ok);
+          if (approved !== true || disposed) return;
+        }
+        if (disposed) return;
         const r = view.run(!!view.confirm);
         if (!r.ok) return toast(r.error.message);
+        if (disposed) return;
         commit(r.save);
         const after = r.save.inventory.cards.find((c) => c.uid === uid)!;
         selected = [];
         const show = view.onSuccess(owned, after);
         celebrating = true;
         // 演出關閉後才更新畫面，結果不會被提前看到
-        celebrate(def, show.headline, show.detail, show.sound, () => { busy = false; draw(); });
+        celebrate(def, show.headline, show.detail, show.sound, () => { busy = false; if (!disposed) draw(); });
       } finally {
         if (!celebrating) { busy = false; btn.disabled = false; }
       }

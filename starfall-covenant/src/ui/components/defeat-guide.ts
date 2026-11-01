@@ -9,12 +9,16 @@ import { stageIntel } from '../stage-intel';
 import { getSave, growth } from '../state';
 import type { Navigator } from '../router';
 import { button } from './basic';
-import { openDialog } from './overlay';
+import { openDialog, type DialogHandle } from './overlay';
 import '../convenience.css';
 
 const ICON: Record<Advice['kind'], string> = { enhance: '強', team: '隊', helper: '助', tip: '！' };
 
+let currentGuide: DialogHandle | undefined;
+
 export function showDefeatGuide(stage: StageDef, progress: { wave: number; waveCount: number; hasHelper: boolean }, nav: Navigator): void {
+  currentGuide?.close();
+  let closed = false;
   const save = getSave();
   const team = save.teams[save.activeTeam];
   const uids = stage.fixedTeam ? [] : (team?.members ?? []).filter((u): u is string => !!u);
@@ -32,8 +36,13 @@ export function showDefeatGuide(stage: StageDef, progress: { wave: number; waveC
     primaryArchetype: members.length ? analyzeTeam(save, growth, team.members).primary : null,
     archetypeName: (id) => gameData.archetypes.find((a) => a.id === id)?.name ?? id,
   });
-  const go = (a: Advice) => {
+  const consume = () => {
+    if (closed || currentGuide !== dlg) return false;
     dlg.close();
+    return true;
+  };
+  const go = (a: Advice) => {
+    if (!consume()) return;
     // 取代戰鬥頁：從捷徑畫面按返回會回到出戰確認
     nav.replace(a.go!.screen, a.go!.args, a.go!.screen === 'helper' ? { from: 'prepare' } : {});
   };
@@ -43,6 +52,10 @@ export function showDefeatGuide(stage: StageDef, progress: { wave: number; waveC
       h('span', { class: 'defeat-advice-icon', 'aria-hidden': 'true' }, ICON[a.kind]),
       h('p', { class: 'grow small-text' }, a.text),
       a.go && button(a.go.label, { small: true, onClick: () => go(a) }))))), [
-    button('返回', { variant: 'primary', sound: 'back', onClick: () => { dlg.close(); nav.back(); } }),
-  ], { dismissible: false });
+    button('返回', { variant: 'primary', sound: 'back', onClick: () => { if (consume()) nav.back(); } }),
+  ], { dismissible: false, scope: 'route', onClose: () => {
+    closed = true;
+    if (currentGuide === dlg) currentGuide = undefined;
+  } });
+  currentGuide = dlg;
 }

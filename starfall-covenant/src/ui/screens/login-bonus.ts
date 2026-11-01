@@ -63,10 +63,11 @@ export function maybeShowLoginPopup(onClaimed?: () => void): boolean {
   if (!shouldAutoShowLogin(getSave(), now, popupShownFor)) return false;
   popupShownFor = dateKey(now);
   const body = h('div', { class: 'login-popup' }, loginGrid());
+  let closed = false;
   const dlg = openDialog('七日星約', body, [
     button(LABEL.later, { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
-    button('領取', { variant: 'primary', icon: 'gift', sound: false, onClick: () => { if (claimToday()) { dlg.close(); onClaimed?.(); } } }),
-  ], { scope: 'route' });
+    button('領取', { variant: 'primary', icon: 'gift', sound: false, onClick: () => { if (closed) return; dlg.close(); if (claimToday()) onClaimed?.(); } }),
+  ], { scope: 'route', onClose: () => { closed = true; } });
   return true;
 }
 

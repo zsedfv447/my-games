@@ -2,7 +2,7 @@ import { h } from '../dom';
 import { APP_VERSION } from '../version';
 import { audio } from '../audio';
 import { button, panel, slider, toggle } from '../components/basic';
-import { confirmDialog, openDialog, toast } from '../components/overlay';
+import { confirmOnScreen, openDialog, toast, type DialogHandle } from '../components/overlay';
 import { commit, exportCode, getSave, getSettings, importCode, resetAll, updateSettings } from '../state';
 import { isTutorialActive, restartTutorial } from '../tutorial/flow';
 import { skipTutorialNow } from '../tutorial/skip';
@@ -24,24 +24,28 @@ function showExport(): void {
   ]);
 }
 
-function showImport(): void {
+function showImport(isCurrent: () => boolean): DialogHandle {
+  let closed = false;
   const area = h('textarea', { rows: '6', class: 'code-box', placeholder: '貼上存檔碼' });
   const dlg = openDialog('匯入存檔碼', h('div', null, h('p', { class: 'small-text dim' }, '匯入後會取代目前的進度。'), area), [
     button('取消', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
     button('匯入', {
       variant: 'primary',
       onClick: () => {
+        if (closed || !isCurrent()) return;
         const error = importCode(area.value);
         if (error) return toast(error);
         dlg.close();
         toast('匯入完成');
       },
     }),
-  ]);
+  ], { scope: 'route', onClose: () => { closed = true; } });
+  return dlg;
 }
 
-async function askReset(): Promise<void> {
-  if (!(await confirmDialog('重置存檔', '所有進度都會消失，而且無法復原。確定要重置嗎？', '重置'))) return;
+async function askReset(isCurrent: () => boolean): Promise<void> {
+  const approved = await confirmOnScreen('重置存檔', '所有進度都會消失，而且無法復原。確定要重置嗎？', '重置');
+  if (approved !== true || !isCurrent()) return;
   resetAll();
   toast('已重置存檔');
 }
@@ -51,7 +55,12 @@ export const settingsScreen: ScreenDef = {
   title: '設定',
   chrome: 'sub',
   parent: 'home',
-  render({ nav }) {
+  render({ nav, onLeave }) {
+    let disposed = false;
+    let resetting = false;
+    let importDialog: DialogHandle | undefined;
+    const isCurrent = () => !disposed;
+    onLeave(() => { disposed = true; importDialog?.close(); });
     const s = getSettings();
     return h(
       'div',
@@ -88,8 +97,16 @@ export const settingsScreen: ScreenDef = {
           'div',
           { class: 'row' },
           button('匯出存檔碼', { small: true, icon: 'save', onClick: showExport }),
-          button('匯入存檔碼', { small: true, onClick: showImport }),
-          button('重置', { small: true, variant: 'danger', onClick: () => void askReset() }),
+          button('匯入存檔碼', { small: true, onClick: () => {
+            if (disposed) return;
+            importDialog?.close();
+            importDialog = showImport(isCurrent);
+          } }),
+          button('重置', { small: true, variant: 'danger', onClick: () => {
+            if (disposed || resetting) return;
+            resetting = true;
+            void askReset(isCurrent).finally(() => { resetting = false; });
+          } }),
         ),
       ),
       panel(

@@ -3,7 +3,7 @@ import { h } from '../dom';
 import { evolve, pickEvolutionMaterials } from '../../growth';
 import { badge, button, emptyState, panel, stars } from '../components/basic';
 import { cardPortrait, cardThumb } from '../components/card-thumb';
-import { confirmDialog, toast } from '../components/overlay';
+import { confirmOnScreen, toast } from '../components/overlay';
 import { commit, getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
 import { celebrate, growthBackdrop, statTable } from './enhance';
@@ -17,7 +17,9 @@ export const evolveScreen: ScreenDef = {
   title: '進化',
   chrome: 'sub',
   parent: 'cards',
-  render({ route, nav }) {
+  render({ route, nav, onLeave }) {
+    let disposed = false;
+    onLeave(() => { disposed = true; });
     const uid = route.args[0];
     const save = getSave();
     const owned = save.inventory.cards.find((c) => c.uid === uid);
@@ -42,11 +44,11 @@ export const evolveScreen: ScreenDef = {
     // 防連點：確認框開著或處理中時不再接受點擊
     let busy = false;
     const run = async () => {
-      if (busy) return;
+      if (busy || disposed) return;
       busy = true;
       try {
-        const ok = await confirmDialog('確認進化', `${def.name} 將進化為 ${toDef.name}。等級會回到 Lv1，素材卡會被消耗。`, '進化');
-        if (!ok) return;
+        const ok = await confirmOnScreen('確認進化', `${def.name} 將進化為 ${toDef.name}。等級會回到 Lv1，素材卡會被消耗。`, '進化');
+        if (ok !== true || disposed) return;
         const pick = pickEvolutionMaterials(getSave(), growth, uid);
         if (pick.missing.length) return toast('素材不足');
         const r = evolve(getSave(), growth, uid, pick.uids);

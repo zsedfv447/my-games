@@ -1,0 +1,88 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-production-promotion/starfall-covenant
+
+ ✓ tests/e18-chain-view.test.ts (5 tests) 266ms
+stdout | tests/e20-helper-selection.test.ts > actual npc-chain choice survives prepare and one paid departure into the real battle roster
+E20_HELPER_MARK_SEEN {"npc":"npc-chain","added":["c509","c110","c206","c306"],"writes":1}
+
+stdout | tests/e20-helper-selection.test.ts > actual npc-chain choice survives prepare and one paid departure into the real battle roster
+E20_HELPER {"npc":"npc-chain","helper":"c509","staminaDelta":-3,"coinDelta":0,"gemsDelta":0,"roster":["c405","c107","c509"],"l405Reduction":[20],"savePayloads":3}
+
+ ✓ tests/e25-period-acquire-view.test.ts (6 tests) 2689ms
+   ✓ actual periodic card source states completion required and retains the original explicit navigation only 1051ms
+   ✓ claimed retains claim and restriction notes without disabling source browsing 346ms
+   ✓ shared missing material block includes guaranteed periodic source; sufficient material suppresses sources 401ms
+   ✓ ordinary first-clear labels and available wording remain unchanged 336ms
+stdout | tests/e20-helper-selection.test.ts > actual npc-combo choice survives prepare and one paid departure into the real battle roster
+E20_HELPER_MARK_SEEN {"npc":"npc-combo","added":["c509","c110","c206","c306"],"writes":1}
+
+stdout | tests/e20-helper-selection.test.ts > actual npc-combo choice survives prepare and one paid departure into the real battle roster
+E20_HELPER {"npc":"npc-combo","helper":"c206","staminaDelta":-3,"coinDelta":0,"gemsDelta":0,"roster":["c405","c107","c206"],"l405Reduction":[],"savePayloads":3}
+
+ ✓ tests/e21-berserk-view.test.ts (2 tests) 3254ms
+   ✓ unowned berserk central copy is readable through actual codex/prepare; locked departure and Back do not write 2670ms
+   ✓ unlocked original prepare remains borrowed and read-only, without starting or giving cards 583ms
+ ✓ tests/e20-oath-helper.test.ts (2 tests) 3371ms
+   ✓ noHelper overrides remembered non-dragon helper and reselect; genuine paid ticket and engine keep helper absent 2756ms
+   ✓ clearing noHelper restores remembered helper and normal paid roster without granting oath rewards 614ms
+ ✓ tests/e18-chain-navigation.test.ts (2 tests) 1474ms
+   ✓ unowned locked chain guide and all quickviews preserve actual Router context/scroll/save with Back 1056ms
+   ✓ existing unlocked trial entry reaches normal prepare without auto-start or guide rewards 417ms
+ ✓ tests/e19-capability-navigation.test.ts (3 tests) 3572ms
+   ✓ actual mixed c405 team sources expand/close and route back read-only without unconditional defense claim 2426ms
+   ✓ actual team tabs update blocked→helper-pending→ordinary-member without stale leader source 546ms
+   ✓ real remove member redraws composition sources; cancellation and subsequent reading never write 599ms
+stdout | tests/e20-helper-selection.test.ts > actual none choice survives prepare and one paid departure into the real battle roster
+E20_HELPER_MARK_SEEN {"npc":"none","added":["c509","c110","c206","c306"],"writes":1}
+
+stdout | tests/e20-helper-selection.test.ts > actual none choice survives prepare and one paid departure into the real battle roster
+E20_HELPER {"npc":"none","helper":null,"staminaDelta":-3,"coinDelta":0,"gemsDelta":0,"roster":["c405","c107"],"l405Reduction":[20],"savePayloads":3}
+
+ ✓ tests/e20-helper-selection.test.ts (3 tests) 3826ms
+   ✓ actual npc-chain choice survives prepare and one paid departure into the real battle roster 2525ms
+   ✓ actual npc-combo choice survives prepare and one paid departure into the real battle roster 571ms
+   ✓ actual none choice survives prepare and one paid departure into the real battle roster 728ms
+ ✓ tests/e19-capability-model.test.ts (9 tests) 10ms
+ ✓ tests/e24-active-resume.test.ts (2 tests) 95ms
+ ✓ tests/e19-capability-view.test.ts (6 tests) 67ms
+ ✓ tests/e19-capability-engine.test.ts (7 tests) 15ms
+ ✓ tests/e20-helper-resume.test.ts (2 tests) 4760ms
+   ✓ paid selected helper with noHelper=false resumes from ticket after module/UI reload, not reset choice memory 3229ms
+   ✓ paid selected helper with noHelper=true resumes from ticket after module/UI reload, not reset choice memory 1531ms
+ ✓ tests/e24-greek-resume.test.ts (1 test) 47ms
+ ✓ tests/e18-chain-engine.test.ts (14 tests) 21ms
+ ✓ tests/e21-berserk-engine.test.ts (5 tests) 28ms
+ ✓ tests/e25-period-acquire.test.ts (6 tests) 26ms
+ ✓ tests/e22-archetype-engine.test.ts (7 tests) 20ms
+ ✓ tests/e25-period-acquire-navigation.test.ts (5 tests) 5248ms
+   ✓ c921 detail exposes active periodic guaranteed source then real prepare and Back without reward/ownership/save writes 2499ms
+   ✓ claimed but playable source remains navigable without promising another current reward 574ms
+   ✓ closed source preserves restriction and navigates existing nemesis list, not departure 605ms
+   ✓ locked source preserves restriction and navigates existing nemesis list, not departure 778ms
+   ✓ actual evolution material source reaches same periodic stage without consuming material or evolving 791ms
+ ✓ tests/acquire-guide.test.ts (7 tests) 13ms
+stdout | tests/e24-oath-resume.test.ts > actual st-1-4 shield expiry and sealLeader oath countdown match across JSON resume for three fixed empty turns
+E24 oath fixed trace {"seed":62423,"stage":"st-1-4","oaths":["sealLeader"],"trace":[{"step":1,"enemyShield":false,"sealTurns":2,"events":["turnResolved","statusExpired"]},{"step":2,"enemyShield":false,"sealTurns":1,"events":["turnResolved","enemyAttack"]},{"step":3,"enemyShield":false,"sealTurns":null,"events":["turnResolved","enemyAttack","statusExpired"]}],"events":["turnResolved","statusExpired","turnResolved","enemyAttack","turnResolved","enemyAttack","statusExpired"],"rng":1887993133}
+
+ ✓ tests/e24-oath-resume.test.ts (1 test) 47ms
+ ✓ tests/e18-chain-model.test.ts (11 tests) 76ms
+ ✓ tests/e22-archetype-copy.test.ts (6 tests) 6ms
+ ✓ tests/e21-berserk-copy.test.ts (2 tests) 3ms
+ ✓ tests/e17-practice.test.ts (2 tests) 1903ms
+   ✓ opening a replacement picker revokes the unclosed old picker and old cancel cannot close the new one 1111ms
+   ✓ actual dismissible backdrop closes consent; retry can enter normal practice and Back returns to adventure 790ms
+ ✓ tests/e25-period-acquire-data.test.ts (8 tests) 845ms
+ ✓ tests/e23-card-image-dom.test.ts (3 tests) 2289ms
+   ✓ collection actual DOM uses selected card URLs and lazy images, with no navigation save effects 1235ms
+   ✓ collection-card actual DOM uses selected card URLs and lazy images, with no navigation save effects 677ms
+   ✓ team actual DOM uses selected card URLs and lazy images, with no navigation save effects 375ms
+ ✓ tests/e22-archetype-view.test.ts (3 tests) 2610ms
+   ✓ 'heart' existing codex/prepare share precise text; unowned locked reading and Back are zero-write 1228ms
+   ✓ 'race' existing codex/prepare share precise text; unowned locked reading and Back are zero-write 802ms
+   ✓ 'skillcycle' existing codex/prepare share precise text; unowned locked reading and Back are zero-write 580ms
+
+ Test Files  27 passed (27)
+      Tests  130 passed (130)
+   Start at  11:57:47
+   Duration  6.89s (transform 3.21s, setup 0ms, collect 4.46s, tests 36.58s, environment 4.24s, prepare 1.91s)
+

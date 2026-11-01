@@ -45,8 +45,14 @@ export function startApp(stage: HTMLElement): Router {
 function warnBrokenSave(): void {
   const problem = getLoadProblem();
   if (!problem) return;
+  let settled = false;
   const dlg = openDialog('存檔讀取失敗', `${loadErrorText(problem)}。目前的遊玩進度不會存檔，你可以重置存檔，或到設定匯入存檔碼。`, [
     button(LABEL.later, { variant: 'ghost', onClick: () => dlg.close() }),
-    button('重置存檔', { variant: 'danger', onClick: () => { resetAll(); dlg.close(); } }),
-  ], { dismissible: false });
+    button('重置存檔', { variant: 'danger', onClick: () => {
+      if (settled || getLoadProblem() !== problem) return;
+      settled = true;
+      resetAll();
+      dlg.close();
+    } }),
+  ], { dismissible: false, onClose: () => { settled = true; } });
 }

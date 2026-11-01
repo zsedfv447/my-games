@@ -12,7 +12,7 @@ import { sortCards } from '../../growth';
 import { RACE_NAMES } from '../art/palette';
 import { badge, button, emptyState, panel, tabs } from '../components/basic';
 import { cardThumb } from '../components/card-thumb';
-import { confirmDialog, openDialog, toast } from '../components/overlay';
+import { confirmOnScreen, openDialog, toast, type DialogHandle } from '../components/overlay';
 import { revealReward } from '../components/reward-reveal';
 import { formatCountdown } from '../countdown';
 import { commit, getSave, growth } from '../state';
@@ -31,7 +31,8 @@ function idleCards(): OwnedCard[] {
 }
 
 /** 選最多 3 張卡的對話框 */
-function pickMembers(current: string[], onDone: (uids: string[]) => void): void {
+function pickMembers(current: string[], onDone: (uids: string[]) => void): DialogHandle {
+  let closed = false;
   const chosen = new Set(current);
   const grid = h('div', { class: 'picker-grid' });
   const draw = () => {
@@ -40,6 +41,7 @@ function pickMembers(current: string[], onDone: (uids: string[]) => void): void 
       ? list.map((c) => cardThumb(growth.card(c.cardId)!, {
         level: c.level, size: 60, selected: chosen.has(c.uid),
         onClick: () => {
+          if (closed) return;
           if (chosen.has(c.uid)) chosen.delete(c.uid);
           else if (chosen.size >= EXPEDITION.maxMembers) return toast(`每隊最多 ${EXPEDITION.maxMembers} 張卡`);
           else chosen.add(c.uid);
@@ -51,11 +53,12 @@ function pickMembers(current: string[], onDone: (uids: string[]) => void): void 
   draw();
   const dlg = openDialog('選擇遠行的卡（最多 3 張）', grid, [
     button('取消', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
-    button('決定', { variant: 'primary', onClick: () => { dlg.close(); onDone([...chosen]); } }),
-  ]);
+    button('決定', { variant: 'primary', onClick: () => { if (closed) return; dlg.close(); onDone([...chosen]); } }),
+  ], { scope: 'route', onClose: () => { closed = true; } });
+  return dlg;
 }
 
-function partyPanel(e: Expedition, now: number, redraw: () => void): HTMLElement {
+function partyPanel(e: Expedition, now: number, redraw: () => void, current: () => boolean): HTMLElement {
   const save = getSave();
   const chapter = chapterOf(e.chapter);
   const back = hasReturned(e, now);
@@ -67,10 +70,15 @@ function partyPanel(e: Expedition, now: number, redraw: () => void): HTMLElement
     void revealReward('星靈歸來', r.reward, `${chapter?.constellation ?? ''}的旅途收穫`);
     redraw();
   };
+  let recalling = false;
   const recall = async () => {
-    if (!(await confirmDialog('提前召回', '現在召回不會有任何收穫，卡片會立刻回來。確定嗎？', '召回'))) return;
-    commit(recallExpedition(getSave(), e.id));
-    redraw();
+    if (!current() || recalling) return;
+    recalling = true;
+    try {
+      if ((await confirmOnScreen('提前召回', '現在召回不會有任何收穫，卡片會立刻回來。確定嗎？', '召回')) !== true || !current()) return;
+      commit(recallExpedition(getSave(), e.id));
+      redraw();
+    } finally { recalling = false; }
   };
   return panel(
     { gold: back },
@@ -92,11 +100,15 @@ export const expeditionScreen: ScreenDef = {
   parent: 'adventure',
   render({ onLeave }) {
     const root = h('div', { class: 'expedition-screen' });
+    let disposed = false;
+    let picker: DialogHandle | undefined;
+    onLeave(() => { disposed = true; picker?.close(); });
     let chapterNo: number | undefined;
     let hours: number = EXPEDITION.hours[EXPEDITION.hours.length - 1];
     let members: string[] = [];
 
     const draw = () => {
+      if (disposed) return;
       const save = getSave();
       const now = Date.now();
       const parties = expeditionsOf(save);
@@ -140,7 +152,11 @@ export const expeditionScreen: ScreenDef = {
             tabs(EXPEDITION.hours.map((x) => ({ id: String(x), label: `${x} 小時` })), String(hours), (id) => { hours = Number(id); draw(); })),
           h('div', { class: 'row wrap', style: { gap: '6px', alignItems: 'center' } },
             owned.map((c) => cardThumb(growth.card(c.cardId)!, { level: c.level, size: 52 })),
-            button(owned.length ? '更換' : '選擇卡片', { small: true, onClick: () => pickMembers(members, (uids) => { members = uids; draw(); }) })),
+            button(owned.length ? '更換' : '選擇卡片', { small: true, onClick: () => {
+              if (disposed) return;
+              picker?.close();
+              picker = pickMembers(members, (uids) => { if (disposed) return; members = uids; draw(); });
+            } })),
           owned.length > 0 && h('p', { class: 'small-text', style: { margin: '8px 0' } },
             `預計約 ${Math.round(units * EXPEDITION.perUnit.coin).toLocaleString()} 金幣與一些塵靈`,
             match > 0 && h('span', { class: 'gold-text' }, `・${RACE_NAMES[chapter.race]}加成 ×${match}`)),
@@ -149,7 +165,7 @@ export const expeditionScreen: ScreenDef = {
 
       const scenery = h('div', { class: 'scene-art-banner' },
         h('img', { src: userAsset('backgrounds', 'pack-expedition'), alt: '', loading: 'lazy' }));
-      root.replaceChildren(scenery, intro, ...parties.map((e) => partyPanel(e, now, draw)), form);
+      root.replaceChildren(scenery, intro, ...parties.map((e) => partyPanel(e, now, draw, () => !disposed)), form);
     };
 
     draw();

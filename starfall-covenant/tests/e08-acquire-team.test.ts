@@ -1,0 +1,67 @@
+// @vitest-environment happy-dom
+import { afterEach, expect, it, vi } from 'vitest';
+import type { Router } from '../src/ui/router';
+let router:Router|undefined;
+afterEach(()=>{router?.stop();router=undefined;vi.restoreAllMocks();document.body.replaceChildren();});
+it('real app conversion codex→acquire→coin shop→cancel/buy once→team preview cancel/confirm→codex retains context and ownership',async()=>{
+  vi.resetModules();localStorage.clear();sessionStorage.clear();history.replaceState(null,'','#/collection');
+  const state=await import('../src/ui/state'), {gameData}=await import('../src/data/load'), {createNewSave}=await import('../src/save/save');
+  // Test-only initialized balance/tutorial state; no cards, unlocks or money granted to any user save.
+  const fixture=createNewSave(gameData.config,Date.now());fixture.player.coin=30000;fixture.tutorial={step:'done',giftGiven:true};fixture.progress.tutorialDone=true;state.commit(fixture);
+  const initial=structuredClone(state.getSave()), originalUids=initial.inventory.cards.map(c=>c.uid);
+  const item=gameData.shop.find(i=>i.id==='classic-c812')!;
+  expect(item.price).toEqual({coin:15000});expect(item.reward).toEqual({cards:[{card:'c812',count:1}]});expect(item.limit).toEqual({count:1,per:'forever'});
+  const {startApp}=await import('../src/ui/app');const stage=document.createElement('div');document.body.append(stage);router=startApp(stage);
+  const writes=vi.spyOn(state,'commit'); // passthrough observer; real storage remains untouched
+  const stored=()=>JSON.stringify(Array.from({length:localStorage.length},(_,i)=>{const key=localStorage.key(i)!;return [key,localStorage.getItem(key)];}).sort());
+  const initialStored=stored();
+  const screen=(name:string)=>stage.querySelector<HTMLElement>(`[data-screen="${name}"]`)!;
+  const waitScreen=async(name:string)=>{await vi.waitFor(()=>expect(screen(name)).not.toBeNull());return screen(name);};
+  const button=(root:ParentNode,text:string)=>{const b=[...root.querySelectorAll<HTMLButtonElement>('button')].find(b=>b.textContent===text);expect(b,`button ${text}`).toBeDefined();return b!;};
+  const dialog=()=>stage.querySelector<HTMLElement>('[role="dialog"]:not(.closing)')!;
+  const closeDialog=async()=>{await vi.waitFor(()=>expect(stage.querySelector('[role="dialog"]')).toBeNull());};
+  const select=(label:string,value:string)=>{const el=screen('collection').querySelector<HTMLSelectElement>(`select[aria-label="${label}"]`)!;el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+  const codex=await waitScreen('collection');const details=codex.querySelector<HTMLDetailsElement>('[data-conversion-filter]')!;details.open=true;details.dispatchEvent(new Event('toggle'));
+  select('轉換來源','heart');select('轉換目標','dark');codex.scrollTop=430;
+  const results=()=>[...screen('collection').querySelectorAll('.codex-no')].map(e=>e.textContent);
+  expect(results()).toContain('No.812');
+  const card=[...codex.querySelectorAll<HTMLButtonElement>('.codex-grid .card-thumb')].find(b=>b.querySelector('.codex-no')?.textContent==='No.812')!;
+  expect(card.classList.contains('codex-unseen')).toBe(true);card.click();
+  const detail=await waitScreen('collection-card');detail.scrollTop=260;
+  expect(detail.textContent).toContain(gameData.cards.find(c=>c.id==='c812')!.name);
+  const source=[...detail.querySelectorAll<HTMLButtonElement>('.acquire-row')].find(b=>b.textContent?.includes(item.name))!;
+  expect(source).toBeDefined();expect(source.textContent).toContain('15,000');source.click();
+  await waitScreen('shop');expect(location.hash).toContain('#/shop/coin');
+  expect(JSON.stringify(state.getSave())).toBe(JSON.stringify(initial));expect(writes).not.toHaveBeenCalled();
+  const itemRow=()=>[...screen('shop').querySelectorAll<HTMLElement>('.shop-item')].find(row=>row.querySelector('strong')?.textContent===item.name)!;
+  const buy=[...itemRow().querySelectorAll<HTMLButtonElement>('button')].find(b=>b.textContent?.startsWith('購買'))!;
+  buy.click();expect(dialog().textContent).toContain('15,000');button(dialog(),'取消').click();await closeDialog();
+  expect(state.getSave()).toEqual(initial);expect(writes).not.toHaveBeenCalled();expect(stored()).toBe(initialStored);
+  buy.click();const confirm=button(dialog(),'購買');confirm.click();
+  await vi.waitFor(()=>expect(state.getSave().player.coin).toBe(15000));confirm.click();await closeDialog();
+  const boughtStored=stored();expect(boughtStored).not.toBe(initialStored);
+  const bought=structuredClone(state.getSave()), added=bought.inventory.cards.filter(c=>!originalUids.includes(c.uid));
+  expect(added).toHaveLength(1);expect(added[0].cardId).toBe('c812');expect(new Set(bought.inventory.cards.map(c=>c.uid)).size).toBe(bought.inventory.cards.length);
+  expect(bought.collection.owned).toEqual([...initial.collection.owned,'c812']);expect(bought.collection.seen).toEqual([...initial.collection.seen,'c812']);
+  expect(bought.collection.claimed).toEqual(initial.collection.claimed);expect(bought.quests.claimed).toEqual(initial.quests.claimed);expect(bought.player.gems).toBe(initial.player.gems);
+  expect(bought.progress).toEqual(initial.progress);expect(bought.tutorial).toEqual(initial.tutorial);expect(bought.teams).toEqual(initial.teams);expect(writes).toHaveBeenCalledTimes(1);
+  expect([...itemRow().querySelectorAll<HTMLButtonElement>('button')].find(b=>b.textContent?.startsWith('售罄'))!.disabled).toBe(true);
+  // An old detached item button can still dispatch, but the real forever limit must reject another purchase.
+  buy.click();button(dialog(),'購買').click();await closeDialog();expect(state.getSave()).toEqual(bought);expect(writes).toHaveBeenCalledTimes(1);expect(stored()).toBe(boughtStored);
+  button(stage.querySelector('.shell-bottom')!,'隊伍').click();await waitScreen('team');
+  const slot=1, teamBefore=structuredClone(state.getSave());
+  const openPicker=()=>screen('team').querySelectorAll<HTMLButtonElement>('.team-slots .card-thumb')[slot].click();
+  const chooseNew=()=>{const candidate=[...dialog().querySelectorAll<HTMLButtonElement>('.picker-grid .card-thumb')].find(b=>b.getAttribute('aria-label')===gameData.cards.find(c=>c.id==='c812')!.name)!;expect(candidate).toBeDefined();candidate.click();};
+  openPicker();chooseNew();expect(dialog().querySelector('.swap-preview')?.textContent).toContain('總生命');expect(state.getSave()).toEqual(teamBefore);
+  button(dialog(),'關閉').click();await closeDialog();expect(state.getSave()).toEqual(teamBefore);expect(writes).toHaveBeenCalledTimes(1);expect(stored()).toBe(boughtStored);
+  openPicker();chooseNew();button(dialog(),'換上').click();await closeDialog();
+  const expected=structuredClone(teamBefore);expected.teams[expected.activeTeam].members[slot]=added[0].uid;
+  expect(state.getSave()).toEqual(expected);expect(writes).toHaveBeenCalledTimes(2);const teamStored=stored();expect(teamStored).not.toBe(boughtStored);
+  router!.back();const backDetail=await waitScreen('collection-card');expect(backDetail.scrollTop).toBe(260);
+  router!.back();const backCodex=await waitScreen('collection');expect(backCodex.scrollTop).toBe(430);
+  expect(backCodex.querySelector<HTMLSelectElement>('[aria-label="轉換來源"]')!.value).toBe('heart');expect(backCodex.querySelector<HTMLSelectElement>('[aria-label="轉換目標"]')!.value).toBe('dark');
+  expect(backCodex.querySelector<HTMLDetailsElement>('[data-conversion-filter]')!.open).toBe(true);
+  const acquired=[...backCodex.querySelectorAll<HTMLButtonElement>('.codex-grid .card-thumb')].find(b=>b.querySelector('.codex-no')?.textContent==='No.812')!;
+  expect(acquired.classList.contains('codex-owned')).toBe(true);expect(acquired.querySelector('.codex-claim')).not.toBeNull();
+  expect(state.getSave()).toEqual(expected);expect(writes).toHaveBeenCalledTimes(2);expect(stored()).toBe(teamStored);
+},20000);

@@ -33,10 +33,19 @@ export function retreatControl(canRetreat = true): { disabled: boolean; note: st
 
 export function openPauseMenu(opts: PauseOptions): PauseHandle {
   const s = getSettings();
+  let closed = false;
+  const finish = (action: () => void) => {
+    if (closed) return;
+    dlg.close(); // Consume this menu before a valid action navigates or resumes.
+    action();
+  };
+  const saveSettings = (patch: Parameters<typeof updateSettings>[0]) => {
+    if (!closed) updateSettings(patch);
+  };
   const retreat = retreatControl(opts.canRetreat);
   const note = h('p', { class: 'small-text dim pause-retreat-note' }, retreat.note ?? '');
   note.hidden = !retreat.note;
-  const retreatBtn = button('撤退', { variant: 'ghost', sound: 'back', disabled: retreat.disabled, onClick: () => { dlg.close(); opts.onRetreat(); } });
+  const retreatBtn = button('撤退', { variant: 'ghost', sound: 'back', disabled: retreat.disabled, onClick: () => { if (!retreatBtn.disabled) finish(opts.onRetreat); } });
   const p = opts.practice;
   const dlg = openDialog('暫停', h('div', { class: 'list pause-menu' },
     p && h('div', { class: 'pause-practice' },
@@ -44,13 +53,13 @@ export function openPauseMenu(opts: PauseOptions): PauseHandle {
       h('div', { class: 'row wrap' }, p.modes.map((m) => button(m.label, {
         small: true,
         variant: m.id === p.current ? 'primary' : 'ghost',
-        onClick: () => { if (m.id === p.current) return; dlg.close(); p.onSwitch(m.id); },
+        onClick: () => { if (m.id === p.current) return; finish(() => p.onSwitch(m.id)); },
       })))),
-    toggle('戰鬥加速 ×2', s.battleSpeed === 2, (v) => updateSettings({ battleSpeed: v ? 2 : 1 })),
-    toggle('顯示轉珠倒數', s.showMoveTimer, (v) => updateSettings({ showMoveTimer: v })),
-    toggle('技能與攻擊演出', s.battleFx, (v) => updateSettings({ battleFx: v })),
-    slider({ label: '背景音樂', value: s.bgm, onInput: (v) => updateSettings({ bgm: v }) }),
-    slider({ label: '音效', value: s.sfx, onInput: (v) => updateSettings({ sfx: v }) }),
+    toggle('戰鬥加速 ×2', s.battleSpeed === 2, (v) => saveSettings({ battleSpeed: v ? 2 : 1 })),
+    toggle('顯示轉珠倒數', s.showMoveTimer, (v) => saveSettings({ showMoveTimer: v })),
+    toggle('技能與攻擊演出', s.battleFx, (v) => saveSettings({ battleFx: v })),
+    slider({ label: '背景音樂', value: s.bgm, onInput: (v) => saveSettings({ bgm: v }) }),
+    slider({ label: '音效', value: s.sfx, onInput: (v) => saveSettings({ sfx: v }) }),
     opts.stars.length > 0 && h('div', { class: 'pause-stars' },
       h('strong', { class: 'small-text' }, '星章條件'),
       opts.stars.map(({ cond, status }) => h('div', { class: `row small-text pause-star ${status}` },
@@ -60,10 +69,11 @@ export function openPauseMenu(opts: PauseOptions): PauseHandle {
     note,
   ), [
     retreatBtn,
-    button('繼續', { variant: 'primary', onClick: () => { dlg.close(); opts.onResume(); } }),
-  ], { dismissible: false });
+    button('繼續', { variant: 'primary', onClick: () => finish(opts.onResume) }),
+  ], { dismissible: false, scope: 'route', onClose: () => { closed = true; } });
   return {
     setCanRetreat(canRetreat) {
+      if (closed) return;
       const next = retreatControl(canRetreat);
       retreatBtn.disabled = next.disabled;
       note.textContent = next.note ?? '';

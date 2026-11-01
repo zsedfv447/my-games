@@ -11,7 +11,7 @@ import { firstClearChip } from '../components/reward-reveal';
 import { toast } from '../components/overlay';
 import { armBattle, confirmNewBattle } from '../battle-session';
 import { getSave } from '../state';
-import type { Navigator, ScreenDef } from '../router';
+import type { ScreenDef } from '../router';
 
 /** 每週一 00:00（裝置當地時間）重置：週鍵是本週一的日期 */
 function resetsAt(week: string): number {
@@ -19,19 +19,34 @@ function resetsAt(week: string): number {
   return new Date(y, m - 1, d + 7).getTime();
 }
 
-async function challenge(stageId: string, nav: Navigator): Promise<void> {
-  const check = await confirmNewBattle(stageId);
-  if (check === 'cancel') return;
-  if (check === 'start') armBattle(stageId);
-  nav.go('battle', [stageId]);
-}
-
 export const abyssScreen: ScreenDef = {
   name: 'abyss',
   title: '星淵回廊',
   chrome: 'sub',
   parent: 'adventure',
-  render({ nav }) {
+  render({ nav, onLeave }) {
+    let disposed = false;
+    let pending = false;
+    let departed = false;
+    onLeave(() => { disposed = true; });
+    const challenge = async (stageId: string): Promise<void> => {
+      if (disposed || pending || departed) return;
+      pending = true;
+      try {
+        const originalTicket = getSave().activeBattle;
+        const check = await confirmNewBattle(stageId, () => !disposed);
+        if (disposed || check === 'cancel') return;
+        if (check === 'resume') {
+          if (getSave().activeBattle !== originalTicket) return;
+        } else {
+          // await handoff 期間新建立的戰鬥不能被這次舊出發覆蓋。
+          if (getSave().activeBattle) return;
+          armBattle(stageId);
+        }
+        departed = true;
+        nav.go('battle', [stageId]);
+      } finally { pending = false; }
+    };
     const save = getSave();
     if (!isAbyssOpen(save)) return h('div', null, emptyState('tower', '星淵回廊尚未開放', `通過主線「${gameData.stages.find((s) => s.id === ABYSS_UNLOCK_STAGE)?.name ?? ABYSS_UNLOCK_STAGE}」後開放。`));
     const now = Date.now();
@@ -55,7 +70,7 @@ export const abyssScreen: ScreenDef = {
         trailing: h('div', { class: 'row', style: { gap: '4px' } },
           reward && firstClearChip(reward, p.claimed.includes(floor), '本週首通'),
           cleared ? badge('通過', 'gold') : badge('挑戰')),
-        onClick: () => void challenge(abyssFloor(p.week, floor, gameData.enemies).stage.id, nav),
+        onClick: () => void challenge(abyssFloor(p.week, floor, gameData.enemies).stage.id),
       });
     };
     // 未開放的層收成一列（「第 N+1～30 層」），鎖定提示是「先通過第 N 層」
@@ -85,7 +100,7 @@ export const abyssScreen: ScreenDef = {
           badge(endless ? `本週 ${ABYSS_FLOORS}/${ABYSS_FLOORS}・無盡 ${p.best} 層` : `本週 ${p.best}/${ABYSS_FLOORS} 層`, 'gold')),
         h('div', { style: { margin: '8px 0 4px' } }, bar({ value: rewards.got, max: rewards.total, variant: 'gold', label: `本週獎勵 ${rewards.got}/${rewards.total}` })),
         h('p', { class: 'small-text dim' }, `歷來最高 ${p.allTimeBest} 層・每週一 00:00 重置（剩 ${formatCountdown(Math.max(0, resetsAt(p.week) - now))}）`),
-        button(endless ? `挑戰第 ${next} 層（無盡）` : `挑戰第 ${next} 層`, { variant: 'primary', block: true, icon: 'sword', onClick: () => void challenge(abyssFloor(p.week, next, gameData.enemies).stage.id, nav) }),
+        button(endless ? `挑戰第 ${next} 層（無盡）` : `挑戰第 ${next} 層`, { variant: 'primary', block: true, icon: 'sword', onClick: () => void challenge(abyssFloor(p.week, next, gameData.enemies).stage.id) }),
         h('p', { class: 'small-text', style: { marginTop: '8px' } }, h('strong', null, `本週星象「${omen.name}」`), `：${omen.text}`),
         h('p', { class: 'small-text dim' }, `第 1～${ABYSS_FLOORS} 層第一次通過有獎勵，一週最多：${totalText}。第 ${ABYSS_FLOORS} 層之後是無盡層，不給獎勵，只記最高層。不耗體力，不帶助戰。`)),
       h('div', { class: 'list' }, floorRow(next), lockedRow, clearedRow),

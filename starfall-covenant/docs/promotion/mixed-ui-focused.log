@@ -1,0 +1,11 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-production-promotion/starfall-covenant
+
+ ✓ tests/pwa-events.test.ts (13 tests) 19ms
+ ✓ tests/tutorial.test.ts (25 tests) 24ms
+
+ Test Files  2 passed (2)
+      Tests  38 passed (38)
+   Start at  11:56:44
+   Duration  1.30s (transform 690ms, setup 0ms, collect 1.41s, tests 43ms, environment 0ms, prepare 115ms)
+

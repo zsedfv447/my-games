@@ -1,0 +1,65 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-production-promotion/starfall-covenant
+
+stdout | audit/e16/practice.test.ts > practice picker normal: navigation authority is separate from save/resources
+E16_PRACTICE {"scenario":"normal","connectedAtProbe":true,"expectedRoute":"#/battle/practice/normal","actualRoute":"#/battle/practice/normal","saveUnchanged":true,"bytesUnchanged":true,"coinDelta":0,"gemsDelta":0,"staminaDelta":0,"seed":321}
+
+stdout | audit/e16/practice.test.ts > practice picker cancel50: navigation authority is separate from save/resources
+E16_PRACTICE {"scenario":"cancel50","connectedAtProbe":true,"expectedRoute":"#/adventure","actualRoute":"#/adventure","saveUnchanged":true,"bytesUnchanged":true,"coinDelta":0,"gemsDelta":0,"staminaDelta":0,"seed":321}
+
+stdout | audit/e16/pause.test.ts > stale mode after close cannot redirect current route or replace engine
+pause stale mode close { connected: true }
+
+stdout | audit/e16/practice.test.ts > practice picker leave200: navigation authority is separate from save/resources
+E16_PRACTICE {"scenario":"leave200","connectedAtProbe":false,"expectedRoute":"#/settings","actualRoute":"#/settings","saveUnchanged":true,"bytesUnchanged":true,"coinDelta":0,"gemsDelta":0,"staminaDelta":0,"seed":321}
+
+stdout | audit/e16/practice.test.ts > practice picker replacement: navigation authority is separate from save/resources
+E16_PRACTICE {"scenario":"replacement","connectedAtProbe":true,"expectedRoute":"#/battle/practice/darkOrbs","actualRoute":"#/battle/practice/darkOrbs","saveUnchanged":true,"bytesUnchanged":true,"coinDelta":0,"gemsDelta":0,"staminaDelta":0,"seed":321}
+
+ ✓ audit/e16/practice.test.ts (4 tests) 3675ms
+   ✓ practice picker normal: navigation authority is separate from save/resources 2139ms
+   ✓ practice picker cancel50: navigation authority is separate from save/resources 393ms
+   ✓ practice picker leave200: navigation authority is separate from save/resources 714ms
+   ✓ practice picker replacement: navigation authority is separate from save/resources 428ms
+stdout | audit/e16/pause.test.ts > stale setting after close cannot change prefs; engine/save independently unchanged
+pause stale setting close { connected: true }
+
+ ✓ audit/e16/assistant.test.ts (5 tests) 3642ms
+   ✓ valid assistant preferences save once and reopen reads goal; battle/ticket/resources unchanged 1983ms
+   ✓ invalid exactcombo rejects without saving and a valid retry remains possible 387ms
+   ✓ close50: old save must not persist preferences despite unchanged battle 476ms
+   ✓ leave200: old save must not persist preferences despite unchanged battle 453ms
+   ✓ new goal saved after reopen cannot be overwritten by old save; old close cannot dismiss new dialog 341ms
+stdout | audit/e16/pause.test.ts > stale mode after leave cannot redirect current route or replace engine
+pause stale mode leave { connected: false }
+
+stdout | audit/e16/pause.test.ts > stale setting after leave cannot change prefs; engine/save independently unchanged
+pause stale setting leave { connected: false }
+
+stdout | audit/e16/pause.test.ts > stale mode after replacement cannot redirect current route or replace engine
+pause stale mode replacement { connected: true }
+
+ ✓ audit/e16/navigation.test.ts (8 tests) 4900ms
+   ✓ stamina normal: actual Shell link only navigates to shop; Back restores team without purchase 1959ms
+   ✓ stamina close50: old shop/close cannot take over new route or dialog 405ms
+   ✓ stamina leave200: old shop/close cannot take over new route or dialog 611ms
+   ✓ defeat normal: real lost snapshot and UI abandon produce helper shortcut; Back returns to prepare with no new rewards or costs 401ms
+   ✓ defeat return50: stale advice/return cannot redirect newer navigation 395ms
+   ✓ defeat leave200: stale advice/return cannot redirect newer navigation 545ms
+stdout | audit/e16/pause.test.ts > stale setting after replacement cannot change prefs; engine/save independently unchanged
+pause stale setting replacement { connected: true }
+
+ ✓ audit/e16/pause.test.ts (10 tests) 5362ms
+   ✓ normal resume restores enabled board without changing real engine/save/preferences 2070ms
+   ✓ normal mode switch uses real new practice engine and no ticket/resource debit 403ms
+   ✓ normal speed and volume persist while engine state and game resources remain unchanged 450ms
+   ✓ stale mode after close cannot redirect current route or replace engine 324ms
+   ✓ stale setting after close cannot change prefs; engine/save independently unchanged 455ms
+   ✓ stale mode after leave cannot redirect current route or replace engine 491ms
+   ✓ stale setting after leave cannot change prefs; engine/save independently unchanged 472ms
+
+ Test Files  4 passed (4)
+      Tests  27 passed (27)
+   Start at  11:58:04
+   Duration  5.89s (transform 1.63s, setup 0ms, collect 151ms, tests 17.58s, environment 1.06s, prepare 273ms)
+

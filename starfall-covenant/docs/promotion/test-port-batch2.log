@@ -1,0 +1,233 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-production-promotion/starfall-covenant
+
+stdout | tests/e17-pause.test.ts > stale mode after close cannot redirect current route or replace engine
+pause stale mode close { connected: true }
+
+stdout | tests/e17-pause.test.ts > stale setting after close cannot change prefs; engine/save independently unchanged
+pause stale setting close { connected: true }
+
+ ✓ tests/e09-action-dialogs.test.ts (4 tests) 4125ms
+   ✓ true ticket-free practice preview/cancel settles dialog: delayed fade cast cannot alter engine/save/RNG 2248ms
+   ✓ opening another member replaces ownership; old cast cannot act on the new live dialog 587ms
+   ✓ normal ready practice cast works exactly once without ticket/persistence; subsequent cooldown rejects stale/disabled buttons 736ms
+   ✓ real resumed sealed-ready member remains uncastable and no save debit/persist occurs on forced disabled click 551ms
+ ✓ tests/e10-economy-crossflow.test.ts (3 tests) 4368ms
+   ✓ high-star sale second confirmation revoked by real route departure; later legitimate sale removes exactly that UID once 2952ms
+   ✓ shop pending purchase revoked after route departure; fresh valid purchase creates one UID and one purchase count 800ms
+   ✓ summon cancelled fade ordinary click cannot spend; old cancel cannot close newer dialog; new approval commits one pull before actual ritual 616ms
+stdout | tests/e17-pause.test.ts > stale mode after leave cannot redirect current route or replace engine
+pause stale mode leave { connected: false }
+
+ ✓ tests/e12-backup-restore.test.ts (3 tests) 4760ms
+   ✓ real settings export textarea → cancel reset → confirmed reset → UI import → reload home resume restores whole battle without rewards/cost 3535ms
+   ✓ reset route revocation preserves production and inactive experiment storage; answer-before-leave=false 632ms
+   ✓ reset route revocation preserves production and inactive experiment storage; answer-before-leave=true 592ms
+ ✓ tests/e09-retreat-app.test.ts (5 tests) 4739ms
+   ✓ route departure cancels unanswered retreat; detached old confirm cannot clear a later same-stage ticket 2695ms
+   ✓ same-stage replacement while confirmation remains open cannot be forfeited by the old session 544ms
+   ✓ normal cancel restores enabled board and skill access without saving or recording defeat 510ms
+   ✓ normal retreat clears its own ticket and emits one failure; repeated stale confirmation cannot settle twice 592ms
+   ✓ practice retreat returns through actual Router history with no stamina/save or formal failure event 392ms
+stdout | tests/e17-pause.test.ts > stale setting after leave cannot change prefs; engine/save independently unchanged
+pause stale setting leave { connected: false }
+
+stdout | tests/e17-pause.test.ts > stale mode after replacement cannot redirect current route or replace engine
+pause stale mode replacement { connected: true }
+
+stdout | tests/e17-pause.test.ts > stale setting after replacement cannot change prefs; engine/save independently unchanged
+pause stale setting replacement { connected: true }
+
+ ✓ tests/e11-growth-modes.test.ts (9 tests) 6572ms
+   ✓ real c102 skill duplicate costs zero, increments once, then celebration close permits another operation 2562ms
+   ✓ same-name limit break remains immediate/no-confirm/zero-coin and exactly one duplicate consumed 510ms
+   ✓ c921 limit break requires crystal confirmation; cancel consumes nothing, retry succeeds exactly once 467ms
+   ✓ real nextAwakening requirement consumes exact coin/materials and c102 first HP+500 slot 432ms
+   ✓ ordinary enhancement follows real exp/coin preview, and closing success permits a second enhancement 554ms
+   ✓ detached no-confirm skill action after real route leave cannot consume anything 512ms
+   ✓ detached no-confirm limit action after real route leave cannot consume anything 455ms
+   ✓ detached no-confirm enhance action after real route leave cannot consume anything 609ms
+   ✓ detached no-confirm awaken action after real route leave cannot consume anything 469ms
+ ✓ tests/e17-pause.test.ts (10 tests) 7066ms
+   ✓ normal resume restores enabled board without changing real engine/save/preferences 2572ms
+   ✓ normal mode switch uses real new practice engine and no ticket/resource debit 452ms
+   ✓ normal speed and volume persist while engine state and game resources remain unchanged 366ms
+   ✓ stale mode after close cannot redirect current route or replace engine 411ms
+   ✓ stale setting after close cannot change prefs; engine/save independently unchanged 446ms
+   ✓ stale mode after leave cannot redirect current route or replace engine 579ms
+   ✓ stale setting after leave cannot change prefs; engine/save independently unchanged 699ms
+   ✓ stale mode after replacement cannot redirect current route or replace engine 612ms
+   ✓ stale setting after replacement cannot change prefs; engine/save independently unchanged 476ms
+   ✓ old resume cannot enable board beneath newer pause 453ms
+ ✓ tests/e09-stale-skill-app.test.ts (5 tests) 2948ms
+   ✓ real skill preview open/cancel never changes save, full engine snapshot or RNG and old cancelled callback stays inert 939ms
+   ✓ real app settings departure closes skill dialog after fade and stale cast cannot alter former battle 766ms
+   ✓ same-stage Router replacement creates a new view that old skill callback cannot mutate or overwrite 422ms
+   ✓ same-stage new ticket fixture without navigation invalidates old skill authorization 468ms
+   ✓ normal ready skill still performs its real conversion once and persists the actual cooldown/board 352ms
+ ✓ tests/e14-session.test.ts (8 tests) 4210ms
+   ✓ abyss main: answer then same-task departure cannot abandon or navigate 868ms
+   ✓ abyss abyss: answer then same-task departure cannot abandon or navigate 441ms
+   ✓ abyss no-ticket await handoff never overwrites a newly installed ticket 466ms
+   ✓ abyss singleflight creates only one pending consent, and cancel permits retry 466ms
+   ✓ abyss abandonment listener installing new ticket survives handoff 421ms
+   ✓ home old Continue cannot redirect into a replacement same-stage battle 407ms
+   ✓ home normal 繼續 remains functional 463ms
+   ✓ home normal 放棄 remains functional 677ms
+ ✓ tests/e17-navigation.test.ts (9 tests) 6265ms
+   ✓ stamina normal: actual Shell link only navigates to shop; Back restores team without purchase 794ms
+   ✓ stamina close50: old shop/close cannot take over new route or dialog 620ms
+   ✓ stamina leave200: old shop/close cannot take over new route or dialog 668ms
+   ✓ stamina replacement: old shop/close cannot take over new route or dialog 502ms
+   ✓ defeat normal: real lost snapshot and UI abandon produce helper shortcut; Back returns to prepare with no new rewards or costs 584ms
+   ✓ defeat return50: stale advice/return cannot redirect newer navigation 536ms
+   ✓ defeat leave200: stale advice/return cannot redirect newer navigation 811ms
+   ✓ defeat replacement: stale advice/return cannot redirect newer navigation 939ms
+   ✓ stamina repeated opener replaces consent: old shop cannot navigate, current shop remains usable once 811ms
+ ✓ tests/e12-save-recovery.test.ts (4 tests) 4150ms
+   ✓ checksum corruption survives deferred warning, settings commit and invalid imports; valid production backup recovers through real module reload 1630ms
+   ✓ cancelled import during 50ms fade cannot overwrite through retained normal click or forced callback 732ms
+   ✓ route departure closes import and retained callback cannot overwrite the current save 921ms
+   ✓ invalid import can be corrected in the same dialog and successful old callback cannot replay over newer progress 865ms
+ ✓ tests/e14-expedition-login.test.ts (15 tests) 11088ms
+   ✓ expedition picker normal: closed selection must not change later chosen members 2221ms
+   ✓ expedition picker cancel: closed selection must not change later chosen members 410ms
+   ✓ expedition picker leave: closed selection must not change later chosen members 619ms
+   ✓ expedition picker replacement: closed selection must not change later chosen members 310ms
+   ✓ expedition recall normal: no stale recall may remove active party 452ms
+   ✓ expedition recall cancel: no stale recall may remove active party 428ms
+   ✓ expedition recall leave: no stale recall may remove active party 720ms
+   ✓ expedition recall replacement: no stale recall may remove active party 560ms
+   ✓ login popup normal: daily guard and closed popup authority 767ms
+   ✓ login popup cancel: daily guard and closed popup authority 709ms
+   ✓ login popup leave: daily guard and closed popup authority 745ms
+   ✓ login popup replacement: daily guard and closed popup authority 667ms
+   ✓ recall approval followed by same-task route departure does not change expedition 641ms
+   ✓ dismissed login popup does not prevent a legitimate daily screen claim 1142ms
+   ✓ cancelled recall permits a fresh approval without losing expedition before that approval 695ms
+ ✓ tests/e11-enhance.test.ts (7 tests) 5178ms
+   ✓ leaving the risky-material confirmation closes it and makes a retained approval inert 880ms
+   ✓ approval then same-task navigation cannot consume material or coin 434ms
+   ✓ cancel permits retry, while repeated confirmation commits the intended material only once 494ms
+   ✓ latest locked material protection survives an already-open confirmation 729ms
+   ✓ latest inTeam material protection survives an already-open confirmation 792ms
+   ✓ successful no-confirm skill growth stays committed but closing its celebration after leave cannot redraw the old root 911ms
+   ✓ a retained no-confirm action cannot start after its screen leaves 937ms
+ ✓ tests/e15-oath-app.test.ts (5 tests) 4550ms
+   ✓ real prepare oath preview/MAX3/confirm redraw and stage-aware memory; clear is only committed on approval 1070ms
+   ✓ oath cancel revokes stale clear/confirm and permits a valid retry without save writes 752ms
+   ✓ oath leave revokes stale clear/confirm and permits a valid retry without save writes 1279ms
+   ✓ same-page new picker revokes old callbacks before and after replacement approval 720ms
+   ✓ consumed confirmation cannot redraw or overwrite a newer same-stage selection 727ms
+ ✓ tests/e15-tutorial-app.test.ts (10 tests) 8616ms
+   ✓ controller: cancel leaves exact save and storage untouched; retry skip grants gift once across real settings replay 1074ms
+   ✓ controller: leave revokes old skip without save/storage/route change 616ms
+   ✓ controller: answerThenLeave revokes old skip without save/storage/route change 665ms
+   ✓ controller: sameRouteReplacement revokes old skip without save/storage/route change 696ms
+   ✓ controller: cancel fade old approval does not settle a newly opened skip 483ms
+   ✓ battle-guide: cancel leaves exact save and storage untouched; retry skip grants gift once across real settings replay 855ms
+   ✓ battle-guide: leave revokes old skip without save/storage/route change 976ms
+   ✓ battle-guide: answerThenLeave revokes old skip without save/storage/route change 1311ms
+   ✓ battle-guide: sameRouteReplacement revokes old skip without save/storage/route change 1150ms
+   ✓ battle-guide: cancel fade old approval does not settle a newly opened skip 787ms
+ ✓ tests/e10-shop.test.ts (5 tests) 4754ms
+   ✓ route departure revokes pending confirmation and detached purchase entry 1530ms
+   ✓ approval followed by synchronous departure before await continuation never purchases 860ms
+   ✓ single pending dialog, cancellation then fresh retry purchases once and respects sold out 642ms
+   ✓ insufficient resources remain unchanged and cancellation does not poison retry 875ms
+   ✓ test-only unlimited item permits a second legitimate purchase after pending settles 846ms
+ ✓ tests/e14-ritual.test.ts (4 tests) 3490ms
+   ✓ canceled again consent and old cancellation cannot consume or close its replacement 1317ms
+   ✓ normal repeat 1 pull commits once without changing existing pricing 835ms
+   ✓ normal repeat 10 pull commits once without changing existing pricing 788ms
+   ✓ an insufficient-funds repeat fails without spending and can be retried after a legitimate balance update 546ms
+ ✓ tests/e10-summon.test.ts (6 tests) 5153ms
+   ✓ cancel revokes old normal confirm during the 50ms connected fade without any save write 1151ms
+   ✓ old cancel and old confirm cannot close or consume a newer confirmation 798ms
+   ✓ normal 1 summon commits exactly once despite retained callback 965ms
+   ✓ normal 10 summon commits exactly once despite retained callback 691ms
+   ✓ insufficient gems consume no save and a fresh dialog can retry once funds exist 815ms
+   ✓ route departure disposes session and old dialog callbacks cannot spend 732ms
+ ✓ tests/e11-evolve.test.ts (8 tests) 7377ms
+   ✓ leaving revokes pending evolution, stale confirmation and stale entry 1481ms
+   ✓ approve then leave in same task cancels transaction before await continuation 1070ms
+   ✓ cancel and retry retain busy guard; valid evolution commits once then celebrates on card route 961ms
+   ✓ latest save lock change rejects previously available evolution 758ms
+   ✓ latest save coin change rejects previously available evolution 829ms
+   ✓ latest save level change rejects previously available evolution 726ms
+   ✓ initial insufficient coin/level disables entry (49999/90) 720ms
+   ✓ initial insufficient coin/level disables entry (100000/1) 831ms
+ ✓ tests/e14-team-picker.test.ts (26 tests) 17529ms
+   ✓ rename button normal updates only intended team 2477ms
+   ✓ rename button cancel rejects retained callback 501ms
+   ✓ rename button leave rejects retained callback 666ms
+   ✓ rename button replaceTeam rejects retained callback 430ms
+   ✓ rename Enter cancel rejects retained callback 375ms
+   ✓ rename Enter leave rejects retained callback 700ms
+   ✓ rename Enter replaceTeam rejects retained callback 478ms
+   ✓ team picker preview is read-only, locked card remains legal to equip, removal preserves leader 498ms
+   ✓ team picker cancel rejects old equip/remove 468ms
+   ✓ team picker leave rejects old equip/remove 612ms
+   ✓ team picker switchTeam rejects old equip/remove 354ms
+   ✓ team picker replaceLineup rejects old equip/remove 340ms
+   ✓ Cost suggestion normal respects 33 limit and retains leader 359ms
+   ✓ Cost suggestion cancel cannot commit captured lineup 387ms
+   ✓ Cost suggestion leave cannot commit captured lineup 848ms
+   ✓ Cost suggestion replaceLineup cannot commit captured lineup 934ms
+   ✓ cards material-target picker normal navigation 894ms
+   ✓ cards material-target picker cancel navigation 981ms
+   ✓ cards material-target picker leave navigation 913ms
+   ✓ new picker revokes old equip/remove and old close cannot dismiss replacement 566ms
+   ✓ picker same-page changed lineup rejects without relying on route disposal 747ms
+   ✓ cost same-page changed lineup rejects without relying on route disposal 716ms
+   ✓ unrelated preference save does not revoke valid picker and normal Cost handoff stays usable 639ms
+   ✓ rename invalid input can retry; new dialog and same-page newer name revoke prior approval 635ms
+   ✓ stale candidate removed from inventory cannot be previewed or equipped 727ms
+ ✓ tests/e11-growth-app.test.ts (6 tests) 5934ms
+   ✓ enhance: route leave closes pending confirmation and old callback cannot consume resources or navigate 1619ms
+   ✓ enhance: answer then leave in the same task revokes pending async continuation 1080ms
+   ✓ enhance: cancel is read-only and new confirmation performs exactly the real growth result once 767ms
+   ✓ evolve: route leave closes pending confirmation and old callback cannot consume resources or navigate 817ms
+   ✓ evolve: answer then leave in the same task revokes pending async continuation 537ms
+   ✓ evolve: cancel is read-only and new confirmation performs exactly the real growth result once 1111ms
+ ✓ tests/e17-assistant.test.ts (5 tests) 406ms
+ ✓ tests/e12-settings-lifecycle.test.ts (6 tests) 5774ms
+   ✓ reset approval after leaving cannot clear the experiment save 1520ms
+   ✓ reset approval then same-task navigation is canceled before reset 990ms
+   ✓ import cancel revokes retained confirmation even during fade-out 915ms
+   ✓ import leave revokes retained confirmation even during fade-out 796ms
+   ✓ invalid import is repairable; valid import commits once and closed callback cannot overwrite later progress 981ms
+   ✓ reset cancel permits retry and a live confirmation resets normally 571ms
+ ✓ tests/e09-action-lifecycle.test.ts (2 tests) 1625ms
+   ✓ cancel revokes a still-connected fading skill button 1137ms
+   ✓ reopening the skill dialog revokes its previous button without revoking the new one 486ms
+ ✓ tests/e10-sale.test.ts (6 tests) 5631ms
+   ✓ leaving at confirmation 1 makes the retained approval inert 1501ms
+   ✓ leaving at confirmation 2 makes the retained approval inert 909ms
+   ✓ approval then same-task navigation at confirmation 1 cannot sell or open another dialog 937ms
+   ✓ approval then same-task navigation at confirmation 2 cannot sell or open another dialog 1137ms
+   ✓ cancel at each step permits retry; both approvals sell the high-rarity card exactly once 681ms
+   ✓ the final commit revalidates the latest lock state rather than selling the preview snapshot 466ms
+ ✓ tests/e15-oath.test.ts (5 tests) 3280ms
+   ✓ oath normal: module-memory selection lifecycle, not save 1267ms
+   ✓ oath cancel: module-memory selection lifecycle, not save 602ms
+   ✓ oath leave: module-memory selection lifecycle, not save 687ms
+   ✓ oath replacePicker: module-memory selection lifecycle, not save 397ms
+   ✓ replacement revokes old clear/toggle/confirm; MAX3 and valid clear/retry preserve stage memory without save 325ms
+ ✓ tests/e15-tutorial.test.ts (5 tests) 2376ms
+   ✓ controller answer-then-leave microtask cannot skip or grant the first gift 921ms
+   ✓ controller cancel then retry keeps old approval inert and live approval valid 421ms
+   ✓ battle guide answer-then-leave microtask cannot skip or grant the first gift 360ms
+   ✓ battle guide cancel then retry keeps old approval inert and live approval valid 335ms
+   ✓ controller invalidates a pending answer even when replacing the same route 338ms
+ ✓ tests/e13-warning.test.ts (4 tests) 3161ms
+   ✓ Later revokes a still-connected warning reset without overwriting broken bytes 1636ms
+   ✓ an open warning cannot reset a backup restored after it was created 737ms
+   ✓ a live explicit reset succeeds once and its fading callback cannot reset later progress 453ms
+   ✓ Later still permits recovery using the settings import dialog 332ms
+
+ Test Files  27 passed (27)
+      Tests  185 passed (185)
+   Start at  11:57:19
+   Duration  22.25s (transform 2.76s, setup 0ms, collect 1.86s, tests 145.13s, environment 11.61s, prepare 2.71s)
+

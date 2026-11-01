@@ -156,10 +156,10 @@ export function guideFor(step: TutorialStep, route: { name: string; args: string
 /** 和流派分析一致的編隊台詞：有紅框就說明原因，不說「隊伍已經很好用」 */
 function teamFitLines(team?: TeamFitHint): string[] {
   if (!team) return [];
-  if (team.misfits === 0) return ['每位隊員都吃得到隊長技的加成，這支隊伍很搭！'];
+  if (team.misfits === 0) return ['目前沒有隊員篩選條件的警示；流派標籤僅供編隊參考，實際加成仍以隊長技條件為準。'];
   return [
-    `有紅框的隊員和隊長不太搭${team.reason ? `：${team.reason}` : ''}。不過他們一樣會攻擊、提供生命與回復，先這樣出發也打得贏。`,
-    '等一下召喚到合得來的夥伴，再回來把紅框的隊員換掉吧。',
+    `紅框表示隊員不符合隊長技的篩選條件${team.reason ? `：${team.reason}` : ''}。這是編隊提醒，不限制你自由混搭。`,
+    '可先查看隊長技與隊員技能，再決定是否調整；實際加成與勝負仍取決於戰鬥條件。',
   ];
 }
 

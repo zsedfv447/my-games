@@ -3,7 +3,7 @@
 import type { Board, Pos } from '../../battle/board';
 import type { BattleState } from '../../battle/battle-state';
 import { ATTRIBUTE_NAMES } from '../art/palette';
-import { confirmDialog } from '../components/overlay';
+import { confirmOnScreen } from '../components/overlay';
 import { GuideLayer } from './guide-ui';
 import { TUTORIAL_COMBO, TUTORIAL_PATH, comboOfPath } from './flow';
 
@@ -64,6 +64,7 @@ export class TutorialBattleGuide implements BattleGuide {
   phase: BattleGuidePhase = 'intro';
   private layer?: GuideLayer;
   private host?: BattleGuideHost;
+  private destroyed = false;
 
   constructor(
     private t: BattleGuideTexts,
@@ -77,7 +78,9 @@ export class TutorialBattleGuide implements BattleGuide {
   }
 
   private skip = async (): Promise<void> => {
-    if (await confirmDialog('略過教學', '之後可以在「設定」重看新手教學。確定要略過嗎？', '略過')) this.callbacks.onSkip();
+    if (this.destroyed) return;
+    const approved = await confirmOnScreen('略過教學', '之後可以在「設定」重看新手教學。確定要略過嗎？', '略過');
+    if (approved === true && !this.destroyed) this.callbacks.onSkip();
   };
 
   private say(lines: string[], actions: { label: string; onClick: () => void }[] = [], onLine?: (i: number) => void): void {
@@ -167,6 +170,7 @@ export class TutorialBattleGuide implements BattleGuide {
   }
 
   destroy(): void {
+    this.destroyed = true;
     this.layer?.destroy();
   }
 }

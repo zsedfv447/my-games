@@ -9,7 +9,7 @@ import { ATTRIBUTE_NAMES, RACE_NAMES } from '../art/palette';
 import { badge, button, emptyState, panel, stars, tabs } from '../components/basic';
 import { cardPortrait, cardThumb } from '../components/card-thumb';
 import { pickCard } from '../components/card-picker';
-import { confirmDialog, toast } from '../components/overlay';
+import { confirmOnScreen, toast } from '../components/overlay';
 import { commit, getSave, growth } from '../state';
 import type { ScreenDef } from '../router';
 import {
@@ -32,7 +32,9 @@ export const cardsScreen: ScreenDef = {
   chrome: 'full',
   tab: 'cards',
   parent: 'home',
-  render({ nav }) {
+  render({ nav, onLeave }) {
+    let disposed = false;
+    onLeave(() => { disposed = true; });
     let selling = false;
     let showFilter = activeFilterCount(filter) > 0;
     let selected = new Set<string>();
@@ -46,24 +48,27 @@ export const cardsScreen: ScreenDef = {
       h('button', { type: 'button', class: ['filter-chip', on && 'on', cls], 'aria-pressed': String(on), onClick }, label);
 
     const sell = async () => {
-      if (busy) return;
+      if (busy || disposed) return;
       const p = previewSell(getSave(), growth, [...selected]);
       if (!p.sellable.length) return toast('請先選擇要販賣的卡片');
       busy = true;
       try {
-        if (!await confirmDialog('批次販賣', `販賣 ${p.sellable.length} 張卡片，獲得 ${p.coin.toLocaleString()} 金幣？`, '販賣')) return;
+        const approved = await confirmOnScreen('批次販賣', `販賣 ${p.sellable.length} 張卡片，獲得 ${p.coin.toLocaleString()} 金幣？`, '販賣');
+        if (approved !== true || disposed) return;
         if (p.needsConfirm) {
           const save = getSave();
-          const ok = await confirmDialog('包含高星卡片', h('div', null,
+          const ok = await confirmOnScreen('包含高星卡片', h('div', null,
             h('p', { style: { margin: '0 0 8px' } }, `其中有 ${p.highRarity.length} 張 ${growth.rules.sellConfirmRarity}★ 以上的卡，賣掉後無法復原。確定要賣嗎？`),
             h('div', { class: 'row wrap', style: { gap: '6px' } }, p.highRarity.map((uid) => {
               const c = save.inventory.cards.find((x) => x.uid === uid)!;
               return cardThumb(growth.card(c.cardId)!, { level: c.level, size: 44 });
             }))), '確定販賣');
-          if (!ok) return;
+          if (ok !== true || disposed) return;
         }
+        if (disposed) return;
         const r = sellCards(getSave(), growth, p.sellable, { confirmHighRarity: p.needsConfirm });
         if (!r.ok) return toast(r.error.message);
+        if (disposed) return;
         commit(r.save);
         toast(`獲得 ${r.coin.toLocaleString()} 金幣`);
         selected = new Set();

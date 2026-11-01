@@ -5,7 +5,7 @@ import { addQuestCounters } from '../../progression/quests';
 import { buyItem, remainingPurchases } from '../../progression/shop';
 import { audio } from '../audio';
 import { button, emptyState, icon, resource, resourceIcon, tabs } from '../components/basic';
-import { confirmDialog, toast } from '../components/overlay';
+import { confirmOnScreen, toast } from '../components/overlay';
 import { rewardArt, screenBanner } from '../components/rewards';
 import { eventBanner } from '../components/event-banner';
 import { clear, h } from '../dom';
@@ -43,7 +43,7 @@ export function purchase(item: ShopItemDef): boolean {
   return true;
 }
 
-function itemCard(item: ShopItemDef, refresh: () => void): HTMLElement {
+function itemCard(item: ShopItemDef, requestPurchase: (item: ShopItemDef) => void): HTMLElement {
   const save = getSave();
   const now = Date.now();
   const left = remainingPurchases(save, item, now, gameData.events);
@@ -63,12 +63,7 @@ function itemCard(item: ShopItemDef, refresh: () => void): HTMLElement {
       disabled: soldOut,
       cost: { kind: price.icon, amount: price.amount },
       sound: 'tap',
-      onClick: async () => {
-        const unit = price.token ? tokenName(price.token) : price.icon === 'gem' ? '星晶' : '金幣';
-        if (!(await confirmDialog('確認購買', `花費 ${unit} ${price.amount.toLocaleString()} 購買「${item.name}」？`, '購買'))) return;
-        purchase(item);
-        refresh();
-      },
+      onClick: () => requestPurchase(item),
     }));
 }
 
@@ -79,6 +74,24 @@ export const shopScreen: ScreenDef = {
   tab: 'shop',
   render({ route, nav, onLeave }) {
     if (TABS.some((t) => t.id === route.args[0])) activeTab = route.args[0] as ShopTab;
+    let disposed = false;
+    let pending = false;
+    onLeave(() => { disposed = true; });
+    const requestPurchase = async (item: ShopItemDef) => {
+      if (disposed || pending) return;
+      pending = true;
+      try {
+        const price = shopPrice(item);
+        const unit = price.token ? tokenName(price.token) : price.icon === 'gem' ? '星晶' : '金幣';
+        const answer = await confirmOnScreen('確認購買', `花費 ${unit} ${price.amount.toLocaleString()} 購買「${item.name}」？`, '購買');
+        // A resolved approval is still revoked if this screen left before the continuation.
+        if (answer !== true || disposed) return;
+        purchase(item);
+        refresh();
+      } finally {
+        pending = false;
+      }
+    };
     // 兌換分頁依活動分組：活動橫幅（倒數）→ 該活動代幣持有數 → 用該代幣標價的商品
     const banners = new Map(gameData.events.filter((e) => e.token).map((e) => [e.id, eventBanner(e, { nav, onLeave, showShop: false })]));
     const list = h('div', { class: 'shop-list' });
@@ -88,14 +101,14 @@ export const shopScreen: ScreenDef = {
       const items = gameData.shop.filter((i) => shopTab(i) === activeTab);
       if (!items.length) list.append(emptyState('shop', '目前沒有商品'));
       if (activeTab !== 'event') {
-        list.append(...items.map((i) => itemCard(i, refresh)));
+        list.append(...items.map((i) => itemCard(i, requestPurchase)));
         return;
       }
       for (const e of gameData.events) {
         const own = items.filter((i) => e.token && i.price.tokens?.[e.token] !== undefined);
         if (!own.length) continue;
         list.append(banners.get(e.id)!, h('div', { class: 'shop-wallet' }, resource('token', `${tokenName(e.token!)} ${(save.player.tokens[e.token!] ?? 0).toLocaleString()}`)));
-        list.append(...own.map((i) => itemCard(i, refresh)));
+        list.append(...own.map((i) => itemCard(i, requestPurchase)));
       }
     };
     refresh();

@@ -11,7 +11,7 @@ import { planDrops, planMatches, type DropPlan } from '../progression/drops';
 import { applyOathTeam, isOathId, oathModifiers, type OathId } from '../progression/oaths';
 import { codexEnemies, markEnemiesSeen } from '../progression/bestiary';
 import { gameData } from '../data/load';
-import { confirmDialog, confirmOnScreen } from './components/overlay';
+import { confirmOnScreen } from './components/overlay';
 import type { Navigator } from './router';
 import { buildSortieTeam } from './sortie';
 import { commit, getSave, growth } from './state';
@@ -84,28 +84,36 @@ export function abandonBattle(): void {
 }
 
 /** 出戰前檢查：已有進行中的戰鬥時詢問。回傳 'resume' 直接回到那場戰鬥、'start' 可以出發、'cancel' 不出發 */
-export async function confirmNewBattle(stageId: string): Promise<'resume' | 'start' | 'cancel'> {
+export async function confirmNewBattle(stageId: string, isCurrent?: () => boolean): Promise<'resume' | 'start' | 'cancel'> {
   const active = getSave().activeBattle;
+  // 回答只授權這張入場券；同頁換票也必須重新詢問。
+  const current = () => !isCurrent || isCurrent();
+  const valid = () => current() && getSave().activeBattle === active;
+  if (!valid()) return 'cancel';
   if (!active) return 'start';
+  const ask = confirmOnScreen;
   const name = findStage(active.stageId)?.name ?? active.stageId;
   if (active.stageId === stageId) {
-    const go = await confirmDialog('有未完成的戰鬥', `「${name}」還有沒打完的戰鬥，要直接繼續嗎？重新出發會視為放棄，並再次消耗體力。`, '繼續', '重新出發');
+    const go = await ask('有未完成的戰鬥', `「${name}」還有沒打完的戰鬥，要直接繼續嗎？重新出發會視為放棄，並再次消耗體力。`, '繼續', '重新出發');
+    if (go === null || !valid()) return 'cancel';
     if (go) return 'resume';
-  } else if (!(await confirmDialog('放棄進行中的戰鬥？', `「${name}」還沒打完。放棄會視為失敗，已消耗的體力不會退還。`, '放棄並出發', '取消'))) {
-    return 'cancel';
+  } else {
+    const go = await ask('放棄進行中的戰鬥？', `「${name}」還沒打完。放棄會視為失敗，已消耗的體力不會退還。`, '放棄並出發', '取消');
+    if (go !== true || !valid()) return 'cancel';
   }
   abandonBattle();
-  return 'start';
+  // stageFailed listener 可能同步建立另一張票或離頁。
+  return current() && !getSave().activeBattle ? 'start' : 'cancel';
 }
 
 /** 進主城時發現有沒打完的戰鬥：詢問要繼續還是放棄。有詢問時回傳 true */
-export function maybeOfferResume(nav: Navigator): boolean {
+export function maybeOfferResume(nav: Navigator, isCurrent: () => boolean = () => true): boolean {
   const active = getSave().activeBattle;
   const stage = active && findStage(active.stageId);
   if (!active || !stage) return false;
   // 還沒選就換了畫面：不繼續也不放棄，下次回主城再問
   void confirmOnScreen('有未完成的戰鬥', `要繼續「${stage.name}」嗎？放棄會視為失敗，已消耗的體力不會退還。`, '繼續', '放棄').then((go) => {
-    if (go === null) return;
+    if (go === null || !isCurrent() || getSave().activeBattle !== active) return;
     if (go) return nav.go('battle', [stage.id]);
     abandonBattle();
   });

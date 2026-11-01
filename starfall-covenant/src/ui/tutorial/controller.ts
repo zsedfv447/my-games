@@ -4,13 +4,14 @@ import { bus } from '../../core/events';
 import { gameData } from '../../data/load';
 import { pullCost } from '../../progression/gacha';
 import { analyzeTeam } from '../../growth';
-import { confirmDialog, toast } from '../components/overlay';
+import { confirmOnScreen, toast } from '../components/overlay';
 import { revealReward } from '../components/reward-reveal';
 import type { Navigator, Route, ScreenDef } from '../router';
 import { commit, getSave, growth, onStateChange } from '../state';
 import { FIRST_STAGE, advanceTutorial, grantSummonGift, guideFor, tutorialStep, type GuideAction, type TeamFitHint } from './flow';
 import { GuideLayer } from './guide-ui';
 import { skipTutorialNow } from './skip';
+import { presentTeamFit } from '../team-fit-presentation';
 
 export interface TutorialController {
   onRoute(screen: ScreenDef, el: HTMLElement, route: Route): void;
@@ -19,7 +20,8 @@ export interface TutorialController {
 /** 目前隊伍的流派分析結果（和編隊畫面的紅框同一份計算） */
 function teamFitHint(): TeamFitHint {
   const save = getSave();
-  const misfits = analyzeTeam(save, growth, save.teams[save.activeTeam].members).members.filter((m) => !m.fits);
+  const report = analyzeTeam(save, growth, save.teams[save.activeTeam].members);
+  const misfits = report.members.filter((m) => presentTeamFit(growth.card(m.cardId), report).warning);
   return { misfits: misfits.length, reason: misfits[0]?.reasons[0] };
 }
 
@@ -28,6 +30,7 @@ export function installTutorial(stage: HTMLElement, nav: Navigator): TutorialCon
   let route: Route | null = null;
   let screenEl: HTMLElement | null = null;
   let shownKey = '';
+  let routeGeneration = 0;
   /** 領獎演出播放中，先不疊引導 */
   let revealing = false;
 
@@ -39,7 +42,9 @@ export function installTutorial(stage: HTMLElement, nav: Navigator): TutorialCon
   };
 
   const askSkip = async () => {
-    if (!(await confirmDialog('略過教學', '之後可以在「設定」重看新手教學。確定要略過嗎？', '略過'))) return;
+    const generation = routeGeneration;
+    const approved = await confirmOnScreen('略過教學', '之後可以在「設定」重看新手教學。確定要略過嗎？', '略過');
+    if (approved !== true || generation !== routeGeneration) return;
     toast('已略過新手教學');
     await skipTutorialNow();
   };
@@ -93,6 +98,7 @@ export function installTutorial(stage: HTMLElement, nav: Navigator): TutorialCon
 
   return {
     onRoute(_screen, el, r) {
+      routeGeneration++;
       route = r;
       screenEl = el;
       shownKey = '';

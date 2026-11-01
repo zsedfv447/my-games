@@ -68,7 +68,7 @@ describe('追卡指南', () => {
     const pool = gameData.gachaPools.find((p) => p.id === 'pool-standard')!;
     const id = Object.values(pool.cards).flat()[0]!;
     const r = acquireRoutes(fresh(), id, data, OPEN).find((x) => x.kind === 'gacha' && x.pool.id === 'pool-standard')!;
-    expect(r.go).toEqual(['summon', []]);
+    expect(r.go).toEqual(['summon', ['pool-standard']]);
   });
 
   it('現在拿得到的排在前面', () => {
@@ -86,6 +86,6 @@ describe('進化缺素材時指路', () => {
     expect(g[0].need).toBe(2);
     expect(g[0].have).toBe(0);
     expect(g[0].routes.length).toBeGreaterThan(0);
-    for (const r of g[0].routes) expect(['drop', 'firstClear', 'shop']).toContain(r.kind);
+    for (const r of g[0].routes) expect(['drop', 'firstClear', 'periodFirstClear', 'shop']).toContain(r.kind);
   });
 });

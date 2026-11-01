@@ -42,10 +42,12 @@ export const homeScreen: ScreenDef = {
   tab: 'home',
   render({ nav, onLeave }) {
     audio.playBgm('home');
+    let disposed = false;
+    onLeave(() => { disposed = true; });
     // 每天第一次回到主城自動跳出登入獎勵（等畫面掛上後再開）
     // 有沒打完的戰鬥時先問要不要繼續，這次就不跳登入獎勵
     // 登入獎勵這次沒跳出時，接著看要不要跳上週的契約週報（每週一次）
-    const popup = maybeOfferResume(nav) ? undefined : setTimeout(() => {
+    const popup = maybeOfferResume(nav, () => !disposed) ? undefined : setTimeout(() => {
       if (!maybeShowLoginPopup(() => root.querySelectorAll('[data-badge="login"]').forEach((el) => el.remove()))) maybeShowWeeklyReport();
     }, 350);
     onLeave(() => clearTimeout(popup));

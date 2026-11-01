@@ -1,5 +1,7 @@
 // 流派圖鑑（GDD 2.0）：流派說明、收集進度、免抽入門、流派試煉入口
 import { openCardQuickView } from '../components/card-quickview';
+import { chainTacticsView } from '../components/chain-tactics';
+import { fixedTacticsView } from '../components/fixed-tactics';
 import { codexSwitch } from '../components/codex-tabs';
 import { h } from '../dom';
 import { gameData } from '../../data/load';
@@ -84,6 +86,8 @@ export const archetypesScreen: ScreenDef = {
             h('div', { class: 'row wrap' },
               button('經典封印', { small: true, onClick: () => nav.go('summon', ['classic-seal']) }),
               button('金幣兌換', { small: true, onClick: () => nav.go('shop', ['coin']) }))),
+          a.id === 'fixed' && fixedTacticsView(nav),
+          a.id === 'chain' && chainTacticsView(nav),
           trialButtons(a.id, nav),
         );
         section.id = `archetype-${a.id}`;

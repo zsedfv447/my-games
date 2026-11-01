@@ -1,9 +1,10 @@
+import { conversionPreviewView } from '../skill-conversion-preview';
 // 戰鬥畫面：上方敵人區、中間隊伍與生命條、下方 6×5 盤面（GDD 2.5 第 4 項）
 import { h, svg, clear } from '../dom';
 import { gameData } from '../../data/load';
 import { bus } from '../../core/events';
 import { createRng } from '../../core/rng';
-import type { StageDef } from '../../core/types';
+import type { ActiveBattle, StageDef } from '../../core/types';
 import { startBattle, type Battle, type BattleData, type BattleState, type EnemyState, type TurnSummary } from '../../battle/battle-state';
 import { BoardView } from '../../battle/view/board-view';
 import { isMemberSealed } from '../../battle/skills/status';
@@ -24,7 +25,7 @@ import { userAsset } from '../assets';
 import { audio } from '../audio';
 import { badge, bar, button, emptyState, iconButton, updateBar } from '../components/basic';
 import { cardThumb } from '../components/card-thumb';
-import { confirmDialog, openDialog, toast, type DialogHandle } from '../components/overlay';
+import { confirmOnScreen, openDialog, toast, type DialogHandle } from '../components/overlay';
 import { DEMO_HELPER, DEMO_TEAM, PRACTICE_MODES, isPracticeMode, practiceSetup, type PracticeMode } from '../demo';
 import { drillById, isDrillId, settleDrill, type DrillLog } from '../../progression/drills';
 import { trackDrill } from '../drill-tracker';
@@ -64,7 +65,7 @@ import { battleDataFor, findStage } from '../stage-lookup';
 import { completeAbyssFloor } from '../../progression/abyss';
 import { stageCleared } from '../eclipse-view';
 import { completeEclipseStage, isEclipseId } from '../../progression/eclipse';
-import { collectedDrops } from '../../progression/active-battle';
+import { collectedDrops, recordBattleSnapshot } from '../../progression/active-battle';
 import type { CardExpGain } from '../../growth';
 import { LABEL } from '../wording';
 import { openOrbAssistant, type OrbAssistantHandle } from '../components/orb-assistant';
@@ -180,6 +181,7 @@ class BattleView {
   private fallen: number[] = [];
   private shownHp: number;
   private dialog?: DialogHandle;
+  private skillDialog?: DialogHandle;
   /** 契印師手札的戰績紀錄（練習與教學不記） */
   private drill?: { log: () => DrillLog; dispose: () => void };
   private records?: BattleRecordTracker;
@@ -200,6 +202,10 @@ class BattleView {
   private assistantPlanning = false;
   private assistantGeneration = 0;
   private destroyed = false;
+  /** 同一畫面的勝利結算只能啟動一次；離頁後交給新的還原畫面接手。 */
+  private winStarted = false;
+  /** 入場身分不隨每回合快照換物件；不可把稍後換入的新票視為本畫面的戰鬥。 */
+  private readonly sessionTicket: Pick<ActiveBattle, 'stageId' | 'seed' | 'startedAt'> | null;
   private assistantPlans = new WeakMap<AssistantPlan, { fingerprint: string; target?: number }>();
   private assistantMode = button('模式：智慧', { small: true, onClick: () => this.openAssistant() });
   private assistantRun = button('', { small: true, onClick: () => { if (this.assistantPlanning || this.assistantPlaying) this.stopAssistant(); else void this.quickAssistant(); } });
@@ -214,6 +220,8 @@ class BattleView {
 
   constructor(private s: Setup, private nav: Navigator) {
     this.policy = battlePolicy({ practice: s.practice, tutorial: !!s.guide });
+    const active = this.policy.savesProgress ? getSave().activeBattle : null;
+    this.sessionTicket = active ? { stageId: active.stageId, seed: active.seed, startedAt: active.startedAt } : null;
     this.state = s.battle.getState();
     this.shownHp = this.state.hp;
     this.speed = getSettings().battleSpeed;
@@ -301,6 +309,7 @@ class BattleView {
     this.offs.forEach((off) => off());
     this.boardView.destroy();
     this.dialog?.close();
+    this.skillDialog?.close();
     this.s.guide?.destroy();
   }
 
@@ -616,9 +625,20 @@ class BattleView {
     }
   }
 
+  /** 正式行動限本畫面的入場身分；快照更新不會改變這三個值。 */
+  private ownsSession(): boolean {
+    if (this.destroyed) return false;
+    if (!this.policy.savesProgress) return true;
+    const active = getSave().activeBattle;
+    return !!active && !!this.sessionTicket && active.stageId === this.s.stage.id
+      && active.stageId === this.sessionTicket.stageId && active.seed === this.sessionTicket.seed
+      && active.startedAt === this.sessionTicket.startedAt;
+  }
+
   /** 點隊員頭像：顯示主動技說明，確認後施放 */
   private useSkill(i: number): void {
-    if (!canAct(this.guard)) return;
+    if (!this.ownsSession() || !canAct(this.guard)) return;
+    this.skillDialog?.close();
     this.assistant?.close();
     this.boardView.previewPath(null);
     const m = this.state.team[i];
@@ -630,15 +650,21 @@ class BattleView {
     const ready = m.skillCooldown === 0 && !sealed;
     const dlg = openDialog(skill.name, h('div', null,
       h('p', null, skill.description),
+      conversionPreviewView(this.state, i, skill),
       h('p', { class: 'small-text dim' }, sealed ? '被星紋封印，暫時不能施放' : ready ? '可以施放' : `冷卻中，還要 ${m.skillCooldown} 回合`),
     ), [
       button('取消', { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
-      button('施放', { variant: 'primary', disabled: !ready, onClick: () => { dlg.close(); void this.castSkill(i); } }),
-    ]);
+      button('施放', { variant: 'primary', disabled: !ready, onClick: () => {
+        if (this.skillDialog !== dlg || !this.ownsSession()) return;
+        dlg.close();
+        void this.castSkill(i);
+      } }),
+    ], { onClose: () => { if (this.skillDialog === dlg) this.skillDialog = undefined; } });
+    this.skillDialog = dlg;
   }
 
   private async castSkill(i: number): Promise<void> {
-    if (!canAct(this.guard)) return;
+    if (!this.ownsSession() || !canAct(this.guard)) return;
     this.stopAssistant();
     const before = this.state;
     const r = this.s.battle.useSkill(i);
@@ -686,9 +712,11 @@ class BattleView {
 
   /** wasEnabled：取消後要不要重新開放盤面（從暫停選單來時由暫停前的狀態決定） */
   private async askRetreat(wasEnabled = !this.boardView.element.classList.contains('disabled')): Promise<void> {
-    if (!canAct(this.guard)) return;
+    if (!this.ownsSession() || !canAct(this.guard)) return;
     this.boardView.setEnabled(false);
-    if (await confirmDialog('撤退', this.s.practice ? '要離開練習場嗎？' : '撤退會視為失敗，已消耗的體力不會退還。')) {
+    const answer = await confirmOnScreen('撤退', this.s.practice ? '要離開練習場嗎？' : '撤退會視為失敗，已消耗的體力不會退還。');
+    if (answer === null || !this.ownsSession() || !canAct(this.guard)) return;
+    if (answer) {
       this.s.battle.forfeit();
       if (this.policy.emitsStageEvents) bus.emit('stageFailed', { stageId: this.s.stage.id });
       this.leaveDefeated();
@@ -906,8 +934,17 @@ class BattleView {
   }
 
   private async onWin(): Promise<void> {
+    if (this.destroyed || this.winStarted || this.s.battle.getState().phase !== 'won') return;
+    this.winStarted = true;
+    const ticket = this.policy.savesProgress ? getSave().activeBattle : null;
+    if (this.policy.savesProgress && (!ticket || !this.sessionTicket
+      || ticket.stageId !== this.s.stage.id || ticket.stageId !== this.sessionTicket.stageId
+      || ticket.seed !== this.sessionTicket.seed || ticket.startedAt !== this.sessionTicket.startedAt)) return;
     this.boardView.setEnabled(false);
     await this.playFinisher();
+    // 演出期間可能已離頁、由新畫面接手或換了入場券；舊回呼不可發獎或清掉新戰鬥。
+    // 一次驗證後同步完成既有結算，包含清票後的羈絆／任務，不在中途誤擋合法副作用。
+    if (this.destroyed || (this.policy.savesProgress && getSave().activeBattle !== ticket)) return;
     audio.play('win');
     audio.playBgm('victory');
     if (this.s.guide) return this.tutorialResult(this.s.guide);
@@ -1025,30 +1062,45 @@ class BattleView {
     audio.play('lose');
     const gems = getSave().player.gems;
     const cost = this.policy.paidContinue ? CONTINUE_COST_GEMS : 0;
+    // A closing overlay remains clickable for its fade-out; authorize each loss dialog only once.
+    let settled = false;
+    const available = () => !settled && !this.destroyed && this.dialog === dialog && this.s.battle.getState().phase === 'lost';
+    const settle = () => { settled = true; abandon.disabled = true; resume.disabled = true; };
     const giveUp = () => {
-      this.dialog?.close();
+      if (!available()) return;
+      settle();
+      dialog.close();
       if (this.policy.emitsStageEvents) bus.emit('stageFailed', { stageId: this.s.stage.id });
       this.leaveDefeated();
     };
     const doContinue = () => {
-      if (this.policy.paidContinue) {
-        const paid = payContinue(getSave());
-        if (!paid.ok) return toast('星晶不足');
-        commit(paid.save);
-      }
+      if (!available()) return;
+      // Pure payment calculation only: never debit a battle the engine rejects.
+      const paid = this.policy.paidContinue ? payContinue(getSave()) : undefined;
+      if (paid && !paid.ok) return toast('星晶不足');
+      settle();
       const r = this.s.battle.continueBattle();
-      if (!r.ok) return toast(r.reason);
-      this.persist();
-      this.dialog?.close();
+      if (!r.ok) {
+        settled = false;
+        const retryable = available();
+        abandon.disabled = !retryable;
+        resume.disabled = !retryable || getSave().player.gems < cost;
+        return toast(r.reason);
+      }
+      let next = paid?.ok ? paid.save : getSave();
+      if (this.policy.savesProgress) next = recordBattleSnapshot(next, this.s.battle.snapshot());
+      // Payment and the successful revive snapshot become durable together; practice writes neither.
+      if (paid?.ok || this.policy.savesProgress) commit(next);
+      dialog.close();
       this.state = this.s.battle.getState();
       this.shownHp = this.state.hp;
       this.renderHp();
       this.boardView.setEnabled(true);
     };
-    this.dialog = openDialog('隊伍倒下了', h('p', null, cost ? `花費 ${cost} 星晶續戰，生命回滿並繼續這一波。（持有 ${gems}）` : '要再試一次嗎？'), [
-      button('放棄', { variant: 'ghost', sound: 'back', onClick: giveUp }),
-      button('續戰', { variant: 'primary', cost: cost ? { kind: 'gem', amount: cost } : undefined, disabled: gems < cost, onClick: doContinue }),
-    ], { dismissible: false });
+    const abandon = button('放棄', { variant: 'ghost', sound: 'back', onClick: giveUp });
+    const resume = button('續戰', { variant: 'primary', cost: cost ? { kind: 'gem', amount: cost } : undefined, disabled: gems < cost, onClick: doContinue });
+    const dialog = openDialog('隊伍倒下了', h('p', null, cost ? `花費 ${cost} 星晶續戰，生命回滿並繼續這一波。（持有 ${gems}）` : '要再試一次嗎？'), [abandon, resume], { dismissible: false });
+    this.dialog = dialog;
   }
 
   /** 失敗離場：正式關卡先顯示失敗引導（components/defeat-guide.ts），練習與教學直接返回 */

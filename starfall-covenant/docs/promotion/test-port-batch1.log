@@ -1,0 +1,75 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-production-promotion/starfall-covenant
+
+ ✓ tests/e07-departure.test.ts (11 tests) 149ms
+ ✓ tests/e04-navigation.test.ts (3 tests) 3200ms
+   ✓ real Router c710 detail→Back and codex replace tabs retain conversion, existing filters, results and scroll without writes 1948ms
+   ✓ clear conversion preserves legacy filters/status; historical owned is not current holdings or a browsing reward 511ms
+   ✓ fresh module load resets conversion query and disclosure instead of persisting either 740ms
+ ✓ tests/e08-acquire-team.test.ts (1 test) 3378ms
+   ✓ real app conversion codex→acquire→coin shop→cancel/buy once→team preview cancel/confirm→codex retains context and ownership 3376ms
+ ✓ tests/e08-saved-battle.test.ts (1 test) 3745ms
+   ✓ unanswered home prompt → route departure → module reload → resume → real skill persisted → reload preserves full battle and rewards 3744ms
+ ✓ tests/e02-conversion-preview.test.ts (7 tests) 38ms
+ ✓ tests/e08-new-player.test.ts (2 tests) 4394ms
+   ✓ fresh title→prologue→real tutorial battle→skip gift→restart/skip→reload grants the lifetime gift only once 3027ms
+   ✓ explicit post-team checkpoint→real summon gift/defer→first departure→before-story reload→battle reload keeps one paid ticket; stage tutorial finishes only at battle 1367ms
+ ✓ tests/e07-continue-app.test.ts (5 tests) 4570ms
+   ✓ real resumed loss:50ms duplicate/detached Continue and stale GiveUp settle once; next genuine loss can pay again 2709ms
+   ✓ insufficient gems: even dispatched disabled-button event cannot debit, revive or persist a changed snapshot 465ms
+   ✓ actual player phase rejects stale defeat Continue without charging or committing 417ms
+   ✓ GiveUp first cannot be undone by stale Continue callback 589ms
+   ✓ real Router departure destroys view: detached defeat callbacks cannot mutate save or engine 388ms
+ ✓ tests/e05-display.test.ts (9 tests) 78ms
+ ✓ tests/e03-view.test.ts (5 tests) 354ms
+ ✓ tests/e08-pool-route.test.ts (3 tests) 2553ms
+   ✓ c710 named source covenant-seal overrides remembered unrelated pool; banner/tab/rates/confirmation agree, cancellation is read-only 1132ms
+   ✓ c710 named source pool-standard overrides remembered unrelated pool; banner/tab/rates/confirmation agree, cancellation is read-only 871ms
+   ✓ synthetic closed named pool remains inspectable but normal summon gates stay disabled and cannot debit 549ms
+stdout | tests/e08-defeat-recovery.test.ts > re-entering recovered won battle during finisher must not settle the same ticket twice
+E08_SETTLEMENT_EVIDENCE {"coinDelta":240,"playerExpDelta":18,"levelBefore":1,"levelAfter":1,"cardExpDelta":60,"added":[{"id":"c901","uid":"u6"}],"stageCleared":1,"gemsDelta":-4}
+
+ ✓ tests/e07-departure-app.test.ts (7 tests) 5591ms
+   ✓ replacement active ticket while confirming is never abandoned even with identical stageId 2363ms
+   ✓ same-stage resume restores complete HP/board/CD/RNG snapshot and costs no stamina or persistence 428ms
+   ✓ different-stage cancel keeps original ticket and stamina, then can retry confirmation 523ms
+   ✓ leaving unanswered prepare st-1-1 and triggering old modal callback never abandons or charges 515ms
+   ✓ leaving unanswered prepare st-1-2 and triggering old modal callback never abandons or charges 567ms
+   ✓ explicit same-stage restart abandons once and charges one entry despite repeated synchronous clicks 548ms
+   ✓ failed insufficient-stamina departure releases pending guard and later valid retry starts normally 642ms
+ ✓ tests/e04-view.test.ts (5 tests) 595ms
+ ✓ tests/e07-continue.test.ts (5 tests) 2202ms
+   ✓ one lost dialog double click50ms apart charges5 only once and commits paid successful snapshot atomically 785ms
+   ✓ real engine already in player phase rejects stale continue without payment or save writes 430ms
+   ✓ insufficient current gems rechecked at click without debit, and destroyed view old callback cannot act 366ms
+   ✓ second genuine loss has a new transaction; previous dialog callbacks cannot spend or abandon it 618ms
+ ✓ tests/e01-team-fit.test.ts (5 tests) 102ms
+ ✓ tests/e02-skill-dialog.test.ts (1 test) 271ms
+ ✓ tests/e05-engine-descriptions.test.ts (10 tests) 40ms
+ ✓ tests/e04-data-conversion.test.ts (10 tests) 183ms
+ ✓ tests/e03-engine-fixed.test.ts (17 tests) 49ms
+ ✓ tests/e03-content.test.ts (8 tests) 77ms
+ ✓ tests/e05-display-battle.test.ts (5 tests) 957ms
+ ✓ tests/e04-query.test.ts (7 tests) 17ms
+ ✓ tests/e05-active-copy.test.ts (11 tests) 5ms
+ ✓ tests/e01-fit-classification.test.ts (6 tests) 3ms
+ ✓ tests/e03-prepare.test.ts (1 test) 66ms
+ ✓ tests/e05-tutorial-fit.test.ts (3 tests) 2115ms
+   ✓ installed team tutorial agrees with neutral c811+c710 tag-only result; reading does not grant or advance 681ms
+   ✓ installed team tutorial keeps real non-beast filter warning without guaranteeing victory or forcing swaps 1176ms
+ ✓ tests/e08-win-lifecycle.test.ts (3 tests) 4818ms
+   ✓ leaving a real recovered victory during finisher grants nothing; the won ticket remains recoverable 1783ms
+   ✓ a same-stage newer ticket installed during finisher cannot receive old rewards or be cleared 2326ms
+   ✓ same-session snapshot persistence after view creation still permits exactly one settlement 707ms
+ ✓ tests/e08-defeat-recovery.test.ts (5 tests) 10159ms
+   ✓ paid revival→real victory→resumed result grants once; noContinue star stays false and settled re-entry cannot reward again 3732ms
+   ✓ re-entering recovered won battle during finisher must not settle the same ticket twice 1696ms
+   ✓ leaving recovered win during finisher defers settlement until a live resume, without background rewards 1577ms
+   ✓ same-stage replacement ticket at 0ms survives an older winning view without reward or accidental clear 1929ms
+   ✓ same-stage replacement ticket at 50ms survives an older winning view without reward or accidental clear 1223ms
+
+ Test Files  27 passed (27)
+      Tests  156 passed (156)
+   Start at  11:57:12
+   Duration  11.01s (transform 3.23s, setup 0ms, collect 9.45s, tests 49.71s, environment 6.67s, prepare 2.39s)
+

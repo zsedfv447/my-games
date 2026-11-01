@@ -269,23 +269,26 @@ export const summonRitualScreen: ScreenDef = {
     let left = false;
     let confirming = false;
     let dialog: DialogHandle | undefined;
-    const cancel = () => { confirming = false; dialog?.close(); dialog = undefined; };
     const ritual = new Ritual(p, {
       again: () => {
         if (left || confirming) return;
         confirming = true;
         const confirm = button(LABEL.summon, { variant: 'primary', onClick: () => {
-          if (left || confirm.disabled) return;
+          if (left || dialog !== ownDialog || confirm.disabled) return;
           confirm.disabled = true;
+          ownDialog.close();
           const next = startPull(p.pool, p.count);
-          cancel();
           if (!next) return;
           left = true;
           setPending(next);
           nav.replace('summon-ritual');
         } });
-        dialog = openDialog('再次召喚', h('p', null, `消耗 ${pullCost(p.pool, p.count)} 星晶，從「${p.pool.name}」召喚 ${p.count} 張卡片。`),
-          [button('取消', { variant: 'ghost', sound: 'back', onClick: cancel }), confirm], { dismissible: false });
+        const ownDialog = openDialog('再次召喚', h('p', null, `消耗 ${pullCost(p.pool, p.count)} 星晶，從「${p.pool.name}」召喚 ${p.count} 張卡片。`),
+          [button('取消', { variant: 'ghost', sound: 'back', onClick: () => ownDialog.close() }), confirm], {
+            dismissible: false,
+            onClose: () => { if (dialog === ownDialog) { confirming = false; dialog = undefined; } },
+          });
+        dialog = ownDialog;
       },
       done: () => { if (!left) { left = true; nav.back(); } },
     });

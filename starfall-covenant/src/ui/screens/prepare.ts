@@ -96,7 +96,7 @@ export const prepareScreen: ScreenDef = {
   title: '出戰確認',
   chrome: 'sub',
   parent: 'adventure',
-  render({ route, nav }) {
+  render({ route, nav, onLeave }) {
     const stage = findStage(route.args[0] ?? '');
     if (!stage) return h('div', null, emptyState('adventure', '找不到這一關'));
     const eclipse = isEclipseId(stage.id);
@@ -119,26 +119,51 @@ export const prepareScreen: ScreenDef = {
     const gotStars = stageStars(save, stage);
     const fastest = recordsOf(save).fastestTurns[stage.id];
 
+    let pending = false;
+    let departed = false;
+    let disposed = false;
+    onLeave(() => { disposed = true; });
     const start = async () => {
-      // 已有進行中的戰鬥：同一關可以直接回去繼續，別關要先確認放棄（記失敗）才出發
-      const check = await confirmNewBattle(stage.id);
-      if (check === 'resume') return nav.go('battle', [stage.id]);
-      if (check === 'cancel') return;
-      const now = Date.now();
-      const sortie = team.borrowed ? undefined : { members: team.cards, helper: team.helperCard };
-      const ctx = stageContext(gameData.stages, gameData.events);
-      const entered = eclipse
-        ? enterEclipseStage(getSave(), stage, ctx, gameData.config, now, sortie, gameData.chapters)
-        : enterStage(getSave(), stage, ctx, gameData.config, now, sortie);
-      if (!entered.ok) return toast(ENTER_ERRORS[entered.reason] ?? entered.reason);
-      commit(entered.save);
-      armBattle(stage.id, undefined, oaths);
-      // 第一次挑戰時先播關卡開場劇情（progression/stage-story.ts），播完直接進戰鬥
-      const saved = getSave();
-      const before = stageStoryToPlay(stage, 'before', gameData.story, saved.progress.storySeen, !stageCleared(saved, stage));
-      if (before) nav.go('story', [before], { next: `battle/${stage.id}` });
-      else nav.go('battle', [stage.id]);
+      // 第一個 await 前就鎖住這次出發；只限制本畫面的交易，不阻擋其他介面。
+      if (pending || departed || disposed) return;
+      pending = true;
+      startButton.disabled = true;
+      try {
+        // 已有戰鬥的確認也綁定畫面，離頁後不能再放棄舊戰鬥或扣體力。
+        const originalTicket = getSave().activeBattle;
+        const check = await confirmNewBattle(stage.id, () => !disposed);
+        if (disposed || check === 'cancel') return;
+        if (check === 'resume') {
+          if (getSave().activeBattle !== originalTicket) return;
+          departed = true;
+          nav.go('battle', [stage.id]);
+          return;
+        }
+        // 即使確認回傳 start，await 空檔或 stageFailed listener 仍可能建立新入場券。
+        // 不能用這次舊操作覆蓋它；放開交易鎖，交給下一次點擊重新確認。
+        if (getSave().activeBattle) return;
+        const now = Date.now();
+        const sortie = team.borrowed ? undefined : { members: team.cards, helper: team.helperCard };
+        const ctx = stageContext(gameData.stages, gameData.events);
+        const entered = eclipse
+          ? enterEclipseStage(getSave(), stage, ctx, gameData.config, now, sortie, gameData.chapters)
+          : enterStage(getSave(), stage, ctx, gameData.config, now, sortie);
+        if (!entered.ok) return toast(ENTER_ERRORS[entered.reason] ?? entered.reason);
+        commit(entered.save);
+        armBattle(stage.id, undefined, oaths);
+        departed = true;
+        // 第一次挑戰先播既有開場劇情，沒有另建出戰或獎勵流程。
+        const saved = getSave();
+        const before = stageStoryToPlay(stage, 'before', gameData.story, saved.progress.storySeen, !stageCleared(saved, stage));
+        if (before) nav.go('story', [before], { next: `battle/${stage.id}` });
+        else nav.go('battle', [stage.id]);
+      } finally {
+        pending = false;
+        // 取消、體力不足或其他入場失敗可重試；成功後殘留按鈕不可再結算。
+        if (!departed && !disposed) startButton.disabled = !!problem || !!oathProblem;
+      }
     };
+    const startButton = button('出發', { variant: 'primary', block: true, icon: 'sword', disabled: !!problem || !!oathProblem, cost: { kind: 'stamina', amount: stage.stamina }, onClick: start });
 
     return h(
       'div',
@@ -204,7 +229,7 @@ export const prepareScreen: ScreenDef = {
         // 誓約碑排在頁面最底，出發列上給一個捷徑（提案 126）
         oathEligible(stage, save) && oathSortieChip(stage, () => nav.replace('prepare', [stage.id])),
         // data-tut：新手教學用來指向出發鈕
-        h('div', { 'data-tut': 'sortie' }, button('出發', { variant: 'primary', block: true, icon: 'sword', disabled: !!problem || !!oathProblem, cost: { kind: 'stamina', amount: stage.stamina }, onClick: start }))),
+        h('div', { 'data-tut': 'sortie' }, startButton)),
     );
   },
 };

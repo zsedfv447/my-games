@@ -6,10 +6,11 @@ import {
   MAX_OATHS, OATHS, WEEKLY_GEM_CAP, oathCoreCard, oathPoints, oathRewardFor, oathsOf, type OathId,
 } from '../progression/oaths';
 import { badge, button, panel, toggle } from './components/basic';
-import { openDialog } from './components/overlay';
+import { openDialog, type DialogHandle } from './components/overlay';
 import { h } from './dom';
 import { getSave } from './state';
 
+let activePicker: DialogHandle | undefined;
 let chosen: { stageId: string; oaths: OathId[] } | null = null;
 
 /** 這一關目前刻下的誓約（沒選就是空陣列） */
@@ -59,6 +60,8 @@ export function oathStelePanel(stage: StageDef, onChange: () => void): HTMLEleme
 }
 
 export function openOathPicker(stage: StageDef, onChange: () => void): void {
+  activePicker?.close();
+  let closed = false;
   let picked = chosenOaths(stage.id);
   const summary = h('p', { class: 'small-text', style: { margin: '6px 0 0' } });
   const list = h('div', { class: 'list oath-list' });
@@ -66,6 +69,7 @@ export function openOathPicker(stage: StageDef, onChange: () => void): void {
     list.replaceChildren(...OATHS.map((o) => {
       const on = picked.includes(o.id);
       const row = toggle(`${o.name}（${o.points} 點）：${o.description}`, on, (v) => {
+        if (closed) return;
         picked = v ? [...picked, o.id] : picked.filter((x) => x !== o.id);
         render();
       });
@@ -78,7 +82,16 @@ export function openOathPicker(stage: StageDef, onChange: () => void): void {
   };
   render();
   const dlg = openDialog('誓約碑', h('div', null, list, summary), [
-    button('清除', { variant: 'ghost', small: true, onClick: () => { picked = []; render(); } }),
-    button('確定', { variant: 'primary', onClick: () => { chosen = { stageId: stage.id, oaths: picked }; dlg.close(); onChange(); } }),
-  ]);
+    button('清除', { variant: 'ghost', small: true, onClick: () => { if (closed || activePicker !== dlg) return; picked = []; render(); } }),
+    button('確定', { variant: 'primary', onClick: () => {
+      if (closed || activePicker !== dlg) return;
+      dlg.close();
+      chosen = { stageId: stage.id, oaths: picked };
+      onChange();
+    } }),
+  ], { scope: 'route', onClose: () => {
+    closed = true;
+    if (activePicker === dlg) activePicker = undefined;
+  } });
+  activePicker = dlg;
 }

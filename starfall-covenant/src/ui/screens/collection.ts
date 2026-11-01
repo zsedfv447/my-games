@@ -19,6 +19,8 @@ import { questDerived } from '../economy';
 import { rewardChips } from '../components/rewards';
 import '../collection-helper.css';
 import { codexSwitch } from '../components/codex-tabs';
+import { conversionFilter } from '../components/conversion-filter';
+import { conversionQueryActive, matchesConversionSkill, type ConversionQuery } from '../conversion-query';
 import { passiveText } from './growth-view';
 
 const STATUS_LABEL: Record<CollectionStatus, string> = { owned: '曾取得', seen: '見過', unseen: '未見過' };
@@ -26,6 +28,8 @@ const archetypeName = (id: string) => gameData.archetypes.find((a) => a.id === i
 
 // 篩選條件在這次遊玩中保留，從卡片詳情返回時不用重選
 let filter: CollectionFilter = {};
+let conversionQuery: ConversionQuery = {};
+let conversionOpen = false;
 
 function select<T extends string>(label: string, value: T | undefined, options: { id: T; label: string }[], onChange: (v: T | undefined) => void): HTMLElement {
   const el = h('select', { class: 'codex-select', 'aria-label': label },
@@ -102,7 +106,7 @@ export const collectionScreen: ScreenDef = {
   preserveScroll: true,
   chrome: 'sub',
   parent: 'home',
-  render({ nav }) {
+  render({ nav, onLeave }) {
     const summaryHost = h('div');
     const grid = h('div', { class: 'card-grid codex-grid' });
     const count = h('span', { class: 'small-text dim' });
@@ -130,7 +134,8 @@ export const collectionScreen: ScreenDef = {
     };
 
     const drawGrid = () => {
-      const list = collectionEntries(getSave(), growth, filter);
+      const list = collectionEntries(getSave(), growth, filter).filter(({ card }) =>
+        matchesConversionSkill(card.activeSkill ? growth.skill(card.activeSkill) : undefined, conversionQuery));
       count.textContent = `符合 ${list.length} 張`;
       grid.replaceChildren(...(list.length
         ? list.map(({ card, status, claimable }) => {
@@ -143,12 +148,16 @@ export const collectionScreen: ScreenDef = {
           if (claimable) el.appendChild(h('span', { class: 'codex-claim' }, `+${claimable}`));
           return el;
         })
-        : [emptyState('book', '沒有符合條件的卡片')]));
+        : [emptyState('book', conversionQueryActive(conversionQuery)
+          ? '目前篩選條件沒有符合的指定轉珠卡；不含洗盤、整排轉珠、補珠或天降。'
+          : '沒有符合條件的卡片')]));
     };
 
     const draw = () => { drawSummary(); drawGrid(); };
     const setFilter = (patch: Partial<CollectionFilter>) => { filter = { ...filter, ...patch }; drawGrid(); };
     draw();
+    const conversion = conversionFilter(conversionQuery, conversionOpen, query => { conversionQuery = query; drawGrid(); }, open => { conversionOpen = open; });
+    onLeave(() => { conversionOpen = conversion.open; });
 
     return h(
       'div',
@@ -166,6 +175,7 @@ export const collectionScreen: ScreenDef = {
         select<Attribute>('屬性', filter.attribute, ATTRIBUTES.map((a) => ({ id: a, label: ATTRIBUTE_NAMES[a] })), (v) => setFilter({ attribute: v })),
         select<Race>('種族', filter.race, RACES.map((r) => ({ id: r, label: RACE_NAMES[r] })), (v) => setFilter({ race: v })),
         select<ArchetypeId>('流派', filter.archetype, ARCHETYPE_IDS.map((a) => ({ id: a, label: archetypeName(a) })), (v) => setFilter({ archetype: v }))),
+      conversion,
       h('div', { class: 'row between' }, count, h('span', { class: 'small-text faint' }, '✓＝曾取得・所有卡片皆可查看')),
       grid,
     );

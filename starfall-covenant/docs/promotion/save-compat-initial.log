@@ -1,0 +1,16 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-production-promotion/starfall-covenant
+
+ ✓ tests/promotion-boundary.test.ts (2 tests) 129ms
+ ✓ tests/save.test.ts (19 tests) 16ms
+ ✓ tests/pwa-events.test.ts (13 tests) 20ms
+ ✓ tests/active-battle.test.ts (8 tests) 19ms
+ ✓ tests/promotion-save-compat.test.ts (3 tests) 2285ms
+   ✓ real production state reopens already-paid old ticket with full snapshot/RNG and no second stamina payment 1841ms
+   ✓ corrupt formal raw is not overwritten until a valid old backup recovers it; reload retains recovery and isolated sentinels 419ms
+
+ Test Files  5 passed (5)
+      Tests  45 passed (45)
+   Start at  11:57:11
+   Duration  3.28s (transform 1.83s, setup 0ms, collect 1.98s, tests 2.47s, environment 288ms, prepare 411ms)
+

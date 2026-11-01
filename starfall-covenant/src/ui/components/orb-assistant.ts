@@ -37,11 +37,16 @@ function starLabel(star: StarCondition): string {
 }
 const field = (label: string, el: HTMLElement) => h('label', { class: 'orb-assistant-field' }, h('span', null, label), el);
 const numberInput = () => h('input', { type: 'number', min: 1, max: 30, step: 1, inputmode: 'numeric', placeholder: '不限' });
-const action = (label: string, run: () => void, primary = false) => h('button', { type: 'button', class: `btn ${primary ? 'primary' : 'ghost'}`, onclick: run }, label);
 
 /** 僅在玩家開啟時存在；每次操作最多執行一回合。 */
 export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle {
   let closed = false;
+  // Consent belongs to this dialog. Check before invoking accepted actions,
+  // which may close first and then legitimately execute/preview their result.
+  const action = (label: string, run: () => void, primary = false) => h('button', {
+    type: 'button', class: `btn ${primary ? 'primary' : 'ghost'}`,
+    onclick: () => { if (!closed) run(); },
+  }, label);
   let generation = 0;
   let busy = false;
   let plan: AssistantPlan | null = null;
@@ -72,6 +77,7 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
   const status = h('p', { class: 'orb-assistant-status', role: 'status', 'aria-live': 'polite' }, '選好目標後，按「規劃路線」。');
   const result = h('div', { class: 'orb-assistant-result' });
   const reset = (message = '條件已更新，請重新規劃路線。') => {
+    if (closed) return;
     generation++;
     opts.cancelPlan?.();
     busy = false;
@@ -190,6 +196,7 @@ export function openOrbAssistant(opts: OrbAssistantOptions): OrbAssistantHandle 
   }
 
   async function runPlan(): Promise<void> {
+    if (closed) return;
     const r = validatedRequest();
     if (!r) return;
     opts.onSaveRequest?.(r);

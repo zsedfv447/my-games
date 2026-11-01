@@ -1,0 +1,35 @@
+// @vitest-environment happy-dom
+import { afterEach, expect, it, vi } from 'vitest';
+import { gameData } from '../src/data/load';
+import { createNewSave } from '../src/save/save';
+import { commit, getSave } from '../src/ui/state';
+import { prepareScreen } from '../src/ui/screens/prepare';
+import { enterStage, stageLockReason } from '../src/progression/stages';
+import { stageContext } from '../src/ui/stage-nav';
+const howToPlay = '消除心珠觸發追打；面對高防禦可發揮優勢，遇到減傷盾或七曜環仍要處理護盾。';
+afterEach(() => { vi.restoreAllMocks(); document.body.replaceChildren(); });
+it('prepare uses centralized corrected fixed tactics; reading does not unlock, acquire, reward or persist', () => {
+  const save = createNewSave(gameData.config, Date.now());
+  save.inventory.cards = []; save.collection = { seen: [], owned: [], claimed: [] };
+  commit(save);
+  const before = structuredClone(getSave());
+  const storageBefore = { ...localStorage };
+  const nav = { go: vi.fn(), replace: vi.fn(), back: vi.fn(), backTo: vi.fn() };
+  const stage = gameData.stages.find(s => s.id === 'trial-fixed')!;
+  const stageBefore = structuredClone(stage);
+  const ctx = stageContext(gameData.stages, gameData.events);
+  expect(stage.unlockAfter).toBe('st-4-9');
+  expect(stageLockReason(before, stage, ctx, Date.now())).not.toBeNull();
+  const root = prepareScreen.render({ route: { name: 'prepare', args: [stage.id], query: {} }, nav, onLeave() {} });
+  document.body.append(root);
+  expect(gameData.archetypes.find(a => a.id === 'fixed')?.howToPlay).toBe(howToPlay);
+  expect(root.textContent).toContain(howToPlay);
+  expect(root.textContent).not.toContain('專門對付高防禦與護盾敵人');
+  expect(root.textContent).toContain('這一關由關卡提供隊伍，不需要擁有這些卡片');
+  expect(getSave()).toEqual(before);
+  expect({ ...localStorage }).toEqual(storageBefore);
+  expect(stage).toEqual(stageBefore);
+  expect(enterStage(getSave(), stage, ctx, gameData.config, Date.now())).toMatchObject({ ok: false, reason: 'locked' });
+  expect(getSave()).toEqual(before);
+  expect(nav.go).not.toHaveBeenCalled();
+});

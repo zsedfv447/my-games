@@ -7,7 +7,7 @@ import { gameData } from '../../data/load';
 import { msUntilFullStamina } from '../../progression/stamina';
 import { staminaFullText, staminaNextText } from '../countdown';
 import { button } from './basic';
-import { openDialog } from './overlay';
+import { openDialog, type DialogHandle } from './overlay';
 import '../convenience.css';
 import { audio } from '../audio';
 import { iconButton, resource } from './basic';
@@ -60,7 +60,16 @@ export class Shell {
     this.staminaTimer.hidden = !text;
   }
 
+  private staminaDialog?: DialogHandle;
+
   private showStaminaInfo(): void {
+    this.staminaDialog?.close();
+    let closed = false;
+    const consume = () => {
+      if (closed || this.staminaDialog !== dlg) return false;
+      dlg.close();
+      return true;
+    };
     const p = getPlayer();
     const full = msUntilFullStamina(getSave(), gameData.config, Date.now());
     const next = staminaNextText(p.staminaNextMs);
@@ -69,9 +78,13 @@ export class Shell {
       next && h('div', { class: 'row between' }, h('span', null, '下一點'), h('strong', null, next.replace('+1 ', ''))),
       h('div', { class: 'row between' }, h('span', null, staminaFullText(full))),
       h('p', { class: 'small-text dim', style: { margin: '0' } }, `每 ${gameData.config.stamina.regenMinutes} 分鐘回復 1 點，離線也會回復。`)), [
-      button(LABEL.close, { variant: 'ghost', sound: 'back', onClick: () => dlg.close() }),
-      button('去商店補充', { variant: 'primary', icon: 'shop', onClick: () => { dlg.close(); this.nav.go('shop'); } }),
-    ]);
+      button(LABEL.close, { variant: 'ghost', sound: 'back', onClick: () => { consume(); } }),
+      button('去商店補充', { variant: 'primary', icon: 'shop', onClick: () => { if (consume()) this.nav.go('shop'); } }),
+    ], { scope: 'route', onClose: () => {
+      closed = true;
+      if (this.staminaDialog === dlg) this.staminaDialog = undefined;
+    } });
+    this.staminaDialog = dlg;
   }
 
   attach(nav: Navigator): void {

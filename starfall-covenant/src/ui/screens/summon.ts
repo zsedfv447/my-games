@@ -123,21 +123,33 @@ export const summonScreen: ScreenDef = {
       confirming = true;
       const pool = selected;
       const cost = pullCost(pool, count);
-      const cancel = () => { confirming = false; dialog?.close(); dialog = undefined; };
-      const confirm = button(LABEL.summon, { variant: 'primary', onClick: () => {
-        if (left || confirm.disabled) return;
+      let settled = false;
+      let ownDialog: DialogHandle;
+      const revoke = () => {
+        settled = true;
         confirm.disabled = true;
-        cancel();
+        if (dialog === ownDialog) { confirming = false; dialog = undefined; }
+      };
+      const settle = () => {
+        if (left || settled || dialog !== ownDialog) return false;
+        revoke();
+        ownDialog.close();
+        return true;
+      };
+      const cancel = () => { settle(); };
+      const confirm = button(LABEL.summon, { variant: 'primary', onClick: () => {
+        if (!settle()) return;
         const result = session.begin(pool, count);
         if (!result.ok) { toast(FAIL_TEXT[result.reason], 3200); return; }
         emitPull(pool, count, result.results);
         setPending({ pool, count, results: result.results });
         ctx.nav.go('summon-ritual');
       } });
-      dialog = openDialog(count === 10 ? LABEL.summonTen : LABEL.summonOnce,
+      ownDialog = openDialog(count === 10 ? LABEL.summonTen : LABEL.summonOnce,
         h('div', null, h('p', null, `消耗 ${cost} 星晶，從「${pool.name}」召喚 ${count} 張卡片。`),
           h('p', { class: 'small-text dim' }, `目前持有 ${getSave().player.gems} 星晶。${count === 10 ? `至少獲得一張 ${pool.tenPullGuarantee.minRarity}★ 以上角色。` : ''}`)),
-        [button('取消', { variant: 'ghost', sound: 'back', onClick: cancel }), confirm], { dismissible: false });
+        [button('取消', { variant: 'ghost', sound: 'back', onClick: cancel }), confirm], { dismissible: false, onClose: revoke });
+      dialog = ownDialog;
     }
     function paint() {
       clear(root);

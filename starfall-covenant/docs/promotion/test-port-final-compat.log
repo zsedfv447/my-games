@@ -1,0 +1,17 @@
+
+ RUN  v2.1.9 /workspace/scratch/78a951d13ae1/starfall-production-promotion/starfall-covenant
+
+ ✓ tests/save.test.ts (19 tests) 18ms
+ ✓ tests/e12-save-recovery.test.ts (4 tests) 3594ms
+   ✓ checksum corruption survives deferred warning, settings commit and invalid imports; valid production backup recovers through real module reload 2527ms
+   ✓ route departure closes import and retained callback cannot overwrite the current save 520ms
+ ✓ tests/e12-backup-restore.test.ts (3 tests) 4019ms
+   ✓ real settings export textarea → cancel reset → confirmed reset → UI import → reload home resume restores whole battle without rewards/cost 3055ms
+   ✓ reset route revocation preserves production and inactive experiment storage; answer-before-leave=false 452ms
+   ✓ reset route revocation preserves production and inactive experiment storage; answer-before-leave=true 512ms
+
+ Test Files  3 passed (3)
+      Tests  26 passed (26)
+   Start at  11:58:40
+   Duration  4.59s (transform 1.61s, setup 0ms, collect 453ms, tests 7.63s, environment 488ms, prepare 231ms)
+
