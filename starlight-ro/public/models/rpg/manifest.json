@@ -1,0 +1,131 @@
+{
+  "source": "https://quaternius.com/packs/rpgcharacters.html",
+  "license": "CC0-1.0",
+  "npcTargetHeight": "1.42–1.60 game units, original model normalized after Idle pose",
+  "models": [
+    {
+      "file": "Cleric.gltf",
+      "bytes": 2985183,
+      "sha256": "6497456a3fa1c151d7a6ab4f7b4c343ee416c23d9454505b950c93ea558e4601",
+      "animations": [
+        "Death",
+        "Idle",
+        "Idle_Weapon",
+        "PickUp",
+        "Punch",
+        "RecieveHit",
+        "RecieveHit_Attacking",
+        "Run",
+        "Spell1",
+        "Staff_Attack",
+        "Walk"
+      ],
+      "externalDependencies": []
+    },
+    {
+      "file": "Monk.gltf",
+      "bytes": 2655048,
+      "sha256": "085c049ebb593e0edbef9f0dd1f62fce70f668f6be7be99f3a1aa5378c83e8a2",
+      "animations": [
+        "Attack",
+        "Attack2",
+        "Death",
+        "Idle",
+        "Idle_Attacking",
+        "PickUp",
+        "RecieveHit",
+        "RecieveHit_2",
+        "Roll",
+        "Run",
+        "Walk"
+      ],
+      "externalDependencies": []
+    },
+    {
+      "file": "Ranger.gltf",
+      "bytes": 2987934,
+      "sha256": "2732741d5e21c20760d7f3dd9d71812d4b796f466be1a6cba212f45483dd56ed",
+      "animations": [
+        "Bow_Draw",
+        "Bow_Shoot",
+        "Death",
+        "Idle",
+        "Idle_Attacking",
+        "Idle_Weapon",
+        "PickUp",
+        "Punch",
+        "RecieveHit",
+        "RecieveHit_2",
+        "Roll",
+        "Run",
+        "Run_Holding",
+        "Walk"
+      ],
+      "externalDependencies": []
+    },
+    {
+      "file": "Rogue.gltf",
+      "bytes": 2568479,
+      "sha256": "5a9eaca0871cd69f554747a1d42870b3bca702ba721d941d909fc530cf18afb8",
+      "animations": [
+        "Attacking_Idle",
+        "Dagger_Attack",
+        "Dagger_Attack2",
+        "Death",
+        "Idle",
+        "PickUp",
+        "Punch",
+        "RecieveHit",
+        "RecieveHit_2",
+        "Roll",
+        "Run",
+        "Walk"
+      ],
+      "externalDependencies": []
+    },
+    {
+      "file": "Warrior.gltf",
+      "bytes": 3035392,
+      "sha256": "2bab905ce12d279e1d099c2a8de0b1ef31c9f5e8d1959b41d24470b4f4181add",
+      "animations": [
+        "Death",
+        "Idle",
+        "Idle_Attacking",
+        "Idle_Weapon",
+        "PickUp",
+        "Punch",
+        "RecieveHit",
+        "Roll",
+        "Run",
+        "Run_Weapon",
+        "Sword_Attack",
+        "Sword_Attack2",
+        "Walk"
+      ],
+      "externalDependencies": []
+    },
+    {
+      "file": "Wizard.gltf",
+      "bytes": 3296909,
+      "sha256": "320de17289857db6794e4eef55101ce3427e755319a4384fb6d9d9ca5206b41b",
+      "animations": [
+        "Death",
+        "Idle",
+        "Idle_Attacking",
+        "Idle_Weapon",
+        "PickUp",
+        "Punch",
+        "RecieveHit",
+        "RecieveHit_2",
+        "Roll",
+        "Run",
+        "Run_Weapon",
+        "Spell1",
+        "Spell2",
+        "Staff_Attack",
+        "Walk"
+      ],
+      "externalDependencies": []
+    }
+  ]
+}

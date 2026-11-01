@@ -1,0 +1,5 @@
+ruins        Lv45  擊殺/分  21.3  死亡 0.0  白水/場 0
+mistMarsh    Lv50  擊殺/分  17.1  死亡 0.0  白水/場 1
+emberRift    Lv57  擊殺/分  15.7  死亡 0.0  白水/場 4
+skyGarden    Lv63  擊殺/分  16.3  死亡 0.0  白水/場 4
+starCitadel  Lv72  擊殺/分  13.3  死亡 0.0  白水/場 7

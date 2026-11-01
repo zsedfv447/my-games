@@ -1,0 +1,22 @@
+{
+  "version": "4.1.0",
+  "date": "2026-10-16",
+  "tests": {
+    "command": "npm test -- --maxWorkers=2",
+    "passed": 227,
+    "failed": 0
+  },
+  "build": {
+    "command": "npm run build",
+    "exit": 0
+  },
+  "claudeReview": "not_requested_quota_paused_by_user",
+  "humanAudioAcceptance": false,
+  "display120HzAcceptance": false,
+  "originalChromeSaveAccessed": false,
+  "assetLibrary": {
+    "nature": 30,
+    "village": 25,
+    "rpg": 6
+  }
+}

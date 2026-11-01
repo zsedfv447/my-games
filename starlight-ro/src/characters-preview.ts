@@ -1,0 +1,17 @@
+import * as THREE from 'three';
+import {ChibiCandidate} from './render3d/chibi-candidate';
+import {CHIBI_CAST,type ChibiMotion} from './render3d/chibi-profile';
+const host=document.getElementById('v')!,status=document.getElementById('status')!;
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;host.appendChild(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#dce7e8');scene.fog=new THREE.Fog('#dce7e8',18,40);
+const camera=new THREE.PerspectiveCamera(32,1,.1,50);
+scene.add(new THREE.HemisphereLight('#ffffff','#9bb19c',2));const light=new THREE.DirectionalLight('#fff4dc',2);light.position.set(-4,8,6);light.castShadow=true;light.shadow.mapSize.set(1024,1024);scene.add(light);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshStandardMaterial({color:'#dce7e2',roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-.13;ground.receiveShadow=true;scene.add(ground);
+const avatars=CHIBI_CAST.map((id,i)=>{const c=new ChibiCandidate(id,1.8);c.root.position.x=(i-2)*1.65;scene.add(c.root);const pedestal=new THREE.Mesh(new THREE.CylinderGeometry(.56,.61,.12,48),new THREE.MeshStandardMaterial({color:i===2?'#acc3c0':'#c4d2cd',roughness:.85}));pedestal.position.set(c.root.position.x,-.06,0);pedestal.receiveShadow=true;scene.add(pedestal);return c;});
+Promise.all(avatars.map(c=>c.ready)).then(()=>status.textContent='5 / 5 已載入 · 原生 11 組動作').catch(err=>{status.textContent='素材載入失敗，請重新整理';console.error(err);});
+let facing='front',time=0,previous=performance.now();
+document.querySelectorAll<HTMLButtonElement>('[data-motion]').forEach(button=>button.addEventListener('click',()=>{const motion=button.dataset.motion as ChibiMotion;avatars.forEach(c=>c.setMotion(motion));document.querySelectorAll('[data-motion]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));}));
+document.getElementById('facing')!.addEventListener('change',e=>facing=(e.target as HTMLSelectElement).value);
+function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.position.set(0,3.5,Math.max(12,10/camera.aspect));camera.lookAt(0,.85,0);camera.updateProjectionMatrix();}addEventListener('resize',resize);resize();
+function loop(){const now=performance.now();time+=Math.min(.05,(now-previous)/1000);previous=now;for(const c of avatars){c.root.rotation.y=facing==='turn'?time*.35:facing==='side'?Math.PI/2:facing==='back'?Math.PI:0;c.animate();}renderer.render(scene,camera);requestAnimationFrame(loop);}loop();
+addEventListener('pagehide',event=>{if(!event.persisted)avatars.forEach(c=>c.dispose());});

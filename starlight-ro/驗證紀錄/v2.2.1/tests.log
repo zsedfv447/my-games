@@ -1,0 +1,107 @@
+
+> starlight-ro@2.2.0 test
+> vitest run --maxWorkers=1 --no-file-parallelism
+
+
+ RUN  v3.2.7 /Users/ethan/Documents/Codex/2026-10-14/referenced-chatgpt-conversation-this-is-an/outputs/starlight-ro-v2
+
+ ✓ src/world/sim.test.ts (12 tests) 16896ms
+   ✓ 世界模擬 > 點地走路沿著可走的格子移動，到達後停止  1485ms
+   ✓ 世界模擬 > 點怪會走過去並持續普攻直到打倒  4833ms
+   ✓ 世界模擬 > 法師火焰矢有詠唱時間，依等級落下多支  1843ms
+   ✓ 世界模擬 > 技能 SP 不足時失敗並提示  317ms
+   ✓ 世界模擬 > 自動戰鬥會找怪打  3806ms
+   ✓ 世界模擬 > 同種子同操作結果一致（確定性）  3370ms
+   ✓ MVP 大招 > 半血時召喚一次小怪，小怪死後不會重生  627ms
+ ❯ src/rules/reliability.test.ts (54 tests | 1 failed) 31115ms
+   ✓ novice free first aid and legacy preservation > learning first aid does not consume the nine points needed for job change 15ms
+   ✓ novice free first aid and legacy preservation > basic3 automatically grants first aid into the first free hotbar slot 17ms
+   ✓ novice free first aid and legacy preservation > legacy changed-job character receives missing free aid without a paid refund 201ms
+   ✓ novice free first aid and legacy preservation > legacy free aid grant preserves every assigned shortcut when hotbar is full 4ms
+   ✓ novice free first aid and legacy preservation > first aid can be learned at zero points after basic3 1ms
+   ✓ novice free first aid and legacy preservation > original v2.0 snapshot refunds paid first aid once and retains every asset  352ms
+   ✓ untrusted save schema and playable positions > rejects unknown skill 256ms
+   ✓ untrusted save schema and playable positions > rejects unknown map 14ms
+   ✓ untrusted save schema and playable positions > rejects nonnumeric x 15ms
+   ✓ untrusted save schema and playable positions > rejects infinite coordinate 5ms
+   ✓ untrusted save schema and playable positions > rejects nonnumeric seq 176ms
+   ✓ untrusted save schema and playable positions > rejects fractional seq 13ms
+   ✓ untrusted save schema and playable positions > rejects modern stale seq 122ms
+   ✓ untrusted save schema and playable positions > rejects invalid level 8ms
+   ✓ untrusted save schema and playable positions > rejects invalid job level 6ms
+   ✓ untrusted save schema and playable positions > rejects invalid exp 3ms
+   ✓ untrusted save schema and playable positions > rejects negative money 1ms
+   ✓ untrusted save schema and playable positions > rejects invalid HP 14ms
+   ✓ untrusted save schema and playable positions > rejects negative SP 4ms
+   ✓ untrusted save schema and playable positions > rejects fractional HP 1ms
+   ✓ untrusted save schema and playable positions > rejects overflow HP 0ms
+   ✓ untrusted save schema and playable positions > rejects invalid points 0ms
+   ✓ untrusted save schema and playable positions > rejects invalid skill level  408ms
+   ✓ untrusted save schema and playable positions > rejects unknown hotbar skill 7ms
+   ✓ untrusted save schema and playable positions > rejects unlearned hotbar skill 49ms
+   ✓ untrusted save schema and playable positions > rejects wrong hotbar size 13ms
+   ✓ untrusted save schema and playable positions > rejects duplicate hotbar 53ms
+   ✓ untrusted save schema and playable positions > rejects unknown module 20ms
+   ✓ untrusted save schema and playable positions > rejects unknown loadout skill 28ms
+   ✓ untrusted save schema and playable positions > rejects wrong module size 1ms
+   ✓ untrusted save schema and playable positions > rejects duplicate module 4ms
+   ✓ untrusted save schema and playable positions > rejects unknown card location 3ms
+   ✓ untrusted save schema and playable positions > rejects fractional card slot 9ms
+   ✓ untrusted save schema and playable positions > rejects wrong equipment slot 3ms
+   ✓ untrusted save schema and playable positions > rejects unknown item 1ms
+   ✓ untrusted save schema and playable positions > rejects equipment in stack 0ms
+   ✓ untrusted save schema and playable positions > rejects invalid counter 1ms
+   ✓ untrusted save schema and playable positions > rejects unknown MVP 2ms
+   ✓ untrusted save schema and playable positions > rejects invalid revision 2ms
+   ✓ untrusted save schema and playable positions > rejects invalid quest 1ms
+   ✓ untrusted save schema and playable positions > rejects bad challenge 22ms
+   ✓ untrusted save schema and playable positions > rejects duplicate buyback ID 2ms
+   ✓ untrusted save schema and playable positions > rejects unknown cooldown key 1ms
+   ✓ untrusted save schema and playable positions > legacy stale/missing sequence is repaired but malformed numeric types are rejected 1ms
+   ✓ untrusted save schema and playable positions > exhausted sequence cannot emit duplicate instances or mutate the original 2ms
+   ✓ untrusted save schema and playable positions > v2.1 refining, bag cards and equipped cards survive normalization exactly 1ms
+   ✓ untrusted save schema and playable positions > known legacy blocked positions safely move to start; modern blocked positions are rejected 55ms
+   ✓ untrusted save schema and playable positions > expired and future MVP cooldowns remain loadable 14ms
+   ✓ equipment recovery and status modules > locked equipment cannot be sold; buyback restores exact refine/ID and leaves cards in bag  514ms
+   ✓ equipment recovery and status modules > buyback keeps ten most recent gear and refuses unaffordable recovery  4690ms
+   ✓ equipment recovery and status modules > legacy provoke loadout is retained, explained and inactive for on-hit modules 100ms
+   × optional MVP challenges with stable old quest indices > normal chain advances past MVP without needing boss kills 22503ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ optional MVP challenges with stable old quest indices > all legacy checkpoints preserve reward history and migrate once  713ms
+   ✓ optional MVP challenges with stable old quest indices > optional boss progress is separate from normal quest and reward is paid only once  435ms
+ ✓ src/world/combat-upgrade.test.ts (13 tests) 5931ms
+   ✓ 戰鬥修正 > 高 INT 杖普攻在貼身及遠處皆使用 MATK  1218ms
+   ✓ 戰鬥修正 > MVP 擊倒後換圖再回來不會刷新，地面物品保留  784ms
+   ✓ 戰鬥修正 > MVP 冷卻可匯出並於重載後匯入  1028ms
+   ✓ 戰鬥修正 > 自動烈焰爆破有近敵才放；單體技能仍可施放  1842ms
+ ✓ src/rules/state.test.ts (20 tests) 474ms
+ ✓ src/world/mapgen.test.ts (7 tests) 1061ms
+   ✓ 地圖產生 > town：起點可走、每個傳送點都走得到、NPC 不在牆裡  642ms
+ ✓ src/save.test.ts (6 tests) 1487ms
+   ✓ corrupt main cannot overwrite valid backup on first post-recovery write  558ms
+   ✓ failed validation writes nothing and preserves existing main and backup  303ms
+ ✓ src/session.test.ts (5 tests) 55ms
+ ✓ src/navigation.test.ts (3 tests) 17ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/rules/reliability.test.ts > optional MVP challenges with stable old quest indices > normal chain advances past MVP without needing boss kills
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/rules/reliability.test.ts:146:3
+    144| 
+    145| describe('optional MVP challenges with stable old quest indices',()=>{
+    146|   test('normal chain advances past MVP without needing boss kills',()=…
+       |   ^
+    147|     let s=made();s.quest={index:4,count:15};s=R.completeQuest(s).state;
+    148|     expect(s.quest.index).toBe(6);expect(R.questStatus(s)!.def.id).toB…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 7 passed (8)
+      Tests  1 failed | 119 passed (120)
+   Start at  21:08:01
+   Duration  175.65s (transform 7.88s, setup 0ms, collect 18.59s, tests 57.04s, environment 22ms, prepare 34.17s)
+

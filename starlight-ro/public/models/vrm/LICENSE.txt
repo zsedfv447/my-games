@@ -1,0 +1,10 @@
+VRoid Studio sample avatars (shibu, shibu_dark, vivi, vita, victoria, base_f, base_m, hair_f, hair_m, fumiriya, shino)
+  Author: VRoid Project (pixiv). Source: https://opengameart.org/content/vroid-studio-cc0-models
+  License: CC0 1.0 per the OpenGameArt release; embedded VRM metadata additionally states
+  allowedUser=Everyone, commercial use allowed, modification and redistribution allowed, credit unnecessary.
+
+式神 COLLECTION (fleur, vulpek, yueji) by 華鈴堂 / karindou — https://karindou.itch.io/vroid
+  License: CC0 1.0 (embedded VRM metadata: licenseName CC0). VANASYA from the same pack is NOT included.
+
+Processing: textures resized to 512px (opaque textures re-encoded as JPEG) with tools/pack-vrm.mjs.
+Motion: Quaternius Universal Animation Library 1 & 2 (CC0), retargeted at runtime (src/render3d/retarget.ts).

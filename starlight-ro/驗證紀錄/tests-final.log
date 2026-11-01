@@ -1,0 +1,26 @@
+
+> starlight-ro@2.2.0 test
+> vitest run --maxWorkers=1 --no-file-parallelism
+
+
+ RUN  v3.2.7 /Users/ethan/Documents/Codex/2026-10-14/referenced-chatgpt-conversation-this-is-an/outputs/starlight-ro-v2
+
+ ✓ src/world/sim.test.ts (12 tests) 6148ms
+   ✓ 世界模擬 > 點地走路沿著可走的格子移動，到達後停止  791ms
+   ✓ 世界模擬 > 點怪會走過去並持續普攻直到打倒  1677ms
+   ✓ 世界模擬 > 法師火焰矢有詠唱時間，依等級落下多支  450ms
+   ✓ 世界模擬 > 自動戰鬥會找怪打  1592ms
+   ✓ 世界模擬 > 同種子同操作結果一致（確定性）  771ms
+ ✓ src/rules/reliability.test.ts (54 tests) 267ms
+ ✓ src/world/combat-upgrade.test.ts (13 tests) 248ms
+ ✓ src/world/mapgen.test.ts (7 tests) 186ms
+ ✓ src/rules/state.test.ts (20 tests) 235ms
+ ✓ src/save.test.ts (6 tests) 129ms
+ ✓ src/session.test.ts (5 tests) 17ms
+ ✓ src/navigation.test.ts (3 tests) 5ms
+
+ Test Files  8 passed (8)
+      Tests  120 passed (120)
+   Start at  20:24:44
+   Duration  17.68s (transform 1.42s, setup 0ms, collect 2.31s, tests 7.24s, environment 3ms, prepare 2.76s)
+

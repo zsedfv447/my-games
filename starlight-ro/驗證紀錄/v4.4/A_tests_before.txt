@@ -1,0 +1,40 @@
+
+> starlight-ro@4.3.0 test
+> vitest run --maxWorkers=2
+
+
+ RUN  v3.2.7 /Users/ethan/Documents/Codex/2026-10-14/referenced-chatgpt-conversation-this-is-an/outputs/starlight-ro-v2
+
+ ✓ src/world/companion.test.ts (8 tests) 612ms
+ ✓ src/world/sim.test.ts (12 tests) 746ms
+ ✓ src/render3d/chibi-assets.test.ts (7 tests) 235ms
+ ✓ src/data/expansion.test.ts (6 tests) 389ms
+   ✓ 內容擴充的正常取得與相容性 > 亞種實際擊倒會走既有掉落與拾取流程，所有100件新裝可進入背包  345ms
+ ✓ src/world/mastery.test.ts (3 tests) 70ms
+ ✓ src/render3d/weapon-appearance.test.ts (59 tests) 52ms
+ ✓ src/world/combat-upgrade.test.ts (13 tests) 61ms
+ ✓ src/rules/reliability.test.ts (54 tests) 43ms
+ ✓ src/collection.test.ts (5 tests) 42ms
+ ✓ src/world/mapgen.test.ts (8 tests) 39ms
+ ✓ src/rules/state.test.ts (20 tests) 35ms
+ ✓ src/world/village-layout.test.ts (7 tests) 33ms
+ ✓ src/render3d/hero-accessories.test.ts (12 tests) 15ms
+ ✓ src/world/builds.test.ts (4 tests) 23ms
+ ✓ src/render3d/terrain.test.ts (5 tests) 23ms
+ ✓ src/render3d/nature-assets.test.ts (50 tests) 37ms
+ ✓ src/save.test.ts (6 tests) 23ms
+ ✓ src/rules/pets-costumes.test.ts (6 tests) 13ms
+ ✓ src/rules/village-save.test.ts (2 tests) 18ms
+ ✓ src/render3d/combat-presentation.test.ts (7 tests) 11ms
+ ✓ src/audio-timing.test.ts (2 tests) 4ms
+ ✓ src/render3d/hero-timing.test.ts (2 tests) 3ms
+ ✓ src/render3d/hero-parts.test.ts (6 tests) 5ms
+ ✓ src/session.test.ts (5 tests) 3ms
+ ✓ src/render3d/static-textures.test.ts (3 tests) 3ms
+ ✓ src/navigation.test.ts (3 tests) 1ms
+
+ Test Files  26 passed (26)
+      Tests  315 passed (315)
+   Start at  00:05:46
+   Duration  3.36s (transform 285ms, setup 0ms, collect 946ms, tests 2.54s, environment 2ms, prepare 904ms)
+

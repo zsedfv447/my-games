@@ -1,0 +1,66 @@
+{
+  "version": "2.2.1",
+  "verifiedAt": "2026-10-15T21:32:09.670183+08:00",
+  "playURL": "http://127.0.0.1:4200/",
+  "changes": [
+    "Left HUD and quest flow vertically with gap; no hardcoded quest top",
+    "Keep seven menu buttons and auto controls mounted across HUD updates"
+  ],
+  "build": "PASS: TypeScript and Vite, 32 modules",
+  "servedAssets": [
+    {
+      "file": "index.html",
+      "http": 200,
+      "sha256": "f4897633266709b62e20eaea34b8abde404afb4a0ec4792caced9cfaae39785d",
+      "sourceBuildMatches": true
+    },
+    {
+      "file": "assets/index-B7y5RUoR.css",
+      "http": 200,
+      "sha256": "521efa7b6162f24424ba8443b2582f860908124100fa1476255f6c3dec304fbe",
+      "sourceBuildMatches": true
+    },
+    {
+      "file": "assets/index-DmEFDARG.js",
+      "http": 200,
+      "sha256": "b9dd48b3396cc95bd289da2a84cb485794938b3daeb59e24db1ad82f926f81ad",
+      "sourceBuildMatches": true
+    },
+    {
+      "file": "assets/phaser-Czz4FBZH.js",
+      "http": 200,
+      "sha256": "a457e09aa916bbe0c7669ed49cddb5ece24db69f11f0c4a2f96fa7b7e6290051",
+      "sourceBuildMatches": true
+    }
+  ],
+  "sourceIntegrity": {
+    "changedSource": [
+      "src/style.css",
+      "src/ui.ts"
+    ],
+    "rulesSaveCombatAndCardModulesByteIdenticalToV22": true
+  },
+  "tests": {
+    "defaultAttempt": {
+      "passed": 119,
+      "failedByTimeout": 1,
+      "log": "驗證紀錄/v2.2.1/tests.log"
+    },
+    "defaultRetry": {
+      "passed": 117,
+      "failedByTimeout": 3,
+      "workerRpcTimeout": true,
+      "log": "驗證紀錄/v2.2.1/tests-final.log"
+    },
+    "boundedThreadRetry": {
+      "passed": 119,
+      "failedByTimeout": 1,
+      "testTimeoutMs": 60000,
+      "log": "驗證紀錄/v2.2.1/tests-bounded.log"
+    },
+    "status": "NOT_FULLY_PASSED; host load high; observed failures are timeouts, no failing assertions reported; do not treat v2.2 120-pass baseline as this run"
+  },
+  "staticPeerReview": "PASS; CSS layout, click delegation, stable controls and modal layer reviewed",
+  "browserMouseAndLayoutAcceptance": "NOT_VERIFIED: browser operations timed out",
+  "userSaveModified": false
+}

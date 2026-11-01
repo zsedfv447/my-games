@@ -1,0 +1,45 @@
+
+> starlight-ro@4.2.0 test
+> vitest run --maxWorkers=2
+
+
+ RUN  v3.2.7 /Users/ethan/Documents/Codex/2026-10-14/referenced-chatgpt-conversation-this-is-an/outputs/starlight-ro-v2
+
+ ✓ src/data/expansion.test.ts (6 tests) 2520ms
+   ✓ 內容擴充的正常取得與相容性 > 亞種實際擊倒會走既有掉落與拾取流程，所有100件新裝可進入背包  2277ms
+ ✓ src/world/sim.test.ts (12 tests) 4134ms
+   ✓ 世界模擬 > 點地走路沿著可走的格子移動，到達後停止  419ms
+   ✓ 世界模擬 > 點怪會走過去並持續普攻直到打倒  1145ms
+   ✓ 世界模擬 > 法師火焰矢有詠唱時間，依等級落下多支  342ms
+   ✓ 世界模擬 > 自動戰鬥會找怪打  798ms
+   ✓ 世界模擬 > 同種子同操作結果一致（確定性）  687ms
+ ✓ src/render3d/chibi-assets.test.ts (7 tests) 1421ms
+   ✓ 完整日系Q版候選角色 > archer的模型、蒙皮、動畫與材質資源完整  332ms
+   ✓ 完整日系Q版候選角色 > knight的模型、蒙皮、動畫與材質資源完整  330ms
+ ✓ src/world/village-layout.test.ts (7 tests) 151ms
+ ✓ src/world/combat-upgrade.test.ts (13 tests) 380ms
+ ✓ src/render3d/weapon-appearance.test.ts (59 tests) 335ms
+ ✓ src/rules/reliability.test.ts (54 tests) 207ms
+ ✓ src/collection.test.ts (5 tests) 223ms
+ ✓ src/render3d/nature-assets.test.ts (50 tests) 137ms
+ ✓ src/world/mapgen.test.ts (8 tests) 211ms
+ ✓ src/render3d/terrain.test.ts (5 tests) 97ms
+ ✓ src/rules/state.test.ts (20 tests) 132ms
+ ✓ src/save.test.ts (6 tests) 146ms
+ ✓ src/render3d/hero-accessories.test.ts (12 tests) 76ms
+ ✓ src/world/builds.test.ts (4 tests) 102ms
+ ✓ src/rules/pets-costumes.test.ts (6 tests) 81ms
+ ✓ src/rules/village-save.test.ts (2 tests) 140ms
+ ✓ src/render3d/combat-presentation.test.ts (7 tests) 531ms
+ ✓ src/render3d/static-textures.test.ts (3 tests) 8ms
+ ✓ src/render3d/hero-parts.test.ts (6 tests) 12ms
+ ✓ src/session.test.ts (5 tests) 30ms
+ ✓ src/render3d/hero-timing.test.ts (2 tests) 31ms
+ ✓ src/audio-timing.test.ts (2 tests) 9ms
+ ✓ src/navigation.test.ts (3 tests) 4ms
+
+ Test Files  24 passed (24)
+      Tests  304 passed (304)
+   Start at  00:47:10
+   Duration  17.28s (transform 1.73s, setup 0ms, collect 5.44s, tests 11.12s, environment 7ms, prepare 5.56s)
+

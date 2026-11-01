@@ -1,0 +1,56 @@
+{
+  "version": "4.2.0",
+  "date": "2026-10-16",
+  "tests": {
+    "files": 24,
+    "passed": 304,
+    "failed": 0,
+    "command": "npm test -- --maxWorkers=2",
+    "exit_code": 0
+  },
+  "build": {
+    "command": "npm run build",
+    "exit_code": 0,
+    "entries": [
+      "index.html",
+      "characters.html"
+    ]
+  },
+  "catalog": {
+    "cards": 62,
+    "modules": 22,
+    "equipment": 137,
+    "weapons": 52,
+    "weapon_silhouettes": 16,
+    "monsters": 62,
+    "added_monster_variants": 40
+  },
+  "assets": {
+    "styloo_characters": 5,
+    "npc_roles_using_styloo": [
+      "tool",
+      "pet"
+    ],
+    "player_replaced": false
+  },
+  "browser_verified": [
+    "old_qa_character_reload",
+    "collection_open_mouse",
+    "card_total_62",
+    "equipment_search_and_job_filter",
+    "pagination_page_2_of_2",
+    "collection_close",
+    "gallery_5_models",
+    "gallery_walk_and_direction",
+    "weapon_preview_4_samples"
+  ],
+  "not_verified": [
+    "120Hz",
+    "human_audio_sync",
+    "long_term_normal_drop_balance",
+    "all_weapons_manual_combat",
+    "production_bundle_full_interaction"
+  ],
+  "claude_review": "paused_by_user",
+  "user_chrome_save_accessed": false
+}

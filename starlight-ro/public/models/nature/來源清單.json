@@ -1,0 +1,2046 @@
+{
+  "author": "Quaternius",
+  "pack": "Stylized Nature MegaKit Standard",
+  "retrieved": "2026-10-16",
+  "sourceUrl": "https://quaternius.itch.io/stylized-nature-megakit",
+  "downloadPage": "https://quaternius.itch.io/stylized-nature-megakit/purchase",
+  "itchUploadId": "11055123",
+  "license": "CC0 1.0 Universal",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "archive": {
+    "path": "outputs/asset-downloads/Quaternius-Stylized-Nature-MegaKit-Standard.zip",
+    "bytes": 104088529,
+    "sha256": "298f6732b872e4cf7b30e6e7abf9641c7f6dc6b326df37ac089533ed7e3d58c9"
+  },
+  "models": [
+    {
+      "file": "Bush_Common.gltf",
+      "bounds": {
+        "min": [
+          -0.9234761595726013,
+          -0.234694704413414,
+          -0.9743891954421997
+        ],
+        "max": [
+          0.9913685917854309,
+          1.3470909595489502,
+          0.9907516837120056
+        ],
+        "size": [
+          1.9148447513580322,
+          1.5817856639623642,
+          1.9651408791542053
+        ]
+      },
+      "triangles": 900,
+      "primitives": 1,
+      "dependencies": [
+        "Bush_Common.bin",
+        "Leaves_TwistedTree_C.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Bush_Common"
+        }
+      ]
+    },
+    {
+      "file": "Bush_Common_Flowers.gltf",
+      "bounds": {
+        "min": [
+          -0.9234761595726013,
+          -0.234694704413414,
+          -0.9743891954421997
+        ],
+        "max": [
+          0.9913685917854309,
+          1.3470909595489502,
+          0.9907516837120056
+        ],
+        "size": [
+          1.9148447513580322,
+          1.5817856639623642,
+          1.9651408791542053
+        ]
+      },
+      "triangles": 1368,
+      "primitives": 2,
+      "dependencies": [
+        "Bush_Common_Flowers.bin",
+        "Leaves_NormalTree_C.png",
+        "Flowers.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Bush_Common_Flowers"
+        }
+      ]
+    },
+    {
+      "file": "Clover_1.gltf",
+      "bounds": {
+        "min": [
+          -0.5022982358932495,
+          -0.012792191468179226,
+          -0.39956197142601013
+        ],
+        "max": [
+          0.2939910888671875,
+          1.131940245628357,
+          0.36432379484176636
+        ],
+        "size": [
+          0.796289324760437,
+          1.1447324370965362,
+          0.7638857662677765
+        ]
+      },
+      "triangles": 379,
+      "primitives": 1,
+      "dependencies": [
+        "Clover_1.bin",
+        "Leaves.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Clover_1"
+        }
+      ]
+    },
+    {
+      "file": "CommonTree_1.gltf",
+      "bounds": {
+        "min": [
+          -2.1944587230682373,
+          -0.24277201294898987,
+          -2.2245190143585205
+        ],
+        "max": [
+          2.116964101791382,
+          7.022013187408447,
+          2.3531949520111084
+        ],
+        "size": [
+          4.311422824859619,
+          7.264785200357437,
+          4.577713966369629
+        ]
+      },
+      "triangles": 6265,
+      "primitives": 2,
+      "dependencies": [
+        "CommonTree_1.bin",
+        "Bark_NormalTree_Normal.png",
+        "Bark_NormalTree.png",
+        "Leaves_NormalTree_C.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "CommonTree_1"
+        }
+      ]
+    },
+    {
+      "file": "CommonTree_2.gltf",
+      "bounds": {
+        "min": [
+          -2.2230136394500732,
+          -0.24277201294898987,
+          -1.8514697551727295
+        ],
+        "max": [
+          2.24128794670105,
+          7.400223731994629,
+          2.4243826866149902
+        ],
+        "size": [
+          4.464301586151123,
+          7.642995744943619,
+          4.27585244178772
+        ]
+      },
+      "triangles": 5648,
+      "primitives": 2,
+      "dependencies": [
+        "CommonTree_2.bin",
+        "Bark_NormalTree_Normal.png",
+        "Bark_NormalTree.png",
+        "Leaves_NormalTree_C.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "CommonTree_2"
+        }
+      ]
+    },
+    {
+      "file": "CommonTree_3.gltf",
+      "bounds": {
+        "min": [
+          -1.9864652156829834,
+          -0.24277201294898987,
+          -2.0609655380249023
+        ],
+        "max": [
+          2.076380968093872,
+          9.182417869567871,
+          2.1801114082336426
+        ],
+        "size": [
+          4.0628461837768555,
+          9.425189882516861,
+          4.241076946258545
+        ]
+      },
+      "triangles": 3505,
+      "primitives": 2,
+      "dependencies": [
+        "CommonTree_3.bin",
+        "Bark_NormalTree_Normal.png",
+        "Bark_NormalTree.png",
+        "Leaves_NormalTree_C.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "CommonTree_3"
+        }
+      ]
+    },
+    {
+      "file": "CommonTree_4.gltf",
+      "bounds": {
+        "min": [
+          -1.7970952987670898,
+          -0.24277201294898987,
+          -2.0796103477478027
+        ],
+        "max": [
+          2.028430461883545,
+          9.195609092712402,
+          1.6757631301879883
+        ],
+        "size": [
+          3.8255257606506348,
+          9.438381105661392,
+          3.755373477935791
+        ]
+      },
+      "triangles": 4066,
+      "primitives": 2,
+      "dependencies": [
+        "CommonTree_4.bin",
+        "Bark_NormalTree_Normal.png",
+        "Bark_NormalTree.png",
+        "Leaves_NormalTree_C.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "CommonTree_4"
+        }
+      ]
+    },
+    {
+      "file": "DeadTree_1.gltf",
+      "bounds": {
+        "min": [
+          -2.5923237800598145,
+          -0.3355545997619629,
+          -2.9034998416900635
+        ],
+        "max": [
+          3.556612253189087,
+          9.15992259979248,
+          2.845168113708496
+        ],
+        "size": [
+          6.148936033248901,
+          9.495477199554443,
+          5.74866795539856
+        ]
+      },
+      "triangles": 6169,
+      "primitives": 1,
+      "dependencies": [
+        "DeadTree_1.bin",
+        "Bark_DeadTree_Normal.png",
+        "Bark_DeadTree.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "DeadTree_1"
+        }
+      ]
+    },
+    {
+      "file": "DeadTree_3.gltf",
+      "bounds": {
+        "min": [
+          -3.847569704055786,
+          -0.3355545997619629,
+          -3.3867006301879883
+        ],
+        "max": [
+          2.540004014968872,
+          12.944830894470215,
+          3.043358564376831
+        ],
+        "size": [
+          6.387573719024658,
+          13.280385494232178,
+          6.430059194564819
+        ]
+      },
+      "triangles": 5802,
+      "primitives": 1,
+      "dependencies": [
+        "DeadTree_3.bin",
+        "Bark_DeadTree_Normal.png",
+        "Bark_DeadTree.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "DeadTree_3"
+        }
+      ]
+    },
+    {
+      "file": "Fern_1.gltf",
+      "bounds": {
+        "min": [
+          -4.419975280761719,
+          -0.2474701851606369,
+          -4.091315746307373
+        ],
+        "max": [
+          4.626213073730469,
+          2.4413082599639893,
+          4.396108150482178
+        ],
+        "size": [
+          9.046188354492188,
+          2.688778445124626,
+          8.48742389678955
+        ]
+      },
+      "triangles": 288,
+      "primitives": 1,
+      "dependencies": [
+        "Fern_1.bin",
+        "Leaves.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Fern_1"
+        }
+      ]
+    },
+    {
+      "file": "Flower_3_Group.gltf",
+      "bounds": {
+        "min": [
+          -0.6136013269424438,
+          -0.03458359092473984,
+          -0.8017617464065552
+        ],
+        "max": [
+          0.8748752474784851,
+          2.020251512527466,
+          0.789365291595459
+        ],
+        "size": [
+          1.488476574420929,
+          2.0548351034522057,
+          1.5911270380020142
+        ]
+      },
+      "triangles": 755,
+      "primitives": 2,
+      "dependencies": [
+        "Flower_3_Group.bin",
+        "Leaves.png",
+        "Flowers.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Flower_3_Group"
+        }
+      ]
+    },
+    {
+      "file": "Flower_3_Single.gltf",
+      "bounds": {
+        "min": [
+          -0.48073863983154297,
+          -0.018326954916119576,
+          -0.520720362663269
+        ],
+        "max": [
+          0.42587125301361084,
+          2.0498666763305664,
+          0.3568156957626343
+        ],
+        "size": [
+          0.9066098928451538,
+          2.068193631246686,
+          0.8775360584259033
+        ]
+      },
+      "triangles": 285,
+      "primitives": 2,
+      "dependencies": [
+        "Flower_3_Single.bin",
+        "Leaves.png",
+        "Flowers.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Flower_3_Single"
+        }
+      ]
+    },
+    {
+      "file": "Flower_4_Group.gltf",
+      "bounds": {
+        "min": [
+          -0.9313857555389404,
+          -0.05699761211872101,
+          -0.6361504197120667
+        ],
+        "max": [
+          0.8491399884223938,
+          2.4297707080841064,
+          0.7313783168792725
+        ],
+        "size": [
+          1.7805257439613342,
+          2.4867683202028275,
+          1.3675287365913391
+        ]
+      },
+      "triangles": 1690,
+      "primitives": 2,
+      "dependencies": [
+        "Flower_4_Group.bin",
+        "Leaves.png",
+        "Flowers.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Flower_4_Group"
+        }
+      ]
+    },
+    {
+      "file": "Grass_Common_Short.gltf",
+      "bounds": {
+        "min": [
+          -0.3556424081325531,
+          -0.022385215386748314,
+          -0.47937828302383423
+        ],
+        "max": [
+          0.2832280695438385,
+          1.311718225479126,
+          0.25788721442222595
+        ],
+        "size": [
+          0.6388704776763916,
+          1.3341034408658743,
+          0.7372654974460602
+        ]
+      },
+      "triangles": 155,
+      "primitives": 1,
+      "dependencies": [
+        "Grass_Common_Short.bin",
+        "Grass.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Grass_Common_Short"
+        }
+      ]
+    },
+    {
+      "file": "Grass_Wispy_Short.gltf",
+      "bounds": {
+        "min": [
+          -0.7280435562133789,
+          -0.08575008809566498,
+          -0.5828109979629517
+        ],
+        "max": [
+          0.5941424369812012,
+          0.9860967993736267,
+          0.6269333362579346
+        ],
+        "size": [
+          1.32218599319458,
+          1.0718468874692917,
+          1.2097443342208862
+        ]
+      },
+      "triangles": 494,
+      "primitives": 1,
+      "dependencies": [
+        "Grass_Wispy_Short.bin",
+        "Grass.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Grass_Wispy_Short"
+        }
+      ]
+    },
+    {
+      "file": "Grass_Wispy_Tall.gltf",
+      "bounds": {
+        "min": [
+          -0.7392446994781494,
+          -0.03605181723833084,
+          -0.8185906410217285
+        ],
+        "max": [
+          0.8008279800415039,
+          1.6357505321502686,
+          0.7751253247261047
+        ],
+        "size": [
+          1.5400726795196533,
+          1.6718023493885994,
+          1.5937159657478333
+        ]
+      },
+      "triangles": 622,
+      "primitives": 1,
+      "dependencies": [
+        "Grass_Wispy_Tall.bin",
+        "Grass.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Grass_Wispy_Tall"
+        }
+      ]
+    },
+    {
+      "file": "Mushroom_Common.gltf",
+      "bounds": {
+        "min": [
+          -0.33337587118148804,
+          -0.017470968887209892,
+          -0.44521069526672363
+        ],
+        "max": [
+          0.23032501339912415,
+          0.4460097551345825,
+          0.3339020013809204
+        ],
+        "size": [
+          0.5637008845806122,
+          0.4634807240217924,
+          0.779112696647644
+        ]
+      },
+      "triangles": 880,
+      "primitives": 1,
+      "dependencies": [
+        "Mushroom_Common.bin",
+        "Mushrooms.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Mushroom_Common"
+        }
+      ]
+    },
+    {
+      "file": "Mushroom_Laetiporus.gltf",
+      "bounds": {
+        "min": [
+          -0.6498190760612488,
+          -0.16022536158561707,
+          -0.32830116152763367
+        ],
+        "max": [
+          0.716213583946228,
+          0.606732964515686,
+          0.7748813629150391
+        ],
+        "size": [
+          1.3660326600074768,
+          0.7669583261013031,
+          1.1031825244426727
+        ]
+      },
+      "triangles": 3216,
+      "primitives": 1,
+      "dependencies": [
+        "Mushroom_Laetiporus.bin",
+        "Mushrooms.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Mushroom_Laetiporus"
+        }
+      ]
+    },
+    {
+      "file": "Pebble_Round_2.gltf",
+      "bounds": {
+        "min": [
+          -0.21520347893238068,
+          -0.0029801998753100634,
+          -0.22227312624454498
+        ],
+        "max": [
+          0.23427341878414154,
+          0.09124953299760818,
+          0.1887856125831604
+        ],
+        "size": [
+          0.4494768977165222,
+          0.09422973287291825,
+          0.4110587388277054
+        ]
+      },
+      "triangles": 114,
+      "primitives": 1,
+      "dependencies": [
+        "Pebble_Round_2.bin",
+        "PathRocks_Diffuse.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Pebble_Round_2"
+        }
+      ]
+    },
+    {
+      "file": "Pebble_Square_3.gltf",
+      "bounds": {
+        "min": [
+          -0.18665164709091187,
+          -0.00811817031353712,
+          -0.16649161279201508
+        ],
+        "max": [
+          0.18668454885482788,
+          0.1508151739835739,
+          0.15225757658481598
+        ],
+        "size": [
+          0.37333619594573975,
+          0.15893334429711103,
+          0.31874918937683105
+        ]
+      },
+      "triangles": 52,
+      "primitives": 1,
+      "dependencies": [
+        "Pebble_Square_3.bin",
+        "PathRocks_Diffuse.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Pebble_Square_3"
+        }
+      ]
+    },
+    {
+      "file": "Pine_1.gltf",
+      "bounds": {
+        "min": [
+          -2.448819160461426,
+          -0.23508860170841217,
+          -2.4769327640533447
+        ],
+        "max": [
+          2.4958789348602295,
+          7.081829071044922,
+          2.0614705085754395
+        ],
+        "size": [
+          4.944698095321655,
+          7.316917672753334,
+          4.538403272628784
+        ]
+      },
+      "triangles": 3947,
+      "primitives": 2,
+      "dependencies": [
+        "Pine_1.bin",
+        "Bark_NormalTree_Normal.png",
+        "Bark_NormalTree.png",
+        "Leaf_Pine_C.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Pine_1"
+        }
+      ]
+    },
+    {
+      "file": "Pine_3.gltf",
+      "bounds": {
+        "min": [
+          -2.113736867904663,
+          -0.23508860170841217,
+          -2.2923386096954346
+        ],
+        "max": [
+          1.4976577758789062,
+          7.157110214233398,
+          1.7034649848937988
+        ],
+        "size": [
+          3.6113946437835693,
+          7.392198815941811,
+          3.9958035945892334
+        ]
+      },
+      "triangles": 4964,
+      "primitives": 2,
+      "dependencies": [
+        "Pine_3.bin",
+        "Bark_NormalTree_Normal.png",
+        "Bark_NormalTree.png",
+        "Leaf_Pine_C.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Pine_3"
+        }
+      ]
+    },
+    {
+      "file": "Pine_5.gltf",
+      "bounds": {
+        "min": [
+          -2.987706422805786,
+          -0.23508861660957336,
+          -3.7784042358398438
+        ],
+        "max": [
+          3.432434320449829,
+          8.48871898651123,
+          2.4435970783233643
+        ],
+        "size": [
+          6.420140743255615,
+          8.723807603120804,
+          6.222001314163208
+        ]
+      },
+      "triangles": 1646,
+      "primitives": 2,
+      "dependencies": [
+        "Pine_5.bin",
+        "Bark_NormalTree_Normal.png",
+        "Bark_NormalTree.png",
+        "Leaf_Pine_C.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Pine_5"
+        }
+      ]
+    },
+    {
+      "file": "Plant_1.gltf",
+      "bounds": {
+        "min": [
+          -0.7107237577438354,
+          -0.0350240021944046,
+          -0.7635920643806458
+        ],
+        "max": [
+          0.562667191028595,
+          0.978546142578125,
+          0.6224353909492493
+        ],
+        "size": [
+          1.2733909487724304,
+          1.0135701447725296,
+          1.386027455329895
+        ]
+      },
+      "triangles": 120,
+      "primitives": 1,
+      "dependencies": [
+        "Plant_1.bin",
+        "Leaves.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Plant_1"
+        }
+      ]
+    },
+    {
+      "file": "Plant_7.gltf",
+      "bounds": {
+        "min": [
+          -0.44815123081207275,
+          0.07910457253456116,
+          -0.46386587619781494
+        ],
+        "max": [
+          0.5996842384338379,
+          0.3286193609237671,
+          0.4982551336288452
+        ],
+        "size": [
+          1.0478354692459106,
+          0.24951478838920593,
+          0.9621210098266602
+        ]
+      },
+      "triangles": 48,
+      "primitives": 1,
+      "dependencies": [
+        "Plant_7.bin",
+        "Leaves.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Plant_7"
+        }
+      ]
+    },
+    {
+      "file": "RockPath_Round_Small_1.gltf",
+      "bounds": {
+        "min": [
+          -0.5380551815032959,
+          -0.008882608264684677,
+          -0.703344464302063
+        ],
+        "max": [
+          0.5184587240219116,
+          0.10394920408725739,
+          0.7730143070220947
+        ],
+        "size": [
+          1.0565139055252075,
+          0.11283181235194206,
+          1.4763587713241577
+        ]
+      },
+      "triangles": 998,
+      "primitives": 1,
+      "dependencies": [
+        "RockPath_Round_Small_1.bin",
+        "PathRocks_Diffuse.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "RockPath_Round_Small_1"
+        }
+      ]
+    },
+    {
+      "file": "Rock_Medium_1.gltf",
+      "bounds": {
+        "min": [
+          -1.7272872924804688,
+          -0.27113133668899536,
+          -1.1498832702636719
+        ],
+        "max": [
+          1.4978611469268799,
+          1.988665223121643,
+          1.8392531871795654
+        ],
+        "size": [
+          3.2251484394073486,
+          2.2597965598106384,
+          2.9891364574432373
+        ]
+      },
+      "triangles": 342,
+      "primitives": 1,
+      "dependencies": [
+        "Rock_Medium_1.bin",
+        "Rocks_Diffuse.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Rock_Medium_1"
+        }
+      ]
+    },
+    {
+      "file": "Rock_Medium_2.gltf",
+      "bounds": {
+        "min": [
+          -1.713641881942749,
+          -0.05084158852696419,
+          -1.1591253280639648
+        ],
+        "max": [
+          1.3351185321807861,
+          1.8481333255767822,
+          1.3199462890625
+        ],
+        "size": [
+          3.048760414123535,
+          1.8989749141037464,
+          2.479071617126465
+        ]
+      },
+      "triangles": 244,
+      "primitives": 1,
+      "dependencies": [
+        "Rock_Medium_2.bin",
+        "Rocks_Diffuse.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Rock_Medium_2"
+        }
+      ]
+    },
+    {
+      "file": "Rock_Medium_3.gltf",
+      "bounds": {
+        "min": [
+          -1.8242793083190918,
+          -0.31564441323280334,
+          -0.8904620409011841
+        ],
+        "max": [
+          1.5958054065704346,
+          2.000638246536255,
+          2.5856480598449707
+        ],
+        "size": [
+          3.4200847148895264,
+          2.3162826597690582,
+          3.476110100746155
+        ]
+      },
+      "triangles": 522,
+      "primitives": 1,
+      "dependencies": [
+        "Rock_Medium_3.bin",
+        "Rocks_Diffuse.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Rock_Medium_3"
+        }
+      ]
+    },
+    {
+      "file": "TwistedTree_1.gltf",
+      "bounds": {
+        "min": [
+          -2.174241065979004,
+          -0.20147469639778137,
+          -6.726779460906982
+        ],
+        "max": [
+          11.341513633728027,
+          16.52402114868164,
+          4.822585105895996
+        ],
+        "size": [
+          13.515754699707031,
+          16.725495845079422,
+          11.549364566802979
+        ]
+      },
+      "triangles": 9564,
+      "primitives": 2,
+      "dependencies": [
+        "TwistedTree_1.bin",
+        "Bark_TwistedTree_Normal.png",
+        "Bark_TwistedTree.png",
+        "Leaves_TwistedTree_C.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "TwistedTree_1"
+        }
+      ]
+    }
+  ],
+  "originalFiles": [
+    {
+      "file": "Bark_DeadTree.png",
+      "bytes": 4228870,
+      "sha256": "8f055724c35f8e8c5685a505775b3b9ebfc6b4745308ef35ce1cfe6fd976153f",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "Bark_DeadTree_Normal.png",
+      "bytes": 5728199,
+      "sha256": "692da2f58909263f074cb17b36defd09f56bf89ab7efda567a9a3e59261747b3",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "Bark_NormalTree.png",
+      "bytes": 3894788,
+      "sha256": "f36e94fdd73255347325b998e02a0b2575fdf714b0315bfe5e8ff34bc8e13603",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "Bark_NormalTree_Normal.png",
+      "bytes": 4384496,
+      "sha256": "852f6155404b8c39e100e41e26970e02a6a5c81b482d3726618dab28e3ad03a2",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "Bark_TwistedTree.png",
+      "bytes": 4630805,
+      "sha256": "01608a96c42954eb725b32824530b51e67a2f3d85432d21a8d8adff958d2084a",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "Bark_TwistedTree_Normal.png",
+      "bytes": 5728199,
+      "sha256": "692da2f58909263f074cb17b36defd09f56bf89ab7efda567a9a3e59261747b3",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "Bush_Common.bin",
+      "bytes": 91800,
+      "sha256": "a5e1a773c8ba78fd9c05a8b342131eba4879302a8fddd2c5186cab9ee1ef4966"
+    },
+    {
+      "file": "Bush_Common.gltf",
+      "bytes": 2101,
+      "sha256": "77811fca92610cb254713d3d49d5029ab6cf13050c3afb61aa942786a7b2ca90"
+    },
+    {
+      "file": "Bush_Common_Flowers.bin",
+      "bytes": 128928,
+      "sha256": "15f56a013afe0eecaded0eb97fd8f323305af11e1f0f7bb9b68472ec4cdc20d5"
+    },
+    {
+      "file": "Bush_Common_Flowers.gltf",
+      "bytes": 3654,
+      "sha256": "08768c680e3abeafd25858c9d3f369bcb7eed014661d3b6825a397f2a6a3deea"
+    },
+    {
+      "file": "Clover_1.bin",
+      "bytes": 12956,
+      "sha256": "788fabaffc3f8f2825ad88399bd4725d8bc397225d93d00926c3223fdee9516b"
+    },
+    {
+      "file": "Clover_1.gltf",
+      "bytes": 2074,
+      "sha256": "05fe48cdf1f3db879371a6ba0d843fcd407667b7680def5716c9f286efe0306b"
+    },
+    {
+      "file": "CommonTree_1.bin",
+      "bytes": 491576,
+      "sha256": "9dd689e84e1aa2f5b08db8def591254d582783c73737af54ba0d89b3e549c3ae"
+    },
+    {
+      "file": "CommonTree_1.gltf",
+      "bytes": 3869,
+      "sha256": "b51cdea6545edb51d102dd6c27caafe62aa75e3c328ac8f9039f4e7bfd690bfa"
+    },
+    {
+      "file": "CommonTree_2.bin",
+      "bytes": 423024,
+      "sha256": "a273d69de31a675a9d7e3eb3c43f804aef2d1b031692111b9e76eb3b0b686d0c"
+    },
+    {
+      "file": "CommonTree_2.gltf",
+      "bytes": 3866,
+      "sha256": "67160975f0ac991b4a2ffb2add4ab4037b5e9c1bef9f66dac5235fcf0ba9bd52"
+    },
+    {
+      "file": "CommonTree_3.bin",
+      "bytes": 296984,
+      "sha256": "24541f46fd9553e2389aba15575f2697009226e82118ed76868284114fd12b49"
+    },
+    {
+      "file": "CommonTree_3.gltf",
+      "bytes": 3864,
+      "sha256": "17c6537aa8042bb7255fbb501bf7aeb2b6db87c16766f794f9c37be3ce70c976"
+    },
+    {
+      "file": "CommonTree_4.bin",
+      "bytes": 307596,
+      "sha256": "4fa52cc5bb9aa42d5ce1eee6cffca0f0a7f25dd07fe4431e371548e89bc30233"
+    },
+    {
+      "file": "CommonTree_4.gltf",
+      "bytes": 3865,
+      "sha256": "ddf0e8837705702871d3f03de8cf7aeed61ad4bf8ee92052b6f95bdd771297b6"
+    },
+    {
+      "file": "DeadTree_1.bin",
+      "bytes": 422744,
+      "sha256": "d623cfc5199a732cc988175fad149e8afcb84516df01a8dc1e378844019f408c"
+    },
+    {
+      "file": "DeadTree_1.gltf",
+      "bytes": 2206,
+      "sha256": "b7ca9e90cbd8e8e3b3b17fd9c8fd57184ebf4986ff433ee3f2212f37f3114469"
+    },
+    {
+      "file": "DeadTree_3.bin",
+      "bytes": 415740,
+      "sha256": "5c3b29bf37c700f5ca545b315f6423d966562d7af01116fdd2d8f94a6173959e"
+    },
+    {
+      "file": "DeadTree_3.gltf",
+      "bytes": 2211,
+      "sha256": "aa74a47c69259f217388d7b3e2871d76c0385449fc1efd92299c2e55417fdffc"
+    },
+    {
+      "file": "Fern_1.bin",
+      "bytes": 11448,
+      "sha256": "5e92b87a27f81a69fe15347a533df3c77d567b48298dceeef43168ccb7c22853"
+    },
+    {
+      "file": "Fern_1.gltf",
+      "bytes": 2058,
+      "sha256": "d41915cffe9dbbde1ae88be381eb9c60f7caa2274511436cc78fe4de627468ab"
+    },
+    {
+      "file": "Flower_3_Group.bin",
+      "bytes": 27772,
+      "sha256": "5ab387dd3d6fe181df3af4eeac4df85533e4c27e77545ae39a61e0c2aaaab248"
+    },
+    {
+      "file": "Flower_3_Group.gltf",
+      "bytes": 3629,
+      "sha256": "4df1612371982c543f930d6b213967372e0d459622d7eff7fc2ed1ddbfaa3b6c"
+    },
+    {
+      "file": "Flower_3_Single.bin",
+      "bytes": 10792,
+      "sha256": "88416b839c0d208040a1bd5b52984f7e927232356dfe9e8faec48838defac654"
+    },
+    {
+      "file": "Flower_3_Single.gltf",
+      "bytes": 3632,
+      "sha256": "26c33edf26f0913947977109fefa2367095a854541a731dfecfd64263b7db2bc"
+    },
+    {
+      "file": "Flower_4_Group.bin",
+      "bytes": 62220,
+      "sha256": "3ac30b4c9eaa5078a17c061aa29e2e9618cc9eb58cb6d5d2ab0c07fa0b851ae1"
+    },
+    {
+      "file": "Flower_4_Group.gltf",
+      "bytes": 3645,
+      "sha256": "69ead56b36b50f06a0cf18380797fce7434302e9b2da7bf68a85014b993c6134"
+    },
+    {
+      "file": "Flowers.png",
+      "bytes": 444609,
+      "sha256": "5c531f2329c241c625aafd6cb769de29f33b480ef2a16491c2489f3c68e62a6a",
+      "pixelSize": [
+        1008,
+        981
+      ]
+    },
+    {
+      "file": "Grass.png",
+      "bytes": 33605,
+      "sha256": "5d69048193b246a73c996b892607fb36c75d0c60afcb2dab8aa12de3c0b2d9bd",
+      "pixelSize": [
+        512,
+        512
+      ]
+    },
+    {
+      "file": "Grass_Common_Short.bin",
+      "bytes": 7052,
+      "sha256": "7a0f0f7a9ac39cfa4b303bac03a6594f43e48d873b73553fa06a79e4df1271e9"
+    },
+    {
+      "file": "Grass_Common_Short.gltf",
+      "bytes": 2023,
+      "sha256": "6957b50622c9e26e7296c1b47ea8653bc0d957e0a547de444e2ed96f0075a21a"
+    },
+    {
+      "file": "Grass_Wispy_Short.bin",
+      "bytes": 25324,
+      "sha256": "c38f46e5a66ed3917fd45104effb914228d43d3724f4659416e1533dcd71776d"
+    },
+    {
+      "file": "Grass_Wispy_Short.gltf",
+      "bytes": 2025,
+      "sha256": "3c1d3bdd332420e070abde72d73611d1f13acfbe027e26b2fb943f9bcbd6b1c5"
+    },
+    {
+      "file": "Grass_Wispy_Tall.bin",
+      "bytes": 29492,
+      "sha256": "a46e091f39958242a96722ea331efa8d7fb055c6e24d21aea6b0ac091a7b1b66"
+    },
+    {
+      "file": "Grass_Wispy_Tall.gltf",
+      "bytes": 2023,
+      "sha256": "a05e3ac05e43abbdb89c5b61134e367c7d33e285ff8d2a6e0a40180cb335af0b"
+    },
+    {
+      "file": "LICENSE.txt",
+      "bytes": 852,
+      "sha256": "120710e542c3ebaf83856c4eb55b4a1e680593b39302eba7fdc5d942dfe78c58"
+    },
+    {
+      "file": "Leaf_Pine_C.png",
+      "bytes": 70055,
+      "sha256": "86f7ff7a214f5424de48d269568f36a15485e61c80677e426c7be9f45181eef9",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "Leaves.png",
+      "bytes": 2586432,
+      "sha256": "23248cebe28a24e78add32db3c2ee2f4d7b9219e9d2467279722f0197a7b6bd5",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "Leaves_NormalTree_C.png",
+      "bytes": 158796,
+      "sha256": "998612bdf0b76a22f5f54d65cd7a457815d2842d89653fa4348a4ebb42933ad3",
+      "pixelSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "Leaves_TwistedTree_C.png",
+      "bytes": 70353,
+      "sha256": "0e459b56b14c0e81b1b7cf3d1e8c6f0bb71790eb6c46bb02a76a922d8df646ea",
+      "pixelSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "Mushroom_Common.bin",
+      "bytes": 23040,
+      "sha256": "e4cee9f2570505a172990a2754d52ed5775a4d75857a832fffa1b573e38a4051"
+    },
+    {
+      "file": "Mushroom_Common.gltf",
+      "bytes": 1822,
+      "sha256": "2088b39d92f2f6331f45e59a048d02814dcd8b22767b024f4d220143bc8339f4"
+    },
+    {
+      "file": "Mushroom_Laetiporus.bin",
+      "bytes": 77088,
+      "sha256": "14f4835745947e7088bf706fbbbfde6b800f89bebf36122f40582fc8d45bb1ae"
+    },
+    {
+      "file": "Mushroom_Laetiporus.gltf",
+      "bytes": 1833,
+      "sha256": "88d264df9da6b0408ec276c36ae744ae79813046ba2938f03ed0837778f66fc9"
+    },
+    {
+      "file": "Mushrooms.png",
+      "bytes": 1208660,
+      "sha256": "e29eed2db831e44a29634fe25c62e9e31edf201e978a52912b9e5221ffd4a1f3",
+      "pixelSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "PathRocks_Diffuse.png",
+      "bytes": 811732,
+      "sha256": "85a04abb2c136fee53b376daf3b7d7f96fdf3966de0258dff6fe2b24da792b23",
+      "pixelSize": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "file": "Pebble_Round_2.bin",
+      "bytes": 7468,
+      "sha256": "1bfde4a0934efd627c559a93d7ec28614b029efc48ce92c86060a6284ea911a9"
+    },
+    {
+      "file": "Pebble_Round_2.gltf",
+      "bytes": 1848,
+      "sha256": "d840c072326701dd5b6c884871948b67cb38e7d10d28773c89ee2ae89da810eb"
+    },
+    {
+      "file": "Pebble_Square_3.bin",
+      "bytes": 3768,
+      "sha256": "fff619340f9b70141e2291c7b465de179f25992bdd8cc3f06872ff4bb41a2013"
+    },
+    {
+      "file": "Pebble_Square_3.gltf",
+      "bytes": 1847,
+      "sha256": "da6e5ed6fec5cf1d72b3d492b479dae88a40f9c1cf9a809e2c708019fbaa9d68"
+    },
+    {
+      "file": "Pine_1.bin",
+      "bytes": 275492,
+      "sha256": "0cc0900d156359cab7028d87cd5d8897fbcb0479ddf1ddf524d5462c11e17af2"
+    },
+    {
+      "file": "Pine_1.gltf",
+      "bytes": 3832,
+      "sha256": "adc85a72e6f46f71317ca5f7630876bfb207f687427bc9e37cd97ec4af5f2cbc"
+    },
+    {
+      "file": "Pine_3.bin",
+      "bytes": 345288,
+      "sha256": "73edd69d7e789b12bfa32ab202c62d74ae98f0bba67975205211bf51906d8c82"
+    },
+    {
+      "file": "Pine_3.gltf",
+      "bytes": 3827,
+      "sha256": "54c72a4d614f053dd4b3d4404076a361de6085ec6a34560e42a76d7e79d89830"
+    },
+    {
+      "file": "Pine_5.bin",
+      "bytes": 120996,
+      "sha256": "18982d7f6c430d1a42568d4ef62017398dedb1ddc60dfbab047f8cddea9cf797"
+    },
+    {
+      "file": "Pine_5.gltf",
+      "bytes": 3815,
+      "sha256": "bb060ce1420af32dc996241078d36e4c991577397474aa64f4c691362c482cfa"
+    },
+    {
+      "file": "Plant_1.bin",
+      "bytes": 5520,
+      "sha256": "cc36c3e6e3473e13ce93ddb7f5efbfa57db43106f1036a8b8ea00edeedfde322"
+    },
+    {
+      "file": "Plant_1.gltf",
+      "bytes": 2057,
+      "sha256": "11749feb4c196bc69eaba0c0ad938fab09e3fe33c02e0d0f86b329eacf633b55"
+    },
+    {
+      "file": "Plant_7.bin",
+      "bytes": 2016,
+      "sha256": "7b2b78dade4459c7c8c683b6e8b860ed87e6e4f799e58c296c57d47964cedd61"
+    },
+    {
+      "file": "Plant_7.gltf",
+      "bytes": 1844,
+      "sha256": "04d5562bdfc4b0709f0030a65d1ddce90373c8e9a4dd3b15eb7acc28cd96b7a2"
+    },
+    {
+      "file": "RockPath_Round_Small_1.bin",
+      "bytes": 71140,
+      "sha256": "8a77235966e7df8eae421de3d14940ca7903951c3e85dcca6c136fbec31fa661"
+    },
+    {
+      "file": "RockPath_Round_Small_1.gltf",
+      "bytes": 1871,
+      "sha256": "9e2fc37aabceed94a2ece3dbffeae4477b87b46a220c3f3ff97503923902d4b9"
+    },
+    {
+      "file": "Rock_Medium_1.bin",
+      "bytes": 13284,
+      "sha256": "ea79527d4c2b3bdb7a28bf589bf0c1fd96d192a4d0738636753911dd58681e99"
+    },
+    {
+      "file": "Rock_Medium_1.gltf",
+      "bytes": 1831,
+      "sha256": "5d1ab1fa03218f4a908728ed0eabe6486344a7e4f510b0d3d6f837fd1d011bd8"
+    },
+    {
+      "file": "Rock_Medium_2.bin",
+      "bytes": 9432,
+      "sha256": "76b60bf8349f71abdb0ed462b3223d93c2dcabdfb5754bc132e18b021cc6c805"
+    },
+    {
+      "file": "Rock_Medium_2.gltf",
+      "bytes": 1825,
+      "sha256": "fac2d05a05f2d0d2098de59c09b58f42cc875c9caca4fd4c4bd57f3d36e7b12e"
+    },
+    {
+      "file": "Rock_Medium_3.bin",
+      "bytes": 20124,
+      "sha256": "63f94bce2d3fb3fe25b2d6c843a828b1bec76855dbaac93fcf5d43582309caad"
+    },
+    {
+      "file": "Rock_Medium_3.gltf",
+      "bytes": 1832,
+      "sha256": "9a575b911372cf91693aa3a56aea8137ec2251c2b99fb34a31272ee64503047f"
+    },
+    {
+      "file": "Rocks_Diffuse.png",
+      "bytes": 2517398,
+      "sha256": "b813696df6081f469a127092eb0ce45cc39d56f3ccc0699152bfcd3804810b48",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "TwistedTree_1.bin",
+      "bytes": 732456,
+      "sha256": "58e4c16c16e0a71051af76a37be0641ea8f7089652687f957383d3c4bd24723b"
+    },
+    {
+      "file": "TwistedTree_1.gltf",
+      "bytes": 3819,
+      "sha256": "8544b084e1fadfbec981e964ce27463f50c39c460513e0d3442160880c5908a7"
+    }
+  ],
+  "processing": {
+    "date": "2026-10-16",
+    "changes": [
+      {
+        "file": "Bark_DeadTree.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "814a227a1ed309c683dfbf7240cc36369ea3f9a4fb0b8e9add4a064c625ed533"
+      },
+      {
+        "file": "Bark_DeadTree_Normal.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "e51b1f492d90249dcf3f5edd97ce91c21beffe392aee0e0571199515d75b25d7"
+      },
+      {
+        "file": "Bark_NormalTree.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "665d9ba65279d3c81d09dcd081e757058503a6817fec78d1c08bbf339c3484b7"
+      },
+      {
+        "file": "Bark_NormalTree_Normal.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "a7e27e63340fdf493e682644f08030ab3745a701f4357b874a5bdff50975218b"
+      },
+      {
+        "file": "Bark_TwistedTree.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "1b187b432e560d8d512692a4164efed283eb53f6b7a48c6b2214b433a6171098"
+      },
+      {
+        "file": "Bark_TwistedTree_Normal.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "e51b1f492d90249dcf3f5edd97ce91c21beffe392aee0e0571199515d75b25d7"
+      },
+      {
+        "file": "Leaf_Pine_C.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          1024,
+          1024
+        ],
+        "outputSHA256": "7425b947c3eea048c7072fcd20b13d87e26c3ca4f8a15ef8eb7a1eb6764c2901"
+      },
+      {
+        "file": "Leaves.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          1024,
+          1024
+        ],
+        "outputSHA256": "b83b5e528b321103b8a59cd8ebda6e0b58fd60eb8273b794a582040be6efe258"
+      },
+      {
+        "file": "Mushrooms.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          1024,
+          1024
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "5f6f308548055fe9dead589cd9dcd4f42a96cc742fa3c178e4bd02a5885fdb4b"
+      },
+      {
+        "file": "PathRocks_Diffuse.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          1024,
+          1024
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "f0c109c7a1475ec95536b3244f9d0f9519b594dd7f0900e415861c1bf49ba0a7"
+      },
+      {
+        "file": "Rocks_Diffuse.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "7618f1ce85eff64cb55eb81bb960671f51245edc6f2b6d7f740c769626fdea60"
+      }
+    ]
+  },
+  "files": [
+    {
+      "file": "Bark_DeadTree.png",
+      "bytes": 317660,
+      "sha256": "814a227a1ed309c683dfbf7240cc36369ea3f9a4fb0b8e9add4a064c625ed533",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 6
+    },
+    {
+      "file": "Bark_DeadTree_Normal.png",
+      "bytes": 437476,
+      "sha256": "e51b1f492d90249dcf3f5edd97ce91c21beffe392aee0e0571199515d75b25d7",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 6
+    },
+    {
+      "file": "Bark_NormalTree.png",
+      "bytes": 306172,
+      "sha256": "665d9ba65279d3c81d09dcd081e757058503a6817fec78d1c08bbf339c3484b7",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 6
+    },
+    {
+      "file": "Bark_NormalTree_Normal.png",
+      "bytes": 352550,
+      "sha256": "a7e27e63340fdf493e682644f08030ab3745a701f4357b874a5bdff50975218b",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 6
+    },
+    {
+      "file": "Bark_TwistedTree.png",
+      "bytes": 336298,
+      "sha256": "1b187b432e560d8d512692a4164efed283eb53f6b7a48c6b2214b433a6171098",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 6
+    },
+    {
+      "file": "Bark_TwistedTree_Normal.png",
+      "bytes": 437476,
+      "sha256": "e51b1f492d90249dcf3f5edd97ce91c21beffe392aee0e0571199515d75b25d7",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 6
+    },
+    {
+      "file": "Bush_Common.bin",
+      "bytes": 91800,
+      "sha256": "a5e1a773c8ba78fd9c05a8b342131eba4879302a8fddd2c5186cab9ee1ef4966"
+    },
+    {
+      "file": "Bush_Common.gltf",
+      "bytes": 2101,
+      "sha256": "77811fca92610cb254713d3d49d5029ab6cf13050c3afb61aa942786a7b2ca90"
+    },
+    {
+      "file": "Bush_Common_Flowers.bin",
+      "bytes": 128928,
+      "sha256": "15f56a013afe0eecaded0eb97fd8f323305af11e1f0f7bb9b68472ec4cdc20d5"
+    },
+    {
+      "file": "Bush_Common_Flowers.gltf",
+      "bytes": 3654,
+      "sha256": "08768c680e3abeafd25858c9d3f369bcb7eed014661d3b6825a397f2a6a3deea"
+    },
+    {
+      "file": "Clover_1.bin",
+      "bytes": 12956,
+      "sha256": "788fabaffc3f8f2825ad88399bd4725d8bc397225d93d00926c3223fdee9516b"
+    },
+    {
+      "file": "Clover_1.gltf",
+      "bytes": 2074,
+      "sha256": "05fe48cdf1f3db879371a6ba0d843fcd407667b7680def5716c9f286efe0306b"
+    },
+    {
+      "file": "CommonTree_1.bin",
+      "bytes": 491576,
+      "sha256": "9dd689e84e1aa2f5b08db8def591254d582783c73737af54ba0d89b3e549c3ae"
+    },
+    {
+      "file": "CommonTree_1.gltf",
+      "bytes": 3869,
+      "sha256": "b51cdea6545edb51d102dd6c27caafe62aa75e3c328ac8f9039f4e7bfd690bfa"
+    },
+    {
+      "file": "CommonTree_2.bin",
+      "bytes": 423024,
+      "sha256": "a273d69de31a675a9d7e3eb3c43f804aef2d1b031692111b9e76eb3b0b686d0c"
+    },
+    {
+      "file": "CommonTree_2.gltf",
+      "bytes": 3866,
+      "sha256": "67160975f0ac991b4a2ffb2add4ab4037b5e9c1bef9f66dac5235fcf0ba9bd52"
+    },
+    {
+      "file": "CommonTree_3.bin",
+      "bytes": 296984,
+      "sha256": "24541f46fd9553e2389aba15575f2697009226e82118ed76868284114fd12b49"
+    },
+    {
+      "file": "CommonTree_3.gltf",
+      "bytes": 3864,
+      "sha256": "17c6537aa8042bb7255fbb501bf7aeb2b6db87c16766f794f9c37be3ce70c976"
+    },
+    {
+      "file": "CommonTree_4.bin",
+      "bytes": 307596,
+      "sha256": "4fa52cc5bb9aa42d5ce1eee6cffca0f0a7f25dd07fe4431e371548e89bc30233"
+    },
+    {
+      "file": "CommonTree_4.gltf",
+      "bytes": 3865,
+      "sha256": "ddf0e8837705702871d3f03de8cf7aeed61ad4bf8ee92052b6f95bdd771297b6"
+    },
+    {
+      "file": "DeadTree_1.bin",
+      "bytes": 422744,
+      "sha256": "d623cfc5199a732cc988175fad149e8afcb84516df01a8dc1e378844019f408c"
+    },
+    {
+      "file": "DeadTree_1.gltf",
+      "bytes": 2206,
+      "sha256": "b7ca9e90cbd8e8e3b3b17fd9c8fd57184ebf4986ff433ee3f2212f37f3114469"
+    },
+    {
+      "file": "DeadTree_3.bin",
+      "bytes": 415740,
+      "sha256": "5c3b29bf37c700f5ca545b315f6423d966562d7af01116fdd2d8f94a6173959e"
+    },
+    {
+      "file": "DeadTree_3.gltf",
+      "bytes": 2211,
+      "sha256": "aa74a47c69259f217388d7b3e2871d76c0385449fc1efd92299c2e55417fdffc"
+    },
+    {
+      "file": "Fern_1.bin",
+      "bytes": 11448,
+      "sha256": "5e92b87a27f81a69fe15347a533df3c77d567b48298dceeef43168ccb7c22853"
+    },
+    {
+      "file": "Fern_1.gltf",
+      "bytes": 2058,
+      "sha256": "d41915cffe9dbbde1ae88be381eb9c60f7caa2274511436cc78fe4de627468ab"
+    },
+    {
+      "file": "Flower_3_Group.bin",
+      "bytes": 27772,
+      "sha256": "5ab387dd3d6fe181df3af4eeac4df85533e4c27e77545ae39a61e0c2aaaab248"
+    },
+    {
+      "file": "Flower_3_Group.gltf",
+      "bytes": 3629,
+      "sha256": "4df1612371982c543f930d6b213967372e0d459622d7eff7fc2ed1ddbfaa3b6c"
+    },
+    {
+      "file": "Flower_3_Single.bin",
+      "bytes": 10792,
+      "sha256": "88416b839c0d208040a1bd5b52984f7e927232356dfe9e8faec48838defac654"
+    },
+    {
+      "file": "Flower_3_Single.gltf",
+      "bytes": 3632,
+      "sha256": "26c33edf26f0913947977109fefa2367095a854541a731dfecfd64263b7db2bc"
+    },
+    {
+      "file": "Flower_4_Group.bin",
+      "bytes": 62220,
+      "sha256": "3ac30b4c9eaa5078a17c061aa29e2e9618cc9eb58cb6d5d2ab0c07fa0b851ae1"
+    },
+    {
+      "file": "Flower_4_Group.gltf",
+      "bytes": 3645,
+      "sha256": "69ead56b36b50f06a0cf18380797fce7434302e9b2da7bf68a85014b993c6134"
+    },
+    {
+      "file": "Flowers.png",
+      "bytes": 444609,
+      "sha256": "5c531f2329c241c625aafd6cb769de29f33b480ef2a16491c2489f3c68e62a6a",
+      "pixelSize": [
+        1008,
+        981
+      ],
+      "pngColorType": 6
+    },
+    {
+      "file": "Grass.png",
+      "bytes": 33605,
+      "sha256": "5d69048193b246a73c996b892607fb36c75d0c60afcb2dab8aa12de3c0b2d9bd",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 6
+    },
+    {
+      "file": "Grass_Common_Short.bin",
+      "bytes": 7052,
+      "sha256": "7a0f0f7a9ac39cfa4b303bac03a6594f43e48d873b73553fa06a79e4df1271e9"
+    },
+    {
+      "file": "Grass_Common_Short.gltf",
+      "bytes": 2023,
+      "sha256": "6957b50622c9e26e7296c1b47ea8653bc0d957e0a547de444e2ed96f0075a21a"
+    },
+    {
+      "file": "Grass_Wispy_Short.bin",
+      "bytes": 25324,
+      "sha256": "c38f46e5a66ed3917fd45104effb914228d43d3724f4659416e1533dcd71776d"
+    },
+    {
+      "file": "Grass_Wispy_Short.gltf",
+      "bytes": 2025,
+      "sha256": "3c1d3bdd332420e070abde72d73611d1f13acfbe027e26b2fb943f9bcbd6b1c5"
+    },
+    {
+      "file": "Grass_Wispy_Tall.bin",
+      "bytes": 29492,
+      "sha256": "a46e091f39958242a96722ea331efa8d7fb055c6e24d21aea6b0ac091a7b1b66"
+    },
+    {
+      "file": "Grass_Wispy_Tall.gltf",
+      "bytes": 2023,
+      "sha256": "a05e3ac05e43abbdb89c5b61134e367c7d33e285ff8d2a6e0a40180cb335af0b"
+    },
+    {
+      "file": "LICENSE.txt",
+      "bytes": 852,
+      "sha256": "120710e542c3ebaf83856c4eb55b4a1e680593b39302eba7fdc5d942dfe78c58"
+    },
+    {
+      "file": "Leaf_Pine_C.png",
+      "bytes": 62994,
+      "sha256": "7425b947c3eea048c7072fcd20b13d87e26c3ca4f8a15ef8eb7a1eb6764c2901",
+      "pixelSize": [
+        1024,
+        1024
+      ],
+      "pngColorType": 6
+    },
+    {
+      "file": "Leaves.png",
+      "bytes": 842554,
+      "sha256": "b83b5e528b321103b8a59cd8ebda6e0b58fd60eb8273b794a582040be6efe258",
+      "pixelSize": [
+        1024,
+        1024
+      ],
+      "pngColorType": 6
+    },
+    {
+      "file": "Leaves_NormalTree_C.png",
+      "bytes": 158796,
+      "sha256": "998612bdf0b76a22f5f54d65cd7a457815d2842d89653fa4348a4ebb42933ad3",
+      "pixelSize": [
+        1024,
+        1024
+      ],
+      "pngColorType": 6
+    },
+    {
+      "file": "Leaves_TwistedTree_C.png",
+      "bytes": 70353,
+      "sha256": "0e459b56b14c0e81b1b7cf3d1e8c6f0bb71790eb6c46bb02a76a922d8df646ea",
+      "pixelSize": [
+        1024,
+        1024
+      ],
+      "pngColorType": 6
+    },
+    {
+      "file": "Mushroom_Common.bin",
+      "bytes": 23040,
+      "sha256": "e4cee9f2570505a172990a2754d52ed5775a4d75857a832fffa1b573e38a4051"
+    },
+    {
+      "file": "Mushroom_Common.gltf",
+      "bytes": 1822,
+      "sha256": "2088b39d92f2f6331f45e59a048d02814dcd8b22767b024f4d220143bc8339f4"
+    },
+    {
+      "file": "Mushroom_Laetiporus.bin",
+      "bytes": 77088,
+      "sha256": "14f4835745947e7088bf706fbbbfde6b800f89bebf36122f40582fc8d45bb1ae"
+    },
+    {
+      "file": "Mushroom_Laetiporus.gltf",
+      "bytes": 1833,
+      "sha256": "88d264df9da6b0408ec276c36ae744ae79813046ba2938f03ed0837778f66fc9"
+    },
+    {
+      "file": "Mushrooms.png",
+      "bytes": 362979,
+      "sha256": "5f6f308548055fe9dead589cd9dcd4f42a96cc742fa3c178e4bd02a5885fdb4b",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 2
+    },
+    {
+      "file": "PathRocks_Diffuse.png",
+      "bytes": 327590,
+      "sha256": "f0c109c7a1475ec95536b3244f9d0f9519b594dd7f0900e415861c1bf49ba0a7",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 2
+    },
+    {
+      "file": "Pebble_Round_2.bin",
+      "bytes": 7468,
+      "sha256": "1bfde4a0934efd627c559a93d7ec28614b029efc48ce92c86060a6284ea911a9"
+    },
+    {
+      "file": "Pebble_Round_2.gltf",
+      "bytes": 1848,
+      "sha256": "d840c072326701dd5b6c884871948b67cb38e7d10d28773c89ee2ae89da810eb"
+    },
+    {
+      "file": "Pebble_Square_3.bin",
+      "bytes": 3768,
+      "sha256": "fff619340f9b70141e2291c7b465de179f25992bdd8cc3f06872ff4bb41a2013"
+    },
+    {
+      "file": "Pebble_Square_3.gltf",
+      "bytes": 1847,
+      "sha256": "da6e5ed6fec5cf1d72b3d492b479dae88a40f9c1cf9a809e2c708019fbaa9d68"
+    },
+    {
+      "file": "Pine_1.bin",
+      "bytes": 275492,
+      "sha256": "0cc0900d156359cab7028d87cd5d8897fbcb0479ddf1ddf524d5462c11e17af2"
+    },
+    {
+      "file": "Pine_1.gltf",
+      "bytes": 3832,
+      "sha256": "adc85a72e6f46f71317ca5f7630876bfb207f687427bc9e37cd97ec4af5f2cbc"
+    },
+    {
+      "file": "Pine_3.bin",
+      "bytes": 345288,
+      "sha256": "73edd69d7e789b12bfa32ab202c62d74ae98f0bba67975205211bf51906d8c82"
+    },
+    {
+      "file": "Pine_3.gltf",
+      "bytes": 3827,
+      "sha256": "54c72a4d614f053dd4b3d4404076a361de6085ec6a34560e42a76d7e79d89830"
+    },
+    {
+      "file": "Pine_5.bin",
+      "bytes": 120996,
+      "sha256": "18982d7f6c430d1a42568d4ef62017398dedb1ddc60dfbab047f8cddea9cf797"
+    },
+    {
+      "file": "Pine_5.gltf",
+      "bytes": 3815,
+      "sha256": "bb060ce1420af32dc996241078d36e4c991577397474aa64f4c691362c482cfa"
+    },
+    {
+      "file": "Plant_1.bin",
+      "bytes": 5520,
+      "sha256": "cc36c3e6e3473e13ce93ddb7f5efbfa57db43106f1036a8b8ea00edeedfde322"
+    },
+    {
+      "file": "Plant_1.gltf",
+      "bytes": 2057,
+      "sha256": "11749feb4c196bc69eaba0c0ad938fab09e3fe33c02e0d0f86b329eacf633b55"
+    },
+    {
+      "file": "Plant_7.bin",
+      "bytes": 2016,
+      "sha256": "7b2b78dade4459c7c8c683b6e8b860ed87e6e4f799e58c296c57d47964cedd61"
+    },
+    {
+      "file": "Plant_7.gltf",
+      "bytes": 1844,
+      "sha256": "04d5562bdfc4b0709f0030a65d1ddce90373c8e9a4dd3b15eb7acc28cd96b7a2"
+    },
+    {
+      "file": "RockPath_Round_Small_1.bin",
+      "bytes": 71140,
+      "sha256": "8a77235966e7df8eae421de3d14940ca7903951c3e85dcca6c136fbec31fa661"
+    },
+    {
+      "file": "RockPath_Round_Small_1.gltf",
+      "bytes": 1871,
+      "sha256": "9e2fc37aabceed94a2ece3dbffeae4477b87b46a220c3f3ff97503923902d4b9"
+    },
+    {
+      "file": "Rock_Medium_1.bin",
+      "bytes": 13284,
+      "sha256": "ea79527d4c2b3bdb7a28bf589bf0c1fd96d192a4d0738636753911dd58681e99"
+    },
+    {
+      "file": "Rock_Medium_1.gltf",
+      "bytes": 1831,
+      "sha256": "5d1ab1fa03218f4a908728ed0eabe6486344a7e4f510b0d3d6f837fd1d011bd8"
+    },
+    {
+      "file": "Rock_Medium_2.bin",
+      "bytes": 9432,
+      "sha256": "76b60bf8349f71abdb0ed462b3223d93c2dcabdfb5754bc132e18b021cc6c805"
+    },
+    {
+      "file": "Rock_Medium_2.gltf",
+      "bytes": 1825,
+      "sha256": "fac2d05a05f2d0d2098de59c09b58f42cc875c9caca4fd4c4bd57f3d36e7b12e"
+    },
+    {
+      "file": "Rock_Medium_3.bin",
+      "bytes": 20124,
+      "sha256": "63f94bce2d3fb3fe25b2d6c843a828b1bec76855dbaac93fcf5d43582309caad"
+    },
+    {
+      "file": "Rock_Medium_3.gltf",
+      "bytes": 1832,
+      "sha256": "9a575b911372cf91693aa3a56aea8137ec2251c2b99fb34a31272ee64503047f"
+    },
+    {
+      "file": "Rocks_Diffuse.png",
+      "bytes": 367654,
+      "sha256": "7618f1ce85eff64cb55eb81bb960671f51245edc6f2b6d7f740c769626fdea60",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 2
+    },
+    {
+      "file": "TwistedTree_1.bin",
+      "bytes": 732456,
+      "sha256": "58e4c16c16e0a71051af76a37be0641ea8f7089652687f957383d3c4bd24723b"
+    },
+    {
+      "file": "TwistedTree_1.gltf",
+      "bytes": 3819,
+      "sha256": "8544b084e1fadfbec981e964ce27463f50c39c460513e0d3442160880c5908a7"
+    }
+  ]
+}

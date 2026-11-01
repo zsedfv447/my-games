@@ -1,0 +1,99 @@
+
+> starlight-ro@2.2.1 test
+> vitest run --maxWorkers=1 --no-file-parallelism
+
+
+ RUN  v3.2.7 /Users/ethan/Documents/Codex/2026-10-14/referenced-chatgpt-conversation-this-is-an/outputs/starlight-ro-v2
+
+ ✓ src/rules/reliability.test.ts (54 tests) 1213ms
+ ❯ src/world/sim.test.ts (12 tests | 3 failed) 94921ms
+   ✓ 世界模擬 > 點地走路沿著可走的格子移動，到達後停止  4660ms
+   × 世界模擬 > 點怪會走過去並持續普攻直到打倒 11219ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ 世界模擬 > 法師火焰矢有詠唱時間，依等級落下多支  1888ms
+   ✓ 世界模擬 > 技能 SP 不足時失敗並提示  1710ms
+   ✓ 世界模擬 > 主動怪會主動追擊；城鎮內不會被攻擊  515ms
+   ✓ 世界模擬 > 手動移動會關閉自動戰鬥 89ms
+   × 世界模擬 > 自動戰鬥會找怪打 10446ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ 世界模擬 > 走到傳送點發出換地圖事件 49ms
+   × 世界模擬 > 同種子同操作結果一致（確定性） 58910ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ 世界模擬 > 卡片模組：回響只回響一次，不會無限連鎖  2607ms
+   ✓ MVP 大招 > 重擊先預警，玩家走出範圍就閃得掉  998ms
+   ✓ MVP 大招 > 半血時召喚一次小怪，小怪死後不會重生  1437ms
+ ✓ src/world/combat-upgrade.test.ts (13 tests) 2539ms
+   ✓ 戰鬥修正 > 高 INT 杖普攻在貼身及遠處皆使用 MATK  616ms
+   ✓ 戰鬥修正 > 單一傳送事件立刻中止本次幀內剩餘固定步進  368ms
+   ✓ 自動選招與冷卻邊界 > 同分單體技能輪替，最前熱鍵不會獨占  363ms
+ ✓ src/save.test.ts (6 tests) 297ms
+ ✓ src/world/mapgen.test.ts (7 tests) 889ms
+ ✓ src/rules/state.test.ts (20 tests) 453ms
+ ✓ src/session.test.ts (5 tests) 99ms
+ ✓ src/navigation.test.ts (3 tests) 93ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/world/sim.test.ts > 世界模擬 > 點怪會走過去並持續普攻直到打倒
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/world/sim.test.ts:21:3
+     19|     expect(w.player.vx).toBe(0);
+     20|   });
+     21|   test('點怪會走過去並持續普攻直到打倒',()=>{
+       |   ^
+     22|     const {w}=setup();const m=w.monsters.find(m=>m.def.id==='jelly')!;
+     23|     w.attack(m.id);const ev=run(w,40);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/world/sim.test.ts > 世界模擬 > 自動戰鬥會找怪打
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/world/sim.test.ts:51:3
+     49|     w.moveTo(10.5,36.5);expect(w.player.auto).toBe(false);
+     50|   });
+     51|   test('自動戰鬥會找怪打',()=>{
+       |   ^
+     52|     const {w}=setup();w.setAuto(true);const ev=run(w,40);
+     53|     expect(ev.some(e=>e.t==='kill')).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/world/sim.test.ts > 世界模擬 > 同種子同操作結果一致（確定性）
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/world/sim.test.ts:59:3
+     57|     const ev=run(w,20);expect(ev.some(e=>e.t==='warp'&&e.to==='meadow'…
+     58|   });
+     59|   test('同種子同操作結果一致（確定性）',()=>{
+       |   ^
+     60|     const a=setup(),b=setup();
+     61|     for(const w of [a.w,b.w]){w.setAuto(true);}
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-worker]: Timeout calling "onTaskUpdate"
+ ❯ Object.onTimeoutError node_modules/vitest/dist/chunks/rpc.-pEldfrD.js:53:10
+ ❯ Timeout._onTimeout node_modules/vitest/dist/chunks/index.B521nVV-.js:59:62
+ ❯ listOnTimeout node:internal/timers:594:17
+ ❯ processTimers node:internal/timers:529:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed | 7 passed (8)
+      Tests  3 failed | 117 passed (120)
+     Errors  1 error
+   Start at  21:14:19
+   Duration  218.42s (transform 18.15s, setup 0ms, collect 40.05s, tests 100.50s, environment 21ms, prepare 16.69s)
+

@@ -1,0 +1,137 @@
+{
+  "job": "swordman",
+  "virtualMinutes": 20,
+  "base": 13,
+  "jobLevel": 10,
+  "currentJob": "swordman",
+  "map": "meadow",
+  "quest": "wolf20",
+  "kills": 261,
+  "deaths": 1,
+  "killers": {
+    "jellyKing": 1
+  },
+  "zeny": 3947,
+  "spent": 350,
+  "purchased": {
+    "redPotion": 7
+  },
+  "consumed": {
+    "redPotion": 11,
+    "orangePotion": 4
+  },
+  "inventory": {
+    "redPotion": 36,
+    "apple": 37,
+    "teleportLeaf": 2,
+    "orangePotion": 1,
+    "jellyGoo": 31,
+    "softSilk": 12,
+    "sporeCap": 11,
+    "feather": 10
+  },
+  "trips": 6,
+  "travelSeconds": 335,
+  "earnedFromSales": 197,
+  "marks": [
+    "委託 jelly10",
+    "委託 goo",
+    "轉職 Base7",
+    "委託 worm12",
+    "委託 job",
+    "10分 Base10 Job6 殺77 死1",
+    "委託 chick15"
+  ],
+  "notes": "初始背包原樣；補藥扣真實庫存／金幣；回城55秒、死亡60秒，含往返與休息；城鎮自然回復；未授予額外經驗或免費補血。"
+}
+{
+  "job": "mage",
+  "virtualMinutes": 20,
+  "base": 13,
+  "jobLevel": 9,
+  "currentJob": "mage",
+  "map": "meadow",
+  "quest": "wolf20",
+  "kills": 200,
+  "deaths": 1,
+  "killers": {
+    "jellyKing": 1
+  },
+  "zeny": 4104,
+  "spent": 150,
+  "purchased": {
+    "redPotion": 3
+  },
+  "consumed": {
+    "redPotion": 7,
+    "orangePotion": 5
+  },
+  "inventory": {
+    "redPotion": 29,
+    "apple": 24,
+    "teleportLeaf": 2,
+    "jellyGoo": 20,
+    "softSilk": 17,
+    "sporeCap": 12,
+    "feather": 9
+  },
+  "trips": 7,
+  "travelSeconds": 390,
+  "earnedFromSales": 154,
+  "marks": [
+    "委託 jelly10",
+    "委託 goo",
+    "委託 worm12",
+    "轉職 Base7",
+    "委託 job",
+    "10分 Base8 Job4 殺61 死0",
+    "委託 chick15"
+  ],
+  "notes": "初始背包原樣；補藥扣真實庫存／金幣；回城55秒、死亡60秒，含往返與休息；城鎮自然回復；未授予額外經驗或免費補血。"
+}
+{
+  "job": "archer",
+  "virtualMinutes": 20,
+  "base": 14,
+  "jobLevel": 11,
+  "currentJob": "archer",
+  "map": "town",
+  "quest": "wolf20",
+  "kills": 340,
+  "deaths": 1,
+  "killers": {
+    "jellyKing": 1
+  },
+  "zeny": 4200,
+  "spent": 50,
+  "purchased": {
+    "redPotion": 1
+  },
+  "consumed": {
+    "redPotion": 6,
+    "orangePotion": 3
+  },
+  "inventory": {
+    "redPotion": 27,
+    "apple": 38,
+    "teleportLeaf": 2,
+    "orangePotion": 2,
+    "jellyGoo": 59,
+    "softSilk": 28,
+    "sporeCap": 22,
+    "feather": 18
+  },
+  "trips": 7,
+  "travelSeconds": 390,
+  "earnedFromSales": 150,
+  "marks": [
+    "委託 jelly10",
+    "委託 goo",
+    "委託 worm12",
+    "轉職 Base7",
+    "委託 job",
+    "10分 Base9 Job5 殺68 死0",
+    "委託 chick15"
+  ],
+  "notes": "初始背包原樣；補藥扣真實庫存／金幣；回城55秒、死亡60秒，含往返與休息；城鎮自然回復；未授予額外經驗或免費補血。"
+}

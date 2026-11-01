@@ -1,0 +1,59 @@
+
+ RUN  v3.2.7 /Users/ethan/Documents/Codex/2026-10-14/referenced-chatgpt-conversation-this-is-an/outputs/starlight-ro-v2
+
+ ✓ src/world/review-fixes.test.ts (19 tests) 597ms
+ ✓ src/world/elements.test.ts (17 tests) 734ms
+ ✓ src/world/second-job.test.ts (28 tests) 909ms
+   ✓ v6.0 星誓騎士 > 破陣突進衝到目標身邊，不會穿過牆壁  398ms
+ ✓ src/world/mapgen.test.ts (24 tests) 231ms
+ ✓ src/render3d/weapon-appearance.test.ts (85 tests) 280ms
+ ✓ src/data/expansion.test.ts (6 tests) 1590ms
+   ✓ 內容擴充的正常取得與相容性 > 亞種實際擊倒會走既有掉落與拾取流程，所有100件新裝可進入背包  1410ms
+ ✓ src/world/combat-upgrade.test.ts (13 tests) 308ms
+ ✓ src/world/companion.test.ts (8 tests) 1882ms
+   ✓ 傭兵與坐騎 > 騎乘加速，攻擊時自動下坐騎  502ms
+   ✓ 傭兵與坐騎 > 劍士傭兵跟隨、協助攻擊並嘲諷魔物  538ms
+   ✓ 傭兵與坐騎 > 傭兵倒下後會在主角身邊復活  488ms
+ ✓ src/world/mastery.test.ts (3 tests) 326ms
+ ✓ src/world/explore.test.ts (12 tests) 287ms
+ ✓ src/collection.test.ts (5 tests) 334ms
+ ✓ src/render3d/terrain.test.ts (21 tests) 137ms
+ ✓ src/save.test.ts (6 tests) 71ms
+ ✓ src/rules/reliability.test.ts (54 tests) 127ms
+ ✓ src/render3d/chibi-assets.test.ts (7 tests) 716ms
+ ✓ src/world/hunt.test.ts (5 tests) 87ms
+ ✓ src/world/sim.test.ts (12 tests) 2972ms
+   ✓ 世界模擬 > 點地走路沿著可走的格子移動，到達後停止  320ms
+   ✓ 世界模擬 > 點怪會走過去並持續普攻直到打倒  706ms
+   ✓ 世界模擬 > 自動戰鬥會找怪打  878ms
+   ✓ 世界模擬 > 同種子同操作結果一致（確定性）  404ms
+ ✓ src/world/expedition.test.ts (6 tests) 121ms
+ ✓ src/world/village-layout.test.ts (7 tests) 149ms
+ ✓ src/world/smartcast.test.ts (5 tests) 103ms
+ ✓ src/rules/state.test.ts (20 tests) 87ms
+ ✓ src/world/food.test.ts (3 tests) 136ms
+ ✓ src/world/dungeon.test.ts (6 tests) 88ms
+ ✓ src/world/merc-modes.test.ts (5 tests) 135ms
+ ✓ src/rules/gear47.test.ts (10 tests) 118ms
+ ✓ src/render3d/nature-assets.test.ts (50 tests) 51ms
+ ✓ src/world/builds.test.ts (4 tests) 51ms
+ ✓ src/render3d/hero-accessories.test.ts (12 tests) 32ms
+ ✓ src/render3d/combat-presentation.test.ts (7 tests) 44ms
+ ✓ src/rules/village-save.test.ts (2 tests) 45ms
+ ✓ src/render3d/hero-parts.test.ts (6 tests) 7ms
+ ✓ src/rules/pets-costumes.test.ts (6 tests) 35ms
+ ✓ src/audio-timing.test.ts (2 tests) 7ms
+ ✓ src/render3d/hero-timing.test.ts (2 tests) 6ms
+ ✓ src/render3d/static-textures.test.ts (3 tests) 4ms
+ ✓ src/navigation.test.ts (3 tests) 3ms
+ ✓ src/session.test.ts (5 tests) 7ms
+ ✓ src/world/world-events.test.ts (6 tests) 4641ms
+   ✓ v5.1 星光異變 > 流星雨：流星落下、留下星屑，經驗加成 20%，時間到就結束  1368ms
+   ✓ v5.1 星光異變 > 黃金魔物沒打倒，時間到就恢復原本的魔物  1478ms
+   ✓ v5.1 星光異變 > 魔物大進攻：三波來襲，全部擊退得到寶箱與經驗  1586ms
+
+ Test Files  38 passed (38)
+      Tests  495 passed (495)
+   Start at  21:25:42
+   Duration  5.30s (transform 1.08s, setup 0ms, collect 5.71s, tests 17.46s, environment 6ms, prepare 4.58s)
+

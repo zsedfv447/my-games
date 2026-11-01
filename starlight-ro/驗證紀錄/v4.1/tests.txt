@@ -1,0 +1,41 @@
+
+> starlight-ro@4.1.0 test
+> vitest run --maxWorkers=2
+
+
+ RUN  v3.2.7 /Users/ethan/Documents/Codex/2026-10-14/referenced-chatgpt-conversation-this-is-an/outputs/starlight-ro-v2
+
+ ✓ src/world/village-layout.test.ts (7 tests) 152ms
+ ✓ src/world/mapgen.test.ts (8 tests) 457ms
+ ✓ src/world/combat-upgrade.test.ts (13 tests) 504ms
+ ✓ src/rules/reliability.test.ts (54 tests) 590ms
+ ✓ src/world/sim.test.ts (12 tests) 14327ms
+   ✓ 世界模擬 > 點地走路沿著可走的格子移動，到達後停止  432ms
+   ✓ 世界模擬 > 點怪會走過去並持續普攻直到打倒  3771ms
+   ✓ 世界模擬 > 法師火焰矢有詠唱時間，依等級落下多支  4096ms
+   ✓ 世界模擬 > 技能 SP 不足時失敗並提示  1917ms
+   ✓ 世界模擬 > 自動戰鬥會找怪打  1284ms
+   ✓ 世界模擬 > 同種子同操作結果一致（確定性）  1941ms
+   ✓ MVP 大招 > 半血時召喚一次小怪，小怪死後不會重生  462ms
+ ✓ src/render3d/hero-accessories.test.ts (12 tests) 127ms
+ ✓ src/render3d/nature-assets.test.ts (50 tests) 1655ms
+   ✓ shipping nature assets > village/FarmCrate_Apple has complete local resources and valid geometry bounds  396ms
+ ✓ src/save.test.ts (6 tests) 167ms
+ ✓ src/rules/state.test.ts (20 tests) 195ms
+ ✓ src/world/builds.test.ts (4 tests) 117ms
+ ✓ src/render3d/terrain.test.ts (5 tests) 170ms
+ ✓ src/rules/pets-costumes.test.ts (6 tests) 63ms
+ ✓ src/rules/village-save.test.ts (2 tests) 62ms
+ ✓ src/render3d/combat-presentation.test.ts (7 tests) 93ms
+ ✓ src/render3d/hero-timing.test.ts (2 tests) 11ms
+ ✓ src/render3d/hero-parts.test.ts (6 tests) 17ms
+ ✓ src/render3d/static-textures.test.ts (3 tests) 9ms
+ ✓ src/session.test.ts (5 tests) 15ms
+ ✓ src/audio-timing.test.ts (2 tests) 11ms
+ ✓ src/navigation.test.ts (3 tests) 8ms
+
+ Test Files  20 passed (20)
+      Tests  227 passed (227)
+   Start at  00:27:50
+   Duration  29.75s (transform 1.91s, setup 0ms, collect 8.19s, tests 18.75s, environment 18ms, prepare 12.10s)
+

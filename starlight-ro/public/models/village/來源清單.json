@@ -1,0 +1,1847 @@
+{
+  "author": "Quaternius",
+  "pack": "Fantasy Props MegaKit Standard",
+  "retrieved": "2026-10-16",
+  "sourceUrl": "https://quaternius.itch.io/fantasy-props-megakit",
+  "downloadPage": "https://quaternius.itch.io/fantasy-props-megakit/purchase",
+  "itchUploadId": "13887750",
+  "license": "CC0 1.0 Universal",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "archive": {
+    "path": "outputs/asset-downloads/Quaternius-Fantasy-Props-MegaKit-Standard.zip",
+    "bytes": 150213360,
+    "sha256": "8b6f7e806d222e585478f0e1bdc6b271bbc7bc6f84dd6af8ca703a7c64f0cb1e"
+  },
+  "models": [
+    {
+      "file": "Anvil_Log.gltf",
+      "bounds": {
+        "min": [
+          -0.41191795468330383,
+          0.0014315724838525057,
+          -0.3469201326370239
+        ],
+        "max": [
+          0.5173688530921936,
+          1.0748099088668823,
+          0.4744724631309509
+        ],
+        "size": [
+          0.9292868077754974,
+          1.0733783363830298,
+          0.8213925957679749
+        ]
+      },
+      "triangles": 3808,
+      "primitives": 3,
+      "dependencies": [
+        "Anvil_Log.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png",
+        "T_Trim_Props_Normal.png",
+        "T_Trim_Props_BaseColor.png",
+        "T_Trim_Props_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Anvil_Log"
+        }
+      ]
+    },
+    {
+      "file": "Bag.gltf",
+      "bounds": {
+        "min": [
+          -0.32977303862571716,
+          0.002416962292045355,
+          -0.2439030408859253
+        ],
+        "max": [
+          0.3254036009311676,
+          0.8015695214271545,
+          0.3004903793334961
+        ],
+        "size": [
+          0.6551766395568848,
+          0.7991525591351092,
+          0.5443934202194214
+        ]
+      },
+      "triangles": 858,
+      "primitives": 2,
+      "dependencies": [
+        "Bag.bin",
+        "T_Trim_Cloth_Normal.png",
+        "T_Trim_Cloth_BaseColor.png",
+        "T_Trim_Cloth_ORM.png",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Bag"
+        }
+      ]
+    },
+    {
+      "file": "Banner_1.gltf",
+      "bounds": {
+        "min": [
+          -0.0008076705853454769,
+          -1.548718810081482,
+          -0.09295948594808578
+        ],
+        "max": [
+          1.6123000383377075,
+          0.8435074090957642,
+          0.097610704600811
+        ],
+        "size": [
+          1.613107708923053,
+          2.392226219177246,
+          0.1905701905488968
+        ]
+      },
+      "triangles": 448,
+      "primitives": 3,
+      "dependencies": [
+        "Banner_1.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png",
+        "T_Trim_Cloth_Normal.png",
+        "T_Trim_Cloth_BaseColor.png",
+        "T_Trim_Cloth_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Banner_1"
+        }
+      ]
+    },
+    {
+      "file": "Barrel.gltf",
+      "bounds": {
+        "min": [
+          -0.34901556372642517,
+          0.003436744213104248,
+          -0.349015474319458
+        ],
+        "max": [
+          0.3490154445171356,
+          0.9013950824737549,
+          0.3490155041217804
+        ],
+        "size": [
+          0.6980310082435608,
+          0.8979583382606506,
+          0.6980309784412384
+        ]
+      },
+      "triangles": 824,
+      "primitives": 2,
+      "dependencies": [
+        "Barrel.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Barrel"
+        }
+      ]
+    },
+    {
+      "file": "Barrel_Apples.gltf",
+      "bounds": {
+        "min": [
+          -0.34901556372642517,
+          0.003436744213104248,
+          -0.349015474319458
+        ],
+        "max": [
+          0.3490154445171356,
+          0.9013950824737549,
+          0.3490155041217804
+        ],
+        "size": [
+          0.6980310082435608,
+          0.8979583382606506,
+          0.6980309784412384
+        ]
+      },
+      "triangles": 2480,
+      "primitives": 3,
+      "dependencies": [
+        "Barrel_Apples.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png",
+        "T_Trim_Props_Normal.png",
+        "T_Trim_Props_BaseColor.png",
+        "T_Trim_Props_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Barrel_Apples"
+        }
+      ]
+    },
+    {
+      "file": "Bench.gltf",
+      "bounds": {
+        "min": [
+          -1.3883408308029175,
+          -0.007262172643095255,
+          -0.2621202766895294
+        ],
+        "max": [
+          1.3883408308029175,
+          0.525951623916626,
+          0.2721467912197113
+        ],
+        "size": [
+          2.776681661605835,
+          0.5332137965597212,
+          0.5342670679092407
+        ]
+      },
+      "triangles": 404,
+      "primitives": 2,
+      "dependencies": [
+        "Bench.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Bench"
+        }
+      ]
+    },
+    {
+      "file": "BookStand.gltf",
+      "bounds": {
+        "min": [
+          -0.2534816861152649,
+          -0.00249952613376081,
+          -0.2555173337459564
+        ],
+        "max": [
+          0.25363287329673767,
+          1.444292664527893,
+          0.2556697130203247
+        ],
+        "size": [
+          0.5071145594120026,
+          1.4467921906616539,
+          0.5111870467662811
+        ]
+      },
+      "triangles": 1526,
+      "primitives": 1,
+      "dependencies": [
+        "BookStand.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "BookStand"
+        }
+      ]
+    },
+    {
+      "file": "Book_Stack_1.gltf",
+      "bounds": {
+        "min": [
+          -0.14579994976520538,
+          0.0011552744545042515,
+          -0.10707271099090576
+        ],
+        "max": [
+          0.13913124799728394,
+          0.21486791968345642,
+          0.11921422183513641
+        ],
+        "size": [
+          0.2849311977624893,
+          0.21371264522895217,
+          0.22628693282604218
+        ]
+      },
+      "triangles": 208,
+      "primitives": 1,
+      "dependencies": [
+        "Book_Stack_1.bin",
+        "T_Trim_Props_Normal.png",
+        "T_Trim_Props_BaseColor.png",
+        "T_Trim_Props_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Book_Stack_1"
+        }
+      ]
+    },
+    {
+      "file": "Bucket_Wooden_1.gltf",
+      "bounds": {
+        "min": [
+          -0.2159692943096161,
+          0.0007063584635034204,
+          -0.19943936169147491
+        ],
+        "max": [
+          0.21795988082885742,
+          0.2934951186180115,
+          0.18401481211185455
+        ],
+        "size": [
+          0.4339291751384735,
+          0.29278876015450805,
+          0.38345417380332947
+        ]
+      },
+      "triangles": 976,
+      "primitives": 2,
+      "dependencies": [
+        "Bucket_Wooden_1.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Bucket_Wooden_1"
+        }
+      ]
+    },
+    {
+      "file": "Chair_1.gltf",
+      "bounds": {
+        "min": [
+          -0.29025912284851074,
+          -0.0027060508728027344,
+          -0.29154688119888306
+        ],
+        "max": [
+          0.29025912284851074,
+          1.1205782890319824,
+          0.25739121437072754
+        ],
+        "size": [
+          0.5805182456970215,
+          1.1232843399047852,
+          0.5489380955696106
+        ]
+      },
+      "triangles": 496,
+      "primitives": 2,
+      "dependencies": [
+        "Chair_1.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Chair_1"
+        }
+      ]
+    },
+    {
+      "file": "Crate_Wooden.gltf",
+      "bounds": {
+        "min": [
+          -0.4258447792468374,
+          -0.05243159234251937,
+          -0.4541466488101733
+        ],
+        "max": [
+          0.4164137671952943,
+          0.8784963503875858,
+          0.4541466488101733
+        ],
+        "size": [
+          0.8422585464421317,
+          0.9309279427301052,
+          0.9082932976203466
+        ]
+      },
+      "triangles": 1576,
+      "primitives": 2,
+      "dependencies": [
+        "Crate_Wooden.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Crate_Wooden",
+          "scale": [
+            0.7800000309944153,
+            0.7800000309944153,
+            0.7800000309944153
+          ]
+        }
+      ]
+    },
+    {
+      "file": "FarmCrate_Apple.gltf",
+      "bounds": {
+        "min": [
+          -0.35689881443977356,
+          -0.01598539389669895,
+          -0.20708000659942627
+        ],
+        "max": [
+          0.35689881443977356,
+          0.227791890501976,
+          0.20708000659942627
+        ],
+        "size": [
+          0.7137976288795471,
+          0.24377728439867496,
+          0.41416001319885254
+        ]
+      },
+      "triangles": 4028,
+      "primitives": 3,
+      "dependencies": [
+        "FarmCrate_Apple.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png",
+        "T_Trim_Props_Normal.png",
+        "T_Trim_Props_BaseColor.png",
+        "T_Trim_Props_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "FarmCrate_Apple"
+        }
+      ]
+    },
+    {
+      "file": "FarmCrate_Carrot.gltf",
+      "bounds": {
+        "min": [
+          -0.35689881443977356,
+          -0.01598544418811798,
+          -0.3599160313606262
+        ],
+        "max": [
+          0.35689881443977356,
+          0.39533743262290955,
+          0.20708000659942627
+        ],
+        "size": [
+          0.7137976288795471,
+          0.4113228768110275,
+          0.5669960379600525
+        ]
+      },
+      "triangles": 5262,
+      "primitives": 3,
+      "dependencies": [
+        "FarmCrate_Carrot.bin",
+        "T_Trim_Props_Normal.png",
+        "T_Trim_Props_BaseColor.png",
+        "T_Trim_Props_ORM.png",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "FarmCrate_Carrot"
+        }
+      ]
+    },
+    {
+      "file": "FarmCrate_Empty.gltf",
+      "bounds": {
+        "min": [
+          -0.3569227159023285,
+          -0.015985392034053802,
+          -0.20708000659942627
+        ],
+        "max": [
+          0.3569227159023285,
+          0.22779184579849243,
+          0.20708000659942627
+        ],
+        "size": [
+          0.713845431804657,
+          0.24377723783254623,
+          0.41416001319885254
+        ]
+      },
+      "triangles": 1928,
+      "primitives": 2,
+      "dependencies": [
+        "FarmCrate_Empty.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "FarmCrate_Empty"
+        }
+      ]
+    },
+    {
+      "file": "Lantern_Wall.gltf",
+      "bounds": {
+        "min": [
+          -0.1786707192659378,
+          0.08183755725622177,
+          -0.05097728595137596
+        ],
+        "max": [
+          0.178670734167099,
+          1.4188451766967773,
+          1.2513371706008911
+        ],
+        "size": [
+          0.3573414534330368,
+          1.3370076194405556,
+          1.302314456552267
+        ]
+      },
+      "triangles": 2822,
+      "primitives": 1,
+      "dependencies": [
+        "Lantern_Wall.bin",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Lantern_Wall"
+        }
+      ]
+    },
+    {
+      "file": "Pot_1.gltf",
+      "bounds": {
+        "min": [
+          -0.2696574032306671,
+          -0.02260822057723999,
+          -0.24300943315029144
+        ],
+        "max": [
+          0.2696574032306671,
+          0.2012079805135727,
+          0.24300943315029144
+        ],
+        "size": [
+          0.5393148064613342,
+          0.22381620109081268,
+          0.4860188663005829
+        ]
+      },
+      "triangles": 1068,
+      "primitives": 1,
+      "dependencies": [
+        "Pot_1.bin",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Pot_1"
+        }
+      ]
+    },
+    {
+      "file": "Potion_1.gltf",
+      "bounds": {
+        "min": [
+          -0.05693448707461357,
+          -0.00039556194678880274,
+          -0.05693448707461357
+        ],
+        "max": [
+          0.05693448707461357,
+          0.13998661935329437,
+          0.05693448707461357
+        ],
+        "size": [
+          0.11386897414922714,
+          0.14038218130008318,
+          0.11386897414922714
+        ]
+      },
+      "triangles": 440,
+      "primitives": 1,
+      "dependencies": [
+        "Potion_1.bin",
+        "T_Trim_Props_Normal.png",
+        "T_Trim_Props_BaseColor.png",
+        "T_Trim_Props_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Potion_1"
+        }
+      ]
+    },
+    {
+      "file": "Rope_1.gltf",
+      "bounds": {
+        "min": [
+          -0.2856038510799408,
+          -0.02687135338783264,
+          -0.3317700922489166
+        ],
+        "max": [
+          0.27178487181663513,
+          0.07098738104104996,
+          0.2745339870452881
+        ],
+        "size": [
+          0.5573887228965759,
+          0.0978587344288826,
+          0.6063040792942047
+        ]
+      },
+      "triangles": 1748,
+      "primitives": 1,
+      "dependencies": [
+        "Rope_1.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Rope_1"
+        }
+      ]
+    },
+    {
+      "file": "Stall_Cart_Empty.gltf",
+      "bounds": {
+        "min": [
+          -2.1067893505096436,
+          -0.0038988939486443996,
+          -0.5298508405685425
+        ],
+        "max": [
+          0.9137552380561829,
+          2.627926826477051,
+          0.5298508405685425
+        ],
+        "size": [
+          3.0205445885658264,
+          2.631825720425695,
+          1.059701681137085
+        ]
+      },
+      "triangles": 3936,
+      "primitives": 3,
+      "dependencies": [
+        "Stall_Cart_Empty.bin",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Cloth_Normal.png",
+        "T_Trim_Cloth_BaseColor.png",
+        "T_Trim_Cloth_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Stall_Cart_Empty"
+        }
+      ]
+    },
+    {
+      "file": "Stall_Empty.gltf",
+      "bounds": {
+        "min": [
+          -0.9224295020103455,
+          -0.0048178937286138535,
+          -0.4607115387916565
+        ],
+        "max": [
+          0.9224295020103455,
+          2.6223647594451904,
+          0.47154372930526733
+        ],
+        "size": [
+          1.844859004020691,
+          2.6271826531738043,
+          0.9322552680969238
+        ]
+      },
+      "triangles": 1496,
+      "primitives": 3,
+      "dependencies": [
+        "Stall_Empty.bin",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Cloth_Normal.png",
+        "T_Trim_Cloth_BaseColor.png",
+        "T_Trim_Cloth_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Stall_Empty"
+        }
+      ]
+    },
+    {
+      "file": "Stool.gltf",
+      "bounds": {
+        "min": [
+          -0.23761053383350372,
+          -0.0064485399052500725,
+          -0.2376105636358261
+        ],
+        "max": [
+          0.23699752986431122,
+          0.5822744369506836,
+          0.23699752986431122
+        ],
+        "size": [
+          0.47460806369781494,
+          0.5887229768559337,
+          0.47460809350013733
+        ]
+      },
+      "triangles": 152,
+      "primitives": 1,
+      "dependencies": [
+        "Stool.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Stool"
+        }
+      ]
+    },
+    {
+      "file": "Table_Large.gltf",
+      "bounds": {
+        "min": [
+          -1.4242464303970337,
+          0.001262865960597992,
+          -0.5419855713844299
+        ],
+        "max": [
+          1.4242464303970337,
+          0.8147094249725342,
+          0.5546767711639404
+        ],
+        "size": [
+          2.8484928607940674,
+          0.8134465590119362,
+          1.0966623425483704
+        ]
+      },
+      "triangles": 986,
+      "primitives": 2,
+      "dependencies": [
+        "Table_Large.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Table_Large"
+        }
+      ]
+    },
+    {
+      "file": "Vase_2.gltf",
+      "bounds": {
+        "min": [
+          -0.3473413288593292,
+          -0.0008944488363340497,
+          -0.3473413288593292
+        ],
+        "max": [
+          0.3473413586616516,
+          0.515419065952301,
+          0.3473413288593292
+        ],
+        "size": [
+          0.6946826875209808,
+          0.5163135147886351,
+          0.6946826577186584
+        ]
+      },
+      "triangles": 598,
+      "primitives": 1,
+      "dependencies": [
+        "Vase_2.bin",
+        "T_Trim_Props_Normal.png",
+        "T_Trim_Props_BaseColor.png",
+        "T_Trim_Props_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Vase_2"
+        }
+      ]
+    },
+    {
+      "file": "WeaponStand.gltf",
+      "bounds": {
+        "min": [
+          -0.6930983662605286,
+          -0.0033770801965147257,
+          -0.49469810724258423
+        ],
+        "max": [
+          0.6930983662605286,
+          1.1059458255767822,
+          0.488442987203598
+        ],
+        "size": [
+          1.3861967325210571,
+          1.109322905773297,
+          0.9831410944461823
+        ]
+      },
+      "triangles": 2084,
+      "primitives": 2,
+      "dependencies": [
+        "WeaponStand.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "WeaponStand"
+        }
+      ]
+    },
+    {
+      "file": "Workbench.gltf",
+      "bounds": {
+        "min": [
+          -1.009548306465149,
+          0.00017460077651776373,
+          -0.5147912502288818
+        ],
+        "max": [
+          1.009548544883728,
+          0.8948198556900024,
+          0.5094448328018188
+        ],
+        "size": [
+          2.019096851348877,
+          0.8946452549134847,
+          1.0242360830307007
+        ]
+      },
+      "triangles": 1368,
+      "primitives": 2,
+      "dependencies": [
+        "Workbench.bin",
+        "T_Trim_Furniture_Normal.png",
+        "T_Trim_Furniture_BaseColor.png",
+        "T_Trim_Furniture_ORM.png",
+        "T_Trim_Metal_Normal.png",
+        "T_Trim_Metal_BaseColor.png",
+        "T_Trim_Metal_ORM.png"
+      ],
+      "nodes": [
+        {
+          "mesh": 0,
+          "name": "Workbench"
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "file": "Anvil_Log.bin",
+      "bytes": 130880,
+      "sha256": "7d3d078f1be72c9c56abc0ee2fc5dfa23826b8a03beaaa756d27054a7443919c"
+    },
+    {
+      "file": "Anvil_Log.gltf",
+      "bytes": 5580,
+      "sha256": "878f803a0d8d7a4db5ad31f4839bc87ac03fd409cb69e30aa078c00729a38df2"
+    },
+    {
+      "file": "Bag.bin",
+      "bytes": 27188,
+      "sha256": "6bf8ad99d0048264aa37157a92f394ab32aeeb5270dab2f3f76282b1eda4e012"
+    },
+    {
+      "file": "Bag.gltf",
+      "bytes": 4318,
+      "sha256": "ccbf22a9162a2a2173caa7346e796b8f92a86dbbbe02a196530bf5642293e545"
+    },
+    {
+      "file": "Banner_1.bin",
+      "bytes": 20976,
+      "sha256": "7d98308055e39b01192ec5fe9a44688f9ba549ec1d2b12c94d6e5fc4f094cf32"
+    },
+    {
+      "file": "Banner_1.gltf",
+      "bytes": 6789,
+      "sha256": "a00162c8ef35912d0fe9137b0ee53f94752a1b61fcd8033d4f1e50bd2c54eca1"
+    },
+    {
+      "file": "Barrel.bin",
+      "bytes": 57144,
+      "sha256": "d8f963e2975b6bbd4b631b5cd7ade2d5dfc76dfb9f8387e2d398935f5405cf20"
+    },
+    {
+      "file": "Barrel.gltf",
+      "bytes": 4311,
+      "sha256": "cececb2da345addb21567e3ce1b30a9da071b689bcec59d85cd7a4446f531e87"
+    },
+    {
+      "file": "Barrel_Apples.bin",
+      "bytes": 104600,
+      "sha256": "774c97d9b2b2faa04ef40c681540ca3be74a3942ab8bbbd8c8d260b66121f8c8"
+    },
+    {
+      "file": "Barrel_Apples.gltf",
+      "bytes": 6241,
+      "sha256": "07520279b51bd1cc75b6db88b572b5ec445fc7decf0b115fba5c9e20f8caa111"
+    },
+    {
+      "file": "Bench.bin",
+      "bytes": 19304,
+      "sha256": "08d6976112645dc1f6a554019e2fc965d0bceba7a01c4f6013615ac46520b418"
+    },
+    {
+      "file": "Bench.gltf",
+      "bytes": 4298,
+      "sha256": "0184d3b128a8a3bcc828d7bc6aa867038e2a85a339130ed015f2727e739f9ab7"
+    },
+    {
+      "file": "BookStand.bin",
+      "bytes": 62020,
+      "sha256": "153aa58a6296d61d39832600c80ceeb2f00011d90c7da477c3f326f4744140dd"
+    },
+    {
+      "file": "BookStand.gltf",
+      "bytes": 2223,
+      "sha256": "c7b717e6388bc151cb026256aee8a0b611bf759d294f5070a1c11157483eb07e"
+    },
+    {
+      "file": "Book_Stack_1.bin",
+      "bytes": 12768,
+      "sha256": "cdbe0b7f468ac1713989e0c7f67c93dd83a899825d518b4911d56f4613c85fb7"
+    },
+    {
+      "file": "Book_Stack_1.gltf",
+      "bytes": 2418,
+      "sha256": "aac90f5a6859acb1edf12b248e12a914f652e8a0a0af0fa6cee6dda3225a7fd2"
+    },
+    {
+      "file": "Bucket_Wooden_1.bin",
+      "bytes": 32544,
+      "sha256": "be608473cd78557d466be9b9e2f6ff15f1edf1e4f5fcdd27be75d494f52578f2"
+    },
+    {
+      "file": "Bucket_Wooden_1.gltf",
+      "bytes": 3911,
+      "sha256": "b4f93568d96d38dca162098e75fb3eb4ffaf5ff6e41f8f788476abd3be4984cf"
+    },
+    {
+      "file": "Chair_1.bin",
+      "bytes": 28096,
+      "sha256": "dc16da2a14704460a4050ef08782bb46b56b911eb161965b3f2676a1b24c201d"
+    },
+    {
+      "file": "Chair_1.gltf",
+      "bytes": 4312,
+      "sha256": "9c3e659f25c850990cbf8a4d850b6222110248cd5c1419a2c0f548a312dd8457"
+    },
+    {
+      "file": "Crate_Wooden.bin",
+      "bytes": 66496,
+      "sha256": "7ae016386790e5998fbdf1656a5dc53a3f1374c3525b22798d84397a36ae937b"
+    },
+    {
+      "file": "Crate_Wooden.gltf",
+      "bytes": 4412,
+      "sha256": "fb06d4b7b9bbfbb9dc51fa56ecff3fe7ba8e9142d643cabedd17a55d7ea46ee5"
+    },
+    {
+      "file": "FarmCrate_Apple.bin",
+      "bytes": 134488,
+      "sha256": "9f764bf2f2e960ec32ff31198f6b54787391e71bec166da59372f596299d24e6"
+    },
+    {
+      "file": "FarmCrate_Apple.gltf",
+      "bytes": 6263,
+      "sha256": "56de7097ddbf22801537f38b77335b2d85a4e2d24bdcbe9ceb1b3bc666a24997"
+    },
+    {
+      "file": "FarmCrate_Carrot.bin",
+      "bytes": 204292,
+      "sha256": "18858970c67b1e6fb2d174a4b4a946787cdde12b42d88cce9d846fc4ede50e19"
+    },
+    {
+      "file": "FarmCrate_Carrot.gltf",
+      "bytes": 6273,
+      "sha256": "6aaa750a27ee652c8090fe7415f1bdd1d66b17d6cfecafc0767559afaef3248c"
+    },
+    {
+      "file": "FarmCrate_Empty.bin",
+      "bytes": 54704,
+      "sha256": "9c380c8ff9314aa5ca94deaf816527be4aae60802c8bba42d30978f1685b520d"
+    },
+    {
+      "file": "FarmCrate_Empty.gltf",
+      "bytes": 3915,
+      "sha256": "7dccd0a93f29a31ffc05b8b5d39704b2d6c65eb477c895325ecf19c6dc17c644"
+    },
+    {
+      "file": "LICENSE.txt",
+      "bytes": 837,
+      "sha256": "edad12240087a33e08fc031e4e66c2b2b4b2a6d4f086339bde04f741b385fbda"
+    },
+    {
+      "file": "Lantern_Wall.bin",
+      "bytes": 120036,
+      "sha256": "fe9f3816130587308b73bb8b4b28031b71fe9405a111f115463022709fa04b2e"
+    },
+    {
+      "file": "Lantern_Wall.gltf",
+      "bytes": 2203,
+      "sha256": "9e7623e1d3a16f9212ff7cb41c939746435187f0071bd94849ee7bc6a59785a2"
+    },
+    {
+      "file": "Pot_1.bin",
+      "bytes": 37160,
+      "sha256": "eebe6918dbdc743501bdcb2d9f576a52028eb3451bdcf95d92674b97918cafc9"
+    },
+    {
+      "file": "Pot_1.gltf",
+      "bytes": 2185,
+      "sha256": "d925a5e5541d83d2d1885b9d3928fbf553cf4a37ff902cf22d33280805efcf6f"
+    },
+    {
+      "file": "Potion_1.bin",
+      "bytes": 18200,
+      "sha256": "6838b7e7a740a91f3bbdce0c79482638f095a79f90e2e1a59158c9750171665c"
+    },
+    {
+      "file": "Potion_1.gltf",
+      "bytes": 2418,
+      "sha256": "fc53caca616741a21790b54a742a4fe3b4b3dfc88f4d50716fa8f65eece5c2ef"
+    },
+    {
+      "file": "Rope_1.bin",
+      "bytes": 41624,
+      "sha256": "950d7977e2dcd8fa40c6103f7cd6d4bc9eb93dbc2da37bd3a3b092868efd61c4"
+    },
+    {
+      "file": "Rope_1.gltf",
+      "bytes": 2223,
+      "sha256": "b4722ec5baf1313b654d2500ba36e2a2b512bbd9b037f304b94b6665d2286313"
+    },
+    {
+      "file": "Stall_Cart_Empty.bin",
+      "bytes": 237264,
+      "sha256": "d70b989c539d9883e9e83f0428390857bf846bb109715a60cb5d526753c33deb"
+    },
+    {
+      "file": "Stall_Cart_Empty.gltf",
+      "bytes": 6857,
+      "sha256": "aaeda0ad9ffe8c317909d7450c994b28b1e608fdf04690fa07726b810fb64c88"
+    },
+    {
+      "file": "Stall_Empty.bin",
+      "bytes": 88176,
+      "sha256": "9ddececa6f5e0922ee32b064c400abea4dd068be2bfc78891017fca334158826"
+    },
+    {
+      "file": "Stall_Empty.gltf",
+      "bytes": 6804,
+      "sha256": "b0e6b4f6cb6b9dc0b35d92eceb89ebc27addac167fe56fe38cfc77e3afd62af9"
+    },
+    {
+      "file": "Stool.bin",
+      "bytes": 11472,
+      "sha256": "6ca3a6bc9b415409d842a338a74c174d0efe4d4972bf8a924fda87c8bda40191"
+    },
+    {
+      "file": "Stool.gltf",
+      "bytes": 2423,
+      "sha256": "55a111d97463adb71a59eddb8bbee777c5743e66a58403b06e869cc35e4da670"
+    },
+    {
+      "file": "T_Trim_Cloth_BaseColor.png",
+      "bytes": 754697,
+      "sha256": "1eeb94fa640101ee0eebb49c90661ec0cdf7483ffaf3951e36a450450727c59e",
+      "pixelSize": [
+        1024,
+        1024
+      ],
+      "pngColorType": 6
+    },
+    {
+      "file": "T_Trim_Cloth_Normal.png",
+      "bytes": 299476,
+      "sha256": "e6e19a141fad8e0ceec3164f14aaad9d648164ba79c1b2a400694697669ef145",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 2
+    },
+    {
+      "file": "T_Trim_Cloth_ORM.png",
+      "bytes": 76256,
+      "sha256": "02b4ec0e6d548dd93006ec7184a593de6dff4dc47d720d80141681d4a566135e",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 2
+    },
+    {
+      "file": "T_Trim_Furniture_BaseColor.png",
+      "bytes": 898996,
+      "sha256": "40aeea729b275032f6de0d9347fbe8af2a00321ee498078921eced0e614e73ff",
+      "pixelSize": [
+        1024,
+        1024
+      ],
+      "pngColorType": 2
+    },
+    {
+      "file": "T_Trim_Furniture_Normal.png",
+      "bytes": 298402,
+      "sha256": "c341389a9bf85310ce43f835bf5f213a3a5bdab5e289ee50ad367046fba3e7c9",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 2
+    },
+    {
+      "file": "T_Trim_Furniture_ORM.png",
+      "bytes": 227679,
+      "sha256": "f59fc558f25801d18e8dc7efa7ebcb9359544690b2c38eb78fe34f0c0c22c906",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 2
+    },
+    {
+      "file": "T_Trim_Metal_BaseColor.png",
+      "bytes": 633784,
+      "sha256": "defe22cba6a4737b0f90832644449321786270589ad08d1ee560221e3a63acbb",
+      "pixelSize": [
+        1024,
+        1024
+      ],
+      "pngColorType": 2
+    },
+    {
+      "file": "T_Trim_Metal_Normal.png",
+      "bytes": 345199,
+      "sha256": "8e496c5477244cd6700df24979ee2c738821a1b91d04ac35bbb3b854276a3670",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 2
+    },
+    {
+      "file": "T_Trim_Metal_ORM.png",
+      "bytes": 213706,
+      "sha256": "fe23639b1e8b8fe8a54bcebe6f3bb2271d466aa91c7e9461e2e1e7c6bc5b705d",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 2
+    },
+    {
+      "file": "T_Trim_Props_BaseColor.png",
+      "bytes": 969734,
+      "sha256": "33dc86536fc35cbee06e02fe88c77d370c8e0bc487827a3eb38631f6370081d9",
+      "pixelSize": [
+        1024,
+        1024
+      ],
+      "pngColorType": 2
+    },
+    {
+      "file": "T_Trim_Props_Normal.png",
+      "bytes": 401054,
+      "sha256": "724ded07db89dd34a56a9d9ca35326c0fcd3a2d5cd96a1ecd9099e08aee42ab5",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 2
+    },
+    {
+      "file": "T_Trim_Props_ORM.png",
+      "bytes": 302050,
+      "sha256": "16ac225aca4d585100873849f17b8fa03254762f8fd9cbe406d3e72be32d65b2",
+      "pixelSize": [
+        512,
+        512
+      ],
+      "pngColorType": 2
+    },
+    {
+      "file": "Table_Large.bin",
+      "bytes": 56396,
+      "sha256": "af7bfe0cbf0532e01543e4fd5d6d710df70106a7d938c4d74a50c8911ee9bf35"
+    },
+    {
+      "file": "Table_Large.gltf",
+      "bytes": 4316,
+      "sha256": "ffd4e5b803f38f02922c2b0303ae3b5a602f7c239e717b725c0553019be8fcf2"
+    },
+    {
+      "file": "Vase_2.bin",
+      "bytes": 21188,
+      "sha256": "1dce19b5d65d83c271b4ca1340446a482aefbd4a03dac61bb2a94ca3c71f99ea"
+    },
+    {
+      "file": "Vase_2.gltf",
+      "bytes": 2407,
+      "sha256": "92218a88b02bac2bf4b3855dff452f209068cbfd58724585b7bf20556ac17ab5"
+    },
+    {
+      "file": "WeaponStand.bin",
+      "bytes": 76312,
+      "sha256": "ac76bb8f6a511179842ecf0610ceabd96486e9cc5ca8dfa7639118f9796e4441"
+    },
+    {
+      "file": "WeaponStand.gltf",
+      "bytes": 3903,
+      "sha256": "039675f0ea79a8615a27e544eb9ec7799a2a1a94e070858dc400cb50be9a76f9"
+    },
+    {
+      "file": "Workbench.bin",
+      "bytes": 63408,
+      "sha256": "d26f2a0ba01b4a8db8d6820d1bd0d281297fea30e48c9952484167d18a637b39"
+    },
+    {
+      "file": "Workbench.gltf",
+      "bytes": 4318,
+      "sha256": "518fc5c955def18cfcb781b3b955da0e8edcf4f37830a21561ef32c03ad0397e"
+    }
+  ],
+  "originalFiles": [
+    {
+      "file": "Anvil_Log.bin",
+      "bytes": 130880,
+      "sha256": "7d3d078f1be72c9c56abc0ee2fc5dfa23826b8a03beaaa756d27054a7443919c"
+    },
+    {
+      "file": "Anvil_Log.gltf",
+      "bytes": 5580,
+      "sha256": "878f803a0d8d7a4db5ad31f4839bc87ac03fd409cb69e30aa078c00729a38df2"
+    },
+    {
+      "file": "Bag.bin",
+      "bytes": 27188,
+      "sha256": "6bf8ad99d0048264aa37157a92f394ab32aeeb5270dab2f3f76282b1eda4e012"
+    },
+    {
+      "file": "Bag.gltf",
+      "bytes": 4318,
+      "sha256": "ccbf22a9162a2a2173caa7346e796b8f92a86dbbbe02a196530bf5642293e545"
+    },
+    {
+      "file": "Banner_1.bin",
+      "bytes": 20976,
+      "sha256": "7d98308055e39b01192ec5fe9a44688f9ba549ec1d2b12c94d6e5fc4f094cf32"
+    },
+    {
+      "file": "Banner_1.gltf",
+      "bytes": 6789,
+      "sha256": "a00162c8ef35912d0fe9137b0ee53f94752a1b61fcd8033d4f1e50bd2c54eca1"
+    },
+    {
+      "file": "Barrel.bin",
+      "bytes": 57144,
+      "sha256": "d8f963e2975b6bbd4b631b5cd7ade2d5dfc76dfb9f8387e2d398935f5405cf20"
+    },
+    {
+      "file": "Barrel.gltf",
+      "bytes": 4311,
+      "sha256": "cececb2da345addb21567e3ce1b30a9da071b689bcec59d85cd7a4446f531e87"
+    },
+    {
+      "file": "Barrel_Apples.bin",
+      "bytes": 104600,
+      "sha256": "774c97d9b2b2faa04ef40c681540ca3be74a3942ab8bbbd8c8d260b66121f8c8"
+    },
+    {
+      "file": "Barrel_Apples.gltf",
+      "bytes": 6241,
+      "sha256": "07520279b51bd1cc75b6db88b572b5ec445fc7decf0b115fba5c9e20f8caa111"
+    },
+    {
+      "file": "Bench.bin",
+      "bytes": 19304,
+      "sha256": "08d6976112645dc1f6a554019e2fc965d0bceba7a01c4f6013615ac46520b418"
+    },
+    {
+      "file": "Bench.gltf",
+      "bytes": 4298,
+      "sha256": "0184d3b128a8a3bcc828d7bc6aa867038e2a85a339130ed015f2727e739f9ab7"
+    },
+    {
+      "file": "BookStand.bin",
+      "bytes": 62020,
+      "sha256": "153aa58a6296d61d39832600c80ceeb2f00011d90c7da477c3f326f4744140dd"
+    },
+    {
+      "file": "BookStand.gltf",
+      "bytes": 2223,
+      "sha256": "c7b717e6388bc151cb026256aee8a0b611bf759d294f5070a1c11157483eb07e"
+    },
+    {
+      "file": "Book_Stack_1.bin",
+      "bytes": 12768,
+      "sha256": "cdbe0b7f468ac1713989e0c7f67c93dd83a899825d518b4911d56f4613c85fb7"
+    },
+    {
+      "file": "Book_Stack_1.gltf",
+      "bytes": 2418,
+      "sha256": "aac90f5a6859acb1edf12b248e12a914f652e8a0a0af0fa6cee6dda3225a7fd2"
+    },
+    {
+      "file": "Bucket_Wooden_1.bin",
+      "bytes": 32544,
+      "sha256": "be608473cd78557d466be9b9e2f6ff15f1edf1e4f5fcdd27be75d494f52578f2"
+    },
+    {
+      "file": "Bucket_Wooden_1.gltf",
+      "bytes": 3911,
+      "sha256": "b4f93568d96d38dca162098e75fb3eb4ffaf5ff6e41f8f788476abd3be4984cf"
+    },
+    {
+      "file": "Chair_1.bin",
+      "bytes": 28096,
+      "sha256": "dc16da2a14704460a4050ef08782bb46b56b911eb161965b3f2676a1b24c201d"
+    },
+    {
+      "file": "Chair_1.gltf",
+      "bytes": 4312,
+      "sha256": "9c3e659f25c850990cbf8a4d850b6222110248cd5c1419a2c0f548a312dd8457"
+    },
+    {
+      "file": "Crate_Wooden.bin",
+      "bytes": 66496,
+      "sha256": "7ae016386790e5998fbdf1656a5dc53a3f1374c3525b22798d84397a36ae937b"
+    },
+    {
+      "file": "Crate_Wooden.gltf",
+      "bytes": 4412,
+      "sha256": "fb06d4b7b9bbfbb9dc51fa56ecff3fe7ba8e9142d643cabedd17a55d7ea46ee5"
+    },
+    {
+      "file": "FarmCrate_Apple.bin",
+      "bytes": 134488,
+      "sha256": "9f764bf2f2e960ec32ff31198f6b54787391e71bec166da59372f596299d24e6"
+    },
+    {
+      "file": "FarmCrate_Apple.gltf",
+      "bytes": 6263,
+      "sha256": "56de7097ddbf22801537f38b77335b2d85a4e2d24bdcbe9ceb1b3bc666a24997"
+    },
+    {
+      "file": "FarmCrate_Carrot.bin",
+      "bytes": 204292,
+      "sha256": "18858970c67b1e6fb2d174a4b4a946787cdde12b42d88cce9d846fc4ede50e19"
+    },
+    {
+      "file": "FarmCrate_Carrot.gltf",
+      "bytes": 6273,
+      "sha256": "6aaa750a27ee652c8090fe7415f1bdd1d66b17d6cfecafc0767559afaef3248c"
+    },
+    {
+      "file": "FarmCrate_Empty.bin",
+      "bytes": 54704,
+      "sha256": "9c380c8ff9314aa5ca94deaf816527be4aae60802c8bba42d30978f1685b520d"
+    },
+    {
+      "file": "FarmCrate_Empty.gltf",
+      "bytes": 3915,
+      "sha256": "7dccd0a93f29a31ffc05b8b5d39704b2d6c65eb477c895325ecf19c6dc17c644"
+    },
+    {
+      "file": "LICENSE.txt",
+      "bytes": 837,
+      "sha256": "edad12240087a33e08fc031e4e66c2b2b4b2a6d4f086339bde04f741b385fbda"
+    },
+    {
+      "file": "Lantern_Wall.bin",
+      "bytes": 120036,
+      "sha256": "fe9f3816130587308b73bb8b4b28031b71fe9405a111f115463022709fa04b2e"
+    },
+    {
+      "file": "Lantern_Wall.gltf",
+      "bytes": 2203,
+      "sha256": "9e7623e1d3a16f9212ff7cb41c939746435187f0071bd94849ee7bc6a59785a2"
+    },
+    {
+      "file": "Pot_1.bin",
+      "bytes": 37160,
+      "sha256": "eebe6918dbdc743501bdcb2d9f576a52028eb3451bdcf95d92674b97918cafc9"
+    },
+    {
+      "file": "Pot_1.gltf",
+      "bytes": 2185,
+      "sha256": "d925a5e5541d83d2d1885b9d3928fbf553cf4a37ff902cf22d33280805efcf6f"
+    },
+    {
+      "file": "Potion_1.bin",
+      "bytes": 18200,
+      "sha256": "6838b7e7a740a91f3bbdce0c79482638f095a79f90e2e1a59158c9750171665c"
+    },
+    {
+      "file": "Potion_1.gltf",
+      "bytes": 2418,
+      "sha256": "fc53caca616741a21790b54a742a4fe3b4b3dfc88f4d50716fa8f65eece5c2ef"
+    },
+    {
+      "file": "Rope_1.bin",
+      "bytes": 41624,
+      "sha256": "950d7977e2dcd8fa40c6103f7cd6d4bc9eb93dbc2da37bd3a3b092868efd61c4"
+    },
+    {
+      "file": "Rope_1.gltf",
+      "bytes": 2223,
+      "sha256": "b4722ec5baf1313b654d2500ba36e2a2b512bbd9b037f304b94b6665d2286313"
+    },
+    {
+      "file": "Stall_Cart_Empty.bin",
+      "bytes": 237264,
+      "sha256": "d70b989c539d9883e9e83f0428390857bf846bb109715a60cb5d526753c33deb"
+    },
+    {
+      "file": "Stall_Cart_Empty.gltf",
+      "bytes": 6857,
+      "sha256": "aaeda0ad9ffe8c317909d7450c994b28b1e608fdf04690fa07726b810fb64c88"
+    },
+    {
+      "file": "Stall_Empty.bin",
+      "bytes": 88176,
+      "sha256": "9ddececa6f5e0922ee32b064c400abea4dd068be2bfc78891017fca334158826"
+    },
+    {
+      "file": "Stall_Empty.gltf",
+      "bytes": 6804,
+      "sha256": "b0e6b4f6cb6b9dc0b35d92eceb89ebc27addac167fe56fe38cfc77e3afd62af9"
+    },
+    {
+      "file": "Stool.bin",
+      "bytes": 11472,
+      "sha256": "6ca3a6bc9b415409d842a338a74c174d0efe4d4972bf8a924fda87c8bda40191"
+    },
+    {
+      "file": "Stool.gltf",
+      "bytes": 2423,
+      "sha256": "55a111d97463adb71a59eddb8bbee777c5743e66a58403b06e869cc35e4da670"
+    },
+    {
+      "file": "T_Trim_Cloth_BaseColor.png",
+      "bytes": 1936754,
+      "sha256": "c4d0e14506e05cc56e7ca62ebeeb2d45de055296a55e5a8e9c1330ff8ff1833a",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "T_Trim_Cloth_Normal.png",
+      "bytes": 3920858,
+      "sha256": "e91a490f94bc00707fb5be08045e316b4a18962f07a3b6e3d9d7c2058cfc51c0",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "T_Trim_Cloth_ORM.png",
+      "bytes": 623426,
+      "sha256": "9bdaa0d1be8c393b07d6185165d73c7cddc058d5c123ad49449945f45a7e0c0d",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "T_Trim_Furniture_BaseColor.png",
+      "bytes": 2232961,
+      "sha256": "075fbc9ec2fabc15732bd4025b6f63a0b25762df38440d06bf30437565d39bab",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "T_Trim_Furniture_Normal.png",
+      "bytes": 3485710,
+      "sha256": "3340c4cc47ff06d5e94a2dbe2a2a12d914d0ef055fcf66f63d876666bd160e42",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "T_Trim_Furniture_ORM.png",
+      "bytes": 2064585,
+      "sha256": "7bf417e82baf313793c5791bf48cdc8e573f1f7136197785bf0eb235cb0f8153",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "T_Trim_Metal_BaseColor.png",
+      "bytes": 1361221,
+      "sha256": "50422bbda9661effc259caf8b386224cac4b5ca811d2c5b3b8b25ae8efc714db",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "T_Trim_Metal_Normal.png",
+      "bytes": 3625541,
+      "sha256": "ab7315c864c9a9e6d716c940a599928506e1569d3b0c9085f8f1a64ec520d790",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "T_Trim_Metal_ORM.png",
+      "bytes": 1871475,
+      "sha256": "7407bccfc39ca74ecd68a61217395959bf56ac2063e6c93b384b11f07f5687c5",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "T_Trim_Props_BaseColor.png",
+      "bytes": 2263132,
+      "sha256": "75225a4ccfd8cc358c871de7a7a3cab7118ef197419a88464e807b81716215c8",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "T_Trim_Props_Normal.png",
+      "bytes": 4441458,
+      "sha256": "c4b28a8ba8efe3108cd11356ecab67e8bf75a10cebf29c78ee7724552c305a3e",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "T_Trim_Props_ORM.png",
+      "bytes": 3017151,
+      "sha256": "2d83d8df79aca2c8f630d389b43f09113afee98e746dfd42ddc3ce3302a136a2",
+      "pixelSize": [
+        2048,
+        2048
+      ]
+    },
+    {
+      "file": "Table_Large.bin",
+      "bytes": 56396,
+      "sha256": "af7bfe0cbf0532e01543e4fd5d6d710df70106a7d938c4d74a50c8911ee9bf35"
+    },
+    {
+      "file": "Table_Large.gltf",
+      "bytes": 4316,
+      "sha256": "ffd4e5b803f38f02922c2b0303ae3b5a602f7c239e717b725c0553019be8fcf2"
+    },
+    {
+      "file": "Vase_2.bin",
+      "bytes": 21188,
+      "sha256": "1dce19b5d65d83c271b4ca1340446a482aefbd4a03dac61bb2a94ca3c71f99ea"
+    },
+    {
+      "file": "Vase_2.gltf",
+      "bytes": 2407,
+      "sha256": "92218a88b02bac2bf4b3855dff452f209068cbfd58724585b7bf20556ac17ab5"
+    },
+    {
+      "file": "WeaponStand.bin",
+      "bytes": 76312,
+      "sha256": "ac76bb8f6a511179842ecf0610ceabd96486e9cc5ca8dfa7639118f9796e4441"
+    },
+    {
+      "file": "WeaponStand.gltf",
+      "bytes": 3903,
+      "sha256": "039675f0ea79a8615a27e544eb9ec7799a2a1a94e070858dc400cb50be9a76f9"
+    },
+    {
+      "file": "Workbench.bin",
+      "bytes": 63408,
+      "sha256": "d26f2a0ba01b4a8db8d6820d1bd0d281297fea30e48c9952484167d18a637b39"
+    },
+    {
+      "file": "Workbench.gltf",
+      "bytes": 4318,
+      "sha256": "518fc5c955def18cfcb781b3b955da0e8edcf4f37830a21561ef32c03ad0397e"
+    }
+  ],
+  "processing": {
+    "date": "2026-10-16",
+    "changes": [
+      {
+        "file": "T_Trim_Cloth_BaseColor.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          1024,
+          1024
+        ],
+        "outputSHA256": "1eeb94fa640101ee0eebb49c90661ec0cdf7483ffaf3951e36a450450727c59e"
+      },
+      {
+        "file": "T_Trim_Cloth_Normal.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "e6e19a141fad8e0ceec3164f14aaad9d648164ba79c1b2a400694697669ef145"
+      },
+      {
+        "file": "T_Trim_Cloth_ORM.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "02b4ec0e6d548dd93006ec7184a593de6dff4dc47d720d80141681d4a566135e"
+      },
+      {
+        "file": "T_Trim_Furniture_BaseColor.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          1024,
+          1024
+        ],
+        "outputSHA256": "40aeea729b275032f6de0d9347fbe8af2a00321ee498078921eced0e614e73ff"
+      },
+      {
+        "file": "T_Trim_Furniture_Normal.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "c341389a9bf85310ce43f835bf5f213a3a5bdab5e289ee50ad367046fba3e7c9"
+      },
+      {
+        "file": "T_Trim_Furniture_ORM.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "f59fc558f25801d18e8dc7efa7ebcb9359544690b2c38eb78fe34f0c0c22c906"
+      },
+      {
+        "file": "T_Trim_Metal_BaseColor.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          1024,
+          1024
+        ],
+        "outputSHA256": "defe22cba6a4737b0f90832644449321786270589ad08d1ee560221e3a63acbb"
+      },
+      {
+        "file": "T_Trim_Metal_Normal.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "8e496c5477244cd6700df24979ee2c738821a1b91d04ac35bbb3b854276a3670"
+      },
+      {
+        "file": "T_Trim_Metal_ORM.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "fe23639b1e8b8fe8a54bcebe6f3bb2271d466aa91c7e9461e2e1e7c6bc5b705d"
+      },
+      {
+        "file": "T_Trim_Props_BaseColor.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          1024,
+          1024
+        ],
+        "outputSHA256": "33dc86536fc35cbee06e02fe88c77d370c8e0bc487827a3eb38631f6370081d9"
+      },
+      {
+        "file": "T_Trim_Props_Normal.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "724ded07db89dd34a56a9d9ca35326c0fcd3a2d5cd96a1ecd9099e08aee42ab5"
+      },
+      {
+        "file": "T_Trim_Props_ORM.png",
+        "operation": "sips resize from original, retain PNG",
+        "originalPixels": [
+          2048,
+          2048
+        ],
+        "outputPixels": [
+          512,
+          512
+        ],
+        "outputSHA256": "16ac225aca4d585100873849f17b8fa03254762f8fd9cbe406d3e72be32d65b2"
+      }
+    ]
+  }
+}

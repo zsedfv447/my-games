@@ -1,0 +1,54 @@
+
+> starlight-ro@2.2.1 test
+> vitest run --maxWorkers=1 --no-file-parallelism --pool=threads --testTimeout=60000
+
+
+ RUN  v3.2.7 /Users/ethan/Documents/Codex/2026-10-14/referenced-chatgpt-conversation-this-is-an/outputs/starlight-ro-v2
+
+ ❯ src/world/sim.test.ts (12 tests | 1 failed) 118909ms
+   ✓ 世界模擬 > 點地走路沿著可走的格子移動，到達後停止  2022ms
+   ✓ 世界模擬 > 點怪會走過去並持續普攻直到打倒  6009ms
+   ✓ 世界模擬 > 法師火焰矢有詠唱時間，依等級落下多支  11764ms
+   ✓ 世界模擬 > 技能 SP 不足時失敗並提示  2859ms
+   ✓ 世界模擬 > 主動怪會主動追擊；城鎮內不會被攻擊  892ms
+   ✓ 世界模擬 > 手動移動會關閉自動戰鬥  2251ms
+   × 世界模擬 > 自動戰鬥會找怪打 84356ms
+     → Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ 世界模擬 > 走到傳送點發出換地圖事件 22ms
+   ✓ 世界模擬 > 同種子同操作結果一致（確定性）  2586ms
+   ✓ 世界模擬 > 卡片模組：回響只回響一次，不會無限連鎖  1367ms
+   ✓ MVP 大招 > 重擊先預警，玩家走出範圍就閃得掉  1958ms
+   ✓ MVP 大招 > 半血時召喚一次小怪，小怪死後不會重生  2774ms
+ ✓ src/world/combat-upgrade.test.ts (13 tests) 1242ms
+   ✓ 戰鬥修正 > 高 INT 杖普攻在貼身及遠處皆使用 MATK  435ms
+ ✓ src/rules/reliability.test.ts (54 tests) 1934ms
+   ✓ untrusted save schema and playable positions > rejects duplicate hotbar  808ms
+ ✓ src/world/mapgen.test.ts (7 tests) 386ms
+ ✓ src/rules/state.test.ts (20 tests) 309ms
+ ✓ src/save.test.ts (6 tests) 1081ms
+   ✓ failed validation writes nothing and preserves existing main and backup  327ms
+ ✓ src/session.test.ts (5 tests) 43ms
+ ✓ src/navigation.test.ts (3 tests) 12ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/world/sim.test.ts > 世界模擬 > 自動戰鬥會找怪打
+Error: Test timed out in 60000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/world/sim.test.ts:51:3
+     49|     w.moveTo(10.5,36.5);expect(w.player.auto).toBe(false);
+     50|   });
+     51|   test('自動戰鬥會找怪打',()=>{
+       |   ^
+     52|     const {w}=setup();w.setAuto(true);const ev=run(w,40);
+     53|     expect(ev.some(e=>e.t==='kill')).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 7 passed (8)
+      Tests  1 failed | 119 passed (120)
+   Start at  21:27:17
+   Duration  166.81s (transform 8.86s, setup 0ms, collect 11.21s, tests 123.91s, environment 10ms, prepare 7.64s)
+

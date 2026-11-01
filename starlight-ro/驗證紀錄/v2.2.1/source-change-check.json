@@ -1,0 +1,7 @@
+{
+  "changedSource": [
+    "src/style.css",
+    "src/ui.ts"
+  ],
+  "rulesSaveCombatAndCardModulesByteIdenticalToV22": true
+}

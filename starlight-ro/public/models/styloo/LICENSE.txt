@@ -1,0 +1,7 @@
+Chibi Characters by styloo
+CC0 1.0 Universal
+Source and author license declaration: https://styloo.itch.io/chibi
+License: https://creativecommons.org/publicdomain/zero/1.0/
+Downloaded 2026-10-16 from author-provided free download.
+Original archive: outputs/asset-downloads/Styloo-ChibiCharactersV1.2.zip
+Changes: glTF extraction, shared PNGs, face texture 2048 to 1024, KHR_materials_unlit and double-sided materials per author recommendations. Full original rigs and animations retained.
